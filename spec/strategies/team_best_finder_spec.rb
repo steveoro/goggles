@@ -341,7 +341,7 @@ describe TeamBestFinder, type: :strategy do
       create_list( :meeting_individual_result, result_num, team: @new_team )
       @new_tbf = TeamBestFinder.new( @new_team )
       @new_team.meeting_individual_results.is_not_disqualified.each do |mir|
-        @new_tbf.distinct_categories << mir.category_type if ! @new_tbf.distinct_categories.rindex( mir.category_type.code )
+        @new_tbf.distinct_categories << mir.category_type if ! @new_tbf.distinct_categories.rindex{ |e| e.code == mir.category_type.code }
       end
       expect( @new_tbf.distinct_categories.size ).to be > 0
     end
@@ -382,17 +382,74 @@ describe TeamBestFinder, type: :strategy do
 
   describe "#split_categories," do
     # Those specs should be very slow using real data
-    # because the team considered can have many results  
+    # because the team considered can have many results
+    # Uncomment the before all cycle instead of before each
+    # to use real data fo CSI Nuoto Ober Ferrari Team  
+    before( :all ) do
+      @new_tbf = TeamBestFinder.new( Team.find(1) )
+      @x4d_records = @new_tbf.scan_for_distinct_bests
+      category_to_split = @new_tbf.get_categories_to_split.map{ |category_type| category_type.code }
+      records_to_split = @x4d_records.records.select{ |record| category_to_split.rindex( record.get_category_type ) }
+      # DEBUG
+      puts "Distinct categories: #{@new_tbf.distinct_categories.map{ |e| e.code }}"
+      puts "\r\nFound #{records_to_split.size} to split:"
+      # DEBUG
+      records_to_split.each do |record_to_split|
+        record          = record_to_split.get_record_instance
+        pool_code       = record_to_split.get_pool_type
+        gender_code     = record_to_split.get_gender_type
+        event_code      = record_to_split.get_event_type
+        target_category = @new_tbf.get_category_to_split_into( record )
+        # DEBUG
+        puts "#{pool_code} #{gender_code} #{event_code} - #{record.category_type.code} => #{target_category.code} (#{record.swimmer.complete_name} #{record.swimmer.year_of_birth} #{record.get_swimmer_age} at #{record.meeting.get_scheduled_date})"
+        # DEBUG
+      end
+    end
+=begin
     before( :each ) do
       @new_team = create( :team )
-      create_list( :meeting_individual_result, result_num, team: @new_team )
+
+      new_badge = create( :badge, team: @new_team, season: Season.find(151), swimmer: create( :swimmer, year_of_birth: ( 26.year.ago.year - ( rand * 10 ).to_i ) ) )
+      fix_me = create( :meeting_event, event_type: event )
+      fix_mp_50S = create( :meeting_program, meeting_event: fix_me, category_type: CategoryType.find_by_code( '50S'), gender_type_id: new_badge.swimmer.gender_type_id )
+      # DEBUG
+      puts "\r\nAlways to split: #{fix_mp_50S.pool_type.code} #{fix_mp_50S.gender_type.code} #{fix_mp_50S.event_type.code} #{fix_mp_50S.category_type.code}" 
+      # DEBUG
+      create( :meeting_individual_result, badge: new_badge, team: @new_team, meeting_program: fix_mp_50S, is_disqualified: false, disqualification_code_type: nil )
+
+      create_list( :meeting_individual_result, result_num - 1, team: @new_team )
       @new_tbf = TeamBestFinder.new( @new_team )
+
+      # Ensure all the categories will be included. Needed because factories not congruent in season and category mapping
       @new_team.meeting_individual_results.is_not_disqualified.each do |mir|
-        @new_tbf.distinct_categories << mir.category_type if ! @new_tbf.distinct_categories.rindex( mir.category_type.code )
+        @new_tbf.distinct_categories << mir.category_type if ! @new_tbf.distinct_categories.rindex{ |e| e.code == mir.category_type.code }
       end
+      # DEBUG
+      puts "Distinct categories: #{@new_tbf.distinct_categories.map{ |e| e.code }}"
+      # DEBUG
       expect( @new_tbf.distinct_categories.size ).to be > 0
+      expect( @new_tbf.distinct_categories.rindex{ |e| e.code == '50S' } ).to be >= 0
       @x4d_records = @new_tbf.scan_for_distinct_bests
+      
+      # Verify seeded/randomized data
+      expect( @x4d_records.has_record_for?( fix_mp_50S.pool_type.code, fix_mp_50S.gender_type.code, fix_mp_50S.event_type.code, fix_mp_50S.category_type.code ) ).to be >= 0
+      category_to_split = @new_tbf.get_categories_to_split.map{ |category_type| category_type.code }
+      records_to_split = @x4d_records.records.select{ |record| category_to_split.rindex( record.get_category_type ) }
+      # DEBUG
+      puts "\r\nFound #{records_to_split.size} to split:"
+      # DEBUG
+      records_to_split.each do |record_to_split|
+        record          = record_to_split.get_record_instance
+        pool_code       = record_to_split.get_pool_type
+        gender_code     = record_to_split.get_gender_type
+        event_code      = record_to_split.get_event_type
+        target_category = @new_tbf.get_category_to_split_into( record )
+        # DEBUG
+        puts "#{pool_code} #{gender_code} #{event_code} - #{record.category_type.code} => #{target_category.code} (#{record.swimmer.year_of_birth} #{record.get_swimmer_age} at #{record.meeting.get_scheduled_date})"
+        # DEBUG
+      end
     end
+=end
 
     it "returns a RecordX4dDAO instance not greater than given one" do
       splitted_records = @new_tbf.split_categories( @x4d_records )
@@ -400,10 +457,15 @@ describe TeamBestFinder, type: :strategy do
       expect( splitted_records.record_count ).to be <= @x4d_records.record_count
     end
     it "returns a RecordX4dDAO instance without category to split" do
-      if @new_tbf.distinct_categories.rindex{ |e| e.code == '50S' }
-        expect( @x4d_records.records.rindex{ |e| e.get_category_type == '50S' } ).to be >= 0
-        splitted_records = @new_tbf.split_categories( @x4d_records )
-        expect( splitted_records.records.rindex{ |e| e.get_category_type == '50S' } ).to be nil
+      splitted_records = @new_tbf.split_categories( @x4d_records )
+      expect( splitted_records.records.rindex{ |e| e.get_category_type == '50S' } ).to be nil
+      splitted_records.records.each do |record|
+        meeting_individual_result = record.get_record_instance
+        swimmer_age = meeting_individual_result.get_swimmer_age
+        if meeting_individual_result.category_type == record.get_category_type &&
+          @new_tbf.distinct_categories.rindex{ |e| e.code != record.get_category_type && e.age_begin <= swimmer_age && e.age_end >= swimmer_age && ! e.is_undivided }
+          expect( @new_tbf.category_needs_split?( meeting_individual_result.category_type ) ).to be false 
+        end
       end
     end
   end

@@ -105,17 +105,16 @@ class TeamBestFinder
   # with correct age range considering the swimmer age
   # at the moment of individual result
   #
+  # If no matching category found return the result one
+  #
   def get_category_to_split_into( meeting_individual_result )
     category_type = meeting_individual_result.category_type
     if category_needs_split?( category_type )
       # Find the swimmer age 
       swimmer_age = meeting_individual_result.get_swimmer_age
       element = @distinct_categories.rindex{ |e| e.code != category_type.code && e.age_begin <= swimmer_age && e.age_end >= swimmer_age && ! e.is_undivided }
-      @distinct_categories[element]
-    else
-      # The category is the result one
-      find_category_by_code( category_type.code )
     end
+    element ? @distinct_categories[element] : find_category_by_code( category_type.code )
   end 
 
   # Verify if exists results for given gender, pool, event and category 
@@ -191,30 +190,26 @@ class TeamBestFinder
       # Scan team records searching for those with categories that needs split
       records_to_split = team_distinct_best.records.select{ |record| category_to_split.rindex( record.get_category_type ) }
       if records_to_split.size > 0
-        # DEBUG
-        puts "\r\nFind #{records_to_split.size} to split"
-        puts records_to_split.inspect
-        # DEBUG
-        
         # Split records
         # Finds taregt category
         # Check if for target category a record is already present
         # If present choses the better one
         records_to_split.each do |record_to_split|
-          record      = record_to_split.get_record_instance
-          pool_code   = record_to_split.get_pool_type
-          gender_code = record_to_split.get_gender_type
-          event_code  = record_to_split.get_event_type
-          target_category_code = get_category_to_split_into( record )
-          if team_distinct_best.has_record_for?( pool_code, gender_code, event_code, target_category_code )
-            if record.get_timing_instance < team_distinct_best.get_record_instance( pool_code, gender_code, event_code, target_category_code ).get_timing_instance
+          record          = record_to_split.get_record_instance
+          pool_code       = record_to_split.get_pool_type
+          gender_code     = record_to_split.get_gender_type
+          event_code      = record_to_split.get_event_type
+          target_category = get_category_to_split_into( record )
+
+          if team_distinct_best.has_record_for?( pool_code, gender_code, event_code, target_category.code )
+            if record.get_timing_instance < team_distinct_best.get_record_instance( pool_code, gender_code, event_code, target_category.code ).get_timing_instance
               # Update previous target record
-              team_distinct_best.delete_record( pool_code, gender_code, event_code, target_category_code ) 
-              team_distinct_best.add_record( record, target_category_code, pool_code, gender_code, event_code ) 
+              team_distinct_best.delete_record( pool_code, gender_code, event_code, target_category.code ) 
+              team_distinct_best.add_record( record, target_category.code, pool_code, gender_code, event_code ) 
             end
           else
             # Creates new record
-            team_distinct_best.add_record( record, target_category_code, pool_code, gender_code, event_code ) 
+            team_distinct_best.add_record( record, target_category.code, pool_code, gender_code, event_code ) 
           end
           team_distinct_best.delete_record( pool_code, gender_code, event_code, record_to_split.get_category_type ) 
         end

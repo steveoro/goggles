@@ -9,7 +9,7 @@ FactoryGirl.define do
   trait :common_swimmer_fields do
     first_name                { FFaker::Name.first_name }
     last_name                 { FFaker::Name.last_name }
-    gender_type_id            { (rand * 10).to_i.even? ? GenderType::FEMALE_ID : GenderType::MALE_ID }
+    gender_type               { GenderType.individual_only.sample }
     year_of_birth             { 18.year.ago.year - ((rand * 100) % 60).to_i } # was Date.today.year -
     complete_name             { "#{last_name} #{first_name}" }
     user

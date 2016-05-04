@@ -16,7 +16,7 @@ FactoryGirl.define do
     minutes                   0
     seconds                   { ((rand * 60) % 60).to_i }
     hundreds                  { ((rand * 100) % 100).to_i }
-    disqualification_code_type { DisqualificationCodeType.order('RAND()').first }
+    disqualification_code_type { (rand == 1) ? DisqualificationCodeType.order('RAND()').first : nil }
     user
   end
   #-- -------------------------------------------------------------------------
