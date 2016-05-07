@@ -208,7 +208,9 @@ describe TeamBestFinder, type: :strategy do
       #u25_category = fin_season.category_types.are_not_relays.where("code like 'U%'")[(rand * (fin_season.category_types.are_not_relays.where("code like 'U%'").count - 1)).round(0)]
       u25_category = fin_season.category_types.are_not_relays.where("code like 'U%'").order('RAND()').first
       fix_tbf.distinct_categories.delete_if{ |e| e.code = 'M20' }
+      fix_tbf.distinct_categories.delete_if{ |e| e.code = 'SEN' }
       expect( fix_tbf.distinct_categories.rindex{ |e| e.code == 'M20' } ).to be nil 
+      expect( fix_tbf.distinct_categories.rindex{ |e| e.code == 'SEN' } ).to be nil 
       expect( fix_tbf.category_needs_split?( u25_category ) ).to eq( false )
     end
     it "returns true for CSI grouped categories (OVER) for multiple season types" do
