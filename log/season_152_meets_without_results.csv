@@ -1,14 +1,9 @@
 id;date;meeting;code;import_data_file;effective_date;days_to_move
 15231;25-10-2015;XIX TROFEO CITTÀ DI ROVIGO;rovigo;ris20151025rovigo.txt;;
 15230;01-11-2015;TROFEO AMICI DEL NUOTO 2015;firenzeamicidelnuoto;ris20151101firenzeamicidelnuoto.txt;;
-15234;07-11-2015;DISTANZE SPECIALI CAMPANIA 2015;speccampania;ris20151107speccampania.txt;;
-15235;08-11-2015;DISTANZE SPECIALI LIGURIA 2015;specliguria;ris20151108specliguria.txt;;
-15238;14-11-2015;II TROFEO IRONSWIM;palermoironswim;ris20151114palermoironswim.txt;;
-15241;15-11-2015;VII TROFEO CITTÀ DI ANDRIA;andria;ris20151115andria.txt;;
 15239;21-11-2015;VIII TROFEO MASTER VICENZA;vicenzamastervicenza;ris20151121vicenzamastervicenza.txt;;
 15244;22-11-2015;V TROFEO PAOLO COSTOLI;romapaolocostoli;ris20151122romapaolocostoli.txt;;
 15245;22-11-2015;IV TROFEO POGGIBONSI;poggibonsi;ris20151122poggibonsi.txt;;
-15221;06-12-2015;II MEMORIAL E. BRUNELLI;verona;ris20151206verona.txt;;
 15251;06-12-2015;XI TROFEO CITTÀ DI MASSAROSA;massarosa;ris20151206massarosa.txt;;
 15203;13-12-2015;XVII MEETING DEGLI AUGURI;livornoauguri;ris20151213livornoauguri.txt;;
 15204;20-12-2015;X TROFEO MUSSI-LOMBARDI-FEMIANO;viareggio;ris20151220viareggio.txt;;
@@ -22,9 +17,5 @@ id;date;meeting;code;import_data_file;effective_date;days_to_move
 15290;03-04-2016;II NUOTOPIÙ SWIM FESTIVAL;livornonuotopiuswimfestival;ris20160403livornonuotopiuswimfestival.txt;;
 15309;10-04-2016;V COPPA CITTÀ DI FOLLONICA;follonica;ris20160410follonica.txt;;
 15312;10-04-2016;IV TROFEO OK MASTER M2;campodipietraokmasterm2;ris20160410campodipietraokmasterm2.txt;;
-15319;17-04-2016;III TROFEO DEL PIAVE;sandonadelpiavedelpiave;ris20160417sandonadelpiavedelpiave.txt;;
 15322;24-04-2016;XVI MEMORIAL GIOVANNI CIUFFRIDA;massarosagiovanniciuffrida;ris20160424massarosagiovanniciuffrida.txt;;
-15323;24-04-2016;III MEETING TERRE DELLE SIRENE;massalubrenseterredellesirene;ris20160424massalubrenseterredellesirene.txt;;
-15324;29-04-2016;III TROFEO DELLA CITTÀ;bustogarolfo;ris20160429bustogarolfo.txt;;
-15326;01-05-2016;IV TROFEO SWIM4LIFE;giulianoswim4life;ris20160501giulianoswim4life.txt;;
-15327;01-05-2016;XIV S.LUCIA DELLE QUAGLIE;siracusasluciadellequaglie;ris20160501siracusasluciadellequaglie.txt;;
+15326;07-05-2016;IV TROFEO SWIM4LIFE;giulianoswim4life;ris20160507giulianoswim4life.txt;;
