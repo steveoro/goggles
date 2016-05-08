@@ -40,3 +40,8 @@ delete from meetings where id = 15319;
 delete from meeting_events where id > 0 and meeting_session_id in (select ms.id from meeting_sessions ms where ms.meeting_id = 15323);
 delete from meeting_sessions where id > 0 and meeting_id = 15323;
 delete from meetings where id = 15323;
+
+-- 15328 - 08-05-2016 MERIDIANA MASTER CUP 2016
+delete from meeting_events where id > 0 and meeting_session_id in (select ms.id from meeting_sessions ms where ms.meeting_id = 15328);
+delete from meeting_sessions where id > 0 and meeting_id = 15328;
+delete from meetings where id = 15328;
