@@ -390,22 +390,13 @@ describe TeamBestFinder, type: :strategy do
     before( :all ) do
       @new_tbf = TeamBestFinder.new( Team.find(1) )
       @x4d_records = @new_tbf.scan_for_distinct_bests
-      category_to_split = @new_tbf.get_categories_to_split.map{ |category_type| category_type.code }
-      records_to_split = @x4d_records.records.select{ |record| category_to_split.rindex( record.get_category_type ) }
+      @category_to_split = @new_tbf.get_categories_to_split.map{ |category_type| category_type.code }
+      @records_to_split = @x4d_records.records.select{ |record| @category_to_split.rindex( record.get_category_type ) }
+      @splitted_records = @new_tbf.split_categories( @x4d_records )
       # DEBUG
-      puts "Distinct categories: #{@new_tbf.distinct_categories.map{ |e| e.code }}"
-      puts "\r\nFound #{records_to_split.size} to split:"
+      puts "\r\nDistinct categories: #{@new_tbf.distinct_categories.map{ |e| e.code }}"
+      puts "Found #{@records_to_split.size} to split."
       # DEBUG
-      records_to_split.each do |record_to_split|
-        record          = record_to_split.get_record_instance
-        pool_code       = record_to_split.get_pool_type
-        gender_code     = record_to_split.get_gender_type
-        event_code      = record_to_split.get_event_type
-        target_category = @new_tbf.get_category_to_split_into( record )
-        # DEBUG
-        puts "#{pool_code} #{gender_code} #{event_code} - #{record.category_type.code} => #{target_category.code} (#{record.swimmer.complete_name} #{record.swimmer.year_of_birth} #{record.get_swimmer_age} at #{record.meeting.get_scheduled_date})"
-        # DEBUG
-      end
     end
 =begin
     before( :each ) do
@@ -435,39 +426,46 @@ describe TeamBestFinder, type: :strategy do
       
       # Verify seeded/randomized data
       expect( @x4d_records.has_record_for?( fix_mp_50S.pool_type.code, fix_mp_50S.gender_type.code, fix_mp_50S.event_type.code, fix_mp_50S.category_type.code ) ).to be >= 0
-      category_to_split = @new_tbf.get_categories_to_split.map{ |category_type| category_type.code }
-      records_to_split = @x4d_records.records.select{ |record| category_to_split.rindex( record.get_category_type ) }
+      @category_to_split = @new_tbf.get_categories_to_split.map{ |category_type| category_type.code }
+      @records_to_split = @x4d_records.records.select{ |record| @category_to_split.rindex( record.get_category_type ) }
       # DEBUG
-      puts "\r\nFound #{records_to_split.size} to split:"
+      puts "\r\nFound #{@records_to_split.size} to split:"
       # DEBUG
-      records_to_split.each do |record_to_split|
-        record          = record_to_split.get_record_instance
-        pool_code       = record_to_split.get_pool_type
-        gender_code     = record_to_split.get_gender_type
-        event_code      = record_to_split.get_event_type
-        target_category = @new_tbf.get_category_to_split_into( record )
-        # DEBUG
-        puts "#{pool_code} #{gender_code} #{event_code} - #{record.category_type.code} => #{target_category.code} (#{record.swimmer.year_of_birth} #{record.get_swimmer_age} at #{record.meeting.get_scheduled_date})"
-        # DEBUG
-      end
+      @splitted_records = @new_tbf.split_categories( @x4d_records )
     end
 =end
 
     it "returns a RecordX4dDAO instance not greater than given one" do
-      splitted_records = @new_tbf.split_categories( @x4d_records )
-      expect( splitted_records ).to be_an_instance_of( RecordX4dDAO )
-      expect( splitted_records.record_count ).to be <= @x4d_records.record_count
+      expect( @splitted_records ).to be_an_instance_of( RecordX4dDAO )
+      expect( @splitted_records.record_count ).to be <= @x4d_records.record_count
     end
     it "returns a RecordX4dDAO instance without category to split" do
-      splitted_records = @new_tbf.split_categories( @x4d_records )
-      expect( splitted_records.records.rindex{ |e| e.get_category_type == '50S' } ).to be nil
-      splitted_records.records.each do |record|
+      expect( @splitted_records.records.rindex{ |e| e.get_category_type == '50S' } ).to be nil
+      @splitted_records.records.each do |record|
         meeting_individual_result = record.get_record_instance
         swimmer_age = meeting_individual_result.get_swimmer_age
         if meeting_individual_result.category_type == record.get_category_type &&
           @new_tbf.distinct_categories.rindex{ |e| e.code != record.get_category_type && e.age_begin <= swimmer_age && e.age_end >= swimmer_age && ! e.is_undivided }
           expect( @new_tbf.category_needs_split?( meeting_individual_result.category_type ) ).to be false 
         end
+      end
+    end
+    it "returns a RecordX4dDAO with splitted catgeory records correctly managed" do
+      @records_to_split.each do |record_to_split|
+        pool_code       = record_to_split.get_pool_type
+        gender_code     = record_to_split.get_gender_type
+        event_code      = record_to_split.get_event_type
+        category_code   = record_to_split.get_category_type
+        record          = record_to_split.get_record_instance
+        target_category = @new_tbf.get_category_to_split_into( record ).code
+
+        # DEBUG
+        #puts "#{pool_code} #{gender_code} #{event_code} - #{record.category_type.code} => #{target_category} (#{record.swimmer.complete_name} #{record.swimmer.year_of_birth} #{record.get_swimmer_age} at #{record.meeting.get_scheduled_date})"
+        # DEBUG
+        
+        expect( @splitted_records.has_record_for?( pool_code, gender_code, event_code, category_code ) ).to be nil
+        expect( @splitted_records.has_record_for?( pool_code, gender_code, event_code, target_category ) ).to be >= 0
+        expect( @splitted_records.get_record( pool_code, gender_code, event_code, target_category ).get_timing_instance ).to be <= record.get_timing_instance
       end
     end
   end
