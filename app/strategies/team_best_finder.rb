@@ -218,4 +218,28 @@ class TeamBestFinder
     
     team_distinct_best
   end
+
+  # Retrieve categories with records for given pool and gender types
+  #
+  def get_categories_with_records( pool_type, gender_type, team_distinct_best )
+    valid_categories = []
+    @distinct_categories.each do |category_type|
+      if team_distinct_best.has_record_for?( pool_type.code, gender_type.code, nil, category_type.code )
+        valid_categories << category_type
+      end
+    end
+    valid_categories.sort{ |n,p| n.age_begin <=> p.age_begin }
+  end
+
+  # Retrieve events with records for given pool and gender types
+  #
+  def get_events_with_records( pool_type, gender_type, team_distinct_best )
+    valid_events = []
+    @event_types.each do |event_type|
+      if team_distinct_best.has_record_for?( pool_type.code, gender_type.code, event_type.code, nil )
+        valid_events << event_type
+      end
+    end
+    valid_events.sort{ |n,p| n.style_order <=> p.style_order }
+  end
 end

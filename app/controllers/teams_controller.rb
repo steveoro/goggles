@@ -74,6 +74,11 @@ class TeamsController < ApplicationController
   #
   def best_timings
     @tab_title = I18n.t('radiography.best_timings_tab')
+    
+    @team_best_finder = TeamBestFinder.new( @team )
+    @team_bests = @team_best_finder.split_categories( @team_best_finder.scan_for_distinct_bests )
+    @highlight_swimmer = current_user.swimmer
+    
   end
   #-- -------------------------------------------------------------------------
   #++

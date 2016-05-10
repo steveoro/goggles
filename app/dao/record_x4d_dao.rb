@@ -150,10 +150,12 @@ class RecordX4dDAO
   end
   
   # Returns the element number of the record in records collection
+  # Ignore event type if no event passed
+  # Ignore category type if no category passed
   # Return nil if no record set
   #
   def has_record_for?( pool_code, gender_code, event_code, category_code )
-    @records.rindex{ |e| e.pool_type_code == pool_code && e.gender_type_code == gender_code && e.event_type_code == event_code && e.category_type_code == category_code }
+    @records.rindex{ |e| e.pool_type_code == pool_code && e.gender_type_code == gender_code && ( event_code == nil || e.event_type_code == event_code ) && ( category_code == nil || e.category_type_code == category_code ) }
   end
   
   # Gets the record for the given parameters
@@ -183,5 +185,5 @@ class RecordX4dDAO
       deleted = true
     end
     deleted 
-  end  
+  end
 end

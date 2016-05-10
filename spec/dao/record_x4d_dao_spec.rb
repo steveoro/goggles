@@ -254,6 +254,9 @@ describe RecordX4dDAO, :type => :model do
     it "returns nil if no records present" do
       expect( subject.records.size ).to eq( 0 )
       expect( subject.has_record_for?( pool, gender, event, category ) ).to be nil
+      expect( subject.has_record_for?( pool, gender, nil, category ) ).to be nil
+      expect( subject.has_record_for?( pool, gender, event, nil ) ).to be nil
+      expect( subject.has_record_for?( pool, gender, nil, nil ) ).to be nil
     end
     it "returns nil if no record present for given parameters" do
       subject.add_record( mir )
@@ -263,6 +266,9 @@ describe RecordX4dDAO, :type => :model do
     it "returns a number if record present for given parameters" do
       subject.add_record( mir, category, pool, gender, event )
       expect( subject.has_record_for?( pool, gender, event, category ) ).to be >= 0
+      expect( subject.has_record_for?( pool, gender, nil, category ) ).to be >= 0
+      expect( subject.has_record_for?( pool, gender, event, nil ) ).to be >= 0
+      expect( subject.has_record_for?( pool, gender, nil, nil ) ).to be >= 0
     end
     it "returns the correct number if record present for given parameters" do
       subject.add_record( mir, category, pool, gender, event )
