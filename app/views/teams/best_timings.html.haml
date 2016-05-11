@@ -1,64 +1,59 @@
-= render( partial: 'tabs_and_radio_title' )
-
-.row-fluid.goggles-category-gap#pageTop
-  %h2= @title
-
-.row-fluid#team_best_timing
-  -# --- Sub-legend for each gender + pool-type
-  .navbar
-    - @team_best_finder.gender_types.each do |gender_type|
-      %a.goggles-small-brand(href='#')= gender_type.i18n_short + ':'
-      %ul.nav
-        - @team_best_finder.pool_types.each do |pool_type|
-          %li
-            %a.goggles-nav-compact(href="##{gender_type.code}#{pool_type.code}")= pool_type.i18n_short
-        .ghost-divider-vertical
-  - @team_best_finder.gender_types.each do |gender_type|
-    - @team_best_finder.pool_types.each do |pool_type|
-      .row-fluid
-        .goggles-category-gap{ 'id' => "#{gender_type.code}#{pool_type.code}" }
-          %h3
-            = "#{gender_type.i18n_short}, #{pool_type.i18n_short}"
-            %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
-      .row-fluid
-        - valid_categories = @team_best_finder.get_categories_with_records( pool_type, gender_type, @team_bests ) 
-        %table.table.table-striped.table-bordered.table-hover.table-condensed
-          %tbody
-            %tr{'class'=>'info'}
-              %td
-              - valid_categories.each do |category_type|
-                %td.goggles-centeralign
-                  %b= category_type.get_full_name
+- if @team_best_finder 
+  = render( partial: 'tabs_and_radio_title' )
+  - cache( cache_key_for_team( 'best_timnigs', @team.id, @max_updated_at, @highlight_swimmer_id ) ) do
+  
+    .row-fluid#sub_legend
+      -# --- Sub-legend for each gender + pool-type
+      .navbar
+        - @team_best_finder.gender_types.each do |gender_type|
+          %a.goggles-small-brand(href='#')= gender_type.i18n_short + ':'
+          %ul.nav
+            - @team_best_finder.pool_types.each do |pool_type|
+              %li
+                %a.goggles-nav-compact(href="##{gender_type.code}#{pool_type.code}")= pool_type.i18n_short
+            .ghost-divider-vertical
       
-            - @team_best_finder.get_events_with_records( pool_type, gender_type, @team_bests ).each do |event_type|
-              %tr
-                %td.goggles-td.goggles-rightalign{'class'=>'info'}
-                  %b= event_type.i18n_short
-                - valid_categories.each do |category_type|
-                  - record = @team_bests.get_record_instance( pool_type.code, gender_type.code, event_type.code, category_type.code )
-                  - is_highlighted = ( record && @highlight_swimmer && (record.swimmer_id == @highlight_swimmer.id) )
-                  %td.goggles-td.goggles-centeralign
-                    - if record
-                      %p
-                        %b= record.get_timing
-                      - if is_highlighted
-                        %p.text-warning
-                          = record.get_swimmer_name
-                      - else
-                        %p
-                          %a{'id'=>"swimmer#{record.swimmer_id}", 'href'=>"#{ swimmer_radio_path(id: record.swimmer_id) }", 'data-toggle'=>'tooltip', 'title'=>I18n.t('radiography.radio_tab_tooltip')}
-                            = record.get_swimmer_name
-                      - if record && (sched_date = record.get_scheduled_date).kind_of?(Date)
-                        %a{'id'=>"rec#{record.id}", 'href'=>"#{ meeting_show_full_path(:id=>record.meeting.id, :swimmer_id=>record.swimmer_id) }", 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.show_results_tooltip') + "\r\n(#{record.meeting.description})"}
-                          %p= Format.a_date( sched_date )
-                      - else
-                        %p= '-'
-
-            %tr{'class'=>'info'}
-              %td
-              - valid_categories.each do |category_type|
-                %td.goggles-centeralign
-                  %b= category_type.get_full_name
-
-.row-fluid.goggles-category-gap
+      - @team_best_finder.gender_types.each do |gender_type|
+        - @team_best_finder.pool_types.each do |pool_type|
+          .row-fluid
+            .goggles-category-gap{ 'id' => "#{gender_type.code}#{pool_type.code}" }
+              %h3
+                = "#{gender_type.i18n_alternate}, #{pool_type.i18n_description}"
+                %a{ href: "#topOfPage", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
+          .row-fluid
+            - valid_categories = @team_best_finder.get_categories_with_records( pool_type, gender_type, @team_bests ) 
+            %table.table.table-striped.table-bordered.table-hover.table-condensed
+              %tbody
+                %tr{'class'=>'info'}
+                  %td
+                  - valid_categories.each do |category_type|
+                    %td.goggles-centeralign
+                      %b= category_type.get_full_name
+          
+                - @team_best_finder.get_events_with_records( pool_type, gender_type, @team_bests ).each do |event_type|
+                  %tr
+                    %td.goggles-td.goggles-rightalign{'class'=>'info'}
+                      %b= event_type.i18n_short
+                    - valid_categories.each do |category_type|
+                      - record = @team_bests.get_record_instance( pool_type.code, gender_type.code, event_type.code, category_type.code )
+                      %td.goggles-td.goggles-centeralign{ 'class' => ( @highlight_swimmer_id && record && ( record.swimmer_id == @highlight_swimmer_id ) ) ? 'success' : '' }
+                        - if record
+                          - swimmer = record.swimmer.decorate
+                          %p
+                            %b= record.get_timing
+                          %p
+                            = swimmer.get_linked_swimmer_name
+                          - if (sched_date = record.get_scheduled_date).kind_of?(Date)
+                            %a{'id'=>"rec#{record.id}", 'href'=>"#{ meeting_show_full_path(:id=>record.meeting.id, :swimmer_id=>record.swimmer_id) }", 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.show_results_tooltip') + "\r\n(#{record.meeting.description})"}
+                              %p= Format.a_date( sched_date )
+                          - else
+                            %p= '-'
     
+                %tr{'class'=>'info'}
+                  %td
+                  - valid_categories.each do |category_type|
+                    %td.goggles-centeralign
+                      %b= category_type.get_full_name
+    
+          .row-fluid.goggles-category-gap
+        

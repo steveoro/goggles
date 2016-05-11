@@ -75,10 +75,12 @@ class TeamsController < ApplicationController
   def best_timings
     @tab_title = I18n.t('radiography.best_timings_tab')
     
-    @team_best_finder = TeamBestFinder.new( @team )
-    @team_bests = @team_best_finder.split_categories( @team_best_finder.scan_for_distinct_bests )
-    @highlight_swimmer = current_user.swimmer
-    
+    if @team.meeting_individual_results.count > 0
+      @team_best_finder = TeamBestFinder.new( @team )
+      @team_bests = @team_best_finder.split_categories( @team_best_finder.scan_for_distinct_bests )
+      @max_updated_at = find_last_updated_mir
+      @highlight_swimmer_id = find_swimmer_to_highlight
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -235,9 +237,24 @@ class TeamsController < ApplicationController
   #-- -------------------------------------------------------------------------
   #++
 
+  # Find out the last update of meeting_individual result
+  #
+  def find_last_updated_mir
+    @team.meeting_individual_results.count > 0 ? @team.meeting_individual_results.sort_by_updated_at('DESC').first.updated_at : 0
+  end
+
+  # Find out the last update of meeting_individual result
+  #
+  def find_swimmer_to_highlight
+    if current_user.swimmer && Badge.for_team(@team).for_swimmer(current_user.swimmer).count > 0
+      current_user.swimmer.id
+    else
+      0
+    end
+  end
+
 
   private
-
 
   # Verifies that a team id is provided as parameter; otherwise
   # redirects to the home page.

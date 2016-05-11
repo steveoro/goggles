@@ -219,6 +219,9 @@ class TeamBestFinder
     team_distinct_best
   end
 
+  
+  # TODO Consider to populate next 2 array during best scan to avoid multiple array scan
+  
   # Retrieve categories with records for given pool and gender types
   #
   def get_categories_with_records( pool_type, gender_type, team_distinct_best )
