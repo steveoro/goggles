@@ -121,10 +121,6 @@ describe MeetingIndividualResult, :type => :model do
       it "returns a number" do
         expect( subject.get_swimmer_age ).to be > 0
       end
-      it "returns a number between 5 and 110" do
-        expect( subject.get_swimmer_age ).to be >= 5 
-        expect( subject.get_swimmer_age ).to be <= 110 
-      end
       it "returns the years between swimmer year of birth and meeting scheduled date" do
         year_of_birth = subject.swimmer.year_of_birth
         year_of_meeting = subject.get_scheduled_date.year
