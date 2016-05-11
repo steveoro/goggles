@@ -56,13 +56,15 @@ class TeamsController < ApplicationController
   #
   def current_swimmers
     @tab_title = I18n.t('radiography.team_current_swimmers_tab')
-    last_seasons = Season.is_not_ended.map{ |season| season.id }
-    current_badges = @team.badges.where( ['season_id in (?)', last_seasons] ) if last_seasons && @team.badges
+    @last_seasons = Season.is_not_ended.map{ |season| season.id }
+    @affiliations = @team.team_affiliations.where( ['season_id in (?)', @last_seasons] )
+    current_badges = @team.badges.where( ['season_id in (?)', @last_seasons] ) if @last_seasons && @team.badges
     @swimmers = if current_badges.nil?
       []
     else
       current_badges.map{ |badge| badge.swimmer }.uniq.sort{ |a,b| a.get_full_name <=> b.get_full_name }
     end
+    @max_updated_at = find_last_updated_mir
   end
   #-- -------------------------------------------------------------------------
   #++
