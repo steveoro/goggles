@@ -11,7 +11,7 @@
     g.column( name: 'ID', attribute: 'id', filter: false ) if admin_signed_in?
 
     g.column(
-        name: I18n.t('meeting_calendar.federation'),
+        #name: I18n.t('meeting_calendar.federation'),
         attribute: 'season_id',
         custom_filter: Season.to_dropdown( "(end_date >= '#{@start_date}') AND (end_date <= '#{@end_date}')" ),
         detach_with_id: :flt_season_id
@@ -28,17 +28,7 @@
         detach_with_id: :flt_description
     ) do |meeting|
     	meeting.decorate.get_linked_name( :get_full_name )
-    end
-
-    g.column(
-        name: I18n.t('meeting_calendar.pool_type'),
-        attribute: 'pool_type_id',
-        model: SwimmingPool,
-        custom_filter: PoolType.only_for_meetings.to_dropdown,
-        detach_with_id: :flt_pool_type
-    ) do |meeting|
-    	[ meeting.swimming_pools.first.pool_type.code,
-    		{ class: 'goggles-centeralign' } ] if meeting.swimming_pools.count > 0
+    	#show_tag( meeting.are_results_acquired )
     end
 
     g.column(
@@ -56,7 +46,19 @@
           	session_date_list << ''
           end
         end
-        session_date_list.join('<br><br>').html_safe
+        [session_date_list.join('<br><br>').html_safe,
+        { class: 'goggles-rightalign' }]
+    end
+
+    g.column(
+        name: I18n.t('meeting_calendar.pool_type'),
+        attribute: 'pool_type_id',
+        model: SwimmingPool,
+        custom_filter: PoolType.only_for_meetings.to_dropdown,
+        detach_with_id: :flt_pool_type
+    ) do |meeting|
+    	[ meeting.swimming_pools.first.pool_type.code,
+    		{ class: 'goggles-centeralign' } ] if meeting.swimming_pools.count > 0
     end
 
     g.column(
@@ -94,6 +96,8 @@
         detach_with_id: :flt_swimming_pool,
         filter: false
     ) do |meeting|
-    	meeting.decorate.get_linked_swimming_pool
+    	#meeting.decorate.get_linked_swimming_pool
+    	meeting.decorate.get_linked_swimming_pool( :get_city_and_attributes )
     end
+    
 end -%>

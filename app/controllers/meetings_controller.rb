@@ -44,11 +44,15 @@ class MeetingsController < ApplicationController
     end
     @preselected_swimmer_id = params[:swimmer_id].to_i if params[:swimmer_id]
     @preselected_team_id    = params[:team_id].to_i if params[:team_id]
-    @start_date, @end_date = if Date.today.month < 10
-      [ "#{Date.today.year-1}-10-01", "#{Date.today.year}-09-30" ]
-    else
-      [ "#{Date.today.year}-10-01", "#{Date.today.year+1}-09-30" ]
-    end
+    #@start_date, @end_date = if Date.today.month < 10
+    #  [ "#{Date.today.year-1}-10-01", "#{Date.today.year}-09-30" ]
+    #else
+    #  [ "#{Date.today.year}-10-01", "#{Date.today.year+1}-09-30" ]
+    #end
+
+    @start_date = "#{Date.today.prev_day(19)}"
+    @end_date   = "#{Date.today.next_month(10)}" 
+
     # Initialize the grid:
     @meetings_grid = initialize_grid(
       Meeting,
