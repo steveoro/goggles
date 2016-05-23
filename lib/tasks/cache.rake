@@ -130,7 +130,7 @@ parameters ('RAILS_ENV=production') not before having issued also a:
       user_name  = response['user_name']
       user_token = response['user_token']
 
-      exec.report( "\r\n-------------[ 3/10 - Championships (for selected seasons) ]--------------\r\n" ) do
+      exec.report( "\r\n-------------[ 3/10 - Championships (for selected CSI seasons) ]--------------\r\n" ) do
         champ_season_ids.each_with_index do |season_id, index|
           puts "Processing: season ID #{season_id}, #{index+1}/#{champ_season_ids.size}"
           [
