@@ -17,6 +17,11 @@ update meeting_sessions set day_part_type_id = (select id from day_part_types wh
 update meeting_sessions set day_part_type_id = (select id from day_part_types where code = 'P'), warm_up_time = '14:30:00', begin_time = '15:00:00', scheduled_date = '2016-06-05' where id > 0 and id = (select a.id from (select id from meeting_sessions ms where ms.meeting_id = 15348 and ms.session_order = 4) a);
 
 --
+-- Aggiunta eventi mancanti
+-- 
+INSERT INTO meeting_events (id,event_order,is_out_of_race,meeting_session_id,event_type_id,heat_type_id,user_id,lock_version,created_at,updated_at) values  (6605,16,0,(select t.id from meeting_sessions t where t.meeting_id = 15348 and t.session_order = 1),(select t.id from event_types t where t.code = 'M4X50MI'),(select t.id from heat_types t where t.code = 'F'),2,0,CURDATE(),CURDATE());
+
+--
 -- Aggiornamento programma gare per il meeting 15348
 -- 
 update meeting_events set meeting_session_id = (select id from meeting_sessions ms where ms.meeting_id = 15348 and ms.session_order = 1), event_type_id = (select et.id from event_types et where et.code = '400SL') where id > 0 and id = (select a.id from (select me.id from meeting_events me join meeting_sessions ms on ms.id = me.meeting_session_id where ms.meeting_id = 15348 and me.event_order = 1) a);
