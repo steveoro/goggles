@@ -155,7 +155,8 @@ class GoggleCupStandardFinder
   #-- --------------------------------------------------------------------------
   #++
 
-  # Deletes entire Goggle cup standard times
+  # Deletes entire Goggle cup standard times, returning the SQL script for the
+  # whole operation.
   def delete_goggle_cup_standards
     sql_diff_text_log << "--\r\n"
     sql_diff_text_log << "-- Deleting time standards for #{@goggle_cup.get_verbose_name}\r\n"
@@ -164,7 +165,7 @@ class GoggleCupStandardFinder
       sql_diff_text_log << to_sql_delete( goggle_cup_standard, false, "\r\n" )
 #      goggle_cup_standard.destroy
     end
-    @goggle_cup.goggle_cup_standards.destroy_all
+    @goggle_cup.goggle_cup_standards.delete_all
     sql_diff_text_log << "-- Deletion complete. Remaining: #{@goggle_cup.goggle_cup_standards.count}\r\n"
   end
   #-- --------------------------------------------------------------------------
