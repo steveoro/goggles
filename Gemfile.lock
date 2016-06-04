@@ -214,7 +214,8 @@ GEM
     mime-types (1.25.1)
     mini_portile (0.6.0)
     multi_json (1.11.2)
-    mysql2 (0.3.16)
+    mysql2 (0.4.4)
+    mysql2 (0.4.4-x86-mingw32)
     nested_form (0.3.2)
     net-http-digest_auth (1.4)
     net-http-persistent (2.9.4)
@@ -492,3 +493,6 @@ DEPENDENCIES
   uglifier (>= 1.0.3)
   wice_grid (= 3.4.8)
   zip
+
+BUNDLED WITH
+   1.10.6
