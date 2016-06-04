@@ -1,27 +1,15 @@
 require 'spec_helper'
 
-shared_examples_for "(existance of a member array)" do |member_name_array|
-  member_name_array.each do |member_name|
-    it "responds to ##{member_name}" do
-      expect( subject ).to respond_to( member_name )
-    end
 
-    it "has a ##{member_name} array" do
-      expect( subject.send(member_name.to_sym) ).to be_a_kind_of( Array )
-    end
-  end
-end
-
-
-describe SwimmerMatchDAO, :type => :model do
+describe SwimmerMatchDAO, type: :model do
 
   context "SwimmerMatchProgramDAO subclass," do
-    
+
     let( :description )        { "This is the match number #{(rand * 100).to_i}" }
     let( :fix_event )          { EventType.are_not_relays[ ( rand * (EventType.are_not_relays.count - 1)).to_i ] }
 
     subject { SwimmerMatchDAO::SwimmerMatchProgramDAO.new }
-  
+
     describe "[a well formed instance]" do
       it "hasn't description if not given" do
         expect( subject.description ).to be nil
@@ -58,7 +46,7 @@ describe SwimmerMatchDAO, :type => :model do
       it "responds to visitor_result" do
         expect( subject ).to respond_to( :visitor_result )
       end
-      
+
       describe "#get_description" do
         it "responds to #get_description" do
           expect( subject ).to respond_to( :get_description )
@@ -100,7 +88,7 @@ describe SwimmerMatchDAO, :type => :model do
         it "returns teh locale result meeting if set" do
           mir = create( :meeting_individual_result )
           with_loc_res = SwimmerMatchDAO::SwimmerMatchProgramDAO.new( mir )
-          meeting = with_loc_res.get_meeting 
+          meeting = with_loc_res.get_meeting
           expect( meeting ).to be_an_instance_of( Meeting )
           expect( meeting ).to eq( mir.meeting )
         end
@@ -120,7 +108,7 @@ describe SwimmerMatchDAO, :type => :model do
         it "returns teh locale result event_type if set" do
           mir = create( :meeting_individual_result )
           with_loc_res = SwimmerMatchDAO::SwimmerMatchProgramDAO.new( mir )
-          event_type = with_loc_res.get_event_type 
+          event_type = with_loc_res.get_event_type
           expect( event_type ).to be_an_instance_of( EventType )
           expect( event_type ).to eq( mir.event_type )
         end
@@ -133,7 +121,7 @@ describe SwimmerMatchDAO, :type => :model do
         it "returns the locale result timing if set" do
           mir = create( :meeting_individual_result )
           with_loc_res = SwimmerMatchDAO::SwimmerMatchProgramDAO.new( mir )
-          timing = with_loc_res.get_locale_timing 
+          timing = with_loc_res.get_locale_timing
           expect( timing ).to be_a_kind_of( String )
           expect( timing ).to eq( mir.get_timing )
           expect( with_loc_res.get_visitor_timing ).to be nil
@@ -150,7 +138,7 @@ describe SwimmerMatchDAO, :type => :model do
         it "returns the visitor result timing if set" do
           mir = create( :meeting_individual_result )
           with_loc_res = SwimmerMatchDAO::SwimmerMatchProgramDAO.new( nil, mir )
-          timing = with_loc_res.get_visitor_timing 
+          timing = with_loc_res.get_visitor_timing
           expect( timing ).to be_a_kind_of( String )
           expect( timing ).to eq( mir.get_timing )
           expect( with_loc_res.get_locale_timing ).to be nil
@@ -164,14 +152,14 @@ describe SwimmerMatchDAO, :type => :model do
   end
   #-- -------------------------------------------------------------------------
   #++
-  
+
   context "SwimmerMatchEventSumDAO subclass," do
-    
+
     let( :fix_event )          { EventType.are_not_relays[ ( rand * EventType.are_not_relays.count ).to_i ] }
     let( :fix_value )          { ( rand * 15 ).to_i + 1 }
 
     subject { SwimmerMatchDAO::SwimmerMatchEventSumDAO.new( fix_event ) }
-  
+
     describe "[a well formed instance]" do
       it "responds to event_type" do
         expect( subject ).to respond_to( :event_type )
@@ -209,7 +197,7 @@ describe SwimmerMatchDAO, :type => :model do
         expect( subject.wons_count ).to eq( 0 )
         expect( subject.losses_count ).to eq( 0 )
       end
-      
+
       describe "#increment" do
         it "responds to #increment" do
           expect( subject ).to respond_to( :increment )
@@ -231,13 +219,13 @@ describe SwimmerMatchDAO, :type => :model do
         end
       end
       #-- -------------------------------------------------------------------------
-      
+
     end
     #-- -------------------------------------------------------------------------
   end
   #-- -------------------------------------------------------------------------
   #++
-  
+
   subject { SwimmerMatchDAO.new() }
 
   describe "[a well formed instance]" do
@@ -257,18 +245,18 @@ describe SwimmerMatchDAO, :type => :model do
     it_behaves_like( "(existance of a member array)", [
       :wons,
       :losses,
-      :neutrals, 
+      :neutrals,
       :events_summary
     ])
 
     it_behaves_like( "(the existance of a method returning numeric values)", [
-      :get_wons_count, 
-      :get_losses_count, 
-      :get_neutrals_count, 
-      :get_matches_count 
+      :get_wons_count,
+      :get_losses_count,
+      :get_neutrals_count,
+      :get_matches_count
     ])
 
-      
+
     it "responds to first_meeting" do
       expect( subject ).to respond_to( :first_meeting )
       expect( subject.first_meeting ).to be nil
@@ -291,7 +279,7 @@ describe SwimmerMatchDAO, :type => :model do
         expect( subject.get_locale ).to be nil
         subject.set_locale( 'wrong_parameter' )
         expect( subject.get_locale ).to be nil
-      end   
+      end
     end
     #-- -------------------------------------------------------------------------
 
@@ -308,7 +296,7 @@ describe SwimmerMatchDAO, :type => :model do
         expect( subject.get_visitor ).to be nil
         subject.set_visitor( 'wrong_parameter' )
         expect( subject.get_visitor ).to be nil
-      end   
+      end
     end
     #-- -------------------------------------------------------------------------
 
@@ -380,7 +368,7 @@ describe SwimmerMatchDAO, :type => :model do
         expect( subject.wons ).to all( be_an_instance_of( SwimmerMatchDAO::SwimmerMatchProgramDAO ) )
         expect( subject.losses ).to all( be_an_instance_of( SwimmerMatchDAO::SwimmerMatchProgramDAO ) )
         expect( subject.neutrals ).to all( be_an_instance_of( SwimmerMatchDAO::SwimmerMatchProgramDAO ) )
-      end 
+      end
       it "populates event summary with SwimmerMatchEventSumDAO elements" do
         subject.set_locale( valid_swimmer )
         subject.set_visitor( valid_swimmer )
@@ -391,7 +379,7 @@ describe SwimmerMatchDAO, :type => :model do
         subject.add_match( best_mir, valid_mir )
         subject.add_match( best_mir, worst_mir )
         expect( subject.events_summary ).to all( be_an_instance_of( SwimmerMatchDAO::SwimmerMatchEventSumDAO ) )
-      end 
+      end
       it "populates event summary with the local result event type" do
         subject.set_locale( valid_swimmer )
         subject.set_visitor( valid_swimmer )
@@ -400,7 +388,7 @@ describe SwimmerMatchDAO, :type => :model do
         subject.add_match( valid_mir, best_mir )
         expect( subject.events_summary.count ).to eq( 1 )
         expect( subject.events_summary[0].event_type.code ).to eq( valid_mir.event_type.code )
-      end 
+      end
       it "populates event summary with all matches result types" do
         subject.set_locale( valid_swimmer )
         subject.set_visitor( valid_swimmer )
@@ -411,7 +399,7 @@ describe SwimmerMatchDAO, :type => :model do
         expect( subject.events_summary[0].wons_count ).to eq( 1 )
         expect( subject.events_summary[0].losses_count ).to eq( 1 )
         expect( subject.events_summary[0].neutrals_count ).to eq( 1 )
-      end 
+      end
       it "populates event summary with all locale result event types" do
         random_mirs = create_list( :meeting_individual_result, ( rand * 20 ).to_i + 5, swimmer: valid_swimmer )
         expect( random_mirs.map{ |mir| mir.event_type }.uniq.count ).to be > 1
@@ -434,12 +422,12 @@ describe SwimmerMatchDAO, :type => :model do
           subject.add_match( mir, valid_mir )
         end
         event_summary_total = 0
-        subject.events_summary.each do |event_summary| 
+        subject.events_summary.each do |event_summary|
           event_summary_total += event_summary.wons_count
           event_summary_total += event_summary.losses_count
           event_summary_total += event_summary.neutrals_count
         end
-        expect( subject.get_matches_count ).to eq( event_summary_total ) 
+        expect( subject.get_matches_count ).to eq( event_summary_total )
       end
       it "populates first_meeting" do
         subject.set_locale( valid_swimmer )
@@ -467,7 +455,7 @@ describe SwimmerMatchDAO, :type => :model do
         expect( subject.first_meeting ).not_to be nil
         random_mirs.each do |mir|
           expect( subject.first_meeting.get_meeting_date.to_date ).to be <= mir.meeting.get_meeting_date.to_date
-        end 
+        end
       end
       it "populates last_meeting with the newest of the matches" do
         random_mirs = create_list( :meeting_individual_result, ( rand * 20 ).to_i + 5, swimmer: valid_swimmer )
@@ -479,7 +467,7 @@ describe SwimmerMatchDAO, :type => :model do
         expect( subject.last_meeting ).not_to be nil
         random_mirs.each do |mir|
           expect( subject.last_meeting.get_meeting_date.to_date ).to be >= mir.meeting.get_meeting_date.to_date
-        end 
+        end
       end
     end
     #-- -------------------------------------------------------------------------

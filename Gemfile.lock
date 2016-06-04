@@ -214,8 +214,8 @@ GEM
     mime-types (1.25.1)
     mini_portile (0.6.0)
     multi_json (1.11.2)
-    mysql2 (0.4.4)
-    mysql2 (0.4.4-x86-mingw32)
+    mysql2 (0.3.21)
+    mysql2 (0.3.21-x86-mingw32)
     nested_form (0.3.2)
     net-http-digest_auth (1.4)
     net-http-persistent (2.9.4)
@@ -467,7 +467,7 @@ DEPENDENCIES
   jquery_datepicker
   json (= 1.8.1)
   mechanize
-  mysql2
+  mysql2 (~> 0.3.11)
   netzke-basepack (~> 0.7.7)
   netzke-core (~> 0.7.7)
   prawn (~> 0.15)
