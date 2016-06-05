@@ -1,0 +1,66 @@
+
+
+--------------------[Phase #3 - COMMIT]--------------------
+
+-- phase_3_commit: session ID:19, season ID: 151...
+
+Importing data @ 05-06-2016 17:17.
+Committing data_import_session ID:19, season ID: 151...
+Committed MeetingProgram, id: 74016.
+Committed Swimmer, id: 27348.
+Committed Badge, id: 55487.
+Committed MeetingEntry, id: 6122.
+Committed MeetingEntry, id: 6123.
+Committed MeetingEntry, id: 6124.
+Committed MeetingEntry, id: 6125.
+Committed MeetingEntry, id: 6126.
+Committed MeetingIndividualResult, id: 436944.
+Committed MeetingIndividualResult, id: 436945.
+Committed MeetingIndividualResult, id: 436946.
+Committed MeetingIndividualResult, id: 436947.
+Committed MeetingIndividualResult, id: 436948.
+Committed MeetingIndividualResult, id: 436949.
+Committed MeetingIndividualResult, id: 436950.
+Committed MeetingIndividualResult, id: 436951.
+Committed MeetingIndividualResult, id: 436952.
+Committed MeetingIndividualResult, id: 436953.
+Committed MeetingIndividualResult, id: 436954.
+Committed MeetingIndividualResult, id: 436955.
+Committed MeetingIndividualResult, id: 436956.
+Committed MeetingIndividualResult, id: 436957.
+Committed MeetingIndividualResult, id: 436958.
+Committed MeetingIndividualResult, id: 436959.
+Committed MeetingIndividualResult, id: 436960.
+Committed MeetingIndividualResult, id: 436961.
+Committed MeetingIndividualResult, id: 436962.
+Committed MeetingIndividualResult, id: 436963.
+Committed MeetingIndividualResult, id: 436964.
+Committed MeetingIndividualResult, id: 436965.
+Committed MeetingIndividualResult, id: 436966.
+Committed MeetingIndividualResult, id: 436967.
+Committed MeetingIndividualResult, id: 436968.
+Committed MeetingIndividualResult, id: 436969.
+Committed MeetingIndividualResult, id: 436970.
+Committed MeetingIndividualResult, id: 436971.
+Committed MeetingIndividualResult, id: 436972.
+Committed MeetingIndividualResult, id: 436973.
+Committed MeetingIndividualResult, id: 436974.
+Committed MeetingIndividualResult, id: 436975.
+Committed MeetingIndividualResult, id: 436976.
+Committed MeetingIndividualResult, id: 436977.
+Committed MeetingIndividualResult, id: 436978.
+Committed MeetingIndividualResult, id: 436979.
+Committed MeetingIndividualResult, id: 436980.
+Committed MeetingIndividualResult, id: 436981.
+Committed MeetingIndividualResult, id: 436982.
+Committed MeetingIndividualResult, id: 436983.
+Committed MeetingIndividualResult, id: 436984.
+
+Begin time re-computed for all meeting programs and updated directly on committed entities.
+
+data-import PHASES #2 & #3 DONE.
+
+Total committed rows: 49
+Data-import session destroyed successfully.
+===========================================================
+
