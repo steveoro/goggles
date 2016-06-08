@@ -41,7 +41,7 @@
                 %td{ colspan: 3 }
                   = I18n.t('goggle_cup.summary').gsub('{USED_RESULTS}', ranked_results.to_s ).gsub('{TOTAL_RESULTS}', total_results.to_s)
                 %td.goggles-rightalign
-                  %b= total_points
+                  %b= total_points.round(2)
                 %td.goggles-centeralign
                   %b= ranked_results
 
