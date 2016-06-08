@@ -4,5 +4,7 @@ $('#loadingIndicator').hide();
 <% end %>
 $('#calculation_result').replaceWith('<%= escape_javascript( render(partial: 'timing_calculation_result') ) %>');
 $('#fin_highlights').replaceWith('<%= escape_javascript( render(partial: 'fin_highlights') ) %>');
+$('#teams_record').replaceWith('<%= escape_javascript( render(partial: 'teams_record') ) %>');
 $('#calculation_result').show();
 $('#fin_highlights').show();
+$('#teams_record').show();

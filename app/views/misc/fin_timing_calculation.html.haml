@@ -10,7 +10,7 @@
   .row-fluid
     %p/
   .row-fluid
-    = form_tag( :misc_compute_fin_timing, class: 'form-horizontal', remote: true, onsubmit: "$('#loadingIndicator').show(); $('#score_calculation_result').hide(); $('#fin_highlights').hide();" ) do
+    = form_tag( :misc_compute_fin_timing, class: 'form-horizontal', remote: true, onsubmit: "$('#loadingIndicator').show(); $('#score_calculation_result').hide(); $('#fin_highlights').hide(); $('#teams_record').hide();" ) do
       = render( partial: 'calculation_parameters' )
       = render( partial: 'score_parameters' )
       .control-group
@@ -21,4 +21,5 @@
 
 #calculation_result
 #fin_highlights
+#teams_record
 %p/

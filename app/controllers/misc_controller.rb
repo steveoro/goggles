@@ -31,6 +31,7 @@ class MiscController < ApplicationController
     @tab_title = I18n.t('misc.fin_score_calculation')
     @current_season = Season.get_last_season_by_type( 'MASFIN' )
     @standard_points = -1                              # Init score with a non-displayable value
+    @available_team_records = Hash.new
 
     # if user is logged in and associated to a swimmer
     # determinates default gender and category
@@ -50,6 +51,7 @@ class MiscController < ApplicationController
   def compute_fin_score
     @current_season = Season.get_last_season_by_type( 'MASFIN' )
     @standard_points = -1                              # Init score with a non-displayable value
+    @available_team_records = Hash.new
     # if user is logged in and associated to a swimmer
     # determinates default gender and category
 
@@ -128,7 +130,6 @@ class MiscController < ApplicationController
 
             # Retrieve team records:
             available_teams = @swimmer.get_teams
-            @available_team_records = Hash.new
             available_teams.each do |team|
               team_rc = RecordCollector.new( team: team )
               team_record = RecordCollectionDecorator.decorate(
@@ -165,6 +166,7 @@ class MiscController < ApplicationController
     @tab_title = I18n.t('misc.fin_timing_calculation')
     @current_season = Season.get_last_season_by_type( 'MASFIN' )
     @timing   = Timing.new( 0 )
+    @available_team_records = Hash.new
 
     # if user is logged in and associated to a swimmer
     # determinates default gender and category
@@ -186,6 +188,7 @@ class MiscController < ApplicationController
   def compute_fin_timing
     @current_season = Season.get_last_season_by_type( 'MASFIN' )
     @timing   = Timing.new( 0 )
+    @available_team_records = Hash.new
 
     # if user is logged in and associated to a swimmer
     # determinates default gender and category
@@ -261,7 +264,6 @@ class MiscController < ApplicationController
 
             # Retrieve team records:
             available_teams = @swimmer.get_teams
-            @available_team_records = Hash.new
             available_teams.each do |team|
               team_rc = RecordCollector.new( team: team )
               team_record = RecordCollectionDecorator.decorate(
