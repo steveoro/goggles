@@ -1,7 +1,7 @@
-- if @available_team_records && @available_team_records.count > 0
-  .row.fluid.span8
-    .goggles-category-gap
+.row.fluid.span8#teams_record
+  .goggles-category-gap
 
+  - if @available_team_records && @available_team_records.count > 0
     %table.table
       %tr
         %td{ colspan: 2 }
