@@ -68,6 +68,7 @@ it:
     no_disqualifications: "Nessuna !!"
     swimmers: "Nuotatori"
     search_swimmers: "Cerca Nuotatori"
+    age_current: "Età al 31/12"
 
   swimmer:
     unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sui Nuotatori! (tab: 'swimmers')"

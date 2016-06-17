@@ -68,6 +68,7 @@ en:
     no_disqualifications: "None !!"
     swimmers: "Swimmers"
     search_swimmers: "Search Swimmers"
+    age_current: "Age at 31/12"
 
   swimmer:
     unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'swimmers'!"
