@@ -161,8 +161,3 @@ namespace :remote do
   #-- -------------------------------------------------------------------------
   #++
 end
-
-
-# Clear the cache after a dump upload:
-#
-after 'db:remote:dump_upload', 'remote:tmp_clear'
