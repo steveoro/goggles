@@ -452,7 +452,7 @@ describe TeamBestFinder, type: :strategy do
       end
     end
 
-# FIXME THIS TEST @ LINE #470 sometimes yields nil AND FAILS THE BUILD
+# FIXME THIS HAS LINE #467 returning nil AND IT FAILS
     it "returns a RecordX4dDAO with splitted catgeory records correctly managed" do
       @records_to_split.each do |record_to_split|
         pool_code       = record_to_split.get_pool_type
@@ -463,7 +463,6 @@ describe TeamBestFinder, type: :strategy do
         target_category = @new_tbf.get_category_to_split_into( record ).code
 # DEBUG
 #        puts "#{pool_code} #{gender_code} #{event_code} - #{record.category_type.code} => #{target_category} (#{record.swimmer.complete_name} #{record.swimmer.year_of_birth} #{record.get_swimmer_age} at #{ record.meeting.get_scheduled_date })"
-
         expect( @splitted_records.has_record_for?( pool_code, gender_code, event_code, category_code ) ).to be nil
         expect( @splitted_records.has_record_for?( pool_code, gender_code, event_code, target_category ) ).to be >= 0
         expect( @splitted_records.get_record( pool_code, gender_code, event_code, target_category ).get_timing_instance ).to be <= record.get_timing_instance
