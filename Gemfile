@@ -51,15 +51,12 @@ gem 'prawn', '~> 0.15'
 
 gem 'country_select'
 gem 'simple_form'
+gem "cocoon"
                                                     # [Steve, 20130412] Custom Documatic version (used for Ooo exports):
 gem 'documatic', :git => 'https://github.com/fasar-sw/documatic.git'
 gem 'generator'
 gem 'zip'
 gem 'rubyzip', :require => 'zip/zip'
-
-gem 'country_select'
-gem 'simple_form'
-gem "cocoon"
 
 gem 'rubocop', require: false                       # [Steve] For style checking
 
@@ -102,8 +99,8 @@ end
 
 group :test do
   gem "zeus", require: false
-  # FIXME (Low-pri) This is required by the core engine, probably due to some wrong setting:
-#  gem "test-unit"
+  # FIXME (Low-pri) This is required by Draper inside the core engine, probably due to some wrong setting:
+  gem "test-unit"
   gem "capybara"                                    # [Steve, 20140226] Used only in Feature Specs
   # The driver for browser testing may be switched back to the default (:rack_test,
   # without Javascript support) with: > Capybara.use_default_driver
