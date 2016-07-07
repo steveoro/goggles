@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 
 describe "Swimmers index/search", type: :feature, wip: true do

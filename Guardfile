@@ -78,11 +78,11 @@ guard :rspec, rspec_options do
 end
 
                                                     # === Specific Scopes: ===
-group :helper do
-  guard :rspec, cmd: 'zeus rspec -f progress --tag type:helper'
-end
+#group :helper do
+#  guard :rspec, cmd: 'zeus rspec -f progress --tag type:helper'
+#end
 
 # Halt as soon as the first fail is found:
-group :integration, halt_on_fail: true do
-  guard :rspec, cmd: 'zeus rspec -f progress --tag type:integration'
-end
+#group :integration, halt_on_fail: true do
+#  guard :rspec, cmd: 'zeus rspec -f progress --tag type:integration'
+#end

@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 
 shared_examples_for "(Ap1-V1-Controllers, success returning an Hash)" do

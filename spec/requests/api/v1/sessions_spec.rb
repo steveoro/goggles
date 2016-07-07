@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 # [Steve, 20140409] To have methods like "last_response" in each test:
 # (but mainly used only by rspec_api_blueprint gem)

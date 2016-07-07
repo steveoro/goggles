@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 
 # These examples are meant to be used for any generic CRUD controller that

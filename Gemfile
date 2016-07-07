@@ -94,6 +94,7 @@ group :development, :test do
   #gem 'selenium-webdriver'                          # Full browser simulation => Capybara.current_driver = :selenium
   # FIXME not working on Leega workstation:
 #  gem 'capybara-webkit'                             # Headless browser simulation (faster) => Capybara.current_driver = :webkit
+  gem "letter_opener"
 end
 
 
