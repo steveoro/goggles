@@ -23,9 +23,9 @@ GIT
 
 GIT
   remote: https://github.com/steveoro/goggles_core.git
-  revision: 27258dd0830b17e8c109823acab9bd553138d386
+  revision: 44a847d3f3ffcbc265254b13ec40c1253de6caee
   specs:
-    goggles_core (0.0.14)
+    goggles_core (0.0.16)
       acts-as-taggable-on (~> 3.4)
       acts_as_votable (~> 0.9.0)
       devise
@@ -202,6 +202,10 @@ GEM
     kaminari (0.17.0)
       actionpack (>= 3.0.0)
       activesupport (>= 3.0.0)
+    launchy (2.4.3)
+      addressable (~> 2.3)
+    letter_opener (1.4.1)
+      launchy (~> 2.2)
     libv8 (3.16.14.15)
     listen (3.1.5)
       rb-fsevent (~> 0.9, >= 0.9.4)
@@ -431,6 +435,7 @@ DEPENDENCIES
   jquery-ui-rails
   jquery_datepicker
   json
+  letter_opener
   mysql2 (~> 0.3.11)
   prawn (~> 0.15)
   rails (= 3.2.22.2)
