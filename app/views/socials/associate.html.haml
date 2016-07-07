@@ -4,13 +4,6 @@
   .span4
     = link_to( I18n.t('user_association.not_now_temporary_skip'), social_skip_associate_path(), { method: :post, confirm: I18n.t('netzke.basepack.grid_panel.are_you_sure'), disable_with: I18n.t(:please_wait), class: 'disabled' } )
 
-- if admin_signed_in?
-  .row-fluid
-    .span1
-      = 'User ID:'
-    .span10
-      = current_user.id
-
 .row-fluid
   %b= I18n.t('user_association.possible_swimmers')
   .row-fluid

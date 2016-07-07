@@ -182,8 +182,7 @@ class TrainingsController < ApplicationController
           redirect_to( edit_training_path(new_training) ) and return
         end
       rescue
-        flash[:error] = "#{I18n.t('trainings.something_went_wrong_during_copy')}" +
-                        ( admin_signed_in? ? "['#{ $!.to_s }']" : '' )
+        flash[:error] = "#{I18n.t('trainings.something_went_wrong_during_copy')}"
         redirect_to( trainings_path() ) and return
       end
     else
@@ -224,8 +223,7 @@ class TrainingsController < ApplicationController
           redirect_to( edit_user_training_path(user_training) ) and return
         end
       rescue
-        flash[:error] = "#{I18n.t('trainings.something_went_wrong_during_copy')}" +
-                        ( admin_signed_in? ? "['#{ $!.to_s }']" : '' )
+        flash[:error] = "#{I18n.t('trainings.something_went_wrong_during_copy')}"
         redirect_to( trainings_path() ) and return
       end
     else
@@ -251,7 +249,7 @@ class TrainingsController < ApplicationController
   #
   def verify_ownership
     set_training
-    if TrainingAccessibility.new(current_user, @training, admin_signed_in?).is_owned
+    if TrainingAccessibility.new( current_user, @training ).is_owned
       return
     else
       flash[:error] = I18n.t(:invalid_action_request)
@@ -270,7 +268,7 @@ class TrainingsController < ApplicationController
   #
   def verify_visibility
     set_training
-    unless TrainingAccessibility.new(current_user, @training, admin_signed_in?).is_visible
+    unless TrainingAccessibility.new( current_user, @training ).is_visible
       flash[:error] = I18n.t(:invalid_action_request)
       redirect_to( trainings_path() ) and return
     end

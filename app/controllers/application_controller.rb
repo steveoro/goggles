@@ -145,7 +145,7 @@ class ApplicationController < ActionController::Base
     params_hash.delete_if { |key| ['password', 'password_confirmation'].include?(key.to_s) }
   end
 
-  # Logs registration actions with an admin email.
+  # Logs registration actions with sending an email notification.
   def log_registration
     if request.post?                                # === POST: ===
       log_action(

@@ -8,8 +8,6 @@
         content_tag( :div, t('meeting.no_records_matching_search_text'), class: 'well' )
     end
 
-    g.column( name: 'ID', attribute: 'id', filter: false ) if admin_signed_in?
-
     g.column(
         name: I18n.t('meeting_calendar.federation'),
         model: Season,

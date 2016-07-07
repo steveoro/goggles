@@ -8,7 +8,6 @@
           = I18n.t(:name) +':'
         .span5
           %b= @swimmer.get_full_name_with_nickname
-          = admin_signed_in? ? " (id=#{@swimmer.id})" : ''
         .span4
           = social_confirm_badge( @swimmer )
           = social_invite_badge( @swimmer )
@@ -133,4 +132,4 @@
 
   -#= render( partial: 'records' )
 
-  -# TODO Give some plus rendering some achievements!  
+  -# TODO Give some plus rendering some achievements!

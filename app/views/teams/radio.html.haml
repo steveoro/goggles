@@ -7,7 +7,6 @@
         = "#{ I18n.t(:name) }:"
       .span9
         %b= @team.get_full_name
-        = admin_signed_in? ? " (id=#{@team.id})" : ''
     .row-fluid
       .span3
         = "#{ I18n.t('address') }:"

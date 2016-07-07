@@ -20,12 +20,6 @@
             #mapsLink{'data-toggle' => 'tooltip', 'title' => I18n.t('swimming_pool.maps_link_tooltip')}= link_to( image_tag('gmaps_new_32.png'), decorated_pool.get_maps_url )
     .accordion-body
       .accordion-inner
-        - if admin_signed_in?
-          .row-fluid
-            .span2
-              = 'ID:'
-            .span10
-              = @pool.id
         .row-fluid
           .span12
         .row-fluid

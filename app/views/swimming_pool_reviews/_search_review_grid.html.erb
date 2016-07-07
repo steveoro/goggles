@@ -3,8 +3,6 @@
         content_tag( :div, t(:no_data_found), class: 'well' )
     end
 
-    g.column( name: 'ID', attribute: 'id', filter: false ) if admin_signed_in?
-
     g.column(
         name: I18n.t('activerecord.attributes.swimming_pool_review.title'),
         attribute: 'title',

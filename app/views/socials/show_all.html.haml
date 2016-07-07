@@ -1,12 +1,5 @@
 %h3= @title
 
-- if admin_signed_in?
-  .row-fluid
-    .span2
-      = 'ID:'
-    .span10
-      = current_user.id
-
 .row-fluid.span12
   %h4= I18n.t('social.current_friends')
   %ul

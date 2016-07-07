@@ -104,13 +104,13 @@ module UserTrainingStoriesHelper
   # Checks if the current_user owns the specified user_training_story
   # Returns +true+ when successful.
   def check_story_ownership_for( user_training_story )
-    UserTrainingStoryAccessibility.new(current_user, user_training_story, admin_signed_in?).is_owned
+    UserTrainingStoryAccessibility.new( current_user, user_training_story ).is_owned
   end
 
   # Checks if the current_user can access (R/O) the specified user_training_story
   # Returns +true+ when successful.
   def check_story_visibility_for( user_training_story )
-    UserTrainingStoryAccessibility.new(current_user, user_training_story, admin_signed_in?).is_visible
+    UserTrainingStoryAccessibility.new( current_user, user_training_story ).is_visible
   end
   #-- -------------------------------------------------------------------------
   #++
