@@ -62,7 +62,7 @@ Options: [db_version=<db_struct_version>] [bzip2=<1>|0]
   Executes all the SQL scripts ('*.sql') found in a special directory (usually for data seed).
 Allows also to clear the executed files afterwards.
 
-Options: [exec_dir=#{DB_SEED_DIR}] [delete=1|<0>]
+Options: [exec_dir=#{ DB_DUMP_DIR }] [delete=1|<0>]
 
 - 'exec_dir' is the path where the files are found
 - 'delete' allows to kill the executed file after completion; defaults to '0' (false)
@@ -76,7 +76,7 @@ Options: [exec_dir=#{DB_SEED_DIR}] [delete=1|<0>]
     db_user       = rails_config.database_configuration[Rails.env]['username']
     db_pwd        = rails_config.database_configuration[Rails.env]['password']
     db_host       = rails_config.database_configuration[Rails.env]['host']
-    exec_folder = ENV.include?("exec_dir") ? ENV["exec_dir"] : DB_SEED_DIR
+    exec_folder = ENV.include?("exec_dir") ? ENV["exec_dir"] : DB_DUMP_DIR
                                                     # Display some info:
     puts "DB name:      #{db_name}"
     puts "DB user:      #{db_user}"

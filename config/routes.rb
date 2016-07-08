@@ -2,70 +2,13 @@ Goggles::Application.routes.draw do
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
+  mount GogglesCore::Engine => "/"
 # FIXME
-  devise_for :controllers => { :sessions => "Sessions" } # [Steve, 20140401] Custom controller for additional customization (OmniAuth, ...)
-
-  namespace :api, defaults: { format: "json" } do
-    namespace :v1 do
-      devise_scope :user do
-        get "sessions/create"
-        get "sessions/destroy"
-      end
-
-      # === Exercises ===
-      get    "exercises/index",               to: "exercises#index",        as: "exercises"
-      get    "exercises/show/:id",            to: "exercises#show",         as: "exercise_show"
-      # TODO Use decorators to return custom-tailored exercise rows for API usage in json_list (becomes => #decorated_index & #decorated_show or use a param for existing actions)
-      # TODO => use new decorated action responders with AJAX query for UserTraining exercise look-up
-
-      # === Search ===
-      get    "search/simple",                 to: "search#simple",          as: "search_simple"
-
-      # === Meetings ===
-      get    "meetings/index",                to: "meetings#index",         as: "meetings"
-      get    "meetings/show/:id",             to: "meetings#show",          as: "meeting_show"
-      # TODO meeting details w/ subentities in dedicated controllers? => No: use decorators to return custom-tailored meeting rows for API usage
-
-      # === News Feeds ===
-      get    "news_feed/for_user/:id",        to: "news_feeds#for_user",    as: "news_feed_for_user"
-      put    "news_feed/read/:id",            to: "news_feeds#read",        as: "news_feed_read"
-      delete "news_feed/destroy/:id",         to: "news_feeds#destroy",     as: "news_feed_destroy"
-
-      # === Records ===
-      get    "records/for_federation/:id",    to: "records#for_federation", as: "records_for_federation"
-      get    "records/for_season_type/:id",   to: "records#for_season_type",as: "records_for_season_type"
-      get    "records/for_team/:id",          to: "records#for_team",       as: "records_for_team"
-      get    "records/for_swimmer/:id",       to: "records#for_swimmer",    as: "records_for_swimmer"
-      get    "records/count_records_for_swimmer/:id", to: "records#count_records_for_swimmer", as: "records_count_records_for_swimmer"
-      get    "records/for_personal_best/:id", to: "records#for_personal_best", as: "records_for_personal_best"
-
-      # === Swimmers ===
-      get    "swimmers/index",                to: "swimmers#index",         as: "swimmers"
-      get    "swimmers/show/:id",             to: "swimmers#show",          as: "swimmer_show"
-
-      # === Teams ===
-      get    "team/count_meetings/:id",       to: "teams#count_meetings",   as: "team_count_meetings"
-      get    "team/count_results/:id",        to: "teams#count_results",    as: "team_count_results"
-      get    "team/count_details/:id",        to: "teams#count_details",    as: "team_count_details"
-      get    "team/current_swimmers/:id",     to: "teams#current_swimmers", as: "team_current_swimmers"
-      get    "teams/index",                   to: "teams#index",            as: "teams"
-      get    "teams/show/:id",                to: "teams#show",             as: "team_show"
-
-      # === Trainings ===
-      get    "trainings/index",               to: "trainings#index",        as: "trainings"
-      get    "trainings/show/:id",            to: "trainings#show",         as: "trainings_show"
-
-      # TODO extract and enlist only the actual routes used:
-      resources :user_trainings, except: [:new]
-      resources :user_training_stories, except: [:new]
-      resources :passages, except: [:new, :create]
-      match "passages/create", to: "passages#create", via: :post
-    end
-  end
+  devise_for :users
+#  devise_for :controllers => { :sessions => "Sessions" } # [Steve, 20140401] Custom controller for additional customization (OmniAuth, ...)
 
   # [Steve, 20130716] Root's route required by Devise:
   root :to => "home#index", locale: /en|it/
-
 
   scope "/" do
     scope "(:locale)", locale: /en|it/ do
@@ -220,6 +163,66 @@ Goggles::Application.routes.draw do
       resources :user_training_stories
     end
   end
+
+
+  namespace :api, defaults: { format: "json" } do
+    namespace :v1 do
+      devise_scope :user do
+        get "sessions/create"
+        get "sessions/destroy"
+      end
+
+      # === Exercises ===
+      get    "exercises/index",               to: "exercises#index",        as: "exercises"
+      get    "exercises/show/:id",            to: "exercises#show",         as: "exercise_show"
+      # TODO Use decorators to return custom-tailored exercise rows for API usage in json_list (becomes => #decorated_index & #decorated_show or use a param for existing actions)
+      # TODO => use new decorated action responders with AJAX query for UserTraining exercise look-up
+
+      # === Search ===
+      get    "search/simple",                 to: "search#simple",          as: "search_simple"
+
+      # === Meetings ===
+      get    "meetings/index",                to: "meetings#index",         as: "meetings"
+      get    "meetings/show/:id",             to: "meetings#show",          as: "meeting_show"
+      # TODO meeting details w/ subentities in dedicated controllers? => No: use decorators to return custom-tailored meeting rows for API usage
+
+      # === News Feeds ===
+      get    "news_feed/for_user/:id",        to: "news_feeds#for_user",    as: "news_feed_for_user"
+      put    "news_feed/read/:id",            to: "news_feeds#read",        as: "news_feed_read"
+      delete "news_feed/destroy/:id",         to: "news_feeds#destroy",     as: "news_feed_destroy"
+
+      # === Records ===
+      get    "records/for_federation/:id",    to: "records#for_federation", as: "records_for_federation"
+      get    "records/for_season_type/:id",   to: "records#for_season_type",as: "records_for_season_type"
+      get    "records/for_team/:id",          to: "records#for_team",       as: "records_for_team"
+      get    "records/for_swimmer/:id",       to: "records#for_swimmer",    as: "records_for_swimmer"
+      get    "records/count_records_for_swimmer/:id", to: "records#count_records_for_swimmer", as: "records_count_records_for_swimmer"
+      get    "records/for_personal_best/:id", to: "records#for_personal_best", as: "records_for_personal_best"
+
+      # === Swimmers ===
+      get    "swimmers/index",                to: "swimmers#index",         as: "swimmers"
+      get    "swimmers/show/:id",             to: "swimmers#show",          as: "swimmer_show"
+
+      # === Teams ===
+      get    "team/count_meetings/:id",       to: "teams#count_meetings",   as: "team_count_meetings"
+      get    "team/count_results/:id",        to: "teams#count_results",    as: "team_count_results"
+      get    "team/count_details/:id",        to: "teams#count_details",    as: "team_count_details"
+      get    "team/current_swimmers/:id",     to: "teams#current_swimmers", as: "team_current_swimmers"
+      get    "teams/index",                   to: "teams#index",            as: "teams"
+      get    "teams/show/:id",                to: "teams#show",             as: "team_show"
+
+      # === Trainings ===
+      get    "trainings/index",               to: "trainings#index",        as: "trainings"
+      get    "trainings/show/:id",            to: "trainings#show",         as: "trainings_show"
+
+      # TODO extract and enlist only the actual routes used:
+      resources :user_trainings, except: [:new]
+      resources :user_training_stories, except: [:new]
+      resources :passages, except: [:new, :create]
+      match "passages/create", to: "passages#create", via: :post
+    end
+  end
+
 
   # Wildcard route to match all the remaining possibilities:
   match "*path", to: "exceptions#render_error"

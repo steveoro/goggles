@@ -52,6 +52,7 @@ gem 'prawn', '~> 0.15'
 gem 'country_select'
 gem 'simple_form'
 gem "cocoon"
+gem "nokogiri"                                      # Used for HTML DOCModel easy tampering
                                                     # [Steve, 20130412] Custom Documatic version (used for Ooo exports):
 gem 'documatic', :git => 'https://github.com/fasar-sw/documatic.git'
 gem 'generator'

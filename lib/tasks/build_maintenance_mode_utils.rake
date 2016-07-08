@@ -62,16 +62,16 @@ DESC
 desc <<-DESC
 Creates a tar(bz2) dump file for the whole subtree of the application.
 
-    Options: [app_version=#{SHORT_AGEX_VERSION}] [output_dir=#{TAR_BACKUP_DIR}]
+    Options: [app_version=#{ GogglesCore::Version::COMPACT }] [output_dir=#{DB_BACKUP_DIR}]
 DESC
   task( tar: [:log_rotate] ) do
     puts "*** Task: Tar BZip2 Application Backup ***"
                                                     # Prepare & check configuration:
-    backup_folder = ENV.include?("output_dir") ? ENV["output_dir"] : TAR_BACKUP_DIR
+    backup_folder = ENV.include?("output_dir") ? ENV["output_dir"] : DB_BACKUP_DIR
     app_version   = ENV.include?("app_version") ?
-                    ENV['app_version'] + '.' + Date.today.strftime("%Y%m%d") :
-                    SHORT_AGEX_VERSION + '.' + DateTime.now.strftime("%Y%m%d.%H%M")
-    file_name     = APP_NAME + '-' + app_version + '.tar.bz2'
+                    "#{ ENV['app_version'] }.#{ Date.today.strftime("%Y%m%d") }" :
+                    "#{ GogglesCore::Version::COMPACT }.#{ DateTime.now.strftime("%Y%m%d.%H%M") }"
+    file_name     = "#{ WEB_APP }-#{ app_version }.tar.bz2"
     FileUtils.makedirs(backup_folder) if ENV.include?("output_dir") # make sure overridden output folder exists, creating the subtree under app's root
 
 # TODO [FUTUREDEV] parametrize sessions cleanup
@@ -93,7 +93,7 @@ DESC
 desc <<-DESC
 Updates the current versioning numbers inside DB table app_parameters.
 
-    Options: [app_version=#{SHORT_AGEX_VERSION}] [db_version=<db_struct_version>]
+    Options: [app_version=#{ GogglesCore::Version::COMPACT }] [db_version=<db_struct_version>]
              [Rails.env=#{Rails.env}]
 DESC
   task( version: [:environment] ) do
@@ -102,7 +102,8 @@ DESC
     time_signature = Date.today.strftime("%Y%m%d")
     db_version    = ENV.include?("db_version") ? ENV['db_version'] + '.' + time_signature : nil
     app_version   = ENV.include?("app_version") ?
-                    ENV['app_version'] + '.' + time_signature : SHORT_AGEX_VERSION
+                    "#{ ENV['app_version'] }.#{ time_signature }" :
+                    GogglesCore::Version::COMPACT
                                                     # Update DB struct versioning number inside table app_parameter:
     ap = AppParameter.find(:first, :conditions => "code=1")
     unless ap.nil? || ap == []
@@ -119,14 +120,17 @@ DESC
 desc <<-DESC
 Updates the News log table with an entry stating that the application has been updated.
 
-    Options: [app_version=#{SHORT_AGEX_VERSION}] [db_version=<db_struct_version>]
+    Options: [app_version=#{ GogglesCore::Version::COMPACT }] [db_version=<db_struct_version>]
              [Rails.env=#{Rails.env}]
 DESC
   task( news_log: ['build:version'] ) do
                                                     # Prepare & check configuration:
     time_signature = Date.today.strftime("%Y%m%d")
-    db_version    = ENV.include?("db_version") ? ENV['db_version'] + '.' + time_signature : nil
-    app_version   = ENV.include?("app_version") ? ENV['app_version'] + '.' + time_signature : SHORT_AGEX_VERSION
+    db_version    = ENV.include?("db_version") ?
+                    "#{ ENV['db_version'] }.#{ time_signature }" : nil
+    app_version   = ENV.include?("app_version") ?
+                    "#{ ENV['app_version'] }.#{ time_signature }" :
+                    GogglesCore::Version::COMPACT
 
     puts "Logging the update into the news blog..."
     Article.create({

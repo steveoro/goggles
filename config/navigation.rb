@@ -143,8 +143,6 @@ SimpleNavigation::Configuration.run do |navigation|
       if: Proc.new { user_signed_in? }
     )
 
-    primary.item :key_separator2,     '&nbsp;', '#', class: 'disabled', if: Proc.new { admin_signed_in? }
-
     primary.item :key_separator3,     '&nbsp;', '#', class: 'disabled'
     primary.item( :key_locale,         content_tag(:span, image_tag('it.png') +"/"+ image_tag('us.png') ), '#'
     ) do |lev2_nav|

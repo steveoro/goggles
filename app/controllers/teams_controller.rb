@@ -76,7 +76,7 @@ class TeamsController < ApplicationController
   #
   def best_timings
     @tab_title = I18n.t('radiography.best_timings_tab')
-    
+
     if @team.meeting_individual_results.count > 0
       @team_best_finder = TeamBestFinder.new( @team )
       @team_bests = @team_best_finder.split_categories( @team_best_finder.scan_for_distinct_bests )
@@ -111,6 +111,9 @@ class TeamsController < ApplicationController
 
     # Gets current goggle cup, if any
     @goggle_cup = @team.get_current_goggle_cup_at
+    @goggle_cup_name = @goggle_cup ? @goggle_cup.get_full_name : I18n.t('goggle_cup.default_name')
+    @goggle_cup_max_points = @goggle_cup ? @goggle_cup.max_points.to_s : I18n.t('goggle_cup.default_max_points')
+    @goggle_cup_max_performance = @goggle_cup ? @goggle_cup.max_performance.to_s : I18n.t('goggle_cup.default_max_performance')
 
     # Gets goggle cup ranks
     @goggle_cup_rank = @goggle_cup ? @goggle_cup.calculate_goggle_cup_rank : []

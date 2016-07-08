@@ -8,7 +8,7 @@
 //= require jquery_ujs
 //= require jquery-ui.min
 //= require wice_grid
-//= require jquery.ui.datepicker
+//= require jquery.ui.datepicker.min
 //= require cocoon
 //= require jquery.flot.min
 //= require jquery.colorhelpers.min

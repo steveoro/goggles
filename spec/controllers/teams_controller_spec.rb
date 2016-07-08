@@ -2,7 +2,7 @@ require 'rails_helper'
 require 'wice_grid'
 
 
-describe TeamsController, :type => :controller do
+describe TeamsController, type: :controller do
 
   describe '[GET #index]' do
     context "with an HTML request," do
@@ -180,6 +180,15 @@ describe TeamsController, :type => :controller do
       it "assigns the tab title" do
         expect( assigns(:tab_title) ).to be_an_instance_of( String )
       end
+      it "assigns the @goggle_cup_name" do
+        expect( assigns(:goggle_cup_name) ).to be_an_instance_of( String )
+      end
+      it "assigns the @goggle_cup_max_points" do
+        expect( assigns(:goggle_cup_max_points) ).to be_an_instance_of( String )
+      end
+      it "assigns the @goggle_cup_max_performance" do
+        expect( assigns(:goggle_cup_max_performance) ).to be_an_instance_of( String )
+      end
       it "doesn't assign a goggle_cup instance" do
         expect( response.status ).to eq( 200 )
         expect( assigns(:goggle_cup) ).to be_an_instance_of( GoggleCup ).or be_nil
@@ -200,6 +209,15 @@ describe TeamsController, :type => :controller do
       end
       it "assigns the tab title" do
         expect( assigns(:tab_title) ).to be_an_instance_of( String )
+      end
+      it "assigns the @goggle_cup_name" do
+        expect( assigns(:goggle_cup_name) ).to be_an_instance_of( String )
+      end
+      it "assigns the @goggle_cup_max_points" do
+        expect( assigns(:goggle_cup_max_points) ).to be_an_instance_of( String )
+      end
+      it "assigns the @goggle_cup_max_performance" do
+        expect( assigns(:goggle_cup_max_performance) ).to be_an_instance_of( String )
       end
       it "assigns a goggle_cup instance if the selected team it has currently one" do
         expect( response.status ).to eq( 200 )
@@ -324,11 +342,11 @@ describe TeamsController, :type => :controller do
   describe '[GET #closed_goggle_cup/:id]' do
     context "as a logged-in user" do
       let(:team)       { Team.find(1) }
-      let(:goggle_cup) { team.goggle_cups[ ((rand * team.goggle_cups.count) % team.goggle_cups.count).to_i ] } 
+      let(:goggle_cup) { team.goggle_cups[ ((rand * team.goggle_cups.count) % team.goggle_cups.count).to_i ] }
 
       before(:each) do
         login_user()
-        get :closed_goggle_cup, id: goggle_cup.id 
+        get :closed_goggle_cup, id: goggle_cup.id
       end
 
       it "assigns the closed goggle cup" do

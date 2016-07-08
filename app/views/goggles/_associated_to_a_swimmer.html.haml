@@ -11,6 +11,6 @@
     - else
       = t('user_association.self_assessed')
       = t('user_association.ask_a_registered_friend_to_confirm_you')
-      = mail_to( "leegaweb@gmail.com" , "Leega" , subject: "[#{AGEX_APP_NAME}] #{t('user_association.please_confirm_my_identity')}", body: "#{t('user_association.i_am')} '#{current_user.swimmer.get_verbose_name}'.\r\n#{t('user')}: #{current_user.name} (ID: #{current_user.id})", encode: "javascript" )
+      = mail_to( "leegaweb@gmail.com" , "Leega" , subject: "[#{WEB_APP_NAME}] #{t('user_association.please_confirm_my_identity')}", body: "#{t('user_association.i_am')} '#{current_user.swimmer.get_verbose_name}'.\r\n#{t('user')}: #{current_user.name} (ID: #{current_user.id})", encode: "javascript" )
       = ', '
-      = mail_to( "fasar.software@email.it" , "Steve" , subject: "[#{AGEX_APP_NAME}] #{t('user_association.please_confirm_my_identity')}", body: "#{t('user_association.i_am')} '#{current_user.swimmer.get_verbose_name}'.\r\n#{t('user')}: #{current_user.name} (ID: #{current_user.id})", encode: "javascript" )
+      = mail_to( "fasar.software@email.it" , "Steve" , subject: "[#{WEB_APP_NAME}] #{t('user_association.please_confirm_my_identity')}", body: "#{t('user_association.i_am')} '#{current_user.swimmer.get_verbose_name}'.\r\n#{t('user')}: #{current_user.name} (ID: #{current_user.id})", encode: "javascript" )
