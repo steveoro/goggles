@@ -19,7 +19,7 @@
 
     g.column(
         name: I18n.t(:city, { scope: [:activerecord, :models] }),
-        model: City,
+        assoc: :city,
         attribute: 'id',
         custom_filter: City.to_dropdown,
         detach_with_id: :flt_pool_city_id,
@@ -29,7 +29,7 @@
 
     g.column(
         name: I18n.t(:pool_type, { scope: [:activerecord, :models] }),
-        model: PoolType,
+        assoc: :pool_type,
         attribute: 'id',
         custom_filter: PoolType.to_dropdown
     ) do |pool|

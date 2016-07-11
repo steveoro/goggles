@@ -13,7 +13,7 @@
 
     g.column(
         name: I18n.t('activerecord.models.swimming_pool'),
-        model: SwimmingPool,
+        assoc: :swimming_pool,
         attribute: 'id',
         custom_filter: SwimmingPool.to_dropdown,
         detach_with_id: :flt_swimming_pool_id,
@@ -26,7 +26,7 @@
 
     g.column(
         name: I18n.t('swimming_pool_review.review_by'),
-        model: User,
+        assoc: :user,
         attribute: 'id',
         custom_filter: User.to_dropdown
     ) do |review|

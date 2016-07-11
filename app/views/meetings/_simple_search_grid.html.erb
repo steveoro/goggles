@@ -10,7 +10,7 @@
 
     g.column(
         name: I18n.t('meeting_calendar.federation'),
-        model: Season,
+        assoc: :season,
         attribute: 'season_type_id',
         custom_filter: SeasonType.is_master.to_dropdown,
     ) do |meeting|

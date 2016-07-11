@@ -34,7 +34,7 @@ shared_examples_for "(Ap1-V1-Controllers, get actions that requires logged user 
   context "unlogged user" do
     action_name_array.each do |action_name|
       it '[GET #{action_name}] displays always the Login page' do
-        get_action_and_check_if_its_the_login_page_for( action_name.to_sym )
+        get_action_and_check_it_redirects_to_login_for( action_name.to_sym )
       end
     end
   end

@@ -45,7 +45,7 @@ describe "Swimmers medals tab", type: :feature, wip: true do
 
   context "as an authorized user," do
     before(:each) do
-      login_user_with_capybara( create(:user) )
+      login_user( create(:user) )
       visit swimmer_medals_path( id: chosen_swimmer.id )
     end
 
@@ -67,7 +67,7 @@ describe "Swimmers best-timings tab", type: :feature, wip: true do
 
   context "as an authorized user," do
     before(:each) do
-      login_user_with_capybara( create(:user) )
+      login_user( create(:user) )
       visit swimmer_best_timings_path( id: chosen_swimmer.id )
     end
 
@@ -87,7 +87,7 @@ describe "Swimmers full_history_1 tab", type: :feature, wip: true do
 
   context "as an authorized user," do
     before(:each) do
-      login_user_with_capybara( create(:user) )
+      login_user( create(:user) )
       visit swimmer_full_history_1_path( id: chosen_swimmer.id )
     end
 
@@ -107,7 +107,7 @@ describe "Swimmers full_history_2 tab", type: :feature, wip: true do
 
   context "as an authorized user," do
     before(:each) do
-      login_user_with_capybara( create(:user) )
+      login_user( create(:user) )
       visit swimmer_full_history_2_path( id: chosen_swimmer.id )
     end
 
@@ -131,7 +131,7 @@ end
     # before(:each) do
       # # We need to set this to make the redirect_to(:back) pass the tests:
 # #      request.env["HTTP_REFERER"] = swimmers_path()
-      # login_user_with_capybara( create(:user) )
+      # login_user( create(:user) )
       # visit swimmer_trainings_path( id: chosen_swimmer.id )
     # end
 # 

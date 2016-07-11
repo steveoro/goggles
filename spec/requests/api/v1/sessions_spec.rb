@@ -2,9 +2,9 @@ require 'rails_helper'
 
 # [Steve, 20140409] To have methods like "last_response" in each test:
 # (but mainly used only by rspec_api_blueprint gem)
-RSpec.configure do |config|
-  config.include Rack::Test::Methods
-end
+#RSpec.configure do |config|
+#  config.include Rack::Test::Methods
+#end
 
 
 # This will auto-generate API-blueprint docs under /api_docs/sessions.txt:

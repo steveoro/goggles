@@ -43,7 +43,7 @@ gem 'safe_yaml'
 gem "simple-navigation"
 gem 'simple-navigation-bootstrap'
 
-gem "wice_grid", '3.4.8'
+gem "wice_grid"
 gem 'amistad', git: 'https://github.com/fasar-sw/amistad.git'  # [Steve] Customized version. For Facebook-like friendship management
 gem 'ruport',  git: 'https://github.com/ruport/ruport.git', branch: 'ruby19-compat'
 gem 'acts_as_reportable'
@@ -69,7 +69,7 @@ group :development do
   gem 'guard', '~> 2.6'
   gem 'guard-rspec'
   gem 'guard-shell'
-  gem 'rspec_api_blueprint', require: false
+#  gem 'rspec_api_blueprint', require: false
 #  gem "airbrussh", :require => false
 
   # Although Capistrano + seed_dump are strictly development-related gems,

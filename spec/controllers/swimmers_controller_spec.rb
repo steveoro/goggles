@@ -70,10 +70,10 @@ describe SwimmersController, :type => :controller do
 
     context "unlogged user" do
       it "displays the Login page for an invalid id" do
-        get_action_and_check_if_its_the_login_page_for( action_sym, 0 )
+        get_action_and_check_it_redirects_to_login_for( action_sym, 0 )
       end
       it "displays the Login page for a valid id" do
-        get_action_and_check_if_its_the_login_page_for( action_sym, @fixture.id )
+        get_action_and_check_it_redirects_to_login_for( action_sym, @fixture.id )
       end
     end
   end

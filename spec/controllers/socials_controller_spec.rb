@@ -10,7 +10,7 @@ describe SocialsController, :type => :controller do
   describe '[GET #show_all]' do
     context "as an unlogged user" do
       it "displays always the Login page" do
-        get_action_and_check_if_its_the_login_page_for( :show_all )
+        get_action_and_check_it_redirects_to_login_for( :show_all )
       end
     end
 
@@ -227,7 +227,7 @@ describe SocialsController, :type => :controller do
   describe '[GET #invite]' do
     context "as an unlogged user" do
       it "displays always the Login page" do
-        get_action_and_check_if_its_the_login_page_for( :invite, @swimming_buddy.id )
+        get_action_and_check_it_redirects_to_login_for( :invite, @swimming_buddy.id )
       end
     end
 
@@ -310,7 +310,7 @@ describe SocialsController, :type => :controller do
   describe '[GET #approve]' do
     context "as an unlogged user" do
       it "displays always the Login page" do
-        get_action_and_check_if_its_the_login_page_for( :approve, @swimming_buddy.id )
+        get_action_and_check_it_redirects_to_login_for( :approve, @swimming_buddy.id )
       end
     end
 
@@ -403,7 +403,7 @@ describe SocialsController, :type => :controller do
   describe '[GET #block]' do
     context "as an unlogged user" do
       it "displays always the Login page" do
-        get_action_and_check_if_its_the_login_page_for( :block, @swimming_buddy.id )
+        get_action_and_check_it_redirects_to_login_for( :block, @swimming_buddy.id )
       end
     end
 
@@ -501,7 +501,7 @@ describe SocialsController, :type => :controller do
   describe '[GET #unblock]' do
     context "as an unlogged user" do
       it "displays always the Login page" do
-        get_action_and_check_if_its_the_login_page_for( :unblock, @swimming_buddy.id )
+        get_action_and_check_it_redirects_to_login_for( :unblock, @swimming_buddy.id )
       end
     end
 
@@ -602,7 +602,7 @@ describe SocialsController, :type => :controller do
   describe '[GET #remove]' do
     context "as an unlogged user" do
       it "displays always the Login page" do
-        get_action_and_check_if_its_the_login_page_for( :remove, @swimming_buddy.id )
+        get_action_and_check_it_redirects_to_login_for( :remove, @swimming_buddy.id )
       end
     end
 
@@ -696,7 +696,7 @@ describe SocialsController, :type => :controller do
   describe '[GET #edit]' do
     context "as an unlogged user" do
       it "displays always the Login page" do
-        get_action_and_check_if_its_the_login_page_for( :edit, @swimming_buddy.id )
+        get_action_and_check_it_redirects_to_login_for( :edit, @swimming_buddy.id )
       end
     end
 
