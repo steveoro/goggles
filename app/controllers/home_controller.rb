@@ -54,7 +54,7 @@ class HomeController < ApplicationController
         order: "is_sticky DESC, updated_at DESC",
         :limit => AppParameter.get_default_pagination_rows_for( :articles )
       )
-      @news_feed = NewsFeed.unread.where( user: current_user )
+      @news_feed = NewsFeed.unread.where( user_id: current_user.id )
     end
   end
   #-- -------------------------------------------------------------------------

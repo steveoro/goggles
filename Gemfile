@@ -44,7 +44,10 @@ gem "simple-navigation"
 gem 'simple-navigation-bootstrap'
 
 gem "wice_grid"
-gem 'amistad', git: 'https://github.com/fasar-sw/amistad.git'  # [Steve] Customized version. For Facebook-like friendship management
+
+# [Steve] Customized version. For Facebook-like friendship management
+gem "amistad", git: "https://github.com/fasar-sw/amistad.git", branch: "version5"
+
 gem 'ruport',  git: 'https://github.com/ruport/ruport.git', branch: 'ruby19-compat'
 gem 'acts_as_reportable'
 gem 'prawn', '~> 0.15'

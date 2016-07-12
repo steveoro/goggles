@@ -16,7 +16,7 @@
         - if @meeting_stats.oldest_female_swimmers.size > 0
           - swimmer = @meeting_stats.oldest_female_swimmers.first
           %td.span3
-            %a{'id'=>"swimmer#{swimmer.id}", 'href'=>"#{ meeting_show_swimmer_results_path(:id=>@meeting.id, :swimmer_id=>swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip')}
+            %a{'id'=>"swimmer#{swimmer.id}", 'href'=>"#{ meeting_show_swimmer_results_path( id: @meeting.id, swimmer_id: swimmer.id, team_id: swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip')}
               = swimmer.get_full_name
           %td.span1.goggles-rightalign
             = swimmer.year_of_birth
@@ -26,7 +26,7 @@
         - if @meeting_stats.oldest_male_swimmers.size > 0
           - swimmer = @meeting_stats.oldest_male_swimmers.first
           %td.span3
-            %a{'id'=>"swimmer#{swimmer.id}", 'href'=>"#{ meeting_show_swimmer_results_path(:id=>@meeting.id, :swimmer_id=>swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip')}
+            %a{'id'=>"swimmer#{swimmer.id}", 'href'=>"#{ meeting_show_swimmer_results_path(id: @meeting.id, swimmer_id: swimmer.id, team_id: swimmer.id ) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip')}
               = swimmer.get_full_name
           %td.span1.goggles-rightalign
             = swimmer.year_of_birth

@@ -37,9 +37,9 @@
 
     g.column(
         name: I18n.t('meeting_calendar.pool_type'),
-        attribute: 'pool_type_id',
-        model: SwimmingPool,
-        custom_filter: PoolType.only_for_meetings.to_dropdown,
+        attribute: 'id',
+        assoc: :pool_types,
+        custom_filter: PoolType.only_for_meetings.to_dropdown
     ) do |meeting|
     	[ meeting.swimming_pools.first.pool_type.code,
     		{ class: 'goggles-centeralign' } ] if meeting.swimming_pools.count > 0

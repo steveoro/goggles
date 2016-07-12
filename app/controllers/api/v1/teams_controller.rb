@@ -101,7 +101,7 @@ class Api::V1::TeamsController < ApplicationController
     # (This uses Squeel DSL syntax for where clauses)
     if params['q']
       filter = "%#{params['q']}%"
-      @teams = Team.where{ name.like filter }.order(:name).limit(20)
+      @teams = Team.where( ["name LIKE ?", filter] ).order(:name).limit(20)
     else
       @teams = Team.order(:name).limit(20)
     end
