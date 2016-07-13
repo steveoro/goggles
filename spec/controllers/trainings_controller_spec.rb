@@ -139,7 +139,7 @@ describe TrainingsController, :type => :controller do
     context "unlogged user" do
       it "displays always the Login page" do
         fixture = create( :training_with_rows )
-        get_action_and_check_it_redirects_to_login_for( :printout, fixture.id )
+        get_action_and_check_it_redirects_to_login_for( :printout, "/users/sign_in", fixture.id )
       end
     end
     # -------------------------------------------------------------------------
