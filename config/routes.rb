@@ -215,11 +215,12 @@ Goggles::Application.routes.draw do
       get    "trainings/index",               to: "trainings#index",        as: "trainings"
       get    "trainings/show/:id",            to: "trainings#show",         as: "trainings_show"
 
+# FIXME NOT REALLY USED:
       # TODO extract and enlist only the actual routes used:
       resources :user_trainings, except: [:new]
       resources :user_training_stories, except: [:new]
-      resources :passages, except: [:new, :create]
-      match "passages/create", to: "passages#create", via: :post
+#      resource :passages, except: [:new, :create]
+#      match "passages/create", to: "passages#create", via: :post
     end
   end
 

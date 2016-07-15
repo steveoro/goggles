@@ -23,9 +23,10 @@ class Api::V1::UserTrainingStoriesController < ApplicationController
     # (This uses Squeel DSL syntax for where clauses)
     if params[:swam_date_like]
       filter = "%#{params[:swam_date_like]}%"
-      @user_training_story = UserTrainingStory.where{ swam_date.like filter }.order('swam_date DESC', 'updated_at DESC')
+      @user_training_story = UserTrainingStory.where( ["swam_date LIKE ?", filter] )
+          .order( 'swam_date DESC', 'updated_at DESC' )
     else
-      @user_training_story = UserTrainingStory.order('swam_date DESC', 'updated_at DESC')
+      @user_training_story = UserTrainingStory.order( 'swam_date DESC', 'updated_at DESC' )
     end
     respond_with( @user_training_story )
   end

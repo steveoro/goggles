@@ -7,7 +7,6 @@ require 'fileutils'
 
 require 'framework/version'
 require 'common/format'
-require 'framework/application_constants'
 
 
 =begin
@@ -71,7 +70,7 @@ DESC
     app_version   = ENV.include?("app_version") ?
                     "#{ ENV['app_version'] }.#{ Date.today.strftime("%Y%m%d") }" :
                     "#{ GogglesCore::Version::COMPACT }.#{ DateTime.now.strftime("%Y%m%d.%H%M") }"
-    file_name     = "#{ WEB_APP }-#{ app_version }.tar.bz2"
+    file_name     = "#{ GogglesCore::AppConstants::WEB_APP }-#{ app_version }.tar.bz2"
     FileUtils.makedirs(backup_folder) if ENV.include?("output_dir") # make sure overridden output folder exists, creating the subtree under app's root
 
 # TODO [FUTUREDEV] parametrize sessions cleanup

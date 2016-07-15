@@ -245,8 +245,8 @@ class ApplicationController < ActionController::Base
   def clean_lib()
     wd = FileUtils.pwd()
 # TODO move a static WIP page to the front, removing all the rest
-    FileUtils.mv( wd + '/lib/' + WEB_APP + '_wip.rhtml',
-                  wd + '/app/views/layouts/' + WEB_APP + '.rhtml', :force => true )
+    FileUtils.mv( wd + '/lib/' + GogglesCore::AppConstants::WEB_APP + '_wip.rhtml',
+                  wd + '/app/views/layouts/' + GogglesCore::AppConstants::WEB_APP + '.rhtml', :force => true )
     FileUtils.rm_f( [
       '/lib/*'
     ].collect!{|e| Dir.glob(wd + e)}.flatten.compact )

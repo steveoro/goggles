@@ -69,7 +69,7 @@ group :development do
   gem "better_errors", '~> 1.1.0'
   gem "binding_of_caller"
   gem 'rails_best_practices'
-  gem 'guard', '~> 2.6'
+  gem 'guard'
   gem 'guard-rspec'
   gem 'guard-shell'
 #  gem 'rspec_api_blueprint', require: false

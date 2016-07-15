@@ -20,9 +20,10 @@ class Api::V1::TrainingsController < ApplicationController
     # (This uses Squeel DSL syntax for where clauses)
     if params[:title_like]
       filter = "%#{params[:title_like]}%"
-      @trainings = Training.where{ title.like filter }.order('updated_at DESC', 'title')
+      @trainings = Training.where( ["title LIKE ?", filter] )
+          .order( 'updated_at DESC', 'title' )
     else
-      @trainings = Training.order(:title)
+      @trainings = Training.order( :title )
     end
     respond_with( @trainings )
   end

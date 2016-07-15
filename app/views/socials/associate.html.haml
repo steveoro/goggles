@@ -38,4 +38,4 @@
 .row-fluid
   %i
     = t('social.totally_missing_swimmer')
-    = mail_to( "leegaweb@gmail.com" , "Leega" , subject: "[#{WEB_APP_NAME}] #{t('social.totally_missing_swimmer_subject')}", body: "#{t('social.totally_missing_swimmer_body')}\r\n\r\n#{t('user_association.i_am')} #{current_user.get_verbose_name}.\r\n(User ID: #{current_user.id})", encode: "javascript" )
+    = mail_to( "leegaweb@gmail.com" , "Leega" , subject: "[#{GogglesCore::AppConstants::WEB_APP_NAME}] #{t('social.totally_missing_swimmer_subject')}", body: "#{t('social.totally_missing_swimmer_body')}\r\n\r\n#{t('user_association.i_am')} #{current_user.get_verbose_name}.\r\n(User ID: #{current_user.id})", encode: "javascript" )

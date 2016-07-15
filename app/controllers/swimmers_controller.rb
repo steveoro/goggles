@@ -339,25 +339,37 @@ class SwimmersController < ApplicationController
       results_by_time = @swimmer.meeting_individual_results
         .for_event_by_pool_type( events_by_pool_type )
         .sort_by_timing( 'ASC' )
-        .select([:id, :minutes, :seconds, :hundreds, :rank, :standard_points, :reaction_time, :meeting_program_id, :is_personal_best])
+        .select([
+            'meeting_individual_results.id', 'minutes', 'seconds', 'hundreds', 'rank',
+            'standard_points', 'reaction_time', 'meeting_program_id',
+            'is_personal_best'
+        ])
       # This is used only for the graphs:
       results_by_date = @swimmer.meeting_individual_results
         .is_valid
         .sort_by_date( 'ASC' )
         .for_event_by_pool_type( events_by_pool_type )
-        .select([:id, :minutes, :seconds, :hundreds, :rank, :standard_points, :reaction_time, :meeting_program_id, :is_personal_best])
+        .select([
+            'meeting_individual_results.id', 'minutes', 'seconds', 'hundreds', 'rank',
+            'standard_points', 'reaction_time', 'meeting_program_id',
+            'is_personal_best'
+        ])
 
       # If has results collect passages and prepares hash for index table
       if results_by_time.count > 0
         # Collect all passages
-        passages = Passage.joins(:event_type, :pool_type, :passage_type)
+        passages = Passage.joins( :event_type, :pool_type, :passage_type )
           .where( swimmer_id: @swimmer.id )
           .where( ['event_types.id = ? AND pool_types.id = ?', events_by_pool_type.event_type_id, events_by_pool_type.pool_type_id] )
-          .select( [:meeting_individual_result_id, :passage_type_id, :minutes, :seconds, :hundreds] )
+          .select([
+            'meeting_individual_result_id', 'passage_type_id',
+            'minutes', 'seconds', 'hundreds'
+          ])
           .select( 'passage_types.length_in_meters' )
 
         # Collects the passage list
-        passages_list = passages.select('passage_types.length_in_meters').map{ |pt| pt.length_in_meters }.uniq.sort
+        passages_list = passages.select( 'passage_types.length_in_meters' )
+          .map{ |pt| pt.length_in_meters }.uniq.sort
 
         # Adds the event type in the hash index table
         stroke_type_code = events_by_pool_type.stroke_type_code

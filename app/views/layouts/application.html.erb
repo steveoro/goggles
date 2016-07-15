@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title><%= WEB_APP_NAME %></title>
+  <title><%= GogglesCore::AppConstants::WEB_APP_NAME %></title>
   <%= stylesheet_link_tag    "application", media: "all" %>
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tags %>
@@ -44,7 +44,7 @@
     </script>
 
     <!-- Main menu section: -->
-    <%= render( partial: WEB_APP + '/main_menu' ) %>
+    <%= render( partial: GogglesCore::AppConstants::WEB_APP + '/main_menu' ) %>
 
     <div class="container-fluid">
         <div class="row-fluid">

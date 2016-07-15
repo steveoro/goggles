@@ -313,7 +313,7 @@ class SwimmerDecorator < Draper::Decorator
       linked_list = list.join(', ')
     else
       linked_list = I18n.t('none')
-    end 
+    end
     linked_list
   end
   #-- -------------------------------------------------------------------------
@@ -328,7 +328,7 @@ class SwimmerDecorator < Draper::Decorator
       .joins( :season, :event_type, :category_type, :gender_type, :pool_type )
       .is_valid
       .has_rank( rank_filter )
-      .where{ swimmer_id == my{id} }
+      .where( swimmer_id: self.id )
   end
   #-- --------------------------------------------------------------------------
   #++
@@ -358,7 +358,7 @@ class SwimmerDecorator < Draper::Decorator
   end
   #-- --------------------------------------------------------------------------
   #++
-  
+
   # Personal bests
   # Retrieves a personal best for the swimmer in a given event and pool types
   #
