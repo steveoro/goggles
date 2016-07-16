@@ -166,6 +166,13 @@ Goggles::Application.routes.draw do
 
 
   namespace :api, defaults: { format: "json" } do
+    namespace :v2 do
+      devise_scope :user do
+        post "sessions/create"
+        post "sessions/destroy"
+      end
+    end
+
     namespace :v1 do
       devise_scope :user do
         get "sessions/create"
