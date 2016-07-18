@@ -54,3 +54,5 @@ api_docs/*
 api_docs
 api_docs/sessions.txt
 bin
+spec/examples.txt
+/spec/examples.txt
