@@ -1,12 +1,12 @@
 GIT
-  remote: https://github.com/fasar-sw/amistad.git
-  revision: 96d141b18d1941c7955e81f7f925ca2225443aee
+  remote: git://github.com/fasar-sw/amistad.git
+  revision: a3c25c605594b9229ced52ed9aa7c53e7a0c7b46
   branch: version5
   specs:
-    amistad (2.0.0)
+    amistad (2.0.1)
 
 GIT
-  remote: https://github.com/fasar-sw/documatic.git
+  remote: git://github.com/fasar-sw/documatic.git
   revision: 4ce150f90c35e67e781f5e0abda47e6c993834ce
   specs:
     documatic (0.2.2)
@@ -14,7 +14,7 @@ GIT
       ruport
 
 GIT
-  remote: https://github.com/ruport/ruport.git
+  remote: git://github.com/ruport/ruport.git
   revision: 00022f8987a5277b4f4c769fb67fb214639ea8b1
   branch: ruby19-compat
   specs:
@@ -22,7 +22,7 @@ GIT
       pdf-writer (= 1.1.8)
 
 GIT
-  remote: https://github.com/steveoro/goggles_core.git
+  remote: git://github.com/steveoro/goggles_core.git
   revision: 858d2cd63fab2e8aa6365a479c50f34cdcfc0f2c
   specs:
     goggles_core (0.0.25)

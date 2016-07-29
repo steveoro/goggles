@@ -243,10 +243,9 @@ class Api::V1::MeetingsController < ApplicationController
                           }
                         end,
 
-               # MeetingEntries array:
+               # MeetingEntries array (no decorator for MeetingEntry):
                entries:  prog.meeting_entries
                         .map do |entry|
-                          entry = entry.decorate
                           {
                             id:                 entry.id,
                             swimmer:            entry.get_swimmer_name,

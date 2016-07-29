@@ -45,7 +45,13 @@ describe "Swimmers medals tab", type: :feature, wip: true do
 
   context "as an authorized user," do
     before(:each) do
-      login_user( create(:user) )
+      # Login User using Capybara:
+      @user = create(:user)
+      visit new_user_session_path()
+      fill_in "user_email", with: @user.email
+      fill_in "user_password", with: @user.password
+      click_button I18n.t('devise.new_session_submit')
+      # Visit the actual test path:
       visit swimmer_medals_path( id: chosen_swimmer.id )
     end
 
@@ -67,7 +73,13 @@ describe "Swimmers best-timings tab", type: :feature, wip: true do
 
   context "as an authorized user," do
     before(:each) do
-      login_user( create(:user) )
+      # Login User using Capybara:
+      @user = create(:user)
+      visit new_user_session_path()
+      fill_in "user_email", with: @user.email
+      fill_in "user_password", with: @user.password
+      click_button I18n.t('devise.new_session_submit')
+      # Visit the actual test path:
       visit swimmer_best_timings_path( id: chosen_swimmer.id )
     end
 
@@ -87,7 +99,13 @@ describe "Swimmers full_history_1 tab", type: :feature, wip: true do
 
   context "as an authorized user," do
     before(:each) do
-      login_user( create(:user) )
+      # Login User using Capybara:
+      @user = create(:user)
+      visit new_user_session_path()
+      fill_in "user_email", with: @user.email
+      fill_in "user_password", with: @user.password
+      click_button I18n.t('devise.new_session_submit')
+      # Visit the actual test path:
       visit swimmer_full_history_1_path( id: chosen_swimmer.id )
     end
 
@@ -107,7 +125,13 @@ describe "Swimmers full_history_2 tab", type: :feature, wip: true do
 
   context "as an authorized user," do
     before(:each) do
-      login_user( create(:user) )
+      # Login User using Capybara:
+      @user = create(:user)
+      visit new_user_session_path()
+      fill_in "user_email", with: @user.email
+      fill_in "user_password", with: @user.password
+      click_button I18n.t('devise.new_session_submit')
+      # Visit the actual test path:
       visit swimmer_full_history_2_path( id: chosen_swimmer.id )
     end
 
@@ -124,9 +148,9 @@ end
 
 # describe "Swimmers trainings tab", type: :feature, wip: true do
   # include ControllerMacros
-# 
+#
   # let(:chosen_swimmer) { create(:swimmer) }
-# 
+#
   # context "as an authorized user," do
     # before(:each) do
       # # We need to set this to make the redirect_to(:back) pass the tests:
@@ -134,7 +158,7 @@ end
       # login_user( create(:user) )
       # visit swimmer_trainings_path( id: chosen_swimmer.id )
     # end
-# 
+#
     # it "shows the page of trainings for the chosen Swimmer" do
       # expect( page ).to have_content( chosen_swimmer.get_full_name )
     # end

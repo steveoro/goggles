@@ -31,7 +31,8 @@ class Api::V1::SwimmersController < ApplicationController
     else
       @swimmers = Swimmer.order( :complete_name ).limit(20)
     end
-    puts "- returning #{ @swimmers.size } result..."
+# DEBUG
+#    puts "- returning #{ @swimmers.size } result..."
     respond_with( @swimmers )
   end
   #-- -------------------------------------------------------------------------

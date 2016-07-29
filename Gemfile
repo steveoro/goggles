@@ -4,10 +4,7 @@ if RUBY_VERSION =~ /1.9/
 end
 source 'https://rubygems.org'
 
-gem 'rails', '3.2.22.2'
-
-# Bundle edge Rails instead:
-# gem 'rails', :git => 'git://github.com/rails/rails.git'
+gem "rails", "3.2.22.2"
 
 gem "mysql2", "~> 0.3.11"
 
@@ -31,7 +28,7 @@ gem 'jquery_datepicker'
 gem "json"
 gem "haml", "~> 4.0.5"
 
-gem 'goggles_core', git: 'https://github.com/steveoro/goggles_core.git'
+gem "goggles_core", git: "git://github.com/steveoro/goggles_core.git"
 
 gem 'execjs'
 gem 'therubyracer'
@@ -46,9 +43,8 @@ gem 'simple-navigation-bootstrap'
 gem "wice_grid"
 
 # [Steve] Customized version. For Facebook-like friendship management
-gem "amistad", git: "https://github.com/fasar-sw/amistad.git", branch: "version5"
-
-gem 'ruport',  git: 'https://github.com/ruport/ruport.git', branch: 'ruby19-compat'
+gem "amistad", git: "git://github.com/fasar-sw/amistad.git", branch: "version5"
+gem "ruport",  git: "git://github.com/ruport/ruport.git", branch: "ruby19-compat"
 gem 'acts_as_reportable'
 gem 'prawn', '~> 0.15'
 
@@ -57,7 +53,7 @@ gem 'simple_form'
 gem "cocoon"
 gem "nokogiri"                                      # Used for HTML DOCModel easy tampering
                                                     # [Steve, 20130412] Custom Documatic version (used for Ooo exports):
-gem 'documatic', :git => 'https://github.com/fasar-sw/documatic.git'
+gem 'documatic', git: "git://github.com/fasar-sw/documatic.git"
 gem 'generator'
 gem 'zip'
 gem 'rubyzip', :require => 'zip/zip'
