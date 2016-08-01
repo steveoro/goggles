@@ -1,5 +1,6 @@
 require 'zeus/rails'
 
+# Customized Plan file for Zeus
 class CustomPlan < Zeus::Rails
 
   def test(*args)

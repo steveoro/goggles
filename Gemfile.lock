@@ -113,6 +113,7 @@ GEM
       rack (>= 1.0.0)
       rack-test (>= 0.5.4)
       xpath (~> 2.0)
+    certifi (2016.02.28)
     cocoon (1.2.9)
     code_analyzer (0.4.5)
       sexp_processor
@@ -252,6 +253,9 @@ GEM
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
+    pullreview-coverage (0.0.5)
+      certifi
+      simplecov (>= 0.7.1, < 1.0.0)
     rack (1.4.7)
     rack-cache (1.6.1)
       rack (>= 0.4)
@@ -433,6 +437,7 @@ DEPENDENCIES
   mysql2 (~> 0.3.11)
   nokogiri
   prawn (~> 0.15)
+  pullreview-coverage
   rails (= 3.2.22.2)
   rails_best_practices
   rspec

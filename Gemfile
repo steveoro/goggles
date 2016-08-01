@@ -112,7 +112,8 @@ group :test do
   gem 'simplecov', require: false
   gem "codeclimate-test-reporter", require: false   # [Steve, 20140321] CI/Test coverage via local test run
   gem 'coveralls', require: false                   # [Steve, 20140312] Uses simplecov to obtain test-coverage badge
-  # For using this one, keep in mind http://rubydoc.info/gems/faker/1.3.0/frames
+
+  gem 'pullreview-coverage', require: false         # [Steve, 20160801] Updated coverage by PullReview
 end
 
 # To use debugger

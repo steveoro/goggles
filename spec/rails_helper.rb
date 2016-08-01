@@ -1,12 +1,17 @@
+# [Steve, 20160731] Surely having 3 different test-coverage reporters is overkill.
+# But, for the moment, I've still have to decide which is my favourite. :-P
+
 # [Steve] Test coverage integrated on CodeClimate, with local HTML-file reports
 # (Remember to exclude /coverage sub-dir from git repo)
-unless ENV["CI"]
   require "codeclimate-test-reporter"
   require 'simplecov'
+  require 'pullreview/coverage_reporter'
+  require 'pullreview/coverage'
+
   CodeClimate::TestReporter.start
   SimpleCov.start 'rails'
+  PullReview::CoverageReporter.start
   puts "SimpleCov required and started."
-end
 
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 ENV['RAILS_ENV'] ||= 'test'
