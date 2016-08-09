@@ -1,6 +1,4 @@
 <%= define_grid(@trainings_grid) do |g|
-    g.column( name: 'ID', attribute: 'id', filter: false ) if admin_signed_in?
-
     g.column(
         name: I18n.t( :title, { scope: [:activerecord, :attributes, :training] } ),
         attribute: 'title',

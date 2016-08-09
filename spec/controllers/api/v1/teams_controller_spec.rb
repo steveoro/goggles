@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 
 describe Api::V1::TeamsController, :type => :controller do
@@ -99,7 +99,7 @@ describe Api::V1::TeamsController, :type => :controller do
 
     context "with valid parameters and credentials" do
       before :each do
-        login_admin()
+        login_user()
         get :current_swimmers, format: :json, id: 1
       end
       it "handles successfully the request" do

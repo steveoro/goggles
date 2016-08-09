@@ -28,13 +28,13 @@ class Api::V1::MeetingsController < ApplicationController
     # (This uses Squeel DSL syntax for where clauses)
     if params[:code_like]
       filter = "%#{params[:code_like]}%"
-      @meetings = Meeting.where{ code.like filter }.order(:header_date)
+      @meetings = Meeting.where( ["code LIKE ?", filter] ).order( :header_date )
     else
       @meetings = Meeting.order(:header_date)
     end
     if params[:header_year]
       filter = params[:header_year].to_i
-      @meetings = @teams.where{ header_year == filter }.order(:header_date)
+      @meetings = @teams.where( header_year: filter ).order( :header_date )
     end
     respond_with( @meetings )
   end
@@ -243,10 +243,9 @@ class Api::V1::MeetingsController < ApplicationController
                           }
                         end,
 
-               # MeetingEntries array:
+               # MeetingEntries array (no decorator for MeetingEntry):
                entries:  prog.meeting_entries
                         .map do |entry|
-                          entry = entry.decorate
                           {
                             id:                 entry.id,
                             swimmer:            entry.get_swimmer_name,

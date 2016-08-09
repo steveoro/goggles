@@ -23,9 +23,9 @@ class Api::V1::ExercisesController < ApplicationController
   #
   def index
     # (This uses Squeel DSL syntax for where clauses)
-    if params[:code_like]                           
+    if params[:code_like]
       filter = "%#{params[:code_like]}%"
-      @exercises = Exercise.where{ code.like filter }.order(:code)
+      @exercises = Exercise.where( ["code LIKE ?", filter] ).order( :code )
     elsif params[:training_step_type_id]
       filter = TrainingStepType.find_by_id( params[:training_step_type_id].to_i ).code
       @exercises = Exercise.belongs_to_training_step_code( filter )

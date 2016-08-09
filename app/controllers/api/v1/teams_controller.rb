@@ -8,7 +8,6 @@ class Api::V1::TeamsController < ApplicationController
   # Require authorization before invoking any of this controller's actions:
   before_filter :authenticate_user_from_token!, except: [:current_swimmers, :index]
   before_filter :authenticate_user!, except: [:current_swimmers, :index]   # Devise "standard" HTTP log-in strategy
-#  before_filter :authenticate_admin!, only: [:current_swimmers]
   before_filter :ensure_format
   #-- -------------------------------------------------------------------------
   #++
@@ -102,7 +101,7 @@ class Api::V1::TeamsController < ApplicationController
     # (This uses Squeel DSL syntax for where clauses)
     if params['q']
       filter = "%#{params['q']}%"
-      @teams = Team.where{ name.like filter }.order(:name).limit(20)
+      @teams = Team.where( ["name LIKE ?", filter] ).order(:name).limit(20)
     else
       @teams = Team.order(:name).limit(20)
     end

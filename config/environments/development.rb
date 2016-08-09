@@ -17,9 +17,20 @@ Goggles::Application.configure do
   # Use a different cache store in production:
   #config.cache_store = :memory_store, { size: 64.megabytes }
 
-  config.action_mailer.perform_deliveries = false
+  config.action_mailer.perform_deliveries = true
   # Use this to disable delivery errors, and bad email addresses will be ignored:
   config.action_mailer.raise_delivery_errors = false
+
+  # XXX [Steve A.] WARNING: when uncommenting below both ":letter_opener" AND
+  #     ":test" as delivery method, *** KEEP IN MIND THAT EACH NEW USER CREATED
+  #     FROM THE CONSOLE OR BY THE SERVER WILL GENERATE AN OUTGOING NOTIFY EMAIL. ***
+  #
+  #     Thus, it's imperative to use either one of the two "fake" delivery methods
+  #     (by leaving them uncommented) prior of running any rake tasks that may
+  #     create lots of fake users.
+  config.action_mailer.delivery_method = :letter_opener
+  # config.action_mailer.delivery_method = :test
+  # config.action_mailer.asset_host = "http://localhost:3000"
 
   # [Steve, 20130716] mailer options used by Devise
   config.action_mailer.default_url_options = {

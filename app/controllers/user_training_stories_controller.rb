@@ -130,7 +130,7 @@ class UserTrainingStoriesController < ApplicationController
   #
   def verify_ownership
     set_user_training_story
-    if UserTrainingStoryAccessibility.new(current_user, @user_training_story, admin_signed_in?).is_owned
+    if UserTrainingStoryAccessibility.new( current_user, @user_training_story ).is_owned
       return
     else
       flash[:error] = I18n.t(:invalid_action_request)
@@ -150,7 +150,7 @@ class UserTrainingStoriesController < ApplicationController
   #
   def verify_visibility
     set_user_training_story
-    unless UserTrainingStoryAccessibility.new(current_user, @user_training_story, admin_signed_in?).is_visible
+    unless UserTrainingStoryAccessibility.new( current_user, @user_training_story ).is_visible
       flash[:error] = I18n.t(:invalid_action_request)
       redirect_to( user_training_stories_path() ) and return
     end

@@ -1,6 +1,6 @@
 = render( partial: 'tabs_and_radio_title' )
 - cache( cache_key_for_team( 'current_swimmers', @team.id, @max_updated_at ) ) do
-  
+
   .row-fluid
     .span3.goggles-div-centeralign
       %b= I18n.t(:name)
@@ -22,7 +22,6 @@
     .row-fluid
       .span3
         = swimmer.get_linked_swimmer_name
-        = " (id=#{swimmer.id})" if admin_signed_in?
       .span1.goggles-div-centeralign
         = swimmer.year_of_birth
       .span1.goggles-div-centeralign
@@ -37,11 +36,11 @@
         = count_with_small_star( swimmer.meeting_individual_results.for_team( @team ).includes( :meeting ).select('meetings.id').uniq.count, 50, :left )
       .span1.goggles-div-rightalign
         = count_with_small_star( swimmer.meeting_individual_results.for_team( @team ).count + swimmer.meeting_relay_results.for_team( @team ).count, 100, :left )
-  
+
   .row-fluid
     .span4
       %i= "#{ I18n.t('meeting_team_score.team_total_athletes') }: #{ @swimmers.size }"
   .row-fluid
     %p
-  
-  
+
+

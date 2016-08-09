@@ -1,5 +1,8 @@
 it:
   goggle_cup:
+    default_name: "Goggle-Cup"
+    default_max_points: "5000"
+    default_max_performance: "5"
     rules_title: "Regolamento"
     count: "Gare"
     winner: "Vincitore"
@@ -17,10 +20,10 @@ it:
       part4: "Per saperne di più sul metodo di calcolo del punteggio consulta il regolamento."
 
     rules:
-      part1: "Al campionato interno Master {GOGGLE_CUP_NAME} partecipano tutti gli atleti master tesserati per la società {TEAM_NAME} che abbiano disputato almeno una gara nella stagione agonistica corrente."
-      part2: "La classifica del campionato interno Master {GOGGLE_CUP_NAME} si ottiene attribuendo un punteggio in millesimi a ciascuna prova disputata da ogni singolo atleta e sommando le migliori {MAX_PERFORMANCE} prestazioni ottenute, indifferentemente dal tipo di specilaità e dal campionato in cui sono state realizzate le prove."
+      part1: "Al campionato interno Master %{gogglecup_name} partecipano tutti gli atleti master tesserati per la società %{team_name} che abbiano disputato almeno una gara nella stagione agonistica corrente."
+      part2: "La classifica del campionato interno Master %{gogglecup_name} si ottiene attribuendo un punteggio in millesimi a ciascuna prova disputata da ogni singolo atleta e sommando le migliori %{max_performance} prestazioni ottenute, indifferentemente dal tipo di specilaità e dal campionato in cui sono state realizzate le prove."
       part3: "Il calcolo del punteggio di ogni singola prova viene fatto rapportando in millesimi il tempo ottenuto dall'atleta ad una tabella dei tempi base."
       part4: "A questo punteggio, in funzione dell'età viene aggiunto un eventuale bonus (un punto percentuale ogni 5 anni a partire dal cinquantesimo anno di età)."
       part5: "La tabella dei tempi base viene calcolata prendendo, per ciascuna specialità di ciascun atleta distinta per tipo di vasca, la migliore prestazione, ottenuta nella stagione precedente. In mancanza di risultati utili nella stagione precedente, la miglior prestazione viene ricercata a ritroso nelle stagioni passate partendo dalle più recenti."
-      part6: "Il sistema è pensato per premiare il miglioramento rispetto alla stagione precedente o, dove non possibile, alle stagioni più recenti disponibili. In questo modo replicando in gara i tempi dell'anno precedente si ottengono {MAX_POINTS} punti, migliorandoli si ottengono più di {MAX_POINTS} punti e, viceversa, peggiornadoli si ottengono meno di {MAX_POINTS} punti."
-      part7: "Se un atleta disputa una specialità che non ha mai tentato in passato, ottiene d'ufficio i {MAX_POINTS} punti ed il tempo realizzato viene inserito immediatamente nella tabella dei tempi base diventando il nuovo riferimento per le future gare della stagione." 
+      part6: "Il sistema è pensato per premiare il miglioramento rispetto alla stagione precedente o, dove non possibile, alle stagioni più recenti disponibili. In questo modo replicando in gara i tempi dell'anno precedente si ottengono %{max_points} punti, migliorandoli si ottengono più di %{max_points} punti e, viceversa, peggiornadoli si ottengono meno di %{max_points} punti."
+      part7: "Se un atleta disputa una specialità che non ha mai tentato in passato, ottiene d'ufficio i %{max_points} punti ed il tempo realizzato viene inserito immediatamente nella tabella dei tempi base diventando il nuovo riferimento per le future gare della stagione."

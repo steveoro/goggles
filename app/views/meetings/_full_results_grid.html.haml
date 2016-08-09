@@ -12,7 +12,6 @@
                 %td{'colspan'=>'7'}
                   %a(href="##{meeting_event.event_type.code}")
                     %b= meeting_program.get_complete_event_name
-                  = admin_signed_in? ? " (meeting_programs.id=#{meeting_program.id}, category_types.id=#{meeting_program.get_category_type_id})" : ''
                 - if @meeting.has_start_list and !is_a_relay
                   %td.goggles-rightalign
                     = '(' + t('meeting.entry_time') + ')'
@@ -30,7 +29,6 @@
                 %td{'colspan'=>'7'}
                   %a(href="##{meeting_event.event_type.code}")
                     %b= meeting_program.get_complete_event_name
-                  = admin_signed_in? ? " (meeting_programs.id=#{meeting_program.id}, category_types.id=#{meeting_program.get_category_type_id})" : ''
               -# --- Team Relay result rows:
               - if is_a_relay
                 - meeting_program.meeting_relay_results.sort_by_timing.each do |relay_result|

@@ -127,13 +127,13 @@ module TrainingsHelper
   # Checks if the current_user owns the specified training.
   # Returns +true+ when successful.
   def check_training_ownership_for( training )
-    TrainingAccessibility.new(current_user, training, admin_signed_in?).is_owned
+    TrainingAccessibility.new( current_user, training ).is_owned
   end
 
   # Checks if the current_user can access (R/O) the specified training
   # Returns +true+ when successful.
   def check_training_visibility_for( training )
-    TrainingAccessibility.new(current_user, training, admin_signed_in?).is_visible
+    TrainingAccessibility.new( current_user, training ).is_visible
   end
   #-- -------------------------------------------------------------------------
   #++

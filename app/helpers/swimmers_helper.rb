@@ -21,7 +21,10 @@ module SwimmersHelper
       # [Steve, 20140901] If this was Rails 4, a simple image_url() would have done the job:
 #      absolute_url = request.protocol + request.host_with_port + path_to_image( default_url )
       # [Steve, 20140901] For development/testing (and production), we need a public-accessible server with the default image:
-      default_uri = "https://s3-eu-west-1.amazonaws.com/goggles-assets/img_radiography.jpg"
+      # Pre-version5:
+#      default_uri = "https://s3-eu-west-1.amazonaws.com/goggles-assets/img_radiography.jpg"
+      # Post-version5:
+      default_uri = "http://master-goggles.org/images/img_radiography.jpg"
       escaped_url = CGI.escape( default_uri )
       "http://gravatar.com/avatar/#{ gravatar_id }.png?d=#{ escaped_url }"
     else

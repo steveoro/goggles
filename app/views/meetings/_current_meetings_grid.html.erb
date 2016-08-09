@@ -8,8 +8,6 @@
         content_tag( :div, t(:no_data_found), class: 'well' )
     end
 
-    g.column( name: 'ID', attribute: 'id', filter: false ) if admin_signed_in?
-
     g.column(
         #name: I18n.t('meeting_calendar.federation'),
         attribute: 'season_id',
@@ -52,8 +50,8 @@
 
     g.column(
         name: I18n.t('meeting_calendar.pool_type'),
-        attribute: 'pool_type_id',
-        model: SwimmingPool,
+        attribute: 'id',
+        assoc: :pool_types,
         custom_filter: PoolType.only_for_meetings.to_dropdown,
         detach_with_id: :flt_pool_type
     ) do |meeting|
@@ -99,5 +97,5 @@
     	#meeting.decorate.get_linked_swimming_pool
     	meeting.decorate.get_linked_swimming_pool( :get_city_and_attributes )
     end
-    
+
 end -%>

@@ -26,11 +26,13 @@ class Api::V1::SwimmersController < ApplicationController
     # (This uses Squeel DSL syntax for where clauses)
     if params['q']
       filter = "%#{params['q']}%"
-      @swimmers = Swimmer.where{ complete_name.like filter }.order(:complete_name).limit(20)
+      @swimmers = Swimmer.where( ["complete_name LIKE ?", filter] )
+          .order( :complete_name ).limit(20)
     else
-      @swimmers = Swimmer.order(:complete_name).limit(20)
+      @swimmers = Swimmer.order( :complete_name ).limit(20)
     end
-    puts "- returning #{ @swimmers.size } result..."
+# DEBUG
+#    puts "- returning #{ @swimmers.size } result..."
     respond_with( @swimmers )
   end
   #-- -------------------------------------------------------------------------

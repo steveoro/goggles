@@ -2,7 +2,7 @@
 
 = Version module
 
-  - version:  1.00.001
+  - version:  5.00
   - author:   Steve A.
 
   Semantic Versioning implementation.
@@ -16,16 +16,16 @@ module Version
   # Framework Core internal name.
   # This is used to refer to any legacy code inherited or copied into this Application.
   # (Leave unchanged if not used.)
-  CORE    = 'core-six'
+  CORE    = 'C6'
 
   # Major version.
-  MAJOR   = '4.00'
+  MAJOR   = '5'
 
   # Minor version.
-  MINOR   = '887'
+  MINOR   = '002'
 
   # Current build version.
-  BUILD   = '20160706'
+  BUILD   = '20160801'
 
   # Full versioning for the current release.
   FULL    = "#{MAJOR}.#{MINOR}.#{BUILD} (#{CORE})"

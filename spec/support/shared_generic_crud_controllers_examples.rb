@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 
 # These examples are meant to be used for any generic CRUD controller that
@@ -34,7 +34,7 @@ shared_examples_for "(generic CRUD controller actions)" do |table_name, decorato
   describe '[GET #index]' do
     context "unlogged user" do
       it "displays always the Login page" do
-        get_action_and_check_if_its_the_login_page_for( :index )
+        get_action_and_check_it_redirects_to_login_for( :index )
       end
     end
     # -------------------------------------------------------------------------
@@ -61,7 +61,7 @@ shared_examples_for "(generic CRUD controller actions)" do |table_name, decorato
   describe '[GET #show]' do
     context "unlogged user" do
       it "displays always the Login page" do
-        get_action_and_check_if_its_the_login_page_for( :show, 1 )
+        get_action_and_check_it_redirects_to_login_for( :show, "/users/sign_in", 1 )
       end
     end
     # -------------------------------------------------------------------------
@@ -101,7 +101,7 @@ shared_examples_for "(generic CRUD controller actions)" do |table_name, decorato
   describe '[GET #new]' do
     context "unlogged user" do
       it "displays always the Login page" do
-        get_action_and_check_if_its_the_login_page_for( :new )
+        get_action_and_check_it_redirects_to_login_for( :new )
       end
     end
     # -------------------------------------------------------------------------
@@ -128,7 +128,7 @@ shared_examples_for "(generic CRUD controller actions)" do |table_name, decorato
   describe '[GET #edit]' do
     context "unlogged user" do
       it "displays always the Login page" do
-        get_action_and_check_if_its_the_login_page_for( :edit, 1 )
+        get_action_and_check_it_redirects_to_login_for( :edit, "/users/sign_in", 1 )
       end
     end
     # -------------------------------------------------------------------------

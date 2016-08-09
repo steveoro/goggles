@@ -3,8 +3,6 @@
         content_tag( :div, t(:no_data_found), class: 'well' )
     end
 
-    g.column( name: 'ID', attribute: 'id', filter: false ) if admin_signed_in?
-
     g.column(
         name: I18n.t(:name),
         attribute: 'name',
@@ -21,7 +19,7 @@
 
     g.column(
         name: I18n.t(:city, { scope: [:activerecord, :models] }),
-        model: City,
+        assoc: :city,
         attribute: 'id',
         custom_filter: City.to_dropdown,
         detach_with_id: :flt_pool_city_id,
@@ -31,7 +29,7 @@
 
     g.column(
         name: I18n.t(:pool_type, { scope: [:activerecord, :models] }),
-        model: PoolType,
+        assoc: :pool_type,
         attribute: 'id',
         custom_filter: PoolType.to_dropdown
     ) do |pool|

@@ -5,18 +5,11 @@
         %h3#headerShw{'data-toggle' => 'tooltip', 'title' => I18n.t(:detail_show_tooltip)}= @meeting.get_verbose_name
     .accordion-body.collapse#collapseShw
       .accordion-inner
-        - if admin_signed_in?
-          .row-fluid
-            .span2
-              = 'ID:'
-            .span10
-              = @meeting.id if @meeting
         .row-fluid
           .span2
             = I18n.t(:season, { scope: [:activerecord, :models] }) +':'
           .span10
             = @meeting.season.decorate.get_linked_full_name
-            = admin_signed_in? ? " (season.id=#{@meeting.season_id})" : ''
         .row-fluid
           .span2
             = I18n.t(:any_date) +':'
@@ -34,7 +27,6 @@
           .span10
             - @meeting.swimming_pools.uniq.each do |pool|
               = link_to( pool.get_verbose_name, swimming_pool_path(pool) )
-              = admin_signed_in? ? " (swimming_pools.id=#{pool.id})" : ''
         .row-fluid
           .span2
             = I18n.t(:has_warm_up_pool, { scope: [:activerecord, :attributes, :meeting] }) +':'
@@ -45,17 +37,6 @@
             = I18n.t(:is_under_25_admitted, { scope: [:activerecord, :attributes, :meeting] }) +':'
           .span10
             = show_tag( @meeting.is_under_25_admitted )
-        - if admin_signed_in?
-          .row-fluid
-            .span2
-              = I18n.t(:has_invitation, { scope: [:activerecord, :attributes, :meeting] }) +':'
-            .span10
-              = show_tag( @meeting.has_invitation )
-          .row-fluid
-            .span2
-              = I18n.t(:has_start_list, { scope: [:activerecord, :attributes, :meeting] }) +':'
-            .span10
-              = show_tag( @meeting.has_start_list )
         .row-fluid
           .span2
             = I18n.t(:max_individual_events, { scope: [:activerecord, :attributes, :meeting] }) +':'

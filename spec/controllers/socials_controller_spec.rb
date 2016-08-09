@@ -1,16 +1,12 @@
-require 'spec_helper'
+require 'rails_helper'
 
 
 describe SocialsController, :type => :controller do
-  before :each do
-    @swimming_buddy = create( :user )
-    @unlogged_user = create( :user )
-  end
 
   describe '[GET #show_all]' do
     context "as an unlogged user" do
       it "displays always the Login page" do
-        get_action_and_check_if_its_the_login_page_for( :show_all )
+        get_action_and_check_it_redirects_to_login_for( :show_all )
       end
     end
 
@@ -49,6 +45,8 @@ describe SocialsController, :type => :controller do
     before :each do
       # We need to set this to make the redirect_to(:back) pass the tests:
       request.env["HTTP_REFERER"] = url_for( host: 'test.host', controller: 'home', action: 'about', only_path: false )
+      @swimming_buddy = create( :user )
+      @unlogged_user = create( :user )
     end
 
     context "as an unlogged user" do
@@ -79,6 +77,8 @@ describe SocialsController, :type => :controller do
 
   describe '[POST #association_confirm]' do
     before :each do
+      @swimming_buddy = create( :user )
+      @unlogged_user = create( :user )
       @swimmer = create(:swimmer)
       @swimming_buddy.set_associated_swimmer(@swimmer)
       # We need to set this to make the redirect_to(:back) pass the tests:
@@ -153,6 +153,8 @@ describe SocialsController, :type => :controller do
 
   describe '[POST #association_unconfirm]' do
     before :each do
+      @swimming_buddy = create( :user )
+      @unlogged_user = create( :user )
       @swimmer = create(:swimmer)
       @swimming_buddy.set_associated_swimmer(@swimmer)
       # We need to set this to make the redirect_to(:back) pass the tests:
@@ -225,9 +227,14 @@ describe SocialsController, :type => :controller do
 
 
   describe '[GET #invite]' do
+    before :each do
+      @swimming_buddy = create( :user )
+      @unlogged_user = create( :user )
+    end
+
     context "as an unlogged user" do
       it "displays always the Login page" do
-        get_action_and_check_if_its_the_login_page_for( :invite, @swimming_buddy.id )
+        get_action_and_check_it_redirects_to_login_for( :invite, "/users/sign_in", @swimming_buddy.id )
       end
     end
 
@@ -271,6 +278,11 @@ describe SocialsController, :type => :controller do
 
 
   describe '[POST #invite]' do
+    before :each do
+      @swimming_buddy = create( :user )
+      @unlogged_user = create( :user )
+    end
+
     context "as an unlogged user" do
       it "doesn't create a new row" do
         expect {
@@ -308,9 +320,14 @@ describe SocialsController, :type => :controller do
 
 
   describe '[GET #approve]' do
+    before :each do
+      @swimming_buddy = create( :user )
+      @unlogged_user = create( :user )
+    end
+
     context "as an unlogged user" do
       it "displays always the Login page" do
-        get_action_and_check_if_its_the_login_page_for( :approve, @swimming_buddy.id )
+        get_action_and_check_it_redirects_to_login_for( :approve, "/users/sign_in", @swimming_buddy.id )
       end
     end
 
@@ -363,6 +380,11 @@ describe SocialsController, :type => :controller do
 
 
   describe '[POST #approve]' do
+    before :each do
+      @swimming_buddy = create( :user )
+      @unlogged_user = create( :user )
+    end
+
     context "as an unlogged user" do
       it "doesn't update existing rows" do
         @unlogged_user = create( :user )
@@ -401,9 +423,14 @@ describe SocialsController, :type => :controller do
 
 
   describe '[GET #block]' do
+    before :each do
+      @swimming_buddy = create( :user )
+      @unlogged_user = create( :user )
+    end
+
     context "as an unlogged user" do
       it "displays always the Login page" do
-        get_action_and_check_if_its_the_login_page_for( :block, @swimming_buddy.id )
+        get_action_and_check_it_redirects_to_login_for( :block, "/users/sign_in", @swimming_buddy.id )
       end
     end
 
@@ -458,6 +485,11 @@ describe SocialsController, :type => :controller do
 
 
   describe '[POST #block]' do
+    before :each do
+      @swimming_buddy = create( :user )
+      @unlogged_user = create( :user )
+    end
+
     context "as an unlogged user" do
       it "doesn't update existing rows" do
         @swimming_buddy.invite( @unlogged_user )
@@ -499,9 +531,14 @@ describe SocialsController, :type => :controller do
 
 
   describe '[GET #unblock]' do
+    before :each do
+      @swimming_buddy = create( :user )
+      @unlogged_user = create( :user )
+    end
+
     context "as an unlogged user" do
       it "displays always the Login page" do
-        get_action_and_check_if_its_the_login_page_for( :unblock, @swimming_buddy.id )
+        get_action_and_check_it_redirects_to_login_for( :unblock, "/users/sign_in", @swimming_buddy.id )
       end
     end
 
@@ -557,6 +594,11 @@ describe SocialsController, :type => :controller do
 
 
   describe '[POST #unblock]' do
+    before :each do
+      @swimming_buddy = create( :user )
+      @unlogged_user = create( :user )
+    end
+
     context "as an unlogged user" do
       it "doesn't update existing rows" do
         @unlogged_user = create( :user )
@@ -600,9 +642,14 @@ describe SocialsController, :type => :controller do
 
 
   describe '[GET #remove]' do
+    before :each do
+      @swimming_buddy = create( :user )
+      @unlogged_user = create( :user )
+    end
+
     context "as an unlogged user" do
       it "displays always the Login page" do
-        get_action_and_check_if_its_the_login_page_for( :remove, @swimming_buddy.id )
+        get_action_and_check_it_redirects_to_login_for( :remove, "/users/sign_in", @swimming_buddy.id )
       end
     end
 
@@ -644,6 +691,11 @@ describe SocialsController, :type => :controller do
 
 
   describe '[POST #remove]' do
+    before :each do
+      @swimming_buddy = create( :user )
+      @unlogged_user = create( :user )
+    end
+
     context "as an unlogged user" do
       it "doesn't update existing rows" do
         @unlogged_user = create( :user )
@@ -694,9 +746,14 @@ describe SocialsController, :type => :controller do
 
 
   describe '[GET #edit]' do
+    before :each do
+      @swimming_buddy = create( :user )
+      @unlogged_user = create( :user )
+    end
+
     context "as an unlogged user" do
       it "displays always the Login page" do
-        get_action_and_check_if_its_the_login_page_for( :edit, @swimming_buddy.id )
+        get_action_and_check_it_redirects_to_login_for( :edit, "/users/sign_in", @swimming_buddy.id )
       end
     end
 
@@ -795,6 +852,10 @@ describe SocialsController, :type => :controller do
 
 
   describe '[POST #edit]' do
+    before :each do
+      @swimming_buddy = create( :user )
+      @unlogged_user = create( :user )
+    end
 
     context "as an unlogged user" do
       it "doesn't update existing rows" do

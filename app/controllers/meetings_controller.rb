@@ -23,7 +23,7 @@ class MeetingsController < ApplicationController
       :edit_passages, :update_passages
   ]
 
-  before_filter :verify_team,             only: [:show_team_results, :show_team_entries, :show_swimmer_results]
+  before_filter :verify_team,             only: [:show_team_results, :show_team_entries]
   before_filter :verify_swimmer,          only: [:show_swimmer_results]
   before_filter :verify_is_team_manager,  only: [:edit_passages]
   #-- -------------------------------------------------------------------------
@@ -51,7 +51,7 @@ class MeetingsController < ApplicationController
     #end
 
     @start_date = "#{Date.today.prev_day(19)}"
-    @end_date   = "#{Date.today.next_month(10)}" 
+    @end_date   = "#{Date.today.next_month(10)}"
 
     # Initialize the grid:
     @meetings_grid = initialize_grid(
@@ -385,8 +385,8 @@ class MeetingsController < ApplicationController
     end
 
     # Get a timestamp for the cache key:
-    max_mir_updated_at = mir.count > 0 ? mir.select( :updated_at ).max.updated_at.to_i : 0
-    max_mrr_updated_at = mrr.count > 0 ? mrr.select( :updated_at ).max.updated_at.to_i : 0
+    max_mir_updated_at = mir.count > 0 ? mir.select( "meeting_individual_results.updated_at" ).max.updated_at.to_i : 0
+    max_mrr_updated_at = mrr.count > 0 ? mrr.select( "meeting_relay_results.updated_at" ).max.updated_at.to_i : 0
     @max_mir_updated_at = max_mir_updated_at >= max_mrr_updated_at ? max_mir_updated_at : max_mrr_updated_at
   end
   #-- -------------------------------------------------------------------------
@@ -413,7 +413,7 @@ class MeetingsController < ApplicationController
     end
 
     # Get a timestamp for the cache key:
-    @max_mir_updated_at = @individual_result_list.select( :updated_at ).max.updated_at.to_i
+    @max_mir_updated_at = @individual_result_list.select( "meeting_individual_results.updated_at" ).max.updated_at.to_i
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -515,7 +515,7 @@ class MeetingsController < ApplicationController
         .where( ['meeting_individual_results.team_id = ? and event_types.length_in_meters > pool_types.length_in_meters', @managed_team_ids] )
         .includes( :passages )
         .map{ |mir| { mir => mir.passages } }
-        
+
     # TODO
     # Should order by start-list.
     # If no start-list present should use timing
@@ -643,7 +643,7 @@ class MeetingsController < ApplicationController
   #
   def get_timestamp_from_relation_chain( relation_to_send = :meeting_individual_results )
     if @meeting.send( relation_to_send ).count > 0
-      timestamp = @meeting.send( relation_to_send ).select( :updated_at ).max.updated_at.to_i
+      timestamp = @meeting.send( relation_to_send ).select(  "#{ relation_to_send }.updated_at"  ).max.updated_at.to_i
       timestamp > @meeting.updated_at.to_i ? timestamp : @meeting.updated_at.to_i
     else
       @meeting.updated_at.to_i

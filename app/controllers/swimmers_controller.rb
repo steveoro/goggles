@@ -140,7 +140,7 @@ class SwimmersController < ApplicationController
     @tot_season_records_for_this_swimmer = 0
     @seasonal_record_collection = []
 
-    # TODO Until we'll have finished FIN import this scan will be used 
+    # TODO Until we'll have finished FIN import this scan will be used
     # for CSI only.
     # FIXME this has not been tested yet:
     #all_championships_records = MeetingIndividualResult.includes(
@@ -339,25 +339,37 @@ class SwimmersController < ApplicationController
       results_by_time = @swimmer.meeting_individual_results
         .for_event_by_pool_type( events_by_pool_type )
         .sort_by_timing( 'ASC' )
-        .select([:id, :minutes, :seconds, :hundreds, :rank, :standard_points, :reaction_time, :meeting_program_id, :is_personal_best])
+        .select([
+            'meeting_individual_results.id', 'minutes', 'seconds', 'hundreds', 'rank',
+            'standard_points', 'reaction_time', 'meeting_program_id',
+            'is_personal_best'
+        ])
       # This is used only for the graphs:
       results_by_date = @swimmer.meeting_individual_results
         .is_valid
         .sort_by_date( 'ASC' )
         .for_event_by_pool_type( events_by_pool_type )
-        .select([:id, :minutes, :seconds, :hundreds, :rank, :standard_points, :reaction_time, :meeting_program_id, :is_personal_best])
+        .select([
+            'meeting_individual_results.id', 'minutes', 'seconds', 'hundreds', 'rank',
+            'standard_points', 'reaction_time', 'meeting_program_id',
+            'is_personal_best'
+        ])
 
       # If has results collect passages and prepares hash for index table
       if results_by_time.count > 0
         # Collect all passages
-        passages = Passage.joins(:event_type, :pool_type, :passage_type)
-          .where(swimmer: @swimmer)
-          .where(['event_types.id = ? AND pool_types.id = ?', events_by_pool_type.event_type_id, events_by_pool_type.pool_type_id])
-          .select([:meeting_individual_result_id, :passage_type_id, :minutes, :seconds, :hundreds])
-          .select('passage_types.length_in_meters')
+        passages = Passage.joins( :event_type, :pool_type, :passage_type )
+          .where( swimmer_id: @swimmer.id )
+          .where( ['event_types.id = ? AND pool_types.id = ?', events_by_pool_type.event_type_id, events_by_pool_type.pool_type_id] )
+          .select([
+            'meeting_individual_result_id', 'passage_type_id',
+            'minutes', 'seconds', 'hundreds'
+          ])
+          .select( 'passage_types.length_in_meters' )
 
         # Collects the passage list
-        passages_list = passages.select('passage_types.length_in_meters').map{ |pt| pt.length_in_meters }.uniq.sort
+        passages_list = passages.select( 'passage_types.length_in_meters' )
+          .map{ |pt| pt.length_in_meters }.uniq.sort
 
         # Adds the event type in the hash index table
         stroke_type_code = events_by_pool_type.stroke_type_code
@@ -430,7 +442,7 @@ class SwimmersController < ApplicationController
       flash[:error] = I18n.t(:invalid_action_request)
       redirect_to(:back) and return
     end
-    
+
     # --- "Supermaster" tab: ---
     @tab_title        = I18n.t('supermaster.supermaster')
     @season_type      = SeasonType.find_by_code('MASFIN')
@@ -440,9 +452,9 @@ class SwimmersController < ApplicationController
     @team             = @badge.team
     @team_affiliation = @team.get_current_affiliation( @season_type )
     @meetings         = @badge.meetings.sort_by_date.uniq
-    
+
     @sssc = SwimmerSeasonalScoreCalculator.new( @swimmer, @season )
-    
+
     @meeting_individual_results = @sssc.get_results
   end
 
@@ -600,15 +612,15 @@ class SwimmersController < ApplicationController
   end
   #-- -------------------------------------------------------------------------
   #++
-  
+
   def set_goggle_cups
     @goggle_cups = []
-    
+
     # Find out swimmer's current(s) goggle cup, if any
-    # 
+    #
     @swimmer.goggle_cups.is_current.each do |goggle_cup|
       @goggle_cups << goggle_cup if !@goggle_cups.include?(goggle_cup)
     end
-    @goggle_cups_tab_title = @goggle_cups.size == 1 ? @goggle_cups.first.description : I18n.t('radiography.goggle_cup_current')  
+    @goggle_cups_tab_title = @goggle_cups.size == 1 ? @goggle_cups.first.description : I18n.t('radiography.goggle_cup_current')
   end
 end

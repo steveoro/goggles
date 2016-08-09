@@ -8,11 +8,9 @@
         content_tag( :div, t('meeting.no_records_matching_search_text'), class: 'well' )
     end
 
-    g.column( name: 'ID', attribute: 'id', filter: false ) if admin_signed_in?
-
     g.column(
         name: I18n.t('meeting_calendar.federation'),
-        model: Season,
+        assoc: :season,
         attribute: 'season_type_id',
         custom_filter: SeasonType.is_master.to_dropdown,
     ) do |meeting|
@@ -39,9 +37,9 @@
 
     g.column(
         name: I18n.t('meeting_calendar.pool_type'),
-        attribute: 'pool_type_id',
-        model: SwimmingPool,
-        custom_filter: PoolType.only_for_meetings.to_dropdown,
+        attribute: 'id',
+        assoc: :pool_types,
+        custom_filter: PoolType.only_for_meetings.to_dropdown
     ) do |meeting|
     	[ meeting.swimming_pools.first.pool_type.code,
     		{ class: 'goggles-centeralign' } ] if meeting.swimming_pools.count > 0

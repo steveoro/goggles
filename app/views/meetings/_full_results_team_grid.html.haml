@@ -9,14 +9,13 @@
           %tr{'class'=>"#{is_a_relay ? 'success' : 'info'}", 'id'=>"#{meeting_event.event_type.code}"}
             %td{'colspan'=>'4'}
               %b= meeting_event.event_type.i18n_description
-              = admin_signed_in? ? " (meeting_events.id=#{meeting_event.id}" : ''
             %td.goggles-centeralign
               %i= I18n.t('meeting.standard')
             %td.goggles-centeralign
               %i= I18n.t('meeting.meeting')
             - if has_goggle_cup
               %td.goggles-rightalign
-                - unless is_a_relay 
+                - unless is_a_relay
                   = @team.get_current_goggle_cup_name_at( @meeting.header_date )
             - if @meeting.has_start_list and !is_a_relay
               %td.goggles-rightalign
@@ -82,7 +81,7 @@
                         %td
                       - if @meeting.has_start_list
                         %td
-                        
-                  
+
+
 .row-fluid
   .span12

@@ -13,7 +13,6 @@
               %tr{'class'=>'info'}
                 %td{'colspan'=>'5'}
                   %b= meeting_program.get_verbose_event_name
-                  = admin_signed_in? ? " (meeting_programs.id=#{meeting_program.id}, category_types.id=#{meeting_program.get_category_type_id})" : ''
               - meeting_program.meeting_entries.sort_by_number.each do |entry|
                 - is_highlighted = (@team && @team.id.to_i == entry.team_id) || (@swimmer && @swimmer.id.to_i == entry.swimmer_id)
                 = render( partial: 'show_entry', locals: { entry: entry, is_highlighted: is_highlighted } )

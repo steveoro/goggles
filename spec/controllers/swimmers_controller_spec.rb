@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 require 'wice_grid'
 
 
@@ -70,10 +70,10 @@ describe SwimmersController, :type => :controller do
 
     context "unlogged user" do
       it "displays the Login page for an invalid id" do
-        get_action_and_check_if_its_the_login_page_for( action_sym, 0 )
+        get_action_and_check_it_redirects_to_login_for( action_sym, "/users/sign_in", 0 )
       end
       it "displays the Login page for a valid id" do
-        get_action_and_check_if_its_the_login_page_for( action_sym, @fixture.id )
+        get_action_and_check_it_redirects_to_login_for( action_sym, "/users/sign_in", @fixture.id )
       end
     end
   end
@@ -551,8 +551,8 @@ describe SwimmersController, :type => :controller do
 
     context "as a logged-in user" do
       let(:team)    { Team.find(1) }
-      let(:swimmer) { team.swimmers[ ((rand * team.swimmers.count) % team.swimmers.count).to_i ] } 
-      
+      let(:swimmer) { team.swimmers[ ((rand * team.swimmers.count) % team.swimmers.count).to_i ] }
+
       before(:each) do
         request.env["HTTP_REFERER"] = swimmers_path()
         login_user()
@@ -571,13 +571,13 @@ describe SwimmersController, :type => :controller do
   describe '[GET #closed_goggle_cup/:id]' do
     context "as a logged-in user" do
       let(:team)       { Team.find(1) }
-      let(:swimmer)    { team.swimmers[ ((rand * team.swimmers.count) % team.swimmers.count).to_i ] } 
-      let(:goggle_cup) { swimmer.goggle_cups.for_team( team )[ ((rand * swimmer.goggle_cups.for_team( team ).count) % swimmer.goggle_cups.for_team( team ).count).to_i ] } 
-      
+      let(:swimmer)    { team.swimmers[ ((rand * team.swimmers.count) % team.swimmers.count).to_i ] }
+      let(:goggle_cup) { swimmer.goggle_cups.for_team( team )[ ((rand * swimmer.goggle_cups.for_team( team ).count) % swimmer.goggle_cups.for_team( team ).count).to_i ] }
+
       before(:each) do
         request.env["HTTP_REFERER"] = swimmers_path()
         login_user()
-        get :closed_goggle_cup, id: swimmer.id, goggle_cup_id: goggle_cup.id 
+        get :closed_goggle_cup, id: swimmer.id, goggle_cup_id: goggle_cup.id
       end
 
       context "current_goggle_cup general structure," do
@@ -593,14 +593,18 @@ describe SwimmersController, :type => :controller do
     context "as a logged-in user" do
       let(:header_year) { Season.build_header_year_from_date }
       let(:season_type) { SeasonType.find_by_code('MASFIN') }
-      let(:season)      { Season.exists?( season_type: season_type, header_year: header_year) ? Season.where( season_type: season_type, header_year: header_year).first : Season.find(152) } 
+      let(:season) do
+        Season.exists?( season_type_id: season_type.id, header_year: header_year) ?
+          Season.where( season_type_id: season_type.id, header_year: header_year).first :
+          Season.find(152)
+      end
       let(:team)        { Team.find(1) }
-      let(:swimmer)     { team.badges.for_season( season )[ ((rand * team.badges.for_season( season ).count) % team.badges.for_season( season ).count).to_i ].swimmer } 
-      
+      let(:swimmer)     { team.badges.for_season( season )[ ((rand * team.badges.for_season( season ).count) % team.badges.for_season( season ).count).to_i ].swimmer }
+
       before(:each) do
         request.env["HTTP_REFERER"] = swimmers_path()
         login_user()
-        get :supermaster, id: swimmer.id, season_id: season.id 
+        get :supermaster, id: swimmer.id, season_id: season.id
       end
 
       context "supermaster general structure," do

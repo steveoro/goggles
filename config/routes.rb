@@ -2,90 +2,13 @@ Goggles::Application.routes.draw do
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
+  mount GogglesCore::Engine => "/"
 # FIXME
-  devise_for :controllers => { :sessions => "Sessions" } # [Steve, 20140401] Custom controller for additional customization (OmniAuth, ...)
-  devise_for :admins
   devise_for :users
-
-  namespace :api, defaults: { format: "json" } do
-    namespace :v1 do
-      devise_scope :user do
-        get "sessions/create"
-        get "sessions/destroy"
-      end
-
-      # === Exercises ===
-      get    "exercises/index",               to: "exercises#index",        as: "exercises"
-      get    "exercises/show/:id",            to: "exercises#show",         as: "exercise_show"
-      # TODO Use decorators to return custom-tailored exercise rows for API usage in json_list (becomes => #decorated_index & #decorated_show or use a param for existing actions)
-      # TODO => use new decorated action responders with AJAX query for UserTraining exercise look-up
-
-      # === Search ===
-      get    "search/simple",                 to: "search#simple",          as: "search_simple"
-
-      # === Meetings ===
-      get    "meetings/index",                to: "meetings#index",         as: "meetings"
-      get    "meetings/show/:id",             to: "meetings#show",          as: "meeting_show"
-      # TODO meeting details w/ subentities in dedicated controllers? => No: use decorators to return custom-tailored meeting rows for API usage
-
-      # === News Feeds ===
-      get    "news_feed/for_user/:id",        to: "news_feeds#for_user",    as: "news_feed_for_user"
-      put    "news_feed/read/:id",            to: "news_feeds#read",        as: "news_feed_read"
-      delete "news_feed/destroy/:id",         to: "news_feeds#destroy",     as: "news_feed_destroy"
-
-      # === Records ===
-      get    "records/for_federation/:id",    to: "records#for_federation", as: "records_for_federation"
-      get    "records/for_season_type/:id",   to: "records#for_season_type",as: "records_for_season_type"
-      get    "records/for_team/:id",          to: "records#for_team",       as: "records_for_team"
-      get    "records/for_swimmer/:id",       to: "records#for_swimmer",    as: "records_for_swimmer"
-      get    "records/count_records_for_swimmer/:id", to: "records#count_records_for_swimmer", as: "records_count_records_for_swimmer"
-      get    "records/for_personal_best/:id", to: "records#for_personal_best", as: "records_for_personal_best"
-
-      # === Swimmers ===
-      get    "swimmers/index",                to: "swimmers#index",         as: "swimmers"
-      get    "swimmers/show/:id",             to: "swimmers#show",          as: "swimmer_show"
-
-      # === Teams ===
-      get    "team/count_meetings/:id",       to: "teams#count_meetings",   as: "team_count_meetings"
-      get    "team/count_results/:id",        to: "teams#count_results",    as: "team_count_results"
-      get    "team/count_details/:id",        to: "teams#count_details",    as: "team_count_details"
-      get    "team/current_swimmers/:id",     to: "teams#current_swimmers", as: "team_current_swimmers"
-      get    "teams/index",                   to: "teams#index",            as: "teams"
-      get    "teams/show/:id",                to: "teams#show",             as: "team_show"
-
-      # === Trainings ===
-      get    "trainings/index",               to: "trainings#index",        as: "trainings"
-      get    "trainings/show/:id",            to: "trainings#show",         as: "trainings_show"
-
-      # TODO extract and enlist only the actual routes used:
-      resources :user_trainings, except: [:new]
-      resources :user_training_stories, except: [:new]
-      resources :passages, except: [:new, :create]
-      match "passages/create", to: "passages#create", via: :post
-
-#      resource :passages do
-#        member do
-#          get     'show'
-#          post    'create', to: "passages#create", as: "create"
-#          get     'edit'
-#          put     'update'
-#          delete  'destroy'
-#        end
-#        collection do
-#          get 'index'
-#        end
-#      end
-    end
-  end
-
-  mount RailsAdmin::Engine => '/goggles_dashboard', as: 'rails_admin' # Feel free to change '/admin' to any namespace you need.
-  mount DjMon::Engine => 'goggles_dj_mon'
-
-  netzke                                            # [Steve] Netzke routes are used just by the Goggles-admin sub-app
+#  devise_for :controllers => { :sessions => "Sessions" } # [Steve, 20140401] Custom controller for additional customization (OmniAuth, ...)
 
   # [Steve, 20130716] Root's route required by Devise:
   root :to => "home#index", locale: /en|it/
-
 
   scope "/" do
     scope "(:locale)", locale: /en|it/ do
@@ -242,77 +165,72 @@ Goggles::Application.routes.draw do
   end
 
 
-  # === Admin Interface V2 (deprecated) / Data Import V2 & V3: ===
-  namespace :admin do
+  namespace :api, defaults: { format: "json" } do
     namespace :v2 do
-      scope "(:locale)", locale: /en|it/ do
-        match "/",                                controller: 'maintenance', action: 'index',             as: :maintenance
-        match "index",                            controller: 'maintenance', action: 'index',             as: :maintenance
-
-        match "db_structure",                     controller: 'maintenance', action: 'db_structure'
-        match "db_reset",                         controller: 'maintenance', action: 'db_reset',          via: :post
-        match "run_db_migrations",                controller: 'maintenance', action: 'run_db_migrations', via: :post
-        match "run_sql_exec",                     controller: 'maintenance', action: 'run_sql_exec',      via: :post
-
-        match "select_meeting",                   controller: 'maintenance', action: 'select_meeting'
-        match "delete_meeting",                   controller: 'maintenance', action: 'delete_meeting',    via: :post
-        match "select_teams",                     controller: 'maintenance', action: 'select_teams'
-
-        match "run_rake",                         controller: 'maintenance', action: 'run_rake',          via: [:get, :post]
-        match "run_bundle",                       controller: 'maintenance', action: 'run_bundle',        via: [:get, :post]
-        match "run_sudo_command",                 controller: 'maintenance', action: 'run_sudo_command',  via: [:get, :post]
-        match "restart_apache",                   controller: 'maintenance', action: 'restart_apache',    via: [:get, :post]
-
-        match "run_src_upgrade",                  controller: 'maintenance', action: 'run_src_upgrade',   via: [:get, :post]
-
-        match "upload_db_dump",                   controller: 'maintenance', action: 'upload_db_dump',    via: [:get, :post]
-        match "upload_db_seed",                   controller: 'maintenance', action: 'upload_db_seed',    via: [:get, :post]
-
-        match "download_db_dump",                 controller: 'maintenance', action: 'download_db_dump'
-        match "download_team_dump",               controller: 'maintenance', action: 'download_team_dump'
-        match "download_swimmer_dump",            controller: 'maintenance', action: 'download_swimmer_dump'
-        match "download_user_dump",               controller: 'maintenance', action: 'download_user_dump'
-        match "cleanup_output_dir",               controller: 'maintenance', action: 'cleanup_output_dir'
-
-        match "step1_status",                     controller: 'data_import', action: 'step1_status',                    as: :di_step1_status
-        match "step1_1_team_analysis",            controller: 'data_import', action: 'step1_1_team_analysis',           as: :di_step1_1_team_analysis
-        match "step1_1_team_analysis_commit",     controller: 'data_import', action: 'step1_1_team_analysis_commit',    as: :di_step1_1_team_analysis_commit, method: :post
-        match "step1_1_swimmer_analysis",         controller: 'data_import', action: 'step1_1_swimmer_analysis',        as: :di_step1_1_swimmer_analysis
-        match "step1_1_swimmer_analysis_commit",  controller: 'data_import', action: 'step1_1_swimmer_analysis_commit', as: :di_step1_1_swimmer_analysis_commit, method: :post
-        match "step2_checkout",                   controller: 'data_import', action: 'step2_checkout',                  as: :di_step2_checkout
-        match "step3_commit",                     controller: 'data_import', action: 'step3_commit',                    as: :di_step3_commit
-        match "kill_import_session",              controller: 'data_import', action: 'kill_import_session',             as: :di_kill_import_session, method: :post
+      devise_scope :user do
+        post "sessions/create"
+        post "sessions/destroy"
       end
     end
 
-    namespace :v3 do
-      scope "(:locale)", locale: /en|it/ do
-        match   "/",                                          controller: 'maintenance', action: 'index',               as: :maintenance
-        get     "maintenance/index",                          to: "maintenance#index",                                  as: :maintenance
-
-        # Data-import status display:
-        get     "data_import/index",                          to: "data_import#index"
-        # Phase 1.00, with meta-data serialization:
-        post    "data_import/parse_file",                     to: "data_import#parse_file"
-
-        # Phase 1.10, Team analysis:
-#        get     "data_import/team_analysis",                  to: "data_import#team_analysis"
-        get     "data_import/team_analysis/:session_id",      to: "data_import#team_analysis/:session_id",              as: "data_import_team_analysis"
-        post    "data_import/team_confirm/:session_id",       to: "data_import#team_confirm/:session_id",               as: "data_import_team_confirm"
-
-        # Phase 1.20, Swimmer analysis:
-        get     "data_import/swimmer_analysis/:session_id",   to: "data_import#swimmer_analysis/:session_id",           as: "data_import_swimmer_analysis"
-        post    "data_import/swimmer_confirm/:session_id",    to: "data_import#swimmer_confirm/:session_id",            as: "data_import_swimmer_confirm"
-
-        # Phase 2.00, serialized data edit & review:
-        get     "data_import/edit/:session_id",               to: "data_import#edit/:session_id",                       as: "data_import_edit"
-        post    "data_import/commit/:session_id",             to: "data_import#commit/:session_id",                     as: "data_import_commit"
-
-        # Phase 3.00, post-commit clean-up:
-        delete  "data_import/destroy/:session_id",            to: "data_import#destroy/:session_id",                    as: "data_import_destroy"
+    namespace :v1 do
+      devise_scope :user do
+        get "sessions/create"
+        get "sessions/destroy"
       end
+
+      # === Exercises ===
+      get    "exercises/index",               to: "exercises#index",        as: "exercises"
+      get    "exercises/show/:id",            to: "exercises#show",         as: "exercise_show"
+      # TODO Use decorators to return custom-tailored exercise rows for API usage in json_list (becomes => #decorated_index & #decorated_show or use a param for existing actions)
+      # TODO => use new decorated action responders with AJAX query for UserTraining exercise look-up
+
+      # === Search ===
+      get    "search/simple",                 to: "search#simple",          as: "search_simple"
+
+      # === Meetings ===
+      get    "meetings/index",                to: "meetings#index",         as: "meetings"
+      get    "meetings/show/:id",             to: "meetings#show",          as: "meeting_show"
+      # TODO meeting details w/ subentities in dedicated controllers? => No: use decorators to return custom-tailored meeting rows for API usage
+
+      # === News Feeds ===
+      get    "news_feed/for_user/:id",        to: "news_feeds#for_user",    as: "news_feed_for_user"
+      put    "news_feed/read/:id",            to: "news_feeds#read",        as: "news_feed_read"
+      delete "news_feed/destroy/:id",         to: "news_feeds#destroy",     as: "news_feed_destroy"
+
+      # === Records ===
+      get    "records/for_federation/:id",    to: "records#for_federation", as: "records_for_federation"
+      get    "records/for_season_type/:id",   to: "records#for_season_type",as: "records_for_season_type"
+      get    "records/for_team/:id",          to: "records#for_team",       as: "records_for_team"
+      get    "records/for_swimmer/:id",       to: "records#for_swimmer",    as: "records_for_swimmer"
+      get    "records/count_records_for_swimmer/:id", to: "records#count_records_for_swimmer", as: "records_count_records_for_swimmer"
+      get    "records/for_personal_best/:id", to: "records#for_personal_best", as: "records_for_personal_best"
+
+      # === Swimmers ===
+      get    "swimmers/index",                to: "swimmers#index",         as: "swimmers"
+      get    "swimmers/show/:id",             to: "swimmers#show",          as: "swimmer_show"
+
+      # === Teams ===
+      get    "team/count_meetings/:id",       to: "teams#count_meetings",   as: "team_count_meetings"
+      get    "team/count_results/:id",        to: "teams#count_results",    as: "team_count_results"
+      get    "team/count_details/:id",        to: "teams#count_details",    as: "team_count_details"
+      get    "team/current_swimmers/:id",     to: "teams#current_swimmers", as: "team_current_swimmers"
+      get    "teams/index",                   to: "teams#index",            as: "teams"
+      get    "teams/show/:id",                to: "teams#show",             as: "team_show"
+
+      # === Trainings ===
+      get    "trainings/index",               to: "trainings#index",        as: "trainings"
+      get    "trainings/show/:id",            to: "trainings#show",         as: "trainings_show"
+
+# FIXME NOT REALLY USED:
+      # TODO extract and enlist only the actual routes used:
+      resources :user_trainings, except: [:new]
+      resources :user_training_stories, except: [:new]
+#      resource :passages, except: [:new, :create]
+#      match "passages/create", to: "passages#create", via: :post
     end
   end
+
 
   # Wildcard route to match all the remaining possibilities:
   match "*path", to: "exceptions#render_error"
@@ -328,51 +246,10 @@ Goggles::Application.routes.draw do
   # Sample resource route (maps HTTP verbs to controller actions automatically):
   #   resources :products
 
-  # Sample resource route with options:
-  #   resources :products do
-  #     member do
-  #       get 'short'
-  #       post 'toggle'
-  #     end
-  #
-  #     collection do
-  #       get 'sold'
-  #     end
-  #   end
-
-  # Sample resource route with sub-resources:
-  #   resources :products do
-  #     resources :comments, :sales
-  #     resource :seller
-  #   end
-
-  # Sample resource route with more complex sub-resources
-  #   resources :products do
-  #     resources :comments
-  #     resources :sales do
-  #       get 'recent', :on => :collection
-  #     end
-  #   end
-
-  # Sample resource route within a namespace:
-  #   namespace :admin do
-  #     # Directs /admin/products/* to Admin::ProductsController
-  #     # (app/controllers/admin/products_controller.rb)
-  #     resources :products
-  #   end
-
-  # You can have the root of your site routed with "root"
-  # just remember to delete public/index.html.
-  # root :to => 'welcome#index'
-
-  # See how all your routes lay out with "rake routes"
-
   # This is a legacy wild controller route that's not recommended for RESTful applications.
   # Note: This route will make all actions in every controller accessible via GET requests.
   # match ':controller(/:action(/:id(.:format)))'
-
   # ----------------------------------------------------------------------------
-
 
   # Any other routes are handled here (since in Rails 3 ActionDispatch prevents
   # RoutingError from hitting ApplicationController::rescue_action).

@@ -243,7 +243,7 @@ class UserTrainingsController < ApplicationController
           redirect_to( edit_user_training_path(new_user_training) ) and return
         end
       rescue
-        flash[:error] = "#{I18n.t('something_went_wrong')}" + ( admin_signed_in? ? "['#{ $!.to_s }']" : '' )
+        flash[:error] = "#{I18n.t('something_went_wrong')}"
         redirect_to( user_trainings_path() ) and return
       end
     else
@@ -278,7 +278,7 @@ class UserTrainingsController < ApplicationController
           redirect_to( edit_user_training_story_path(new_user_training_story) ) and return
         end
       rescue
-        flash[:error] = "#{I18n.t('something_went_wrong')}" + ( admin_signed_in? ? "['#{ $!.to_s }']" : '' )
+        flash[:error] = "#{I18n.t('something_went_wrong')}"
         redirect_to( user_trainings_path() ) and return
       end
     else
@@ -304,7 +304,7 @@ class UserTrainingsController < ApplicationController
   #
   def verify_ownership
     set_user_training
-    if UserTrainingAccessibility.new(current_user, @user_training, admin_signed_in?).is_owned
+    if UserTrainingAccessibility.new( current_user, @user_training ).is_owned
       return
     else
       flash[:error] = I18n.t(:invalid_action_request)
@@ -324,7 +324,7 @@ class UserTrainingsController < ApplicationController
   #
   def verify_visibility
     set_user_training
-    if UserTrainingAccessibility.new(current_user, @user_training, admin_signed_in?).is_visible ||
+    if UserTrainingAccessibility.new( current_user, @user_training ).is_visible ||
        ( request.xhr? && @user_training.nil? )
       return
     else

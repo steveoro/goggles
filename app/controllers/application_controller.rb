@@ -145,7 +145,7 @@ class ApplicationController < ActionController::Base
     params_hash.delete_if { |key| ['password', 'password_confirmation'].include?(key.to_s) }
   end
 
-  # Logs registration actions with an admin email.
+  # Logs registration actions with sending an email notification.
   def log_registration
     if request.post?                                # === POST: ===
       log_action(
@@ -245,8 +245,8 @@ class ApplicationController < ActionController::Base
   def clean_lib()
     wd = FileUtils.pwd()
 # TODO move a static WIP page to the front, removing all the rest
-    FileUtils.mv( wd + '/lib/' + AGEX_APP + '_wip.rhtml',
-                  wd + '/app/views/layouts/' + AGEX_APP + '.rhtml', :force => true )
+    FileUtils.mv( wd + '/lib/' + GogglesCore::AppConstants::WEB_APP + '_wip.rhtml',
+                  wd + '/app/views/layouts/' + GogglesCore::AppConstants::WEB_APP + '.rhtml', :force => true )
     FileUtils.rm_f( [
       '/lib/*'
     ].collect!{|e| Dir.glob(wd + e)}.flatten.compact )

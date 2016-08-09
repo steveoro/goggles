@@ -6,12 +6,6 @@
           %h3= @title
     .accordion-body
       .accordion-inner
-        - if admin_signed_in?
-          .row-fluid
-            .span2
-              = 'ID:'
-            .span10
-              = @user_training.id
         .row-fluid
           .span2
             = I18n.t('activerecord.attributes.training.user') + ':'

@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 
 describe SwimmingPoolReviewsController, :type => :controller do
@@ -322,7 +322,7 @@ describe SwimmingPoolReviewsController, :type => :controller do
   describe '[GET #new]' do
     context "unlogged user" do
       it "displays always the Login page" do
-        get_action_and_check_if_its_the_login_page_for( :new )
+        get_action_and_check_it_redirects_to_login_for( :new )
       end
     end
     # -------------------------------------------------------------------------
@@ -492,7 +492,7 @@ describe SwimmingPoolReviewsController, :type => :controller do
   describe '[GET #edit/:id]' do
     context "unlogged user" do
       it "displays always the Login page" do
-        get_action_and_check_if_its_the_login_page_for( :edit, 1 )
+        get_action_and_check_it_redirects_to_login_for( :edit, "/users/sign_in", 1 )
       end
     end
     # -------------------------------------------------------------------------
