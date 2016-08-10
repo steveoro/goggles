@@ -14,6 +14,11 @@ Clears output dir (auto-generated PDF reports and so on) and upload dir.
 #-- ---------------------------------------------------------------------------
 #++
 
+# ODT/PDF output dir:
+ODT_OUTPUT_DIR = File.join( Rails.root, 'public', 'output' ) unless defined? ODT_OUTPUT_DIR
+# User's upload dir:
+UPLOADS_DIR = File.join( Rails.root, 'public', 'uploads' ) unless defined? UPLOADS_DIR
+
 
 namespace :clear do
 
