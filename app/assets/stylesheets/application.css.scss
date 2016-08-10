@@ -5,7 +5,6 @@
  *= require_self
  *= require_tree .
  */
-
 /* ----- Navbar & Titlebar ----- */
 #goggles-inner-navbar {
     min-height: 26px;
@@ -20,7 +19,7 @@
     font-weight: 200;
     margin-left: -10px;
     padding: 3px 10px;
-    text-shadow: 0 1px 0 #FFFFFF;
+    text-shadow: 0px 1px 0px #FFFFFF;
 }
 
 .navbar .goggles-brand img {
@@ -33,9 +32,9 @@
     float: left;
     font-size: 18px;
     font-weight: 200;
-    margin-left: 0;
+    margin-left: 0px;
     padding: 2px 5px;
-    text-shadow: 0 1px 0 #FFFFFF;
+    text-shadow: 0px 1px 0px #FFFFFF;
 	line-height: 0px;
 }
 
@@ -46,10 +45,9 @@
     padding: 2px 5px;
 	line-height: 0px;
 }
-
 .navbar .ghost-divider-vertical {
     height: 20px;
-    margin: 0 9px;
+    margin: 0px 9px;
 }
 
 
@@ -58,7 +56,6 @@
 	padding: 26px 10px 0px 0px;
 	text-align: right;
 }
-
 .goggles-category-gap{
 	padding: 26px 0px 0px 0px;
 }
@@ -71,9 +68,8 @@
 .table td.goggles-td p {
     margin-bottom: 2px;
 }
-
 table.table {
-    margin-bottom: 0;
+    margin-bottom: 0px;
 }
 
 table.table.goggles-meeting-team-results-table {
@@ -136,84 +132,6 @@ table td.goggles-rightalign {
 }
 
 
-
-/* ----- Custom table input-related overrides ----- */
-.g-float, .g-float input, .g-float select {
-	float: left;
-	margin-left: 4px;
-	margin-top: 2px;
-}
-.g-float img {
-    padding-left: 6px;
-    padding-top: 7px;
-}
-
-
-/* ----- Fixed widths: ----- */
-.g-fixed { display: inline-block; }
-.g-w15  input, .g-w15  select { min-width: 15px; width: 15px; }
-.g-w20  input, .g-w20  select { min-width: 20px; width: 20px; }
-.g-w25  input, .g-w25  select { min-width: 25px; width: 25px; }
-.g-w30  input, .g-w30  select { min-width: 30px; width: 30px; }
-.g-w30  input, .g-w40  select { min-width: 40px; width: 40px; }
-.g-w50  input, .g-w50  select { min-width: 50px; width: 50px; }
-.g-w80  input, .g-w80  select { min-width: 80px; width: 80px; }
-.g-w100 input, .g-w100 select { min-width: 100px; width: 100px; }
-.g-w150 input, .g-w150 select { min-width: 150px; width: 150px; }
-.g-w200 input, .g-w200 select { min-width: 200px; width: 200px; }
-.g-w300 input, .g-w300 select { min-width: 300px; width: 300px; }
-.g-w320 input, .g-w320 select { min-width: 320px; width: 320px; }
-.g-w350 input, .g-w350 select { min-width: 350px; width: 350px; }
-.g-w370 input, .g-w370 select { min-width: 370px; width: 370px; }
-.g-w400 input, .g-w400 select { min-width: 400px; width: 400px; }
-
-
-/* ----- Flex display layout (warning: too slow for drag'n'drop) ----- */
-.flex-row {
-   display: -webkit-flex;
-   display: flex;
-   -webkit-flex-direction: row;
-   flex-direction: row;
-
-   -webkit-flex-grow: 0;
-   flex-grow: 0;
-   -webkit-flex-shrink: 0;
-   flex-shrink: 0;
-   -webkit-flex-basis: auto;
-   flex-basis: auto;
-}
-.flex-column {
-   display: -webkit-flex;
-   display: flex;
-   -webkit-flex-direction: column;
-   flex-direction: column;
-
-   -webkit-flex-grow: 0;
-   flex-grow: 0;
-   -webkit-flex-shrink: 0;
-   flex-shrink: 0;
-   -webkit-flex-basis: auto;
-   flex-basis: auto;
-}
-/* ----- Relative widths with Flex display: ----- */
-.f-w_x1 {
-	-webkit-flex: 1 0 0;
-	flex: 1 0 0;
-}
-.f-w_x2 {
-	-webkit-flex: 2 0 0;
-	flex: 2 0 0;
-}
-.f-w_x3 {
-	-webkit-flex: 3 0 0;
-	flex: 3 0 0;
-}
-.f-w_x4 {
-	-webkit-flex: 4 0 0;
-	flex: 4 0 0;
-}
-
-
 /* ----- Training Row 'new'/'edit' form sortable/droppable styles: ----- */
 ul.sortable {
 	list-style-type: none;
@@ -226,24 +144,6 @@ ul.sortable li {
     margin-top: 2px;
     margin-bottom: 2px;
 }
-/*
-li.goggles-sortable {
-    cursor: pointer;
-	margin-bottom: 2px;
-	line-height: 1.2em;
-}
-li.goggles-sortable {
-	margin: 0 3px 3px 3px;
-	padding: 0.4em;
-	padding-left: 1.5em;
-	font-size: 1em;
-	height: 18px;
-}
-li.goggles-sortable div {
-	position: absolute;
-	margin-left: -1.3em;
-}
-*/
 
 
 /* Flag classes to signal feature on/off; enable styles to debug */
@@ -272,7 +172,7 @@ li.goggles-sortable div {
 .goggles-training pre {
 	font-size: 12px;
 	line-height: 14px;
-	margin: 2px 0;
+	margin: 2px 0px;
 	padding: 4px;
 }
 
@@ -280,21 +180,21 @@ li.goggles-sortable div {
 /* ----- Custom ComboBox widget styles: ----- */
 .ui-combobox {
     display: inline-block;
-    margin: 0;
+    margin: 0px;
     margin-right: 1em;
     margin-left: 0.5em;
     position: relative;
 }
 .ui-combobox-input {
-    padding: 0.1em; margin: 0;
+    padding: 0.1em; margin: 0px;
 }
 .ui-combobox-button {
     position: absolute;
     width: 0.8em !important;
-    margin: 0;
+    margin: 0px;
     margin-left: -1px;
-    top: 0;
-    bottom: 0;
+    top: 0px;
+    bottom: 0px;
 }
 .ui-combobox-button .ui-button-text {
     padding: 0em;
