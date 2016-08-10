@@ -2,7 +2,7 @@ require 'rails_helper'
 require 'wice_grid'
 
 
-describe MiscController, :type => :controller do
+describe MiscController, type: :controller do
 
   shared_examples_for "(Misc not restricted GET action)" do |action_sym|
     it "handles successfully the request" do
@@ -708,13 +708,13 @@ describe MiscController, :type => :controller do
 
   describe '[XHR POST #show_swimmer_matches]' do
 
-    context "without requested parameters" do
+    context "without requested parameters," do
       before(:each) do
         xhr(
           :post,
           :show_swimmer_matches,
-          local_swimmer_id:   23,
-          visitor_swimmer_id: 0  # Force invalid value
+          local_swimmer_id:   { id: 23 },
+          visitor_swimmer_id: { id: 0 } # Force invalid value
         )
       end
       it "handles the request" do
@@ -727,6 +727,35 @@ describe MiscController, :type => :controller do
     #-- -----------------------------------------------------------------------
     #++
 
+    context "with a correct request," do
+      before(:each) do
+        xhr(
+          :post,
+          :show_swimmer_matches,
+          local_swimmer:   { id: 23 },
+          visitor_swimmer: { id: 142 }
+        )
+      end
+      it "handles the request" do
+        expect( response ).to be_a_success
+      end
+      it "assigns @local_swimmer according to the specified parameter" do
+        expect( assigns(:local_swimmer) ).to be_a( Swimmer )
+        expect( assigns(:local_swimmer).id ).to eq( 23 )
+      end
+      it "assigns @visitor_swimmer according to the specified parameter" do
+        expect( assigns(:visitor_swimmer) ).to be_a( Swimmer )
+        expect( assigns(:visitor_swimmer).id ).to eq( 142 )
+      end
+      it "assigns @sme (to the resulting SwimmerMatchEvaluator)" do
+        expect( assigns(:sme) ).to be_a( SwimmerMatchEvaluator )
+      end
+      it "renders #show_swimmer_matches" do
+        expect( response ).to render_template( :show_swimmer_matches )
+      end
+    end
+    #-- -----------------------------------------------------------------------
+    #++
   end
   #-- =========================================================================
   #++
