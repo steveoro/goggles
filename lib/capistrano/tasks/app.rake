@@ -224,7 +224,8 @@ before 'deploy:restart', :retrieve_db_dump do
   on roles(:app) do
     within File.join(release_path, "db", "dump") do
       as( user: :root ) do
-        execute :wget, "https://raw.githubusercontent.com/steveoro/goggles_admin/master/db/dump/production.sql.bz2"
+        execute :wget, "-q https://raw.githubusercontent.com/steveoro/goggles_admin/master/db/dump/production.sql.bz2"
+        puts "DB dump retrieved."
       end
     end
   end
