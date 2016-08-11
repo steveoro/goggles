@@ -3,8 +3,8 @@
 
 [![Code Climate](https://codeclimate.com/github/steveoro/goggles/badges/gpa.svg)](https://codeclimate.com/github/steveoro/goggles)
 [![Test Coverage](https://codeclimate.com/github/steveoro/goggles/badges/coverage.svg)](https://codeclimate.com/github/steveoro/goggles)
-[![PullReview stats](https://www.pullreview.com/github/steveoro/goggles/badges/version5.svg?)](https://www.pullreview.com/github/steveoro/goggles/reviews/version5)
-[![Build Status](https://semaphoreci.com/api/v1/steveoro/goggles/branches/version5/badge.svg)](https://semaphoreci.com/steveoro/goggles)
+[![PullReview stats](https://www.pullreview.com/github/steveoro/goggles/badges/master.svg?)](https://www.pullreview.com/github/steveoro/goggles/reviews/master)
+[![Build Status](https://semaphoreci.com/api/v1/steveoro/goggles/branches/master/badge.svg)](https://semaphoreci.com/steveoro/goggles)
 
 Goggles is a Rails application developed to manage the storage of the results from any official
 Swimming competition as well as a lot more of anything else related to the "Master Swimming"
