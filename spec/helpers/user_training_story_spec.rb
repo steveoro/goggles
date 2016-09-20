@@ -2,7 +2,7 @@ require 'rails_helper'
 
 
 describe UserTrainingStoriesHelper, :type => :helper do
-  include Devise::TestHelpers
+  include Devise::Test::ControllerHelpers
 
   before :each do
     @request.env["devise.mapping"] = :user

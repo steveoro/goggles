@@ -3,7 +3,7 @@ require 'date'
 
 
 describe MeetingsHelper, :type => :helper do
-  include Devise::TestHelpers
+  include Devise::Test::ControllerHelpers
   include ERB::Util
 
   subject { helper }

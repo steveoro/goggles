@@ -19,11 +19,11 @@ class UserTrainingsController < ApplicationController
   QUERY_WILDCHAR = '%'
 
   # Require authorization before invoking any of this controller's actions:
-  before_filter :authenticate_user_from_token!
-  before_filter :authenticate_user!                # Devise "standard" HTTP log-in strategy
+  before_action :authenticate_user_from_token!
+  before_action :authenticate_user!                # Devise "standard" HTTP log-in strategy
   # Parse parameters:
-  before_filter :verify_ownership, only: [:edit, :destroy, :update]
-  before_filter :verify_visibility, except: [:index, :edit, :new, :create]
+  before_action :verify_ownership, only: [:edit, :destroy, :update]
+  before_action :verify_visibility, except: [:index, :edit, :new, :create]
   #-- -------------------------------------------------------------------------
   #++
 

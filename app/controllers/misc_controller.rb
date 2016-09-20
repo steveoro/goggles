@@ -16,7 +16,7 @@ class MiscController < ApplicationController
   # Uncomment this to make this controller available only to logged-id users with
   # an associated swimmer: (very restrictive)
   #
-#  before_filter :verify_parameter
+#  before_action :verify_parameter
   #-- -------------------------------------------------------------------------
   #++
 

@@ -10,10 +10,10 @@
 class SocialsController < ApplicationController
 
   # Require authorization before invoking any of this controller's actions:
-  before_filter :authenticate_user_from_token!
-  before_filter :authenticate_user!                # Devise "standard" HTTP log-in strategy
+  before_action :authenticate_user_from_token!
+  before_action :authenticate_user!                # Devise "standard" HTTP log-in strategy
   # Parse parameters:
-  before_filter :verify_parameter, except: [:associate, :dissociate, :show_all, :skip_associate]
+  before_action :verify_parameter, except: [:associate, :dissociate, :show_all, :skip_associate]
   #-- -------------------------------------------------------------------------
   #++
 

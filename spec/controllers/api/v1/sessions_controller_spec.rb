@@ -13,21 +13,21 @@ describe Api::V1::SessionsController, :type => :controller do
 
     context "with invalid credentials or invalid request" do
       it "returns a JSON success=false response for a missing password" do
-        get :create, format: :json, user_password: @user.password
+        get :create, format: :json, params: { user_password: @user.password }
         expect(response.status).to eq( 400 )
         result = JSON.parse(response.body)
         expect( result['success'] ).to eq( false )
       end
 
       it "returns a JSON success=false response for a missing email" do
-        get :create, format: :json, user_email: @user.email
+        get :create, format: :json, params: { user_email: @user.email }
         expect(response.status).to eq( 400 )
         result = JSON.parse(response.body)
         expect( result['success'] ).to eq( false )
       end
 
       it "returns a JSON success=false response for a non-JSON request" do
-        get :create, user_email: @user.email, user_password: @user.password
+        get :create, params: { user_email: @user.email, user_password: @user.password }
         expect(response.status).to eq( 406 )
         result = JSON.parse(response.body)
         expect( result['success'] ).to eq( false )
@@ -38,7 +38,7 @@ describe Api::V1::SessionsController, :type => :controller do
 
     context "with valid credentials" do
       before :each do
-        get :create, format: :json, user_email: @user.email, user_password: @user.password
+        get :create, format: :json, params: { user_email: @user.email, user_password: @user.password }
         expect(response.status).to eq( 200 )
         @result = JSON.parse(response.body)
       end
@@ -76,14 +76,14 @@ describe Api::V1::SessionsController, :type => :controller do
       end
 
       it "returns a JSON success=false response for a wrong user token" do
-        get :destroy, format: :json, user_token: 'this_is_fake'
+        get :destroy, format: :json, params: { user_token: 'this_is_fake' }
         expect(response.status).to eq( 404 )
         result = JSON.parse(response.body)
         expect( result['success'] ).to eq( false )
       end
 
       it "returns a JSON success=false response for a non-JSON request" do
-        get :destroy, user_token: @user.authentication_token
+        get :destroy, params: { user_token: @user.authentication_token }
         expect(response.status).to eq( 406 )
         result = JSON.parse(response.body)
         expect( result['success'] ).to eq( false )
@@ -95,7 +95,7 @@ describe Api::V1::SessionsController, :type => :controller do
     context "with valid credentials" do
       before :each do
         @old_auth_token = @user.authentication_token
-        get :destroy, format: :json, user_token: @user.authentication_token
+        get :destroy, format: :json, params: { user_token: @user.authentication_token }
         expect(response.status).to eq( 200 )
       end
 

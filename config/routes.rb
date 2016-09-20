@@ -3,9 +3,6 @@ Goggles::Application.routes.draw do
   # first created -> highest priority.
 
   mount GogglesCore::Engine => "/"
-# FIXME
-  devise_for :users
-#  devise_for :controllers => { :sessions => "Sessions" } # [Steve, 20140401] Custom controller for additional customization (OmniAuth, ...)
 
   # [Steve, 20130716] Root's route required by Devise:
   root :to => "home#index", locale: /en|it/
@@ -13,16 +10,16 @@ Goggles::Application.routes.draw do
   scope "/" do
     scope "(:locale)", locale: /en|it/ do
       # === Home ===
-      match "wip",                              to: "home#wip"
-      match "about",                            to: "home#about"
-      match "contact_us",                       to: "home#contact_us"
-      match "maintenance",                      to: "home#maintenance"
-      match "tutorials",                        to: "home#tutorials"
+      get "home/wip",                           to: "home#wip"
+      get "home/about",                         to: "home#about"
+      get "home/contact_us",                    to: "home#contact_us"
+      get "home/maintenance",                   to: "home#maintenance"
+      get "home/tutorials",                     to: "home#tutorials"
 
       # === Socials ===
       # A user associates himself/herself with a swimmer:
-      match "associate",                        to: "socials#associate",  via: [:get, :post]
-      match "dissociate",                       to: "socials#dissociate", via: :post
+      match "socials/associate",                to: "socials#associate",  via: [:get, :post]
+      post "socials/dissociate",                to: "socials#dissociate"
 
       # A user temporary skips the requested association with a swimmer:
       post "social/skip_associate",             to: "socials#skip_associate",           as: "social_skip_associate"
@@ -94,7 +91,7 @@ Goggles::Application.routes.draw do
       get  "teams/best_timings/:id",            to: "teams#best_timings",               as: "team_best_timings"
       get  "teams/count_meetings/:id",          to: "teams#count_meetings",             as: "team_count_meetings"
       get  "teams/count_results/:id",           to: "teams#count_results",              as: "team_count_results"
-      get  "teams/count_details/:id",           to: "teams#count_details",              as: "team_count_results"
+      get  "teams/count_details/:id",           to: "teams#count_details",              as: "team_count_details"
       get  "teams/palmares/:id",                to: "teams#palmares",                   as: "team_palmares"
       get  "teams/goggle_cup/:id",              to: "teams#goggle_cup",                 as: "team_goggle_cup"
       get  "teams/goggle_cup_all_of_fame/:id",  to: "teams#goggle_cup_all_of_fame",     as: "team_goggle_cup_all_of_fame"
@@ -231,9 +228,9 @@ Goggles::Application.routes.draw do
     end
   end
 
-
+  # FIXME Wildcard route NOT working anymore w/ Rails 5:
   # Wildcard route to match all the remaining possibilities:
-  match "*path", to: "exceptions#render_error"
+#  match "*path", to: "exceptions#render_error"
 
   # Sample of regular route:
   #   match 'products/:id' => 'catalog#view'

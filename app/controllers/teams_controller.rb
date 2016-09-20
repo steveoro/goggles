@@ -13,10 +13,10 @@ require 'common/format'
 class TeamsController < ApplicationController
 
   # Require authorization before invoking any of this controller's actions:
-  before_filter :authenticate_user_from_token!, except: [:index, :radio]
-  before_filter :authenticate_user!, except: [:index, :radio] # Devise HTTP log-in strategy
+  before_action :authenticate_user_from_token!, except: [:index, :radio]
+  before_action :authenticate_user!, except: [:index, :radio] # Devise HTTP log-in strategy
   # Parse parameters:
-  before_filter :verify_parameter, except: [:index, :closed_goggle_cup]
+  before_action :verify_parameter, except: [:index, :closed_goggle_cup]
   #-- -------------------------------------------------------------------------
   #++
 

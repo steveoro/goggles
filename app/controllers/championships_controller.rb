@@ -12,10 +12,10 @@ require 'common/format'
 =end
 class ChampionshipsController < ApplicationController
   # Parse parameters:
-  before_filter :verify_parameter_regional_er_csi,  only: [:ranking_regional_er_csi, :calendar_regional_er_csi, :event_ranking_regional_er_csi, :individual_rank_regional_er_csi, :rules_regional_er_csi, :history_regional_er_csi]
-  before_filter :verify_parameter_regional_er_uisp, only: [:ranking_regional_er_uisp, :calendar_regional_er_uisp, :rules_regional_er_uisp, :history_regional_er_uisp]
-  before_filter :verify_parameter_supermaster_fin,  only: [:ranking_supermaster_fin, :calendar_supermaster_fin, :rules_supermaster_fin, :history_supermaster_fin]
-  before_filter :set_team,                          only: [:ranking_regional_er_csi, :event_ranking_regional_er_csi, :individual_rank_regional_er_csi]
+  before_action :verify_parameter_regional_er_csi,  only: [:ranking_regional_er_csi, :calendar_regional_er_csi, :event_ranking_regional_er_csi, :individual_rank_regional_er_csi, :rules_regional_er_csi, :history_regional_er_csi]
+  before_action :verify_parameter_regional_er_uisp, only: [:ranking_regional_er_uisp, :calendar_regional_er_uisp, :rules_regional_er_uisp, :history_regional_er_uisp]
+  before_action :verify_parameter_supermaster_fin,  only: [:ranking_supermaster_fin, :calendar_supermaster_fin, :rules_supermaster_fin, :history_supermaster_fin]
+  before_action :set_team,                          only: [:ranking_regional_er_csi, :event_ranking_regional_er_csi, :individual_rank_regional_er_csi]
   #-- -------------------------------------------------------------------------
   #++
 

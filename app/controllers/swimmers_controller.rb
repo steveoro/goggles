@@ -15,11 +15,11 @@ require 'wrappers/timing'
 class SwimmersController < ApplicationController
 
   # Require authorization before invoking any of this controller's actions:
-  before_filter :authenticate_user_from_token!, except: [:index, :radio]
-  before_filter :authenticate_user!, except: [:index, :radio] # Devise HTTP log-in strategy
+  before_action :authenticate_user_from_token!, except: [:index, :radio]
+  before_action :authenticate_user!, except: [:index, :radio] # Devise HTTP log-in strategy
   # Parse parameters:
-  before_filter :verify_parameter, except: [:index]
-  before_filter :find_last_updated_mir, except: [:index, :trainings]
+  before_action :verify_parameter, except: [:index]
+  before_action :find_last_updated_mir, except: [:index, :trainings]
   #-- -------------------------------------------------------------------------
   #++
 

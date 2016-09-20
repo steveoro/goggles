@@ -25,7 +25,7 @@ gem 'therubyracer'
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
 gem 'jquery-ui-rails'
-gem 'jquery_datepicker'
+# gem 'jquery_datepicker' # FIXME THIS SEEMS TO BE INCOMPATIBLE W/ RAILS 5
 # Turbolinks makes navigating your web application faster. Read more: https://github.com/turbolinks/turbolinks
 gem 'turbolinks', '~> 5'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
@@ -40,8 +40,15 @@ gem "haml"
 
 gem "goggles_core", git: "git@github.com:steveoro/goggles_core", branch: "rails5"
 
-gem "syck"                              # old-skool YAML interpreter used by some of our gems
-gem 'safe_yaml'
+# XXX [Steve, 20160920] Too many issues w/ SafeYAML, regarding ActiveRecord,
+# Guard & DelayedJob (See https://github.com/dtao/safe_yaml#known-issues).
+# gem "syck"                              # old-skool YAML interpreter used by some of our gems
+# gem 'safe_yaml'
+# XXX When using safe_yaml, these 2 must be set
+# (but a warning persist anyway on the command line, since load_file is called internally by system requires)
+# SafeYAML::OPTIONS[:default_mode] = :safe # or :unsafe
+# SafeYAML::OPTIONS[:deserialize_symbols] = true
+
                                         # [Steve, 20130801] Navigation gems for rendering menus & breadcrumbs:
 gem "simple-navigation"
 gem 'simple-navigation-bootstrap'

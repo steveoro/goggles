@@ -1,7 +1,11 @@
-# Load the rails application
-require File.expand_path('../application', __FILE__)
+# Load the Rails application.
+require_relative 'application'
 
-require 'framework/version'
+# Initialize the Rails application.
+Rails.application.initialize!
+
+# FIXME Old:
+#require 'framework/version'
 
 # Initialize the rails application
-Goggles::Application.initialize!
+#Goggles::Application.initialize!

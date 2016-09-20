@@ -73,7 +73,7 @@ shared_examples_for "(generic CRUD controller actions)" do |table_name, decorato
       end
 
       it "assigns an instance to be shown" do
-        get :show, id: @fixture.id
+        get :show, params: { id: @fixture.id }
         expect( response.status ).to eq(200)
         expect( assigns( model_name_sym ) ).not_to be_nil
         expect( assigns( model_name_sym ) ).to be_an_instance_of( model_name.constantize )
@@ -87,7 +87,7 @@ shared_examples_for "(generic CRUD controller actions)" do |table_name, decorato
       end
 
       it "renders the show template" do
-        get :show, id: @fixture.id
+        get :show, params: { id: @fixture.id }
         expect( controller.params[:id].to_i == @fixture.id ).to be true
         expect(response.status).to eq(200)
         expect(response).to render_template(:show)
@@ -140,7 +140,7 @@ shared_examples_for "(generic CRUD controller actions)" do |table_name, decorato
       end
 
       it "assigns an instance to be edited" do
-        get :edit, id: @fixture.id
+        get :edit, params: { id: @fixture.id }
         expect( response.status ).to eq(200)
         expect( assigns( model_name_sym ) ).not_to be_nil
         expect( assigns( model_name_sym ) ).to be_an_instance_of( model_name.constantize )
@@ -149,7 +149,7 @@ shared_examples_for "(generic CRUD controller actions)" do |table_name, decorato
       end
 
       it "renders the edit template" do
-        get :edit, id: @fixture.id
+        get :edit, params: { id: @fixture.id }
         expect( controller.params[:id].to_i == @fixture.id ).to be true
         expect(response.status).to eq(200)
         expect(response).to render_template(:edit)
@@ -164,7 +164,7 @@ shared_examples_for "(generic CRUD controller actions)" do |table_name, decorato
     context "unlogged user" do
       it "doesn't create a new row" do
         expect {
-          post :create, model_name_sym => entity_attrs
+          post :create, params: { model_name_sym => entity_attrs }
         }.not_to change( model_name.constantize, :count )
       end
     end
@@ -176,11 +176,11 @@ shared_examples_for "(generic CRUD controller actions)" do |table_name, decorato
       context "with valid attributes" do
         it "creates a new row" do
           expect {
-            post :create, model_name_sym => entity_attrs
+            post :create, params: { model_name_sym => entity_attrs }
           }.to change( model_name.constantize, :count ).by(1)
         end
         it "redirects to the new row" do
-          post :create, model_name_sym => entity_attrs
+          post :create, params: { model_name_sym => entity_attrs }
           expect(response).to redirect_to( model_name.constantize.last )
         end
       end
@@ -188,12 +188,12 @@ shared_examples_for "(generic CRUD controller actions)" do |table_name, decorato
       context "with invalid attributes" do
         it "does not save the new contact" do
           expect{
-            post :create, model_name_sym => attributes_for( invalid_model_name_sym )
+            post :create, params: { model_name_sym => attributes_for( invalid_model_name_sym ) }
           }.to_not change( model_name.constantize, :count )
         end
 
         it "re-renders the new method" do
-          post :create, model_name_sym => attributes_for( invalid_model_name_sym )
+          post :create, params: { model_name_sym => attributes_for( invalid_model_name_sym ) }
           expect(response).to render_template( :edit )
         end
       end
@@ -210,7 +210,7 @@ shared_examples_for "(generic CRUD controller actions)" do |table_name, decorato
         fixture = create( model_name_sym )
         expect( entity_attrs.values != fixture.attributes.values ).to be true
                                                     # Try the update without logging in:
-        put :update, id: fixture.id, model_name_sym => entity_attrs
+        put :update, params: { id: fixture.id, model_name_sym => entity_attrs }
         fixture.reload                             # The update should not have persisted:
         fixture_data_values = fixture.attributes.values.map{ |i| i.to_s }
         expect(
@@ -230,7 +230,7 @@ shared_examples_for "(generic CRUD controller actions)" do |table_name, decorato
 
       context "with valid attributes" do
         before :each do
-          put :update, id: @fixture, model_name_sym => entity_attrs
+          put :update, params: { id: @fixture, model_name_sym => entity_attrs }
         end
         it "changes the row attributes" do
           @fixture.reload
@@ -246,7 +246,7 @@ shared_examples_for "(generic CRUD controller actions)" do |table_name, decorato
 
       context "with invalid attributes" do
         before :each do
-          put :update, id: @fixture, model_name_sym => attributes_for( invalid_model_name_sym )
+          put :update, params: { id: @fixture, model_name_sym => attributes_for( invalid_model_name_sym ) }
         end
         it "doesn't change the row" do
           updated_fixture = model_name.constantize.find( @fixture.id )
@@ -272,7 +272,7 @@ shared_examples_for "(generic CRUD controller actions)" do |table_name, decorato
       it "doesn't delete the row" do
         fixture = create( model_name_sym )
         expect {
-          delete :destroy, id: fixture.id
+          delete :destroy, params: { id: fixture.id }
         }.not_to change( model_name.constantize, :count )
       end
     end
@@ -286,12 +286,12 @@ shared_examples_for "(generic CRUD controller actions)" do |table_name, decorato
 
       it "deletes the row" do
         expect {
-          delete :destroy, id: @fixture.id
+          delete :destroy, params: { id: @fixture.id }
         }.to change( model_name.constantize, :count ).by(-1)
       end
 
       it "redirects to #index" do
-        delete :destroy, id: @fixture.id
+        delete :destroy, params: { id: @fixture.id }
         expect( response ).to redirect_to( controller: table_name, action: :index )
         # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
         # and we have just set defaul locale to :it

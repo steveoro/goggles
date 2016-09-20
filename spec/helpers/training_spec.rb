@@ -2,7 +2,7 @@ require 'rails_helper'
 
 
 describe TrainingsHelper, :type => :helper do
-  include Devise::TestHelpers
+  include Devise::Test::ControllerHelpers
   include ERB::Util
 
   before :each do

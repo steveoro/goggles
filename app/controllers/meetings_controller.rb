@@ -16,16 +16,16 @@ require 'passages_batch_updater'
 =end
 class MeetingsController < ApplicationController
   # Parse parameters:
-  before_filter :verify_meeting, only: [
+  before_action :verify_meeting, only: [
       :show_full, :show_autoscroll, :show_ranking, :show_stats,
       :show_team_results, :show_swimmer_results, :show_invitation,
       :show_start_list, :show_start_list_by_category, :show_team_entries,
       :edit_passages, :update_passages
   ]
 
-  before_filter :verify_team,             only: [:show_team_results, :show_team_entries]
-  before_filter :verify_swimmer,          only: [:show_swimmer_results]
-  before_filter :verify_is_team_manager,  only: [:edit_passages]
+  before_action :verify_team,             only: [:show_team_results, :show_team_entries]
+  before_action :verify_swimmer,          only: [:show_swimmer_results]
+  before_action :verify_is_team_manager,  only: [:edit_passages]
   #-- -------------------------------------------------------------------------
   #++
 

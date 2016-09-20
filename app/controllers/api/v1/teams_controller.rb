@@ -6,9 +6,9 @@ class Api::V1::TeamsController < ApplicationController
   respond_to :json
 
   # Require authorization before invoking any of this controller's actions:
-  before_filter :authenticate_user_from_token!, except: [:current_swimmers, :index]
-  before_filter :authenticate_user!, except: [:current_swimmers, :index]   # Devise "standard" HTTP log-in strategy
-  before_filter :ensure_format
+  before_action :authenticate_user_from_token!, except: [:current_swimmers, :index]
+  before_action :authenticate_user!, except: [:current_swimmers, :index]   # Devise "standard" HTTP log-in strategy
+  before_action :ensure_format
   #-- -------------------------------------------------------------------------
   #++
 

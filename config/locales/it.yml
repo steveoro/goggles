@@ -852,7 +852,8 @@ it:
     month_names: [~, Gennaio, Febbraio, Marzo, Aprile, Maggio, Giugno, Luglio, Agosto, Settembre, Ottobre, Novembre, Dicembre]
     abbr_month_names: [~, Gen, Feb, Mar, Apr, Mag, Giu, Lug, Ago, Sett, Ott, Nov, Dic]
     # Used in date_select and datime_select.
-    order: [ :year, :month, :day ]
+    # FIXME NOT WORKING in Rails 5:
+    #order: [ :year, :month, :day ]
 
   time:
     formats:

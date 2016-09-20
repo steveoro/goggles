@@ -12,8 +12,8 @@ class SwimmingPoolReviewsController < ApplicationController
   respond_to :html, :json
 
   # Require authorization before invoking some of this controller's actions:
-  before_filter :authenticate_user_from_token!, except: [:index, :show, :for_swimming_pool, :for_user]
-  before_filter :authenticate_user!, except: [:index, :show, :for_swimming_pool, :for_user] # Devise HTTP log-in strategy
+  before_action :authenticate_user_from_token!, except: [:index, :show, :for_swimming_pool, :for_user]
+  before_action :authenticate_user!, except: [:index, :show, :for_swimming_pool, :for_user] # Devise HTTP log-in strategy
   # ---------------------------------------------------------------------------
 
 

@@ -2,7 +2,7 @@ require 'rails_helper'
 
 
 describe TeamsHelper, :type => :helper do
-  include Devise::TestHelpers
+  include Devise::Test::ControllerHelpers
 
   describe "#cache_key_for_swimmer" do
     let(:result_plain) { helper.send(:cache_key_for_team, 'radio', (rand * 10000).to_i, DateTime.now ) }

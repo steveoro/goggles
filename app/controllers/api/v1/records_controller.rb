@@ -5,7 +5,7 @@ class Api::V1::RecordsController < ApplicationController
 
   respond_to :json
 
-  before_filter :ensure_format
+  before_action :ensure_format
   #-- -------------------------------------------------------------------------
   #++
 
