@@ -95,7 +95,7 @@ class UserTrainingStoriesController < ApplicationController
   # Update action.
   #
   def update
-    if @user_training_story.update_attributes( params[:user_training_story] )
+    if @user_training_story.update_attributes( user_training_story_params )
       flash[:info] = I18n.t('user_training_stories.story_updated')
       redirect_to( user_training_story_path(@user_training_story) )
     else
@@ -117,6 +117,20 @@ class UserTrainingStoriesController < ApplicationController
 
 
   private
+
+
+  # Strong parameters checking for mass-assignment of a UserTrainingStory instance.
+  # Returns the whitelisted, filtered params Hash.
+  def user_training_story_params
+    params
+      .require( :user_training_story )
+      .permit(
+        :swam_date, :total_training_time, :notes,
+        :user_training_id, :swimming_pool_id, :swimmer_level_type_id
+      )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Verifies that the user_training_story id is provided as a parameter

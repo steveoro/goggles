@@ -160,7 +160,7 @@ class UserTrainingsController < ApplicationController
   # Update action.
   #
   def update
-    if @user_training.update_attributes( params[:user_training] )
+    if @user_training.update_attributes( user_training_params )
       flash[:info] = I18n.t('trainings.training_updated')
       redirect_to( user_training_path(@user_training) )
     else
@@ -291,6 +291,31 @@ class UserTrainingsController < ApplicationController
 
 
   private
+
+
+  # Strong parameters checking for mass-assignment of a UserTraining instance.
+  # Returns the whitelisted, filtered params Hash.
+  def user_training_params
+    params
+      .require( :user_training )
+      .permit(
+        :description,
+        :user_id,
+        user_training_rows_attributes: [
+          :part_order,
+          :group_id, :group_times, :group_start_and_rest, :group_pause,
+          :times, :distance, :start_and_rest, :pause,
+          :user_training_id, :exercise_id, :training_step_type_id,
+          :arm_aux_type_id, :kick_aux_type_id, :body_aux_type_id, :breath_aux_type_id
+        ],
+        user_training_story_attributes: [
+          :swam_date, :total_training_time, :notes,
+          :user_training_id, :swimming_pool_id, :swimmer_level_type_id
+        ]
+      )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Verifies that the user_training id is provided as a parameter

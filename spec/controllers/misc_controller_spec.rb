@@ -6,13 +6,10 @@ describe MiscController, type: :controller do
 
   shared_examples_for "(Misc not restricted GET action)" do |action_sym|
     it "handles successfully the request" do
-      expect(response.status).to eq( 200 )
+      expect( response.status ).to be_a_success
     end
     it "assigns the tab title" do
-      expect( assigns(:tab_title) ).to be_an_instance_of( String )
-    end
-    it "renders the template" do
-      expect(response).to render_template( action_sym )
+      expect( response.body ).to include( I18n.t("misc.#{ action_sym }") )
     end
   end
   #-- =========================================================================
@@ -132,16 +129,16 @@ describe MiscController, type: :controller do
 
     context "without requested parameters" do
       before(:each) do
-        xhr(
-          :post,
-          :compute_fin_score,
-          gender_type_id:   0,  # Force invalid event type and pool type
-          category_type_id: 0,
-          event_type:       {id: 0},
-          pool_type:        {id: 0},
-          minutes:          minutes,
-          seconds:          seconds,
-          hundreds:         hundreds
+        post( :compute_fin_score, xhr: true,
+          params: {
+            gender_type_id:   0,  # Force invalid event type and pool type
+            category_type_id: 0,
+            event_type:       {id: 0},
+            pool_type:        {id: 0},
+            minutes:          minutes,
+            seconds:          seconds,
+            hundreds:         hundreds
+          }
         )
       end
       it "handles the request" do
@@ -163,16 +160,16 @@ describe MiscController, type: :controller do
         @fixture_gender = GenderType.find_by_code('M')
         @fixture_category = CategoryType.find_by_code('M40')
         @fixture_events_by_pool_type = EventsByPoolType.find_by_id(((rand * 18) % 18).to_i + 1) # ASSERT: first 18 event by pool types are not relays
-        xhr(
-          :post,
-          :compute_fin_score,
-          gender_type_id:   @fixture_gender.id,
-          category_type_id: @fixture_category.id,
-          event_type_id:    @fixture_events_by_pool_type.event_type_id,
-          pool_type_id:     @fixture_events_by_pool_type.pool_type_id,
-          minutes:          -3,  # Force invalid timing
-          seconds:          -2,
-          hundreds:         -1
+        post( :compute_fin_score, xhr: true,
+          params: {
+            gender_type_id:   @fixture_gender.id,
+            category_type_id: @fixture_category.id,
+            event_type_id:    @fixture_events_by_pool_type.event_type_id,
+            pool_type_id:     @fixture_events_by_pool_type.pool_type_id,
+            minutes:          -3,  # Force invalid timing
+            seconds:          -2,
+            hundreds:         -1
+          }
         )
       end
       it "handles the request" do
@@ -193,16 +190,16 @@ describe MiscController, type: :controller do
       before(:each) do
         @fixture_gender = GenderType.find_by_code('M')
         @fixture_category = CategoryType.find_by_code('M40')
-        xhr(
-          :post,
-          :compute_fin_score,
-          gender_type_id:   @fixture_gender.id,
-          category_type_id: @fixture_category.id,
-          event_type_id:    EventType.where(code: '100MI').first.id,
-          pool_type_id:     PoolType.where(code: '50').first.id,
-          minutes:          minutes,
-          seconds:          seconds,
-          hundreds:         hundreds
+        post( :compute_fin_score, xhr: true,
+          params: {
+            gender_type_id:   @fixture_gender.id,
+            category_type_id: @fixture_category.id,
+            event_type_id:    EventType.where(code: '100MI').first.id,
+            pool_type_id:     PoolType.where(code: '50').first.id,
+            minutes:          minutes,
+            seconds:          seconds,
+            hundreds:         hundreds
+          }
         )
       end
       it "handles the request" do
@@ -224,16 +221,16 @@ describe MiscController, type: :controller do
         @fixture_gender = GenderType.find_by_code('M')
         @fixture_category = CategoryType.find_by_code('M40')
         @fixture_events_by_pool_type = EventsByPoolType.find_by_id(((rand * 18) % 18).to_i + 1) # ASSERT: first 18 event by pool types are not relays
-        xhr(
-          :post,
-          :compute_fin_score,
-          gender_type_id:   @fixture_gender.id,
-          category_type_id: @fixture_category.id,
-          event_type_id:    @fixture_events_by_pool_type.event_type_id,
-          pool_type_id:     @fixture_events_by_pool_type.pool_type_id,
-          minutes:          minutes,
-          seconds:          seconds,
-          hundreds:         hundreds
+        post( :compute_fin_score, xhr: true,
+          params: {
+            gender_type_id:   @fixture_gender.id,
+            category_type_id: @fixture_category.id,
+            event_type_id:    @fixture_events_by_pool_type.event_type_id,
+            pool_type_id:     @fixture_events_by_pool_type.pool_type_id,
+            minutes:          minutes,
+            seconds:          seconds,
+            hundreds:         hundreds
+          }
         )
       end
 
@@ -308,16 +305,16 @@ describe MiscController, type: :controller do
         expect( subject.current_user ).to be_an_instance_of( User )
         expect( subject.current_user.swimmer_id ).not_to be nil
 
-        xhr(
-          :post,
-          :compute_fin_score,
-          gender_type_id:   @fixture_gender.id,
-          category_type_id: @fixture_category.id,
-          event_type_id:    @fixture_events_by_pool_type.event_type_id,
-          pool_type_id:     @fixture_events_by_pool_type.pool_type_id,
-          minutes:          minutes,
-          seconds:          seconds,
-          hundreds:         hundreds
+        post( :compute_fin_score, xhr: true,
+          params: {
+            gender_type_id:   @fixture_gender.id,
+            category_type_id: @fixture_category.id,
+            event_type_id:    @fixture_events_by_pool_type.event_type_id,
+            pool_type_id:     @fixture_events_by_pool_type.pool_type_id,
+            minutes:          minutes,
+            seconds:          seconds,
+            hundreds:         hundreds
+          }
         )
       end
 
@@ -455,14 +452,14 @@ describe MiscController, type: :controller do
 
     context "without requested parameters" do
       before(:each) do
-        xhr(
-          :post,
-          :compute_fin_timing,
-          gender_type_id:   0,  # Force invalid event type and pool type
-          category_type_id: 0,
-          event_type:       {id: 0},
-          pool_type:        {id: 0},
-          standard_points:  standard_points
+        post( :fin_timing_calculation, xhr: true,
+          params: {
+            gender_type_id:   0,  # Force invalid event type and pool type
+            category_type_id: 0,
+            event_type:       {id: 0},
+            pool_type:        {id: 0},
+            standard_points:  standard_points
+          }
         )
       end
       it "handles the request" do
@@ -483,14 +480,14 @@ describe MiscController, type: :controller do
         @fixture_gender = GenderType.find_by_code('M')
         @fixture_category = CategoryType.find_by_code('M40')
         @fixture_events_by_pool_type = EventsByPoolType.find_by_id(((rand * 18) % 18).to_i + 1) # ASSERT: first 18 event by pool types are not relays
-        xhr(
-          :post,
-          :compute_fin_timing,
-          gender_type_id:   @fixture_gender.id,
-          category_type_id: @fixture_category.id,
-          event_type_id:    @fixture_events_by_pool_type.event_type_id,
-          pool_type_id:     @fixture_events_by_pool_type.pool_type_id,
-          standard_points:  50  # Force invalid score
+        post( :fin_timing_calculation, xhr: true,
+          params: {
+            gender_type_id:   @fixture_gender.id,
+            category_type_id: @fixture_category.id,
+            event_type_id:    @fixture_events_by_pool_type.event_type_id,
+            pool_type_id:     @fixture_events_by_pool_type.pool_type_id,
+            standard_points:  50  # Force invalid score
+          }
         )
       end
       it "handles the request" do
@@ -510,14 +507,14 @@ describe MiscController, type: :controller do
       before(:each) do
         @fixture_gender = GenderType.find_by_code('M')
         @fixture_category = CategoryType.find_by_code('M40')
-        xhr(
-          :post,
-          :compute_fin_timing,
-          gender_type_id:   @fixture_gender.id,
-          category_type_id: @fixture_category.id,
-          event_type_id:    EventType.where(code: '100MI').first.id,
-          pool_type_id:     PoolType.where(code: '50').first.id,
-          standard_points:  standard_points
+        post( :fin_timing_calculation, xhr: true,
+          params: {
+            gender_type_id:   @fixture_gender.id,
+            category_type_id: @fixture_category.id,
+            event_type_id:    EventType.where(code: '100MI').first.id,
+            pool_type_id:     PoolType.where(code: '50').first.id,
+            standard_points:  standard_points
+          }
         )
       end
       it "handles the request" do
@@ -538,14 +535,14 @@ describe MiscController, type: :controller do
         @fixture_gender = GenderType.find_by_code('M')
         @fixture_category = CategoryType.find_by_code('M40')
         @fixture_events_by_pool_type = EventsByPoolType.find_by_id(((rand * 18) % 18).to_i + 1) # ASSERT: first 18 event by pool types are not relays
-        xhr(
-          :post,
-          :compute_fin_timing,
-          gender_type_id:   @fixture_gender.id,
-          category_type_id: @fixture_category.id,
-          event_type_id:    @fixture_events_by_pool_type.event_type_id,
-          pool_type_id:     @fixture_events_by_pool_type.pool_type_id,
-          standard_points:  standard_points
+        post( :fin_timing_calculation, xhr: true,
+          params: {
+            gender_type_id:   @fixture_gender.id,
+            category_type_id: @fixture_category.id,
+            event_type_id:    @fixture_events_by_pool_type.event_type_id,
+            pool_type_id:     @fixture_events_by_pool_type.pool_type_id,
+            standard_points:  standard_points
+          }
         )
       end
 
@@ -613,14 +610,14 @@ describe MiscController, type: :controller do
         expect( subject.current_user ).to be_an_instance_of( User )
         expect( subject.current_user.swimmer_id ).not_to be nil
 
-        xhr(
-          :post,
-          :compute_fin_timing,
-          gender_type_id:   @fixture_gender.id,
-          category_type_id: @fixture_category.id,
-          event_type_id:    @fixture_events_by_pool_type.event_type_id,
-          pool_type_id:     @fixture_events_by_pool_type.pool_type_id,
-          standard_points:  standard_points
+        post( :fin_timing_calculation, xhr: true,
+          params: {
+            gender_type_id:   @fixture_gender.id,
+            category_type_id: @fixture_category.id,
+            event_type_id:    @fixture_events_by_pool_type.event_type_id,
+            pool_type_id:     @fixture_events_by_pool_type.pool_type_id,
+            standard_points:  standard_points
+          }
         )
       end
 
@@ -710,11 +707,11 @@ describe MiscController, type: :controller do
 
     context "without requested parameters," do
       before(:each) do
-        xhr(
-          :post,
-          :show_swimmer_matches,
-          local_swimmer_id:   { id: 23 },
-          visitor_swimmer_id: { id: 0 } # Force invalid value
+        post( :show_swimmer_matches, xhr: true,
+          params: {
+            local_swimmer_id:   { id: 23 },
+            visitor_swimmer_id: { id: 0 } # Force invalid value
+          }
         )
       end
       it "handles the request" do
@@ -729,11 +726,11 @@ describe MiscController, type: :controller do
 
     context "with a correct request," do
       before(:each) do
-        xhr(
-          :post,
-          :show_swimmer_matches,
-          local_swimmer:   { id: 23 },
-          visitor_swimmer: { id: 142 }
+        post( :show_swimmer_matches, xhr: true,
+          params: {
+            local_swimmer:   { id: 23 },
+            visitor_swimmer: { id: 142 }
+          }
         )
       end
       it "handles the request" do

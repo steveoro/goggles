@@ -139,6 +139,9 @@ group :test do
   gem "codeclimate-test-reporter", require: false   # [Steve, 20140321] CI/Test coverage via local test run
   gem 'coveralls', require: false                   # [Steve, 20140312] Uses simplecov to obtain test-coverage badge
   gem 'pullreview-coverage', require: false         # [Steve, 20160801] Updated coverage by PullReview
+
+  # FIXME High-priority: remove usage of 'assigns' & 'render_template' in tests
+  gem 'rails-controller-testing'
 end
 
 # To use debugger

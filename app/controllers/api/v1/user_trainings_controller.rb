@@ -49,7 +49,7 @@ class Api::V1::UserTrainingsController < ApplicationController
   # - :user_training => the attributes for the row to be created.
   #
   def create
-    respond_with( @user_training = UserTraining.create(params[:user_training]) )
+    respond_with( @user_training = UserTraining.create( user_training_params ) )
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -74,7 +74,7 @@ class Api::V1::UserTrainingsController < ApplicationController
   #
   def update
     row = UserTraining.find_by_id( params[:id] )
-    is_ok = row && row.update_attributes( params[:user_training] )
+    is_ok = row && row.update_attributes( user_training_params )
     render( status: (is_ok ? :ok : 400), json: { success: is_ok } )
   end
   #-- -------------------------------------------------------------------------
@@ -105,6 +105,34 @@ class Api::V1::UserTrainingsController < ApplicationController
       render( status: 406, json: { success: false, message: I18n.t(:api_request_must_be_json) } )
       return
     end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  private
+
+
+  # Strong parameters checking for mass-assignment of a UserTraining instance.
+  # Returns the whitelisted, filtered params Hash.
+  def user_training_params
+    params
+      .require( :user_training )
+      .permit(
+        :description,
+        :user_id,
+        user_training_rows_attributes: [
+          :part_order,
+          :group_id, :group_times, :group_start_and_rest, :group_pause,
+          :times, :distance, :start_and_rest, :pause,
+          :user_training_id, :exercise_id, :training_step_type_id,
+          :arm_aux_type_id, :kick_aux_type_id, :body_aux_type_id, :breath_aux_type_id
+        ],
+        user_training_story_attributes: [
+          :swam_date, :total_training_time, :notes,
+          :user_training_id, :swimming_pool_id, :swimmer_level_type_id
+        ]
+      )
   end
   #-- -------------------------------------------------------------------------
   #++

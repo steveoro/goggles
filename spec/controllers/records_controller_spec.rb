@@ -25,7 +25,7 @@ describe RecordsController, :type => :controller do
 
     context "with an AJAX request," do
       context "without parameters," do
-        before(:each) { xhr :get, :for_season_type }
+        before(:each) { get( :for_season_type, xhr: true ) }
         # [Steve, 20140723] To speed up the example, this long request will be done only
         # once, with all the test performed at once (even thou it's not a best-practice).
         it "handles successfully the request but with an empty list" do
@@ -38,7 +38,7 @@ describe RecordsController, :type => :controller do
       end
 
       context "with a valid parameter," do
-        before(:each) { xhr :get, :for_season_type, season_type: {id: 2} }
+        before(:each) { get( :for_season_type, xhr: true, params: { season_type: {id: 2} } ) }
 
         it "handles successfully the request" do
           expect(response.status).to eq( 200 )
@@ -78,7 +78,7 @@ describe RecordsController, :type => :controller do
 
     context "with an AJAX request," do
       context "without parameters," do
-        before(:each) { xhr :get, :for_team }
+        before(:each) { get( :for_team, xhr: true ) }
         # [Steve, 20140723] To speed up the example, this long request will be done only
         # once, with all the test performed at once (even thou it's not a best-practice).
         it "handles successfully the request but with an empty list" do
@@ -93,7 +93,7 @@ describe RecordsController, :type => :controller do
 
       context "with a valid parameter," do
         # (Team.id = 1 => CSI, always existing in seeds)
-        before(:each) { xhr :get, :for_team, team: {id: 1} }
+        before(:each) { get( :for_team, xhr: true, params: { team: {id: 1} } ) }
 
         it "handles successfully the request" do
           expect(response.status).to eq( 200 )
@@ -135,7 +135,7 @@ describe RecordsController, :type => :controller do
 
     context "with an AJAX request," do
       context "without parameters," do
-        before(:each) { xhr :get, :for_swimmer }
+        before(:each) { get( :for_swimmer, xhr: true ) }
         # [Steve, 20140723] To speed up the example, this long request will be done only
         # once, with all the test performed at once (even thou it's not a best-practice).
         it "handles successfully the request but with an empty list" do
@@ -150,7 +150,7 @@ describe RecordsController, :type => :controller do
 
       context "with a valid parameter," do
         let(:leega_swimmer) { Swimmer.where(complete_name: 'LIGABUE MARCO').first }
-        before(:each) { xhr :get, :for_swimmer, swimmer: {id: leega_swimmer.id} }
+        before(:each) { get( :for_swimmer, xhr: true, params: { swimmer: {id: leega_swimmer.id} } ) }
 
         it "handles successfully the request" do
           expect(response.status).to eq( 200 )
@@ -174,6 +174,7 @@ describe RecordsController, :type => :controller do
 
   describe '[GET #for_personal_best]' do
     context "with an HTML request," do
+# FIXME
       xit "handles successfully the request" do
         get :for_personal_best
         expect(response.status).to eq( 200 )
@@ -191,9 +192,10 @@ describe RecordsController, :type => :controller do
 
     context "with an AJAX request," do
       context "without parameters," do
-        before(:each) { xhr :get, :for_personal_best }
+        before(:each) { get( :for_personal_best, xhr: true ) }
         # [Steve, 20140723] To speed up the example, this long request will be done only
         # once, with all the test performed at once (even thou it's not a best-practice).
+# FIXME
         xit "handles successfully the request but with an empty list" do
           expect(response.status).to eq( 200 )
           expect( assigns(:title) ).to be_an_instance_of( String )
@@ -206,8 +208,9 @@ describe RecordsController, :type => :controller do
       context "with a valid parameter," do
         # (Team.id = 1 => CSI, existing in seeds)
         let(:leega_swimmer) { Swimmer.where(complete_name: 'LIGABUE MARCO').first }
-        before(:each) { xhr :get, :for_personal_best, swimmer: {id: leega_swimmer.id} }
+        before(:each) { get( :for_personal_best, xhr: true, params: { swimmer: {id: leega_swimmer.id} } ) }
 
+# FIXME
         xit "handles successfully the request" do
           expect(response.status).to eq( 200 )
         end

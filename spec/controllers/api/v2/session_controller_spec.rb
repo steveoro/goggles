@@ -98,7 +98,7 @@ RSpec.describe Api::V2::SessionsController, type: :controller do
     # A valid "SIGN-IN" request made with XHR (via AJAX call):
     context "with an XHR POST & valid credentials" do
       before :each do
-        xhr( :post, :create, format: :json, params: { u: user.email, p: user.password } )
+        post( :create, xhr: true, format: :json, params: { u: user.email, p: user.password } )
         expect( response.status ).to eq( 200 )
         @result = JSON.parse(response.body)
       end
