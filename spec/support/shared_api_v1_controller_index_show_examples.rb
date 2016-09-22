@@ -45,7 +45,7 @@ shared_examples_for "(Ap1-V1-Controllers, get actions that requires logged user 
     action_name_array.each do |action_name|
       it '[GET #{action_name}] refuses the request and redirects to app root' do
         get action_name.to_sym
-        expect( response ).to redirect_to( controller: :home, action: :index ) 
+        expect( response ).to redirect_to( controller: :home, action: :index )
       end
     end
   end
@@ -58,7 +58,7 @@ shared_examples_for "(Ap1-V1-Controllers, #index & #show actions)" do |controlle
   describe '[GET #{controller_name}/index]' do
     context "with a non-JSON request" do
       before :each do
-        get :index, user_email: @user.email, user_token: @user.authentication_token
+        get :index, params: { user_email: @user.email, user_token: @user.authentication_token }
       end
       it "refuses the request" do
         expect(response.status).to eq( 406 )
@@ -68,7 +68,7 @@ shared_examples_for "(Ap1-V1-Controllers, #index & #show actions)" do |controlle
     context "with valid parameters and credentials" do
       before :each do
         # Assert: we rely on the pre-loaded seeds here
-        get :index, format: :json, user_email: @user.email, user_token: @user.authentication_token
+        get :index, format: :json, params: { user_email: @user.email, user_token: @user.authentication_token }
       end
 
       it_behaves_like( "(Ap1-V1-Controllers, success returning an Array of Hash)" )
@@ -78,19 +78,19 @@ shared_examples_for "(Ap1-V1-Controllers, #index & #show actions)" do |controlle
 
 
   describe '[GET #{controller_name}/show]' do
-    context "with a non-JSON request" do
+    context "with a non-JSON request," do
       before :each do
-        get :show, id: 1, user_email: @user.email, user_token: @user.authentication_token
+        get :show, params: { id: 1, user_email: @user.email, user_token: @user.authentication_token }
       end
       it "refuses the request" do
         expect(response.status).to eq( 406 )
       end
     end
 
-    context "with valid parameters and credentials" do
+    context "with a JSON request, valid parameters and credentials," do
       before :each do
         # Assert: we rely on the pre-loaded seeds here
-        get :show, id: 1, format: :json, user_email: @user.email, user_token: @user.authentication_token
+        get :show, format: :json, params: { id: 1, user_email: @user.email, user_token: @user.authentication_token }
       end
       it "handles successfully the request" do
         expect(response.status).to eq( 200 )

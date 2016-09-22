@@ -12,7 +12,7 @@ describe Api::V1::SearchController, :type => :controller do
     context "with an existing :query parameter," do
       before :each do
         # Assert: we rely on the pre-loaded seeds here
-        get :simple, query: 'CILLONI', format: :json, user_email: @user.email, user_token: @user.authentication_token
+        get :simple, format: :json, params: { query: 'CILLONI', user_email: @user.email, user_token: @user.authentication_token }
       end
       it_behaves_like( "(Ap1-V1-Controllers, success returning an Array of Hash)" )
 
@@ -38,7 +38,7 @@ describe Api::V1::SearchController, :type => :controller do
     context "with a non-existing :query parameter," do
       before :each do
         # Assert: we rely on the pre-loaded seeds here
-        get :simple, query: 'LARICIUMBALALILLALLERO', format: :json, user_email: @user.email, user_token: @user.authentication_token
+        get :simple, format: :json, params: { query: 'LARICIUMBALALILLALLERO', user_email: @user.email, user_token: @user.authentication_token }
       end
 
       it "handles successfully the request" do
@@ -58,7 +58,7 @@ describe Api::V1::SearchController, :type => :controller do
     context "with an empty :query parameter," do
       before :each do
         # Assert: we rely on the pre-loaded seeds here
-        get :simple, query: '', format: :json, user_email: @user.email, user_token: @user.authentication_token
+        get :simple, format: :json, params: { query: '', user_email: @user.email, user_token: @user.authentication_token }
       end
       it_behaves_like( "(Ap1-V1-Controllers, success returning an Array of Hash)" )
 

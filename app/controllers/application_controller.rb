@@ -15,7 +15,7 @@ class ApplicationController < ActionController::Base
 
   before_action :set_locale, :check_maintenance_mode
 
-  acts_as_token_authentication_handler_for User
+#  acts_as_token_authentication_handler_for User
   # FIXME Rails5: :authenticate_user! NOT DEFINED YET AT THIS LEVEL
   # [Steve, 20140409] Disabling the auth filters by default will allow us to choose
   # with increased granularity which controllers must be protected:

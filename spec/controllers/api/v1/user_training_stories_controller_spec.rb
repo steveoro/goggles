@@ -264,7 +264,7 @@ describe Api::V1::UserTrainingStoriesController, type: :controller, api: true do
 
     context "with a valid request but for an unlogged user," do
       before(:each) do
-        delete :destroy, format: :json, id: @deletable_row.id
+        delete :destroy, format: :json, params: { id: @deletable_row.id }
       end
       it "refuses the request with unauthorized status" do
         expect( response ).not_to be_a_success

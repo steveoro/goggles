@@ -14,8 +14,15 @@
 
 =end
 class Api::V2::SessionsController < Devise::SessionsController
+  # define which model will act as token authenticatable
+  acts_as_token_authentication_handler_for User
+
+  # Prevent CSRF attacks by raising an exception.
+  # For APIs, you may want to use :null_session instead.
+  protect_from_forgery with: :null_session
 
   respond_to :json
+  skip_before_action :verify_authenticity_token, if: :json_request?
 
   # Ok result status
   RESULT_OK = 'ok'
@@ -86,8 +93,14 @@ class Api::V2::SessionsController < Devise::SessionsController
     user = User.find_for_database_authentication( email: email ) if email.presence
     if user
       if user.valid_password?( password )
-        user.reset_authentication_token!
         sign_in( user )
+# DEBUG
+#        puts "\r\n- user: #{ user.inspect }"
+#        puts "\r\n- authentication_token...: '#{ user.authentication_token }'"
+#        puts "- params['t']............: '#{ params['t'] }'"
+        # FIXME was: user.reset_authentication_token!
+#        user.authentication_token = nil
+#        user.save!
         render(
           status: :ok,    # 200 status code
           json: {
@@ -152,6 +165,12 @@ class Api::V2::SessionsController < Devise::SessionsController
 
 
   private
+
+
+  # Returns true if the request format is JSON
+  def json_request?
+    request.format.json?
+  end
 
 
   # Override for Devise::SessionController#respond_to_on_destroy, since here we

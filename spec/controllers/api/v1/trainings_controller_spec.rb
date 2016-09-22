@@ -15,7 +15,7 @@ describe Api::V1::TrainingsController, :type => :controller do
     context "with :title_like filtering parameter" do
       before :each do
         create( :training_with_rows ) # ASSERT: it should include 'workout' in its title
-        get :index, title_like: 'workout', format: :json, user_email: @user.email, user_token: @user.authentication_token
+        get :index, format: :json, params: { title_like: 'workout', user_email: @user.email, user_token: @user.authentication_token }
       end
 
       it_behaves_like( "(Ap1-V1-Controllers, success returning an Array of Hash)" )

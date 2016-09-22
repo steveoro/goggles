@@ -15,25 +15,25 @@ RSpec.describe Api::V2::SessionsController, type: :controller do
     # A non-valid "SIGN-IN" request:
     context "with invalid credentials or invalid request" do
       it "returns a JSON error result for a missing password" do
-        post( :create, format: :json, p: user.password )
+        post( :create, format: :json, params: { p: user.password } )
         expect( response.status ).to eq( 400 )
         result = JSON.parse(response.body)
         expect( result['result'] ).to eq( Api::V2::SessionsController::RESULT_ERROR )
       end
       it "returns a JSON error result for a missing email" do
-        post( :create, format: :json, p: user.password )
+        post( :create, format: :json, params: { p: user.password } )
         expect( response.status ).to eq( 400 )
         result = JSON.parse(response.body)
         expect( result['result'] ).to eq( Api::V2::SessionsController::RESULT_ERROR )
       end
       it "returns a JSON error result for a wrong password" do
-        post( :create, format: :json, u: user.email, p: "fake" ) # (surely a too-short password to be correct standing to our current validations)
+        post( :create, format: :json, params: { u: user.email, p: "fake" } ) # (surely a too-short password to be correct standing to our current validations)
         expect( response.status ).to eq( 401 )
         result = JSON.parse(response.body)
         expect( result['result'] ).to eq( Api::V2::SessionsController::RESULT_ERROR )
       end
       it "returns a JSON error result for a non-JSON request" do
-        post( :create, u: user.email, p: user.password )
+        post( :create, params: { u: user.email, p: user.password } )
         expect( response.status ).to eq( 406 )
         result = JSON.parse(response.body)
         expect( result['result'] ).to eq( Api::V2::SessionsController::RESULT_ERROR )
@@ -48,7 +48,7 @@ RSpec.describe Api::V2::SessionsController, type: :controller do
         @new_fixture_email    = FactoryGirl.build(:user).email
         @new_fixture_password = "password"
         @user_count_before    = User.count
-        post( :create, format: :json, u: @new_fixture_email, p: @new_fixture_password )
+        post( :create, format: :json, params: { u: @new_fixture_email, p: @new_fixture_password } )
         expect( response.status ).to eq( 401 )
         @result = JSON.parse(response.body)
       end
@@ -118,13 +118,13 @@ RSpec.describe Api::V2::SessionsController, type: :controller do
         expect( result['result'] ).to eq( Api::V2::SessionsController::RESULT_ERROR )
       end
       it "returns a JSON success=false response for a wrong user token" do
-        post( :destroy, format: :json, t: "this_is_fake" )
+        post( :destroy, format: :json, params: { t: "this_is_fake" } )
         expect(response.status).to eq( 404 )
         result = JSON.parse(response.body)
         expect( result['result'] ).to eq( Api::V2::SessionsController::RESULT_ERROR )
       end
       it "redirects to root_path a non-JSON request" do
-        post( :destroy, t: user.authentication_token )
+        post( :destroy, params: { t: user.authentication_token } )
         expect(response.status).to eq( 406 )
         result = JSON.parse(response.body)
         expect( result['result'] ).to eq( Api::V2::SessionsController::RESULT_ERROR )
@@ -137,13 +137,13 @@ RSpec.describe Api::V2::SessionsController, type: :controller do
     context "with valid credentials" do
       before :each do
         # Force creation of a new token:
-        post( :create, format: :json, u: user.email, p: user.password )
+        post( :create, format: :json, params: { u: user.email, p: user.password } )
         expect( response.status ).to eq( 200 )
         result = JSON.parse(response.body)
         expect( result['token'] ).not_to be nil
         user.reload
         @old_auth_token = user.authentication_token # result['token']
-        post( :destroy, format: :json, t: user.authentication_token )
+        post( :destroy, format: :json, params: { t: user.authentication_token } )
         expect( response.status ).to eq( 200 )
       end
 
