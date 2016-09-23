@@ -1,13 +1,12 @@
 #
 # RESTful API controller
 #
-class Api::V1::UserTrainingsController < ApplicationController
+class Api::V1::UserTrainingsController < Api::BaseController
 
   respond_to :json
 
   # Require authorization before invoking any of this controller's actions:
   before_action :authenticate_user_from_token!
-  before_action :authenticate_user!                # Devise "standard" HTTP log-in strategy
   before_action :ensure_format
   #-- -------------------------------------------------------------------------
   #++
@@ -26,7 +25,7 @@ class Api::V1::UserTrainingsController < ApplicationController
     else
       @user_trainings = UserTraining.order('updated_at DESC').all
     end
-    respond_with( @user_trainings )
+    render status: 200, json: @user_trainings
   end
 
 
@@ -37,7 +36,7 @@ class Api::V1::UserTrainingsController < ApplicationController
   # - id: the UserTraining.id
   #
   def show
-    respond_with( @user_training = UserTraining.find(params[:id]) )
+    render status: 200, json: UserTraining.find(params[:id])
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -49,7 +48,13 @@ class Api::V1::UserTrainingsController < ApplicationController
   # - :user_training => the attributes for the row to be created.
   #
   def create
-    respond_with( @user_training = UserTraining.create( user_training_params ) )
+    is_ok = true
+    begin
+      @user_training = UserTraining.create!( user_training_params )
+    rescue
+      is_ok = false
+    end
+    render( status: (is_ok ? 201 : 422), json: @user_training )
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -61,7 +66,7 @@ class Api::V1::UserTrainingsController < ApplicationController
   # - id: the UserTraining.id
   #
   def edit
-    respond_with( @user_training = UserTraining.find(params[:id]) )
+    render json: UserTraining.find(params[:id])
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -101,7 +106,7 @@ class Api::V1::UserTrainingsController < ApplicationController
 
   # Makes sure that the format for the request is an accepted one.
   def ensure_format
-    unless request.xhr? || request.format.json?
+    unless request.format.json?
       render( status: 406, json: { success: false, message: I18n.t(:api_request_must_be_json) } )
       return
     end

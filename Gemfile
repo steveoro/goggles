@@ -38,7 +38,9 @@ gem 'jbuilder', '~> 2.5'
 gem "json"
 gem "haml"
 
-gem "goggles_core", git: "git@github.com:steveoro/goggles_core", branch: "rails5"
+# XXX When using ssh key use the protocol below:
+#gem "goggles_core", git: "git@github.com:steveoro/goggles_core", branch: "rails5"
+gem "goggles_core", git: "https://github.com/steveoro/goggles_core", branch: "rails5"
 
 # XXX [Steve, 20160920] Too many issues w/ SafeYAML, regarding ActiveRecord,
 # Guard & DelayedJob (See https://github.com/dtao/safe_yaml#known-issues).
@@ -56,12 +58,17 @@ gem 'simple-navigation-bootstrap'
 gem "wice_grid"
 
 # [Steve] Customized version. For Facebook-like friendship management
-gem "amistad", git: "git@github.com:fasar-sw/amistad", branch: "rails5"
-gem "ruport",  git: "git@github.com:ruport/ruport" #, branch: "ruby19-compat"
+# XXX When using ssh key use the protocol below:
+#gem "amistad", git: "git@github.com:fasar-sw/amistad", branch: "rails5"
+gem "amistad", git: "https://github.com/fasar-sw/amistad", branch: "rails5"
+gem "ruport",  git: "https://github.com/ruport/ruport" #, branch: "ruby19-compat"
 gem 'acts_as_reportable'
 gem 'prawn' #, '~> 0.15'
-                                                    # [Steve, 20130412] Custom Documatic version (used for Ooo exports):
-gem 'documatic', git: "git@github.com:fasar-sw/documatic"
+
+# [Steve, 20130412] Custom Documatic version (used for Ooo exports):
+# XXX When using ssh key use the protocol below:
+#gem 'documatic', git: "git@github.com:fasar-sw/documatic"
+gem 'documatic', git: "https://github.com/fasar-sw/documatic"
 
 gem 'country_select'
 gem 'simple_form'

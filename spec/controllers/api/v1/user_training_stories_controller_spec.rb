@@ -90,11 +90,12 @@ describe Api::V1::UserTrainingStoriesController, type: :controller, api: true do
         expect( response ).not_to be_a_success
         expect(response.status).to eq( 422 )
       end
-      it "returns a valid JSON Hash with a nil 'id' member" do
+      it "returns an empty body" do
         post :create, format: :json, params: { user_training_story: invalid_post_attributes, user_email: @user.email, user_token: @user.authentication_token }
-        result = JSON.parse(response.body)
-        expect( result ).to be_an_instance_of(Hash)
-        expect( result['id'] ).to be_nil
+# DEBUG
+        #puts "\r\n- response.body: <<#{ response.body }>>"
+        expect( response.body ).to be_an_instance_of( String )
+        expect( response.body ).to eq("null")
       end
       it "doesn't add a new row" do
         expect {

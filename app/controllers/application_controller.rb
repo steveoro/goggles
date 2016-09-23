@@ -15,9 +15,13 @@ class ApplicationController < ActionController::Base
 
   before_action :set_locale, :check_maintenance_mode
 
+  # Security note: controllers with no-CSRF protection must disable the Devise fallback,
+  # see #49 for details.
 #  acts_as_token_authentication_handler_for User
-  acts_as_token_authentication_handler_for User,
-    if: ->(controller) { controller.user_token_authenticable? }
+
+#  acts_as_token_authentication_handler_for User,
+#    fallback: :none,
+#    if: ->(controller) { controller.user_token_authenticable? }
 
   # FIXME Rails5: :authenticate_user! NOT DEFINED YET AT THIS LEVEL
   # [Steve, 20140409] Disabling the auth filters by default will allow us to choose
@@ -36,15 +40,17 @@ class ApplicationController < ActionController::Base
   protected
 
 
-  # Returns true if the current user is defined and
-  def user_token_authenticable?
-    # This ensure the token can be used only for JSON requests (you may want to enable it for XML too, for example)
-    return false unless request.format.json?
-    return false if tokenized_user_identifier.blank?
+  # Returns true if the current user is defined and the controller does:
+  # - respond to JSON
+  #
+#  def user_token_authenticable?
+#    # This ensure the token can be used only for JSON requests (you may want to enable it for XML too, for example)
+#    return false unless request.format.json?
+#    return false if tokenized_user_identifier.blank?
 
     # `nil` is still a falsy value, but I want a strictly boolean field here
-    tokenized_user.try(:token_authenticable?) || false
-  end
+#    tokenized_user.try(:token_authenticable?) || false
+#  end
 
 
 

@@ -1,12 +1,12 @@
 GIT
-  remote: git@github.com:fasar-sw/amistad
+  remote: https://github.com/fasar-sw/amistad
   revision: 4f69e42bef321d0babfb08fa285626726504c621
   branch: rails5
   specs:
     amistad (5.0.0)
 
 GIT
-  remote: git@github.com:fasar-sw/documatic
+  remote: https://github.com/fasar-sw/documatic
   revision: 4ce150f90c35e67e781f5e0abda47e6c993834ce
   specs:
     documatic (0.2.2)
@@ -14,7 +14,7 @@ GIT
       ruport
 
 GIT
-  remote: git@github.com:ruport/ruport
+  remote: https://github.com/ruport/ruport
   revision: e416896a1fc79b950cf5341e5b8b3ac7deeafdd7
   specs:
     ruport (1.7.0)
@@ -22,7 +22,7 @@ GIT
       prawn (= 0.12.0)
 
 GIT
-  remote: git@github.com:steveoro/goggles_core
+  remote: https://github.com/steveoro/goggles_core
   revision: 3ec96c4791f0385b2073733be96296365d997ab9
   branch: rails5
   specs:
@@ -108,7 +108,6 @@ GEM
     arel (7.1.2)
     ast (2.3.0)
     bcrypt (3.1.11)
-    bcrypt (3.1.11-x86-mingw32)
     better_errors (2.1.1)
       coderay (>= 1.0.0)
       erubis (>= 2.6.6)
@@ -135,7 +134,7 @@ GEM
     capistrano-rvm (0.1.2)
       capistrano (~> 3.0)
       sshkit (~> 1.2)
-    capybara (2.8.1)
+    capybara (2.9.0)
       addressable
       mime-types (>= 1.16)
       nokogiri (>= 1.3.3)
@@ -196,7 +195,6 @@ GEM
       railties (>= 3.0.0)
     ffaker (2.2.0)
     ffi (1.9.14)
-    ffi (1.9.14-x86-mingw32)
     formatador (0.2.5)
     fuzzy-string-match_pure (0.9.5)
     generator (0.0.1)
@@ -260,7 +258,6 @@ GEM
     minitest (5.9.0)
     multi_json (1.12.1)
     mysql2 (0.4.4)
-    mysql2 (0.4.4-x86-mingw32)
     nenv (0.3.0)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
@@ -269,14 +266,11 @@ GEM
     nokogiri (1.6.8)
       mini_portile2 (~> 2.1.0)
       pkg-config (~> 1.1.7)
-    nokogiri (1.6.8-x86-mingw32)
-      mini_portile2 (~> 2.1.0)
-      pkg-config (~> 1.1.7)
     notiffany (0.1.1)
       nenv (~> 0.1)
       shellany (~> 0.0)
     orm_adapter (0.5.0)
-    parser (2.3.1.3)
+    parser (2.3.1.4)
       ast (~> 2.2)
     pdf-reader (1.4.0)
       Ascii85 (~> 1.0.0)
@@ -436,8 +430,6 @@ GEM
     turbolinks-source (5.0.0)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
-    tzinfo-data (1.2016.6)
-      tzinfo (>= 1.0.0)
     uglifier (3.0.2)
       execjs (>= 0.3.0, < 3)
     unicode-display_width (1.1.1)
@@ -464,7 +456,6 @@ GEM
 
 PLATFORMS
   ruby
-  x86-mingw32
 
 DEPENDENCIES
   acts_as_reportable

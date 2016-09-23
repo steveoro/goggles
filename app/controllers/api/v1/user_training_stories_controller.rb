@@ -1,13 +1,12 @@
 #
 # RESTful API controller
 #
-class Api::V1::UserTrainingStoriesController < ApplicationController
+class Api::V1::UserTrainingStoriesController < Api::BaseController
 
   respond_to :json
 
   # Require authorization before invoking any of this controller's actions:
   before_action :authenticate_user_from_token!
-  before_action :authenticate_user!                # Devise "standard" HTTP log-in strategy
   before_action :ensure_format
   #-- -------------------------------------------------------------------------
   #++
@@ -23,12 +22,13 @@ class Api::V1::UserTrainingStoriesController < ApplicationController
     # (This uses Squeel DSL syntax for where clauses)
     if params[:swam_date_like]
       filter = "%#{params[:swam_date_like]}%"
-      @user_training_story = UserTrainingStory.where( ["swam_date LIKE ?", filter] )
+      @user_training_story = UserTrainingStory
+          .where( ["swam_date LIKE ?", filter] )
           .order( 'swam_date DESC', 'updated_at DESC' )
     else
       @user_training_story = UserTrainingStory.order( 'swam_date DESC', 'updated_at DESC' )
     end
-    respond_with( @user_training_story )
+    render status: 200, json: @user_training_story
   end
 
 
@@ -39,7 +39,7 @@ class Api::V1::UserTrainingStoriesController < ApplicationController
   # - id: the UserTrainingStory.id
   #
   def show
-    respond_with( @user_training_story = UserTrainingStory.find(params[:id]) )
+    render status: 200, json: UserTrainingStory.find(params[:id])
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -51,7 +51,13 @@ class Api::V1::UserTrainingStoriesController < ApplicationController
   # - :user_training_story => the attributes for the row to be created.
   #
   def create
-    respond_with( @user_training_story = UserTrainingStory.create( user_training_story_params ) )
+    is_ok = true
+    begin
+      @user_training_story = UserTrainingStory.create!( user_training_story_params )
+    rescue
+      is_ok = false
+    end
+    render( status: (is_ok ? 201 : 422), json: @user_training_story )
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -63,7 +69,7 @@ class Api::V1::UserTrainingStoriesController < ApplicationController
   # - id: the UserTrainingStory.id
   #
   def edit
-    respond_with( @user_training_story = UserTrainingStory.find(params[:id]) )
+    render json: UserTrainingStory.find(params[:id])
   end
   #-- -------------------------------------------------------------------------
   #++
