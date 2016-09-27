@@ -1,14 +1,13 @@
 #
 # RESTful API controller
 #
-class Api::V1::PassagesController < ApplicationController
+class Api::V1::PassagesController < Api::BaseController
 
   respond_to :json
 
   # Require authorization before invoking any of this controller's actions:
-  before_filter :authenticate_user_from_token!
-  before_filter :authenticate_user!                # Devise "standard" HTTP log-in strategy
-  before_filter :ensure_format
+  before_action :authenticate_user_from_token!
+  before_action :ensure_format
   #-- -------------------------------------------------------------------------
   #++
 
@@ -29,7 +28,7 @@ class Api::V1::PassagesController < ApplicationController
     else
       @passages = []
     end
-    respond_with( @passages )
+    render status: 200, json: @passages
   end
 
 
@@ -40,7 +39,7 @@ class Api::V1::PassagesController < ApplicationController
   # - id: the Passage.id
   #
   def show
-    respond_with( @passage = Passage.find(params[:id]) )
+    render status: 200, json: Passage.find(params[:id])
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -52,7 +51,13 @@ class Api::V1::PassagesController < ApplicationController
   # - :passage => the attributes for the row to be created.
   #
   def create
-    respond_with( @passage = Passage.create(params[:passage]) )
+    is_ok = true
+    begin
+      @passage = Passage.create!( passage_params )
+    rescue
+      is_ok = false
+    end
+    render( status: (is_ok ? 201 : 422), json: @passage )
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -64,7 +69,7 @@ class Api::V1::PassagesController < ApplicationController
   # - id: the Passage.id
   #
   def edit
-    respond_with( @passage = Passage.find(params[:id]) )
+    render json: Passage.find(params[:id])
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -77,7 +82,7 @@ class Api::V1::PassagesController < ApplicationController
   #
   def update
     row = Passage.find_by_id( params[:id] )
-    is_ok = row && row.update_attributes( params[:passage] )
+    is_ok = row && row.update_attributes( passage_params )
     render( status: (is_ok ? :ok : 400), json: { success: is_ok } )
   end
   #-- -------------------------------------------------------------------------
@@ -108,6 +113,36 @@ class Api::V1::PassagesController < ApplicationController
       render( status: 406, json: { success: false, message: I18n.t(:api_request_must_be_json) } )
       return
     end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  private
+
+
+  # Strong parameters checking for mass-assignment of a Passage instance.
+  # Returns the whitelisted, filtered params Hash.
+  def passage_params
+    params
+      .require( :passage )
+      .permit(
+        :user_id,
+        :passage_type_id,
+        :swimmer_id,
+        :team_id,
+        :meeting_program_id,
+        :meeting_entry_id,
+        :meeting_individual_result_id,
+        :minutes_from_start, :seconds_from_start, :hundreds_from_start,
+        :is_native_from_start,
+        :reaction_time, :position,
+        :minutes, :seconds, :hundreds,
+        :breath_number, :stroke_cycles,
+        :not_swam_part_seconds,
+        :not_swam_part_hundreds,
+        :not_swam_kick_number
+      )
   end
   #-- -------------------------------------------------------------------------
   #++
