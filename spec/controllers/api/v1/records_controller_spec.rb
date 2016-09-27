@@ -1,20 +1,20 @@
 require 'rails_helper'
 
 
-describe Api::V1::RecordsController, type: :controller do
+describe Api::V1::RecordsController, type: :controller, api: true do
   # ASSERT: individual_records table has been copied from development DB
   # (use always #> rake db:clone_to_test task to prepare the test DB)
 
   describe '[GET #for_season_type]' do
     context "with a non-JSON request" do
       it "refuses the request" do
-        get :for_season_type, id: 2 # 'MASCSI'
+        get :for_season_type, params: { id: 2 } # 'MASCSI'
         expect(response.status).to eq( 406 )
       end
     end
 
     context "for JSON request with invalid parameters," do
-      before( :each ) { get :for_season_type, id: 0, format: :json }
+      before( :each ) { get :for_season_type, format: :json, params: { id: 0 } }
 
       it "handles successfully the request" do
         expect(response.status).to eq( 200 )
@@ -27,7 +27,7 @@ describe Api::V1::RecordsController, type: :controller do
     end
 
     context "for JSON request with valid parameters," do
-      before( :each ) { get :for_season_type, id: 2, format: :json }
+      before( :each ) { get :for_season_type, format: :json, params: { id: 2 } }
 
       it "handles successfully the request" do
         expect(response.status).to eq( 200 )
@@ -55,13 +55,13 @@ describe Api::V1::RecordsController, type: :controller do
   describe '[GET #for_federation]' do
     context "with a non-JSON request" do
       it "refuses the request" do
-        get :for_federation, id: 2 # 'CSI'
+        get :for_federation, params: { id: 2 } # 'CSI'
         expect(response.status).to eq( 406 )
       end
     end
 
     context "for JSON request with invalid parameters," do
-      before( :each ) { get :for_federation, id: 0, format: :json }
+      before( :each ) { get :for_federation, format: :json, params: { id: 0 } }
 
       it "handles successfully the request" do
         expect(response.status).to eq( 200 )
@@ -74,7 +74,7 @@ describe Api::V1::RecordsController, type: :controller do
     end
 
     context "for JSON request with valid parameters," do
-      before( :each ) { get :for_federation, id: 2, format: :json }
+      before( :each ) { get :for_federation, format: :json, params: { id: 2 } }
 
       it "handles successfully the request" do
         expect(response.status).to eq( 200 )
@@ -102,13 +102,13 @@ describe Api::V1::RecordsController, type: :controller do
   describe '[GET #for_team]' do
     context "with a non-JSON request" do
       it "refuses the request" do
-        get :for_team, id: 1
+        get :for_team, params: { id: 1 }
         expect(response.status).to eq( 406 )
       end
     end
 
     context "for JSON request with invalid parameters," do
-      before( :each ) { get :for_team, id: 0, format: :json }
+      before( :each ) { get :for_team, format: :json, params: { id: 0 } }
 
       it "handles successfully the request" do
         expect(response.status).to eq( 200 )
@@ -121,7 +121,7 @@ describe Api::V1::RecordsController, type: :controller do
     end
 
     context "for JSON request with valid parameters," do
-      before( :each ) { get :for_team, id: 1, format: :json }
+      before( :each ) { get :for_team, format: :json, params: { id: 1 } }
 
       it "handles successfully the request" do
         expect(response.status).to eq( 200 )
@@ -147,13 +147,13 @@ describe Api::V1::RecordsController, type: :controller do
   describe '[GET #for_swimmer]' do
     context "with a non-JSON request" do
       it "refuses the request" do
-        get :for_swimmer, id: 142 # = Steve A.
+        get :for_swimmer, params: { id: 142 } # = Steve A.
         expect(response.status).to eq( 406 )
       end
     end
 
     context "for JSON request with invalid parameters," do
-      before( :each ) { get :for_swimmer, id: 0, format: :json }
+      before( :each ) { get :for_swimmer, format: :json, params: { id: 0 } }
 
       it "handles successfully the request" do
         expect(response.status).to eq( 200 )
@@ -166,7 +166,7 @@ describe Api::V1::RecordsController, type: :controller do
     end
 
     context "for JSON request with valid parameters," do
-      before( :each ) { get :for_swimmer, id: 142, format: :json }
+      before( :each ) { get :for_swimmer, format: :json, params: { id: 142 } }
 
       it "handles successfully the request" do
         expect(response.status).to eq( 200 )
@@ -192,13 +192,13 @@ describe Api::V1::RecordsController, type: :controller do
   describe '[GET #count_records_for_swimmer]' do
     context "with a non-JSON request" do
       it "refuses the request" do
-        get :count_records_for_swimmer, id: 142 # = Steve A.
+        get :count_records_for_swimmer, params: { id: 142 } # = Steve A.
         expect(response.status).to eq( 406 )
       end
     end
 
     context "for JSON request with invalid parameters," do
-      before( :each ) { get :count_records_for_swimmer, id: 0, format: :json }
+      before( :each ) { get :count_records_for_swimmer, format: :json, params: { id: 0 } }
 
       it "handles successfully the request" do
         expect(response.status).to eq( 200 )
@@ -224,7 +224,7 @@ describe Api::V1::RecordsController, type: :controller do
     end
 
     context "for JSON request with valid parameters," do
-      before( :each ) { get :count_records_for_swimmer, id: 142, format: :json }
+      before( :each ) { get :count_records_for_swimmer, format: :json, params: { id: 142 } }
 
       it "handles successfully the request" do
         expect(response.status).to eq( 200 )

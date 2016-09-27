@@ -4,8 +4,8 @@ require 'common/format'
 
 describe Api::V1::PassagesController, type: :controller, api: true do
   before(:all) do # Force the creation of the required rows:
-    @user = FactoryGirl.create( :user )
-    mir = FactoryGirl.create( :meeting_individual_result_with_passages )
+    @user = create( :user )
+    mir = create( :meeting_individual_result_with_passages )
     @fixture_row = mir.passages.first
   end
 
@@ -19,7 +19,7 @@ describe Api::V1::PassagesController, type: :controller, api: true do
   describe 'GET #index' do
     context "with a non-JSON request" do
       before :each do
-        get :index, user_email: @user.email, user_token: @user.authentication_token
+        get :index, params: { user_email: @user.email, user_token: @user.authentication_token }
       end
       it "refuses the request" do
         expect(response.status).to eq( 406 )
@@ -28,7 +28,7 @@ describe Api::V1::PassagesController, type: :controller, api: true do
 
     context "with valid parameters and credentials" do
       before :each do
-        get :index, team_id: @fixture_row.team_id, meeting_id: @fixture_row.meeting.id, format: :json, user_email: @user.email, user_token: @user.authentication_token
+        get :index, format: :json, params: { team_id: @fixture_row.team_id, meeting_id: @fixture_row.meeting.id, user_email: @user.email, user_token: @user.authentication_token }
       end
 
       it_behaves_like( "(Ap1-V1-Controllers, success returning an Array of Hash)" )
@@ -41,7 +41,7 @@ describe Api::V1::PassagesController, type: :controller, api: true do
 
     context "with a valid request but for an unlogged user," do
       it "refuses the request with unauthorized status" do
-        get :index, team_id: @fixture_row.team_id, meeting_id: @fixture_row.meeting.id, format: :json
+        get :index, format: :json, params: { team_id: @fixture_row.team_id, meeting_id: @fixture_row.meeting.id }
         expect( response ).not_to be_a_success
         expect(response.status).to eq( 401 ) # 401 = unauthorized
       end
@@ -51,7 +51,7 @@ describe Api::V1::PassagesController, type: :controller, api: true do
   describe 'GET #show/:id' do
     context "with a non-JSON request" do
       before :each do
-        get :show, id: @fixture_row.id, user_email: @user.email, user_token: @user.authentication_token
+        get :show, params: { id: @fixture_row.id, user_email: @user.email, user_token: @user.authentication_token }
       end
       it "refuses the request" do
         expect(response.status).to eq( 406 )
@@ -60,7 +60,7 @@ describe Api::V1::PassagesController, type: :controller, api: true do
 
     context "with valid parameters and credentials" do
       before :each do
-        get :show, id: @fixture_row.id, format: :json, user_email: @user.email, user_token: @user.authentication_token
+        get :show, format: :json, params: { id: @fixture_row.id, user_email: @user.email, user_token: @user.authentication_token }
       end
       it "handles successfully the request" do
         expect(response.status).to eq( 200 )
@@ -74,7 +74,7 @@ describe Api::V1::PassagesController, type: :controller, api: true do
 
     context "with a valid request but for an unlogged user," do
       it "refuses the request with unauthorized status" do
-        get :show, format: :json, id: @fixture_row.id
+        get :show, format: :json, params: { id: @fixture_row.id }
         expect( response ).not_to be_a_success
         expect(response.status).to eq( 401 ) # 401 = unauthorized
       end
@@ -96,45 +96,44 @@ describe Api::V1::PassagesController, type: :controller, api: true do
 
     context "with a non-JSON request," do
       it "refuses the request" do
-        post :create, passage: @post_attributes, user_email: @user.email, user_token: @user.authentication_token
+        post :create, params: { passage: @post_attributes, user_email: @user.email, user_token: @user.authentication_token }
         expect( response ).not_to be_a_success
         expect(response.status).to eq( 406 ) # 406 = not acceptable
       end
       it "doesn't add a new row" do
         expect {
-          post :create, passage: @post_attributes, user_email: @user.email, user_token: @user.authentication_token
+          post :create, params: { passage: @post_attributes, user_email: @user.email, user_token: @user.authentication_token }
         }.not_to change{ Passage.count }
       end
     end
 
     context "with a valid request but for an unlogged user," do
       it "refuses the request with unauthorized status" do
-        post :create, format: :json, passage: @post_attributes
+        post :create, format: :json, params: { passage: @post_attributes }
         expect( response ).not_to be_a_success
         expect(response.status).to eq( 401 ) # 401 = unauthorized
       end
       it "doesn't add a new row" do
         expect {
-          post :create, format: :json, passage: @post_attributes
+          post :create, format: :json, params: { passage: @post_attributes }
         }.not_to change{ Passage.count }
       end
     end
 
     context "with non-valid attributes," do
       it "handles successfully the request" do
-        post :create, format: :json, passage: @invalid_post_attributes, user_email: @user.email, user_token: @user.authentication_token
+        post :create, format: :json, params: { passage: @invalid_post_attributes, user_email: @user.email, user_token: @user.authentication_token }
         expect( response ).not_to be_a_success
         expect(response.status).to eq( 422 )
       end
-      it "returns a valid JSON Hash with a nil 'id' member" do
-        post :create, format: :json, passage: @invalid_post_attributes, user_email: @user.email, user_token: @user.authentication_token
-        result = JSON.parse(response.body)
-        expect( result ).to be_an_instance_of(Hash)
-        expect( result['id'] ).to be_nil
+      it "returns an empty body" do
+        post :create, format: :json, params: { passage: @invalid_post_attributes, user_email: @user.email, user_token: @user.authentication_token }
+        expect( response.body ).to be_an_instance_of( String )
+        expect( response.body ).to eq("null")
       end
       it "doesn't add a new row" do
         expect {
-          post :create, format: :json, passage: @invalid_post_attributes, user_email: @user.email, user_token: @user.authentication_token
+          post :create, format: :json, params: { passage: @invalid_post_attributes, user_email: @user.email, user_token: @user.authentication_token }
         }.not_to change{ Passage.count }
       end
     end
@@ -142,13 +141,16 @@ describe Api::V1::PassagesController, type: :controller, api: true do
     context "with a valid request and credentials" do
 # FIXME ROUTE CLASH
       xit "handles successfully the request" do
-        post :create, format: :json, passage: @post_attributes, user_email: @user.email, user_token: @user.authentication_token
+        post :create, format: :json, params: { passage: @post_attributes, user_email: @user.email, user_token: @user.authentication_token }
         expect(response.status).to eq( 201 ) # 201 = created
       end
 # FIXME ROUTE CLASH
       xit "returns a valid JSON Hash with a valid, positive, 'id' member" do
-        post :create, controller: :passages, action: :create, format: :json, passage: @post_attributes, user_email: @user.email, user_token: @user.authentication_token
-        post api_v1_passages_create_path( format: :json, passage: @post_attributes, user_email: @user.email, user_token: @user.authentication_token )
+        post :create, controller: :passages, action: :create, format: :json, params: { passage: @post_attributes, user_email: @user.email, user_token: @user.authentication_token }
+        post api_v1_passages_create_path(
+          format: :json,
+          params: { passage: @post_attributes, user_email: @user.email, user_token: @user.authentication_token }
+        )
 #        post :create, format: :json, passage: @post_attributes, user_email: @user.email, user_token: @user.authentication_token
         result = JSON.parse(response.body)
         expect( result ).to be_an_instance_of(Hash)
@@ -157,7 +159,7 @@ describe Api::V1::PassagesController, type: :controller, api: true do
 # FIXME ROUTE CLASH
       xit "adds a new row" do
         expect {
-          post :create, format: :json, passage: @post_attributes, user_email: @user.email, user_token: @user.authentication_token
+          post :create, format: :json, params: { passage: @post_attributes, user_email: @user.email, user_token: @user.authentication_token }
         }.to change{ Passage.count }
       end
     end
@@ -169,7 +171,7 @@ describe Api::V1::PassagesController, type: :controller, api: true do
   describe 'GET #edit/:id' do
     context "with a non-JSON request" do
       it "refuses the request" do
-        get :edit, id: @fixture_row.id, user_email: @user.email, user_token: @user.authentication_token
+        get :edit, params: { id: @fixture_row.id, user_email: @user.email, user_token: @user.authentication_token }
         expect( response ).not_to be_a_success
         expect(response.status).to eq( 406 ) # 406 = not acceptable
       end
@@ -177,7 +179,7 @@ describe Api::V1::PassagesController, type: :controller, api: true do
 
     context "with a valid request but for an unlogged user," do
       it "refuses the request with unauthorized status" do
-        get :edit, format: :json, id: @fixture_row.id
+        get :edit, format: :json, params: { id: @fixture_row.id }
         expect( response ).not_to be_a_success
         expect(response.status).to eq( 401 ) # 401 = unauthorized
       end
@@ -185,7 +187,7 @@ describe Api::V1::PassagesController, type: :controller, api: true do
 
     context "with valid parameters and credentials" do
       before(:each) do
-        get :edit, id: @fixture_row.id, format: :json, user_email: @user.email, user_token: @user.authentication_token
+        get :edit, format: :json, params: { id: @fixture_row.id, user_email: @user.email, user_token: @user.authentication_token }
       end
       it "handles successfully the request" do
         expect( response ).to be_a_success # 200 = success
@@ -217,7 +219,7 @@ describe Api::V1::PassagesController, type: :controller, api: true do
 
     context "with a non-JSON request," do
       before(:each) do
-        put :update, id: @updatable_row.id, passage: @put_attributes, user_email: @user.email, user_token: @user.authentication_token
+        put :update, params: { id: @updatable_row.id, passage: @put_attributes, user_email: @user.email, user_token: @user.authentication_token }
       end
       it "refuses the request" do
         expect( response ).not_to be_a_success
@@ -236,7 +238,7 @@ describe Api::V1::PassagesController, type: :controller, api: true do
 
     context "with a valid request but for an unlogged user," do
       before(:each) do
-        put :update, format: :json, id: @updatable_row.id, passage: @put_attributes
+        put :update, format: :json, params: { id: @updatable_row.id, passage: @put_attributes }
       end
       it "refuses the request with unauthorized status" do
         expect( response ).not_to be_a_success
@@ -251,7 +253,7 @@ describe Api::V1::PassagesController, type: :controller, api: true do
 
     context "with non-valid attributes," do
       before(:each) do
-        put :update, format: :json, id: @updatable_row.id, passage: @invalid_put_attributes, user_email: @user.email, user_token: @user.authentication_token
+        put :update, format: :json, params: { id: @updatable_row.id, passage: @invalid_put_attributes, user_email: @user.email, user_token: @user.authentication_token }
       end
       it "refuses the request" do
         expect( response ).not_to be_a_success
@@ -272,7 +274,7 @@ describe Api::V1::PassagesController, type: :controller, api: true do
       before(:each) do
         expect( @updatable_row.position ).not_to eq( @put_attributes['position'] )
         expect( @updatable_row.hundreds_from_start ).not_to eq( @put_attributes['hundreds_from_start'] )
-        put :update, format: :json, id: @updatable_row.id, passage: @put_attributes, user_email: @user.email, user_token: @user.authentication_token
+        put :update, format: :json, params: { id: @updatable_row.id, passage: @put_attributes, user_email: @user.email, user_token: @user.authentication_token }
       end
       it "handles successfully the request" do
         expect( response ).to be_a_success # 200 = success
@@ -300,7 +302,7 @@ describe Api::V1::PassagesController, type: :controller, api: true do
 
     context "with a non-JSON request" do
       before(:each) do
-        delete :destroy, id: @deletable_row.id, user_email: @user.email, user_token: @user.authentication_token
+        delete :destroy, params: { id: @deletable_row.id, user_email: @user.email, user_token: @user.authentication_token }
       end
       it "refuses the request" do
         expect( response ).not_to be_a_success
@@ -318,7 +320,7 @@ describe Api::V1::PassagesController, type: :controller, api: true do
 
     context "with a valid request but for an unlogged user," do
       before(:each) do
-        delete :destroy, format: :json, id: @deletable_row.id
+        delete :destroy, format: :json, params: { id: @deletable_row.id }
       end
       it "refuses the request with unauthorized status" do
         expect( response ).not_to be_a_success
@@ -332,7 +334,7 @@ describe Api::V1::PassagesController, type: :controller, api: true do
 
     context "with a not existing id and valid credentials" do
       before(:each) do
-        delete :destroy, format: :json, id: 0, user_email: @user.email, user_token: @user.authentication_token
+        delete :destroy, format: :json, params: { id: 0, user_email: @user.email, user_token: @user.authentication_token }
       end
       it "handles the request with 'unprocessable entity' error result (422)" do
         expect( response ).not_to be_a_success
@@ -350,7 +352,7 @@ describe Api::V1::PassagesController, type: :controller, api: true do
 
     context "with an existing id and valid credentials" do
       before(:each) do
-        delete :destroy, format: :json, id: @deletable_row.id, user_email: @user.email, user_token: @user.authentication_token
+        delete :destroy, format: :json, params: { id: @deletable_row.id, user_email: @user.email, user_token: @user.authentication_token }
       end
       it "handles successfully the request" do
         expect(response.status).to eq( 200 )

@@ -2,7 +2,7 @@ require 'rails_helper'
 require 'json'
 
 
-describe Api::V1::SessionsController, :type => :controller do
+describe Api::V1::SessionsController, type: :controller, api: true do
 
 
   describe '[GET api/v1/sessions/create]' do

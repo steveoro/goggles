@@ -1,7 +1,7 @@
 #
 # R/O RESTful API controller
 #
-class Api::V1::SwimmersController < ApplicationController
+class Api::V1::SwimmersController < Api::BaseController
 
   respond_to :json
 
@@ -33,7 +33,7 @@ class Api::V1::SwimmersController < ApplicationController
     end
 # DEBUG
 #    puts "- returning #{ @swimmers.size } result..."
-    respond_with( @swimmers )
+    render status: 200, json: @swimmers
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -45,7 +45,7 @@ class Api::V1::SwimmersController < ApplicationController
   # - id: the Swimmer.id
   #
   def show
-    respond_with( @swimmer = Swimmer.find(params[:id]) )
+    render status: 200, json: Swimmer.find(params[:id])
   end
   #-- -------------------------------------------------------------------------
   #++

@@ -21,7 +21,8 @@ class Api::V1::UserTrainingsController < Api::BaseController
   def index
     # (This uses Squeel DSL syntax for where clauses)
     if params[:user_id]
-      @user_trainings = UserTraining.where( user_id: params[:user_id] ).order('updated_at DESC')
+      @user_trainings = UserTraining.where( user_id: params[:user_id] )
+          .order('updated_at DESC')
     else
       @user_trainings = UserTraining.order('updated_at DESC').all
     end

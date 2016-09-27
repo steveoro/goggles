@@ -1,13 +1,12 @@
 #
 # R/O RESTful API controller
 #
-class Api::V1::TeamsController < ApplicationController
+class Api::V1::TeamsController < Api::BaseController
 
   respond_to :json
 
   # Require authorization before invoking any of this controller's actions:
   before_action :authenticate_user_from_token!, except: [:current_swimmers, :index]
-  before_action :authenticate_user!, except: [:current_swimmers, :index]   # Devise "standard" HTTP log-in strategy
   before_action :ensure_format
   #-- -------------------------------------------------------------------------
   #++
@@ -101,11 +100,12 @@ class Api::V1::TeamsController < ApplicationController
     # (This uses Squeel DSL syntax for where clauses)
     if params['q']
       filter = "%#{params['q']}%"
-      @teams = Team.where( ["name LIKE ?", filter] ).order(:name).limit(20)
+      @teams = Team.where( ["name LIKE ?", filter] )
+          .order(:name).limit(20)
     else
       @teams = Team.order(:name).limit(20)
     end
-    respond_with( @teams )
+    render status: 200, json: @teams
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -117,7 +117,7 @@ class Api::V1::TeamsController < ApplicationController
   # - id: the Team.id
   #
   def show
-    respond_with( @team = Team.find(params[:id]) )
+    render status: 200, json: Team.find(params[:id])
   end
   #-- -------------------------------------------------------------------------
   #++

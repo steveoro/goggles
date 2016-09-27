@@ -1,3 +1,18 @@
+# encoding: utf-8
+
+
+=begin
+
+= Api::V1::SessionsController
+
+  - version:  1.00.00
+  - author:   Steve A.
+
+  Override/upgrade for Devise::SessionsController
+
+  Allows session creation/destruction via API session tokens using the simple_token_authentication gem.
+
+=end
 class Api::V1::SessionsController < Devise::SessionsController
   # define which model will act as token authenticatable
   acts_as_token_authentication_handler_for User

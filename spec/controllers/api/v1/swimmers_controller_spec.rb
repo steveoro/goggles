@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 
-describe Api::V1::SwimmersController, :type => :controller do
+describe Api::V1::SwimmersController, type: :controller, api: true do
   before :each do
     @request.env["devise.mapping"] = Devise.mappings[:user]
     @user = create( :user )

@@ -31,7 +31,7 @@ class Api::BaseController < ActionController::API
     return false unless request.format.json?
     return false if tokenized_user_identifier.blank?
 
-    # `nil` is still a falsy value, but I want a strictly boolean field here
+    # `nil` is still a falsy value, but we want a strictly boolean field here
     tokenized_user.try(:authentication_token?) || false
   end
   #-- -------------------------------------------------------------------------

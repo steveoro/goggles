@@ -1,7 +1,7 @@
 #
 # R/O RESTful API controller
 #
-class Api::V1::ExercisesController < ApplicationController
+class Api::V1::ExercisesController < Api::BaseController
 
   respond_to :json
 
