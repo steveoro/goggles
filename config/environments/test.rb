@@ -1,7 +1,5 @@
 Goggles::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb
-  require 'ruport'                                  # Ruby Reportin Tool
-  require 'ruport/acts_as_reportable'               # ActiveRecord data collection for Ruport
 
   # Do not eager load code on boot. This avoids loading your whole application
   # just for the purpose of running a single test. If you are using a tool that

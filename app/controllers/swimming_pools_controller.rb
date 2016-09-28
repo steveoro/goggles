@@ -7,7 +7,7 @@ require 'common/format'
 
 = SwimmingPoolsController
 
-  - version:  4.00.383
+  - version:  6.002
   - author:   Steve A.
 
 =end
@@ -16,6 +16,7 @@ class SwimmingPoolsController < ApplicationController
   # Index/Search action.
   #
   def index
+    redirect_to root_path and return if request.format.json?
     @title = I18n.t('swimming_pool.index_title')
     @pools_grid = initialize_grid(
       SwimmingPool,
@@ -30,6 +31,7 @@ class SwimmingPoolsController < ApplicationController
   # Show action.
   #
   def show
+    redirect_to root_path and return if request.format.json?
     pool_id = params[:id].to_i
     @pool = ( pool_id > 0 ) ? SwimmingPool.find_by_id( pool_id ) : nil
     unless ( @pool )

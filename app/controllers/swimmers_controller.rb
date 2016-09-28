@@ -8,14 +8,14 @@ require 'wrappers/timing'
 
 = SwimmersController
 
-  - version:  4.00.535
+  - version:  6.002
   - author:   Steve A., Leega
 
 =end
 class SwimmersController < ApplicationController
 
   # Require authorization before invoking any of this controller's actions:
-  before_action :authenticate_user_from_token!, except: [:index, :radio]
+#  before_action :authenticate_user_from_token!, except: [:index, :radio]
   before_action :authenticate_user!, except: [:index, :radio] # Devise HTTP log-in strategy
   # Parse parameters:
   before_action :verify_parameter, except: [:index]
@@ -440,7 +440,7 @@ class SwimmersController < ApplicationController
   def supermaster
     unless ( @swimmer.has_badge_for_season_and_year? )
       flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to(:back) and return
+      redirect_back( fallback_location: swimmers_path ) and return
     end
 
     # --- "Supermaster" tab: ---
@@ -473,7 +473,7 @@ class SwimmersController < ApplicationController
     # --- "Closed Goggle cup" tab (not shown): ---
     unless ( params[:goggle_cup_id] ) && GoggleCup.exists?( params[:goggle_cup_id].to_i )
       flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to(:back) and return
+      redirect_back( fallback_location: swimmers_path ) and return
     end
 
     @tab_title = I18n.t('radiography.goggle_cup_closed')
@@ -568,7 +568,7 @@ class SwimmersController < ApplicationController
       @last_training[:avg_100_meters]   = @last_training[:duration] / ( @last_training[:distance] / 100 ) if @last_training[:distance].to_i > 0
     else
       flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to(:back) and return
+      redirect_back( fallback_location: swimmers_path ) and return
     end
   end
   #-- -------------------------------------------------------------------------
@@ -589,7 +589,7 @@ class SwimmersController < ApplicationController
     set_swimmer
     unless ( @swimmer )
       flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to(:back) and return
+      redirect_back( fallback_location: root_path ) and return
     end
     set_goggle_cups
   end

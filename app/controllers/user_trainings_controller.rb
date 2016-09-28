@@ -8,7 +8,7 @@ require 'training_printout_layout'
 
 = UserTrainingsController
 
-  - version:  4.00.483
+  - version:  6.002
   - author:   Steve A., Leega
 
 =end
@@ -100,7 +100,9 @@ class UserTrainingsController < ApplicationController
   # Show action.
   #
   def show
-    user_training_rows = @user_training.user_training_rows.includes(:exercise, :training_step_type).all
+    user_training_rows = @user_training.user_training_rows
+        .includes(:exercise, :training_step_type)
+        .all
     @user_training_rows = TrainingRowDecorator.decorate_collection( user_training_rows )
     @title = I18n.t('trainings.show_title').gsub( "{TRAINING_TITLE}", @user_training.description )
     @user_training = TrainingDecorator.decorate( @user_training )
@@ -127,7 +129,7 @@ class UserTrainingsController < ApplicationController
     logger.debug "\r\n\r\n!! ------ #{self.class.name} -----"
     logger.debug "> #{params.inspect}\r\n"
     if request.post?
-      @user_training = UserTraining.new( params[:user_training] )
+      @user_training = UserTraining.new( user_training_params )
       @user_training.user_id = current_user.id      # Set the owner for all the records
 
       if @user_training.save
@@ -190,7 +192,10 @@ class UserTrainingsController < ApplicationController
   #   The id of the Training header; all its details will be retrieved also.
   #
   def printout()
-    user_training_rows = @user_training.user_training_rows.includes(:exercise, :training_step_type).sort_by_part_order.all
+    user_training_rows = @user_training.user_training_rows
+        .includes(:exercise, :training_step_type)
+        .sort_by_part_order
+        .all
     if user_training_rows.size < 1
       flash[:error] = I18n.t(:no_detail_to_process)
       redirect_to( user_trainings_path() ) and return
@@ -201,16 +206,16 @@ class UserTrainingsController < ApplicationController
     base_filename = "#{I18n.t('trainings.training')}_#{@user_training.description}"
     filename = create_unique_filename( base_filename ) + '.pdf'
     options = {
-      :report_title         => title,
-      :meta_info_subject    => 'training model printout',
-      :meta_info_keywords   => "Goggles, #{base_filename}",
-      :header_row           => TrainingDecorator.decorate( @user_training ),
-      :detail_rows          => TrainingRowDecorator.decorate_collection( user_training_rows )
+      report_title:       title,
+      meta_info_subject:  'training model printout',
+      meta_info_keywords: "Goggles, #{base_filename}",
+      header_row:         TrainingDecorator.decorate( @user_training ),
+      detail_rows:        TrainingRowDecorator.decorate_collection( user_training_rows )
     }
     send_data(                                      # == Render layout & send data:
         TrainingPrintoutLayout.render( options ),
-        :type => 'application/pdf',
-        :filename => filename
+        type: 'application/pdf',
+        filename: filename
     )
   end
   #-- -------------------------------------------------------------------------

@@ -61,9 +61,9 @@ gem "wice_grid"
 # XXX When using ssh key use the protocol below:
 #gem "amistad", git: "git@github.com:fasar-sw/amistad", branch: "rails5"
 gem "amistad", git: "https://github.com/fasar-sw/amistad", branch: "rails5"
-gem "ruport",  git: "https://github.com/ruport/ruport" #, branch: "ruby19-compat"
 gem 'acts_as_reportable'
-gem 'prawn' #, '~> 0.15'
+gem 'prawn', '~> 2.1'
+gem 'prawn-table'
 
 # [Steve, 20130412] Custom Documatic version (used for Ooo exports):
 # XXX When using ssh key use the protocol below:

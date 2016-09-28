@@ -4,7 +4,7 @@ require 'date'
 require 'common/format'
 
 
-describe UserTrainingsController, :type => :controller do
+describe UserTrainingsController, type: :controller do
 
   it_behaves_like( "(generic CRUD controller actions)", "user_trainings", "TrainingDecorator" )
 
@@ -15,7 +15,8 @@ describe UserTrainingsController, :type => :controller do
         expect(response.status).to eq( 401 )            # invalid request / not found
       end
     end
-    # -------------------------------------------------------------------------
+    #-- -----------------------------------------------------------------------
+    #++
 
     context "logged-in user" do
 
@@ -289,7 +290,8 @@ describe UserTrainingsController, :type => :controller do
         expect(response.status).to eq( 302 )        # must redirect to the login page
       end
     end
-    # -------------------------------------------------------------------------
+    #-- -----------------------------------------------------------------------
+    #++
 
     context "logged-in user" do
       before(:each) { login_user() }
@@ -400,7 +402,8 @@ describe UserTrainingsController, :type => :controller do
         expect(response.status).to eq( 302 )        # must redirect to the login page
       end
     end
-    # -------------------------------------------------------------------------
+    #-- -----------------------------------------------------------------------
+    #++
 
     context "logged-in user" do
       before(:each) { login_user() }

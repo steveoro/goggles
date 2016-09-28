@@ -4,7 +4,7 @@ require 'date'
 require 'common/format'
 
 
-describe TrainingsController, :type => :controller do
+describe TrainingsController, type: :controller do
 
   it_behaves_like( "(generic CRUD controller actions)", "trainings", "TrainingDecorator" )
 
@@ -14,7 +14,7 @@ describe TrainingsController, :type => :controller do
 
       it "assigns a decorator for the details to be shown" do
         fixture = create( :training_with_rows )
-        get :show, id: fixture.id
+        get :show, params: { id: fixture.id }
         expect(response.status).to eq(200)
         expect( assigns( :training_rows ).first ).to be_an_instance_of( TrainingRowDecorator )
       end
@@ -33,7 +33,7 @@ describe TrainingsController, :type => :controller do
         fixture = create( :training )
         fixture.user.invite( @user, true, true, true )   # he wants to share everything
         @user.approve( fixture.user, true, true, true )  # the current user approves
-        get :edit, id: fixture.id
+        get :edit, params: { id: fixture.id }
         expect( response ).to redirect_to( controller: :trainings, action: :index )
         # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
         # and we have just set defaul locale to :it
@@ -41,7 +41,7 @@ describe TrainingsController, :type => :controller do
       end
       it "refuses the request for an unshared training" do
         fixture = create( :training )
-        get :edit, id: fixture.id
+        get :edit, params: { id: fixture.id }
         expect( response ).to redirect_to( controller: :trainings, action: :index )
         # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
         # and we have just set defaul locale to :it
@@ -51,7 +51,7 @@ describe TrainingsController, :type => :controller do
       context "with some existing rows," do
         before(:each) do
           fixture = create( :training_with_rows, user: @user )
-          get :edit, id: fixture.id
+          get :edit, params: { id: fixture.id }
           expect( response.status ).to eq(200)
         end
 
@@ -86,7 +86,7 @@ describe TrainingsController, :type => :controller do
         fixture = create( :training )
         fixture.user.invite( @user, true, true, true )   # he wants to share everything
         @user.approve( fixture.user, true, true, true )  # the current user approves
-        put :update, id: fixture.id, training: attributes_for( :training )
+        put :update, params: { id: fixture.id, training: attributes_for( :training ) }
         expect( response ).to redirect_to( controller: :trainings, action: :index )
         # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
         # and we have just set defaul locale to :it
@@ -94,7 +94,7 @@ describe TrainingsController, :type => :controller do
       end
       it "refuses the request for an unshared training" do
         fixture = create( :training )
-        put :update, id: fixture.id, training: attributes_for( :training )
+        put :update, params: { id: fixture.id, training: attributes_for( :training ) }
         expect( response ).to redirect_to( controller: :trainings, action: :index )
         # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
         # and we have just set defaul locale to :it
@@ -115,7 +115,7 @@ describe TrainingsController, :type => :controller do
         fixture = create( :training )
         fixture.user.invite( @user, true, true, true )   # he wants to share everything
         @user.approve( fixture.user, true, true, true )  # the current user approves
-        delete :destroy, id: fixture.id
+        delete :destroy, params: { id: fixture.id }
         expect( response ).to redirect_to( controller: :trainings, action: :index )
         # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
         # and we have just set defaul locale to :it
@@ -123,7 +123,7 @@ describe TrainingsController, :type => :controller do
       end
       it "refuses the request for an unshared training" do
         fixture = create( :training )
-        delete :destroy, id: fixture.id
+        delete :destroy, params: { id: fixture.id }
         expect( response ).to redirect_to( controller: :trainings, action: :index )
         # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
         # and we have just set defaul locale to :it
@@ -148,7 +148,7 @@ describe TrainingsController, :type => :controller do
       before(:each) { login_user() }
 
       it "refuses the request with invalid parameters" do
-        get :printout, id: 0
+        get :printout, params: { id: 0 }
         expect( response ).to redirect_to( controller: :trainings, action: :index )
         # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
         # and we have just set defaul locale to :it
@@ -156,17 +156,17 @@ describe TrainingsController, :type => :controller do
       end
       it "handles the request with valid parameters" do
         fixture = create( :training_with_rows )
-        get :printout, id: fixture.id
+        get :printout, params: { id: fixture.id }
         expect(response.status).to eq(200)     # 302 (redirect) means the user is not logged in
       end
       it "receives a PDF file" do
         fixture = create( :training_with_rows )
-        get :printout, id: fixture.id
+        get :printout, params: { id: fixture.id }
         expect( response.body).to include("%PDF")
       end
       it "refuses the request for a training with no rows" do
         fixture = create( :training, user: @user )
-        get :printout, id: fixture.id
+        get :printout, params: { id: fixture.id }
         expect( response ).to redirect_to( controller: :trainings, action: :index )
         # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
         # and we have just set defaul locale to :it
@@ -182,7 +182,7 @@ describe TrainingsController, :type => :controller do
     context "unlogged user" do
       it "displays always the Login page" do
         fixture = create( :training_with_rows )
-        post :duplicate, id: fixture.id
+        post :duplicate, params: { id: fixture.id }
         expect(response).to redirect_to '/users/sign_in' # new_user_session_path() => '/users/sign_in?locale=XX'
         expect(response.status).to eq( 302 )        # must redirect to the login page
       end
@@ -193,7 +193,7 @@ describe TrainingsController, :type => :controller do
       before(:each) { login_user() }
 
       it "refuses the request with invalid parameters" do
-        post :duplicate, id: 0
+        post :duplicate, params: { id: 0 }
         expect( response ).to redirect_to( controller: :trainings, action: :index )
         # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
         # and we have just set defaul locale to :it
@@ -211,22 +211,26 @@ describe TrainingsController, :type => :controller do
         end
 
         it "handles the request with valid parameters, redirecting to #edit" do
-          post :duplicate, id: @fixture.id
+          post :duplicate, params: { id: @fixture.id }
         expect( response ).to redirect_to( controller: :trainings, action: :edit, id: Training.last )
         # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
         # and we have just set defaul locale to :it
 #          expect(response.status).to redirect_to( edit_training_path(Training.last) )
         end
         it "adds another header row" do
-          expect { post :duplicate, id: @fixture.id }.to change( Training, :count ).by(1)
+          expect {
+            post :duplicate, params: { id: @fixture.id }
+          }.to change( Training, :count ).by(1)
         end
         it "adds as many detail rows as the source has" do
           detail_rows_count = @fixture.training_rows.count
-          expect { post :duplicate, id: @fixture.id }.to change( TrainingRow, :count ).by(detail_rows_count)
+          expect {
+            post :duplicate, params: { id: @fixture.id }
+          }.to change( TrainingRow, :count ).by(detail_rows_count)
         end
 
         it "creates a copy of the header row" do
-          post :duplicate, id: @fixture.id
+          post :duplicate, params: { id: @fixture.id }
           duplicated_row = Training.last
           expect( duplicated_row.title ).to             include( @fixture.title )
           expect( duplicated_row.description ).to       eq( @fixture.description )
@@ -235,14 +239,14 @@ describe TrainingsController, :type => :controller do
           expect( duplicated_row.user_id ).to           eq( @fixture.user_id )
         end
         it "links all the copied detail rows to the copied header row" do
-          post :duplicate, id: @fixture.id
+          post :duplicate, params: { id: @fixture.id }
           duplicated_row = Training.last
           duplicated_row.training_rows.each do |duplicated_detail_row|
             expect( duplicated_detail_row.training_id ).to eq( duplicated_row.id )
           end
         end
         it "creates a copy of all the detail rows" do
-          post :duplicate, id: @fixture.id
+          post :duplicate, params: { id: @fixture.id }
           duplicated_row = Training.last
           # For all duplicated detail rows:
           duplicated_row.training_rows.each do |duplicated_detail_row|
@@ -273,7 +277,7 @@ describe TrainingsController, :type => :controller do
     context "unlogged user" do
       it "displays always the Login page" do
         fixture = create( :training_with_rows )
-        post :create_user_training, id: fixture.id
+        post :create_user_training, params: { id: fixture.id }
         expect(response).to redirect_to '/users/sign_in' # new_user_session_path() => '/users/sign_in?locale=XX'
         expect(response.status).to eq( 302 )        # must redirect to the login page
       end
@@ -284,7 +288,7 @@ describe TrainingsController, :type => :controller do
       before(:each) { login_user() }
 
       it "refuses the request with invalid parameters" do
-        post :create_user_training, id: 0
+        post :create_user_training, params: { id: 0 }
         expect( response ).to redirect_to( controller: :trainings, action: :index )
         # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
         # and we have just set defaul locale to :it
@@ -302,35 +306,39 @@ describe TrainingsController, :type => :controller do
         end
 
         it "handles the request with valid parameters, redirecting to #edit" do
-          post :create_user_training, id: @fixture.id
+          post :create_user_training, params: { id: @fixture.id }
         expect( response ).to redirect_to( controller: :user_trainings, action: :edit, id: UserTraining.last )
         # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
         # and we have just set defaul locale to :it
 #          expect(response).to redirect_to( edit_user_training_path(UserTraining.last) )
         end
         it "adds a UserTraining row" do
-          expect { post :create_user_training, id: @fixture.id }.to change( UserTraining, :count ).by(1)
+          expect {
+            post :create_user_training, params: { id: @fixture.id }
+          }.to change( UserTraining, :count ).by(1)
         end
         it "adds as many detail rows as the source has" do
           detail_rows_count = @fixture.training_rows.count
-          expect { post :create_user_training, id: @fixture.id }.to change( UserTrainingRow, :count ).by(detail_rows_count)
+          expect {
+            post :create_user_training, params: { id: @fixture.id }
+          }.to change( UserTrainingRow, :count ).by(detail_rows_count)
         end
 
         it "creates a copy of the header row" do
-          post :create_user_training, id: @fixture.id
+          post :create_user_training, params: { id: @fixture.id }
           created_row = UserTraining.last
           expect( created_row.description ).to include( @fixture.title )
           expect( created_row.user_id ).to eq( @fixture.user_id )
         end
         it "links all the copied detail rows to the copied header row" do
-          post :create_user_training, id: @fixture.id
+          post :create_user_training, params: { id: @fixture.id }
           created_row = UserTraining.last
           created_row.user_training_rows.each do |duplicated_detail_row|
             expect( duplicated_detail_row.user_training_id ).to eq( created_row.id )
           end
         end
         it "creates a copy of all the detail rows" do
-          post :create_user_training, id: @fixture.id
+          post :create_user_training, params: { id: @fixture.id }
           created_row = UserTraining.last
           # For all duplicated detail rows:
           created_row.user_training_rows.each do |created_detail_row|

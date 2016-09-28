@@ -1,7 +1,5 @@
 Goggles::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb
-  require 'ruport'                                  # Ruby Reportin Tool
-  require 'ruport/acts_as_reportable'               # ActiveRecord data collection for Ruport
 
   # Code is not reloaded between requests
   config.cache_classes = true

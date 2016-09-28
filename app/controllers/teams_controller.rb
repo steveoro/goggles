@@ -6,14 +6,13 @@ require 'common/format'
 
 = TeamsController
 
-  - version:  4.00.475
+  - version:  6.002
   - author:   Steve A.
 
 =end
 class TeamsController < ApplicationController
 
   # Require authorization before invoking any of this controller's actions:
-  before_action :authenticate_user_from_token!, except: [:index, :radio]
   before_action :authenticate_user!, except: [:index, :radio] # Devise HTTP log-in strategy
   # Parse parameters:
   before_action :verify_parameter, except: [:index, :closed_goggle_cup]
@@ -167,11 +166,11 @@ class TeamsController < ApplicationController
   # == Params:
   # id: the team id to be processed
   #
-  # TODO Verify if better using the same view for current and closed
+  # TODO Verify if is better using the same view for current and closed
   def closed_goggle_cup
     unless ( params[:id] ) && GoggleCup.exists?( params[:id].to_i )
       flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to(:back) and return
+      redirect_back( fallback_location: root_path ) and return
     end
 
     # Gets closed goggle cup
@@ -272,7 +271,7 @@ class TeamsController < ApplicationController
     set_team
     unless ( @team )
       flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to(:back) and return
+      redirect_back( fallback_location: root_path ) and return
     end
   end
 

@@ -8,14 +8,13 @@ require 'training_printout_layout'
 
 = UserTrainingStoriesController
 
-  - version:  4.00.483
+  - version:  6.002
   - author:   Steve A.
 
 =end
 class UserTrainingStoriesController < ApplicationController
 
   # Require authorization before invoking any of this controller's actions:
-  before_action :authenticate_user_from_token!
   before_action :authenticate_user!                # Devise "standard" HTTP log-in strategy
   # Parse parameters:
   before_action :verify_ownership, only: [:edit, :destroy, :update]
@@ -61,7 +60,7 @@ class UserTrainingStoriesController < ApplicationController
   #
   def create
     if request.post?
-      @user_training_story = UserTrainingStory.new( params[:user_training_story] )
+      @user_training_story = UserTrainingStory.new( user_training_story_params )
       @user_training_story.user_id = current_user.id # Set the owner for all the records
 
       if @user_training_story.save

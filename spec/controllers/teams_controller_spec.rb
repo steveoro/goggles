@@ -30,11 +30,11 @@ describe TeamsController, type: :controller do
 
     context "with an HTML request for a non-existing id," do
       it "handles the request with a redirect" do
-        get :radio, id: 0
+        get :radio, params: { id: 0 }
         expect(response.status).to eq( 302 )
       end
       it "redirects to #index" do
-        get :radio, id: 0
+        get :radio, params: { id: 0 }
         expect( response ).to redirect_to( request.env["HTTP_REFERER"] )
       end
     end
@@ -44,16 +44,16 @@ describe TeamsController, type: :controller do
         @fixture = create( :team )
       end
       it "handles successfully the request" do
-        get :radio, id: @fixture.id
+        get :radio, params: { id: @fixture.id }
         expect(response.status).to eq( 200 )
       end
       it "assigns the required variables" do
-        get :radio, id: @fixture.id
+        get :radio, params: { id: @fixture.id }
         expect( assigns(:team) ).to be_an_instance_of( Team )
         expect( assigns(:tab_title) ).to be_an_instance_of( String )
       end
       it "renders the template" do
-        get :radio, id: @fixture.id
+        get :radio, params: { id: @fixture.id }
         expect(response).to render_template(:radio)
       end
     end
@@ -88,7 +88,7 @@ describe TeamsController, type: :controller do
 
     context "as a logged-in user" do
       context "with an HTML request for a non-existing id," do
-        before(:each) { get action_sym, id: 0 }
+        before(:each) { get action_sym, params: { id: 0 } }
 
         it "handles the request with a redirect" do
           expect(response.status).to eq( 302 )
@@ -99,7 +99,7 @@ describe TeamsController, type: :controller do
       end
 
       context "with an HTML request for a valid id," do
-        before(:each) { get action_sym, id: @fixture.id }
+        before(:each) { get action_sym, params: { id: @fixture.id } }
 
         it "handles successfully the request" do
           expect(response.status).to eq( 200 )
@@ -126,7 +126,7 @@ describe TeamsController, type: :controller do
         # We need to set this to make the redirect_to(:back) passes the tests:
         request.env["HTTP_REFERER"] = teams_path()
         login_user()
-        get :current_swimmers, id: @fixture.id
+        get :current_swimmers, params: { id: @fixture.id }
       end
       it "assigns a list of swimmers" do
         expect( response.status ).to eq( 200 )
@@ -155,7 +155,7 @@ describe TeamsController, type: :controller do
         @fixture = Team.find(1)
         request.env["HTTP_REFERER"] = teams_path()
         login_user()
-        get :palmares, id: @fixture.id
+        get :palmares, params: { id: @fixture.id }
       end
 
       it "assigns the tab title" do
@@ -175,7 +175,7 @@ describe TeamsController, type: :controller do
         @fixture = create( :team_affiliation_with_badges ).team
         request.env["HTTP_REFERER"] = teams_path()
         login_user()
-        get :goggle_cup, id: @fixture.id
+        get :goggle_cup, params: { id: @fixture.id }
       end
       it "assigns the tab title" do
         expect( assigns(:tab_title) ).to be_an_instance_of( String )
@@ -205,7 +205,7 @@ describe TeamsController, type: :controller do
         @fixture = Team.find(1).decorate
         request.env["HTTP_REFERER"] = teams_path()
         login_user()
-        get :goggle_cup, id: @fixture.id
+        get :goggle_cup, params: { id: @fixture.id }
       end
       it "assigns the tab title" do
         expect( assigns(:tab_title) ).to be_an_instance_of( String )
@@ -246,7 +246,7 @@ describe TeamsController, type: :controller do
         @fixture = create( :team_affiliation_with_badges ).team
         request.env["HTTP_REFERER"] = teams_path()
         login_user()
-        get :goggle_cup_all_of_fame, id: @fixture.id
+        get :goggle_cup_all_of_fame, params: { id: @fixture.id }
       end
       it "doesn't assign a closed goggle cup collection" do
         expect( response.status ).to eq( 200 )
@@ -263,7 +263,7 @@ describe TeamsController, type: :controller do
         @fixture = Team.find(1)
         request.env["HTTP_REFERER"] = teams_path()
         login_user()
-        get :goggle_cup_all_of_fame, id: @fixture.id
+        get :goggle_cup_all_of_fame, params: { id: @fixture.id }
       end
       it "assigns the tab title" do
         expect( assigns(:tab_title) ).to be_an_instance_of( String )
@@ -346,7 +346,7 @@ describe TeamsController, type: :controller do
 
       before(:each) do
         login_user()
-        get :closed_goggle_cup, id: goggle_cup.id
+        get :closed_goggle_cup, params: { id: goggle_cup.id }
       end
 
       it "assigns the closed goggle cup" do

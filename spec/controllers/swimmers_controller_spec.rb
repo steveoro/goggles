@@ -2,7 +2,7 @@ require 'rails_helper'
 require 'wice_grid'
 
 
-describe SwimmersController, :type => :controller do
+describe SwimmersController, type: :controller do
 
   describe '[GET #index]' do
     context "with an HTML request," do
@@ -21,7 +21,8 @@ describe SwimmersController, :type => :controller do
       end
     end
   end
-  # ===========================================================================
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   describe '[GET #radio/:id]' do
@@ -30,11 +31,11 @@ describe SwimmersController, :type => :controller do
 
     context "with an HTML request for a non-existing id," do
       it "handles the request with a redirect" do
-        get :radio, id: 0
+        get :radio, params: { id: 0 }
         expect(response.status).to eq( 302 )
       end
       it "redirects to #index" do
-        get :radio, id: 0
+        get :radio, params: { id: 0 }
         expect( response ).to redirect_to( request.env["HTTP_REFERER"] )
       end
     end
@@ -42,7 +43,7 @@ describe SwimmersController, :type => :controller do
     context "with an HTML request for a valid id," do
       before :each do
         @fixture = create( :swimmer )
-        get :radio, id: @fixture.id
+        get :radio, params: { id: @fixture.id }
       end
       it "handles successfully the request" do
         expect(response.status).to eq( 200 )
@@ -59,7 +60,8 @@ describe SwimmersController, :type => :controller do
       end
     end
   end
-  # ===========================================================================
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   shared_examples_for "(Swimmers restricted GET action as an unlogged user)" do |action_sym|
@@ -77,7 +79,8 @@ describe SwimmersController, :type => :controller do
       end
     end
   end
-  # ===========================================================================
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   shared_examples_for "(Swimmers restricted GET action as a logged-in user)" do |action_sym|
@@ -90,7 +93,7 @@ describe SwimmersController, :type => :controller do
 
     context "as a logged-in user" do
       context "with an HTML request for a non-existing id," do
-        before(:each) { get action_sym, id: 0 }
+        before(:each) { get action_sym, params: { id: 0 } }
 
         it "handles the request with a redirect" do
           expect(response.status).to eq( 302 )
@@ -101,7 +104,7 @@ describe SwimmersController, :type => :controller do
       end
 
       context "with an HTML request for a valid id," do
-        before(:each) { get action_sym, id: @fixture.id }
+        before(:each) { get action_sym, params: { id: @fixture.id } }
 
         it "handles successfully the request" do
           expect(response.status).to eq( 200 )
@@ -119,7 +122,8 @@ describe SwimmersController, :type => :controller do
       end
     end
   end
-  # ===========================================================================
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   describe '[GET #medals/:id]' do
@@ -130,7 +134,7 @@ describe SwimmersController, :type => :controller do
       before(:each) do
         login_user()
         @swimmer = create(:swimmer)
-        get :medals, id: @swimmer.id
+        get :medals, params: { id: @swimmer.id }
       end
 
       it "retrieves the medal types" do
@@ -148,7 +152,7 @@ describe SwimmersController, :type => :controller do
       before(:each) do
         login_user()
         @swimmer = Swimmer.find(23)
-        get :medals, id: @swimmer.id
+        get :medals, params: { id: @swimmer.id }
       end
 
       it "collects informations about at least one season type" do
@@ -194,7 +198,8 @@ describe SwimmersController, :type => :controller do
       end
     end
   end
-  # ===========================================================================
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   describe '[GET #records/:id]' do
@@ -205,7 +210,7 @@ describe SwimmersController, :type => :controller do
       before(:each) do
         login_user()
         @swimmer = create(:swimmer)
-        #get :records, id: @swimmer.id
+        #get :records, params: { id: @swimmer.id }
       end
 
       xit "assigns an array of hashes as seasonal record collection which responds to :tot_season_records" do
@@ -215,14 +220,16 @@ describe SwimmersController, :type => :controller do
       end
     end
   end
-  # ===========================================================================
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   describe '[GET #best_timings/:id]' do
     it_behaves_like( "(Swimmers restricted GET action as an unlogged user)", :best_timings )
     it_behaves_like( "(Swimmers restricted GET action as a logged-in user)", :best_timings )
   end
-  # ===========================================================================
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   describe '[GET #full_history_1/:id]' do
@@ -233,7 +240,7 @@ describe SwimmersController, :type => :controller do
       before(:each) do
         login_user()
         @swimmer = create(:swimmer)
-        get :full_history_1, id: @swimmer.id
+        get :full_history_1, params: { id: @swimmer.id }
       end
 
       context "@full_history_by_date general structure," do
@@ -339,7 +346,7 @@ describe SwimmersController, :type => :controller do
       before(:each) do
         login_user()
         @swimmer = Swimmer.find(23)
-        get :full_history_1, id: @swimmer.id
+        get :full_history_1, params: { id: @swimmer.id }
       end
 
       it "prepares an event_list containing specific events" do
@@ -366,7 +373,8 @@ describe SwimmersController, :type => :controller do
       end
     end
   end
-  # ===========================================================================
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   describe '[GET #full_history_2/:id]' do
@@ -379,7 +387,7 @@ describe SwimmersController, :type => :controller do
       before(:each) do
         login_user()
         @swimmer = create(:swimmer_with_results)
-        get :full_history_2, id: @swimmer.id
+        get :full_history_2, params: { id: @swimmer.id }
       end
 
       context "full_history_by_date general structure," do
@@ -466,7 +474,7 @@ describe SwimmersController, :type => :controller do
       before(:each) do
         login_user()
         @swimmer = Swimmer.find(23)            # Assumes LIGABUE MARCO from seeds
-        get :full_history_2, id: @swimmer.id
+        get :full_history_2, params: { id: @swimmer.id }
       end
 
       it "has elements with results for 50FA, 100FA, 200MI in each pool types" do
@@ -542,7 +550,8 @@ describe SwimmersController, :type => :controller do
       end
     end
   end
-  # ===========================================================================
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   describe '[GET #current_goggle_cup/:id]' do
@@ -556,7 +565,7 @@ describe SwimmersController, :type => :controller do
       before(:each) do
         request.env["HTTP_REFERER"] = swimmers_path()
         login_user()
-        get :current_goggle_cup, id: swimmer.id
+        get :current_goggle_cup, params: { id: swimmer.id }
       end
 
       context "current_goggle_cup general structure," do
@@ -566,7 +575,9 @@ describe SwimmersController, :type => :controller do
       end
     end
   end
-  # ===========================================================================
+  #-- -------------------------------------------------------------------------
+  #++
+
 
   describe '[GET #closed_goggle_cup/:id]' do
     context "as a logged-in user" do
@@ -577,7 +588,7 @@ describe SwimmersController, :type => :controller do
       before(:each) do
         request.env["HTTP_REFERER"] = swimmers_path()
         login_user()
-        get :closed_goggle_cup, id: swimmer.id, goggle_cup_id: goggle_cup.id
+        get :closed_goggle_cup, params: { id: swimmer.id, goggle_cup_id: goggle_cup.id }
       end
 
       context "current_goggle_cup general structure," do
@@ -587,7 +598,9 @@ describe SwimmersController, :type => :controller do
       end
     end
   end
-  # ===========================================================================
+  #-- -------------------------------------------------------------------------
+  #++
+
 
   describe '[GET #supermaster/:id]' do
     context "as a logged-in user" do
@@ -604,7 +617,7 @@ describe SwimmersController, :type => :controller do
       before(:each) do
         request.env["HTTP_REFERER"] = swimmers_path()
         login_user()
-        get :supermaster, id: swimmer.id, season_id: season.id
+        get :supermaster, params: { id: swimmer.id, season_id: season.id }
       end
 
       context "supermaster general structure," do
@@ -621,7 +634,9 @@ describe SwimmersController, :type => :controller do
       end
     end
   end
-  # ===========================================================================
+  #-- -------------------------------------------------------------------------
+  #++
+
 
   describe '[GET #trainings/:id]' do
     # FIXME This action requires "full goggler" (swimmer associated with user)
@@ -687,6 +702,6 @@ describe SwimmersController, :type => :controller do
       end
     end
   end
-  # ===========================================================================
-
+  #-- -------------------------------------------------------------------------
+  #++
 end

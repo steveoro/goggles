@@ -3,16 +3,15 @@
 
 = SwimmingPoolReviewsController
 
-  - version:  4.00.383
+  - version:  6.002
   - author:   Steve A.
 
 =end
 class SwimmingPoolReviewsController < ApplicationController
-
   respond_to :html, :json
 
   # Require authorization before invoking some of this controller's actions:
-  before_action :authenticate_user_from_token!, except: [:index, :show, :for_swimming_pool, :for_user]
+#  before_action :authenticate_user_from_token!, except: [:index, :show, :for_swimming_pool, :for_user]
   before_action :authenticate_user!, except: [:index, :show, :for_swimming_pool, :for_user] # Devise HTTP log-in strategy
   # ---------------------------------------------------------------------------
 
@@ -62,7 +61,7 @@ class SwimmingPoolReviewsController < ApplicationController
   def for_swimming_pool
     @swimming_pool_id = params[:id]
     @reviews = SwimmingPoolReview.where( swimming_pool_id: @swimming_pool_id )
-    @reviews.sort!{ |a,b| (a.votes_for.down.count - a.votes_for.up.count) <=> (b.votes_for.down.count - b.votes_for.up.count) }
+    @reviews.sort{ |a,b| (a.votes_for.down.count - a.votes_for.up.count) <=> (b.votes_for.down.count - b.votes_for.up.count) }
     respond_with( @reviews )
   end
   # ----------------------------------------------------------------------------
@@ -147,7 +146,7 @@ class SwimmingPoolReviewsController < ApplicationController
   #
   def create
     redirect_to(root_path) and return if current_user_does_not_have_enough_confirmations?
-    @review = SwimmingPoolReview.create(params[:swimming_pool_review])
+    @review = SwimmingPoolReview.create( swimming_pool_review_params )
     @review.user_id = current_user.id
     respond_with( @review )
   end
@@ -178,7 +177,7 @@ class SwimmingPoolReviewsController < ApplicationController
   def update
     @review = SwimmingPoolReview.find_by_id(params[:id])
     redirect_to( swimming_pool_reviews_path() ) and return if @review.nil?
-    @review.update_attributes(params[:swimming_pool_review])
+    @review.update_attributes( swimming_pool_review_params )
     respond_with( @review )
   end
   # ---------------------------------------------------------------------------
@@ -206,6 +205,21 @@ class SwimmingPoolReviewsController < ApplicationController
   private
 
 
+  # Strong parameters checking for mass-assignment of a SwimmingPoolReview instance.
+  # Returns the whitelisted, filtered params Hash.
+  def swimming_pool_review_params
+    params
+      .require( :swimming_pool_review )
+      .permit(
+        :title, :entry_text,
+        :swimming_pool_id,
+        :user_id
+      )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
   # Returns true if the user doesn't meet the
   # criteria for creating a Review or false otherwise.
   #
@@ -218,4 +232,6 @@ class SwimmingPoolReviewsController < ApplicationController
       true
     end
   end
+  #-- -------------------------------------------------------------------------
+  #++
 end

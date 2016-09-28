@@ -101,30 +101,6 @@ class ApplicationController < ActionController::Base
   #++
 
 
-  # Utility method to localize the column names of a <tt>Ruport::Data::Table</tt> instance,
-  # given the main Model symbol used to scope its localization labels,
-  # and an existing +label_hash+ of already localized text labels (if any).
-  #
-  # == Parameters:
-  # - <tt>ruport_table</tt> => the table with the column names that have to be localized
-  # - <tt>model_sym</tt> => symbol representing the scope of the localization labels (i.e.: <tt>ProjectRow</tt> #=> <tt>:project_row</tt>)
-  # - <tt>label_hash</tt> => the Hash of already localized labels
-  #
-  def localize_ruport_table_column_names( ruport_table, model_sym, label_hash = {} )
-    return unless ruport_table.kind_of?( Ruport::Data::Table ) && label_hash.kind_of?( Hash )
-                                                    # Localize each column name:
-    ruport_table.column_names().each { |col_name|
-      if label_hash.has_key?(col_name.to_sym)
-        ruport_table.rename_column( col_name, label_hash[col_name.to_sym] )
-      else
-        ruport_table.rename_column( col_name, I18n.t( col_name.to_sym, { scope: [model_sym.to_sym] } ) )
-      end
-    }
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-
-
   # Removes older (automatically generated) files from the public output directory
   # on the server.
   #
