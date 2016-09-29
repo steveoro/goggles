@@ -49,11 +49,11 @@ SimpleNavigation::Configuration.run do |navigation|
     #                            when the item should be highlighted, you can set a regexp which is matched
     #                            against the current URI.  You may also use a proc, or the symbol <tt>:subpath</tt>.
     #
-    primary.item( :key_home,                    t('home'), '#' ) do |lev2_nav|
-      lev2_nav.item( :key_main,                 t('main'),        root_path() )
-      lev2_nav.item( :key_about,                t('about'),       about_path() )
-      lev2_nav.item( :key_contact_us,           t('contact_us'),  contact_us_path() )
-      lev2_nav.item( :key_separator1_0,         content_tag(:span, ''), class: 'divider', if: Proc.new { user_signed_in? && current_user && current_user.has_associated_swimmer? } )
+    primary.item( :key_home,            t('home'), '#' ) do |lev2_nav|
+      lev2_nav.item( :key_main,         t('main'),        root_path() )
+      lev2_nav.item( :key_about,        t('about'),       home_about_path() )
+      lev2_nav.item( :key_contact_us,   t('contact_us'),  home_contact_us_path() )
+      lev2_nav.item( :key_separator1_0, content_tag(:span, ''), class: 'divider', if: Proc.new { user_signed_in? && current_user && current_user.has_associated_swimmer? } )
       lev2_nav.item(
         :key_user_radio_id,
         t('radiography.id_card'),
@@ -68,13 +68,13 @@ SimpleNavigation::Configuration.run do |navigation|
       )
     end
 
-    primary.item( :key_meetings,                t('meetings'), '#' ) do |lev2_nav|
-      lev2_nav.item :key_meetings_current,      t('meeting.current_menu'), meetings_current_path(), highlights_on: /current/ do |lev3_nav|
-        lev3_nav.item :key_meeting_show_full,   t('show_details'), '#', highlights_on: %r(/meetings/\d/show_full)
+    primary.item( :key_meetings,              t('meetings'), '#' ) do |lev2_nav|
+      lev2_nav.item :key_meetings_current,    t('meeting.current_menu'), meetings_current_path(), highlights_on: /current/ do |lev3_nav|
+        lev3_nav.item :key_meeting_show_full, t('show_details'), '#', highlights_on: %r(/meetings/\d/show_full)
       end
-      lev2_nav.item( :key_separator2_0,         content_tag(:span, ''), class: 'divider' )
-      lev2_nav.item( :key_meetings_simple,      t('meeting.simple_menu'), meetings_simple_search_path(), highlights_on: %r(simple_search) )
-      lev2_nav.item( :key_meetings_custom,      t('meeting.index_menu'), meetings_custom_search_path(), highlights_on: %r(custom_search) )
+      lev2_nav.item( :key_separator2_0,       content_tag(:span, ''), class: 'divider' )
+      lev2_nav.item( :key_meetings_simple,    t('meeting.simple_menu'), meetings_simple_search_path(), highlights_on: %r(simple_search) )
+      lev2_nav.item( :key_meetings_custom,    t('meeting.index_menu'), meetings_custom_search_path(), highlights_on: %r(custom_search) )
     end
 
     primary.item( :key_championships,                    t('championships.title'), '#' ) do |lev2_nav|
@@ -83,37 +83,37 @@ SimpleNavigation::Configuration.run do |navigation|
       lev2_nav.item :key_championships_regional_er_csi,  t('championships.regional_er_csi'), championships_calendar_regional_er_csi_path
     end
 
-    primary.item( :key_records,                 t('records.menu_root'), '#' ) do |lev2_nav|
-      lev2_nav.item :key_records_season_type,   t('records.menu_by_season_type'), records_for_season_type_path()
-      lev2_nav.item :key_records_team,          t('records.menu_by_team'),        records_for_team_path()
-      lev2_nav.item :key_records_swimmer,       t('records.menu_by_swimmer'),     records_for_swimmer_path()
+    primary.item( :key_records,               t('records.menu_root'), '#' ) do |lev2_nav|
+      lev2_nav.item :key_records_season_type, t('records.menu_by_season_type'), records_for_season_type_path()
+      lev2_nav.item :key_records_team,        t('records.menu_by_team'),        records_for_team_path()
+      lev2_nav.item :key_records_swimmer,     t('records.menu_by_swimmer'),     records_for_swimmer_path()
     end
 
-    primary.item( :key_swimmers,                t('swimmers.swimmers'), '#' ) do |lev2_nav|
-      lev2_nav.item :key_swimmers_index,        t('swimmers.search_swimmers'), swimmers_path(), highlights_on: %r(/swimmers) do |lev3_nav|
-        lev3_nav.item :key_swimmers_id,         t('radiography.id_card'), '#', highlights_on: %r(/swimmers/\d/radio)
+    primary.item( :key_swimmers,              t('swimmers.swimmers'), '#' ) do |lev2_nav|
+      lev2_nav.item :key_swimmers_index,      t('swimmers.search_swimmers'), swimmers_path(), highlights_on: %r(/swimmers) do |lev3_nav|
+        lev3_nav.item :key_swimmers_id,       t('radiography.id_card'), '#', highlights_on: %r(/swimmers/\d/radio)
       end
     end
 
-    primary.item( :key_teams,                   t('team.title'), '#' ) do |lev2_nav|
-      lev2_nav.item :key_teams_index,           t('team.search_title'), teams_path(), highlights_on: %r(/teams) do |lev3_nav|
-        lev3_nav.item :key_teams_id,            t('radiography.id_card'), '#', highlights_on: %r(/teams/\d/radio)
+    primary.item( :key_teams,                 t('team.title'), '#' ) do |lev2_nav|
+      lev2_nav.item :key_teams_index,         t('team.search_title'), teams_path(), highlights_on: %r(/teams) do |lev3_nav|
+        lev3_nav.item :key_teams_id,          t('radiography.id_card'), '#', highlights_on: %r(/teams/\d/radio)
       end
     end
 
-    primary.item( :key_misc,                    t('misc_main_menu.title'), '#' ) do |lev2_nav|
-      lev2_nav.item :key_pools,                 t('swimming_pool.pools'),                   swimming_pools_path()
-      lev2_nav.item :key_pool_reviews,          t('swimming_pool_review.navigation_title'), swimming_pool_reviews_path()
-      lev2_nav.item :key_separator4_0,          content_tag(:span, ''), class: 'divider'
-      lev2_nav.item :key_fin_score_calc,        t('misc.fin_score_calculation'),            misc_fin_score_calculation_path()
-      lev2_nav.item :key_fin_timing_calc,       t('misc.fin_timing_calculation'),           misc_fin_timing_calculation_path()
-      lev2_nav.item :key_swimmer_matches,       t('misc.swimmer_matches'),                  misc_swimmer_matches_path()
-      lev2_nav.item :key_separator4_1,          content_tag(:span, ''), class: 'divider'
-      lev2_nav.item :key_trainings,             t('misc_main_menu.trainings'),              trainings_path()
-      lev2_nav.item :key_user_trainings,        t('misc_main_menu.user_trainings'),         user_trainings_path()
-      lev2_nav.item :key_user_tr_stories,       t('misc_main_menu.user_training_stories'),  user_training_stories_path()
-      lev2_nav.item :key_separator4_2,          content_tag(:span, ''), class: 'divider'
-      lev2_nav.item :key_tutorial,              t('tutorials_title'),                       tutorials_path()
+    primary.item( :key_misc,                  t('misc_main_menu.title'), '#' ) do |lev2_nav|
+      lev2_nav.item :key_pools,               t('swimming_pool.pools'),                   swimming_pools_path()
+      lev2_nav.item :key_pool_reviews,        t('swimming_pool_review.navigation_title'), swimming_pool_reviews_path()
+      lev2_nav.item :key_separator4_0,        content_tag(:span, ''), class: 'divider'
+      lev2_nav.item :key_fin_score_calc,      t('misc.fin_score_calculation'),            misc_fin_score_calculation_path()
+      lev2_nav.item :key_fin_timing_calc,     t('misc.fin_timing_calculation'),           misc_fin_timing_calculation_path()
+      lev2_nav.item :key_swimmer_matches,     t('misc.swimmer_matches'),                  misc_swimmer_matches_path()
+      lev2_nav.item :key_separator4_1,        content_tag(:span, ''), class: 'divider'
+      lev2_nav.item :key_trainings,           t('misc_main_menu.trainings'),              trainings_path()
+      lev2_nav.item :key_user_trainings,      t('misc_main_menu.user_trainings'),         user_trainings_path()
+      lev2_nav.item :key_user_tr_stories,     t('misc_main_menu.user_training_stories'),  user_training_stories_path()
+      lev2_nav.item :key_separator4_2,        content_tag(:span, ''), class: 'divider'
+      lev2_nav.item :key_tutorial,            t('tutorials_title'),                       home_tutorials_path()
     end
 
     primary.item :key_separator0, '&nbsp;', '#', class: 'disabled'

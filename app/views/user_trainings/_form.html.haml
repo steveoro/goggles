@@ -20,7 +20,7 @@
       %i= I18n.t('activerecord.attributes.training_rows.pause')
     .span1
       .toolTip{'data-toggle' => 'tooltip', 'title' => I18n.t('trainings.toggle_frames_tooltip') }
-        = link_to_function( image_tag('shape_group.png'), "$('.full_row').toggleClass('framed');" )
+        = link_to( image_tag('shape_group.png'), '#', onclick: "$('.full_row').toggleClass('framed'); return false",  class: "nav_link" )
   %ul.droppable.sortable#training_rows
     = f.simple_fields_for :user_training_rows do |user_training_row_form|
       = render( 'user_training_row_fields', f: user_training_row_form )

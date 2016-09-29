@@ -15,7 +15,7 @@
         = f.input :group_pause, label: false, wrapper: false, collection: @pause_options_array, input_html: { class: 'combobox group_clear' }
     .span1.g-w50
       .toolTip{'data-toggle' => 'tooltip', 'title' => I18n.t('trainings.link_break_tooltip') }
-        = link_to_function( image_tag('link_break.png'), "clickBreakGrouping( $(this).closest('.full_row') );" )
+        = link_to( image_tag('link_break.png'), '#', onclick: "clickBreakGrouping( $(this).closest('.full_row') ); return false",  class: "nav_link" )
 
   %ul.group_detail.droppable.sortable
     %li.data_row.row-fluid.control-row

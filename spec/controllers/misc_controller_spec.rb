@@ -4,6 +4,8 @@ require 'wice_grid'
 
 describe MiscController, type: :controller do
 
+  render_views
+
   shared_examples_for "(Misc not restricted GET action)" do |action_sym|
     it "handles successfully the request" do
       expect( response.status ).to eq(200)

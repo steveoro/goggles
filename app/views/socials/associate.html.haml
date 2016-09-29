@@ -22,7 +22,7 @@
 .row-fluid
   %hr
 .row-fluid
-  %i= link_to_function( t('social.chose_manually_your_identity'), "$('#manualOverride').toggle();" )
+  %i= link_to( t('social.chose_manually_your_identity'), '#', onclick: "$('#manualOverride').toggle(); return false",  class: "nav_link" )
 .row-fluid
   %p
 .row-fluid#manualOverride(hidden='true')
