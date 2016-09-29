@@ -3,14 +3,13 @@
 
 = SocialsController
 
-  - version:  4.00.765
+  - version:  6.002
   - author:   Steve A.
 
 =end
 class SocialsController < ApplicationController
 
   # Require authorization before invoking any of this controller's actions:
-  before_action :authenticate_user_from_token!
   before_action :authenticate_user!                # Devise "standard" HTTP log-in strategy
   # Parse parameters:
   before_action :verify_parameter, except: [:associate, :dissociate, :show_all, :skip_associate]
@@ -61,7 +60,7 @@ class SocialsController < ApplicationController
         flash[:error] = I18n.t('user_association.something_went_wrong_try_later')
       end
     end
-    redirect_to( :back ) and return
+    redirect_back( fallback_location: root_path ) and return
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -87,8 +86,7 @@ class SocialsController < ApplicationController
   #
   def association_confirm
     toggle_confirmation( true )
-    redirect_to( :back ) and return
-#    redirect_to( request.env["HTTP_REFERER"] ) and return
+    redirect_back( fallback_location: root_path ) and return
   end
 
   # Remove endorsement/unconfirm user association with a goggler (POST only, see routes).
@@ -97,8 +95,7 @@ class SocialsController < ApplicationController
   #
   def association_unconfirm
     toggle_confirmation( false )
-    redirect_to( :back ) and return
-#    redirect_to( request.env["HTTP_REFERER"] ) and return
+    redirect_back( fallback_location: root_path ) and return
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -158,7 +155,7 @@ class SocialsController < ApplicationController
         # If friendship exists:
         flash[:warning] = I18n.t( 'social.warning_friendship_invite_already_sent_edit_options' )
           .gsub( "{SWIMMER_NAME}", @swimming_buddy.name )
-        redirect_to( :back ) and return
+        redirect_back( fallback_location: root_path ) and return
       end
     end
   end
@@ -208,7 +205,7 @@ class SocialsController < ApplicationController
       else
         flash[:warning] = I18n.t( 'social.warning_could_not_find_valid_or_pending_friendship' )
           .gsub( "{SWIMMER_NAME}", @swimming_buddy.name )
-        redirect_to( :back ) and return
+        redirect_back( fallback_location: root_path ) and return
       end
     end
   end
@@ -246,7 +243,7 @@ class SocialsController < ApplicationController
       else
         flash[:warning] = I18n.t( 'social.warning_generic_not_a_valid_friendship' )
           .gsub( "{SWIMMER_NAME}", @swimming_buddy.name )
-        redirect_to( :back ) and return
+        redirect_back( fallback_location: root_path ) and return
       end
       render :ask_confirmation
     end
@@ -285,7 +282,7 @@ class SocialsController < ApplicationController
       else
         flash[:warning] = I18n.t( 'social.warning_generic_not_a_valid_friendship' )
           .gsub( "{SWIMMER_NAME}", @swimming_buddy.name )
-        redirect_to( :back ) and return
+        redirect_back( fallback_location: root_path ) and return
       end
       render :ask_confirmation
     end
@@ -324,7 +321,7 @@ class SocialsController < ApplicationController
       else
         flash[:warning] = I18n.t( 'social.warning_generic_not_a_valid_friendship' )
           .gsub( "{SWIMMER_NAME}", @swimming_buddy.name )
-        redirect_to( :back ) and return
+        redirect_back( fallback_location: root_path ) and return
       end
       render :ask_confirmation
     end
@@ -406,9 +403,7 @@ class SocialsController < ApplicationController
     @swimming_buddy = ( user_id > 0 ) ? User.find_by_id( user_id ) : nil
     unless ( @swimming_buddy )                      # Check swimming buddy existance
       flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to( :back ) and return
-#      redirect_to( request.env["HTTP_REFERER"] ) and return
-#      redirect_to( socials_show_all_path() ) and return
+      redirect_back( fallback_location: root_path ) and return
     end
   end
   #-- -------------------------------------------------------------------------

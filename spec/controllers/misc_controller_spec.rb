@@ -6,7 +6,7 @@ describe MiscController, type: :controller do
 
   shared_examples_for "(Misc not restricted GET action)" do |action_sym|
     it "handles successfully the request" do
-      expect( response.status ).to be_a_success
+      expect( response.status ).to eq(200)
     end
     it "assigns the tab title" do
       expect( response.body ).to include( I18n.t("misc.#{ action_sym }") )
@@ -67,16 +67,13 @@ describe MiscController, type: :controller do
     context "as logged and swimmer-associated user" do
       before(:each) do
         @user = create(:user)
-
         # Select from seasons that have badges and time standards
         fix_season = Meeting.for_season_type( SeasonType.find_by_code( 'MASFIN' )).has_results[ ( rand * Meeting.for_season_type( SeasonType.find_by_code( 'MASFIN' )).has_results.count - 1 ).to_i ].season
-
         # Get a random swimmer from the fixture season:
         swimmer = Swimmer
           .includes(:badges)
           .where( "badges.season_id" => fix_season.id )[ ( rand * Swimmer.includes(:badges).where( "badges.season_id" => fix_season.id ).count - 1 ).to_i ]
         expect( swimmer ).not_to be nil
-
 # DEBUG
 #        puts( "\r\n- fixture season: #{@fixture_season.inspect}" )
 #        puts( "- swimmer: #{swimmer.inspect}" )
@@ -282,7 +279,6 @@ describe MiscController, type: :controller do
       before(:each) do
         # Select from seasons that have badges and time standards
         fix_season = Meeting.for_season_type( SeasonType.find_by_code( 'MASFIN' )).has_results[ ( rand * Meeting.for_season_type( SeasonType.find_by_code( 'MASFIN' )).has_results.count - 1 ).to_i ].season
-
         # Get a random swimmer from the fixture season:
         swimmer = Swimmer
           .includes(:badges)
@@ -406,10 +402,8 @@ describe MiscController, type: :controller do
     context "as logged and swimmer-associated user" do
       before(:each) do
         @user = create(:user)
-
         # Select from seasons that have badges and time standards
         fix_season = Meeting.for_season_type( SeasonType.find_by_code( 'MASFIN' )).has_results[ ( rand * Meeting.for_season_type( SeasonType.find_by_code( 'MASFIN' )).has_results.count - 1 ).to_i ].season
-
         # Get a random swimmer from the fixture season:
         swimmer = Swimmer
           .includes(:badges)
@@ -446,13 +440,12 @@ describe MiscController, type: :controller do
   #-- =========================================================================
   #++
 
-  describe '[XHR POST #fin_timing_calculation]' do
-
+  describe '[XHR POST #compute_fin_timing]' do
     let(:standard_points)  { ((rand * 550) + 500).round(2) }
 
     context "without requested parameters" do
       before(:each) do
-        post( :fin_timing_calculation, xhr: true,
+        post( :compute_fin_timing, xhr: true,
           params: {
             gender_type_id:   0,  # Force invalid event type and pool type
             category_type_id: 0,
@@ -480,7 +473,7 @@ describe MiscController, type: :controller do
         @fixture_gender = GenderType.find_by_code('M')
         @fixture_category = CategoryType.find_by_code('M40')
         @fixture_events_by_pool_type = EventsByPoolType.find_by_id(((rand * 18) % 18).to_i + 1) # ASSERT: first 18 event by pool types are not relays
-        post( :fin_timing_calculation, xhr: true,
+        post( :compute_fin_timing, xhr: true,
           params: {
             gender_type_id:   @fixture_gender.id,
             category_type_id: @fixture_category.id,
@@ -507,7 +500,7 @@ describe MiscController, type: :controller do
       before(:each) do
         @fixture_gender = GenderType.find_by_code('M')
         @fixture_category = CategoryType.find_by_code('M40')
-        post( :fin_timing_calculation, xhr: true,
+        post( :compute_fin_timing, xhr: true,
           params: {
             gender_type_id:   @fixture_gender.id,
             category_type_id: @fixture_category.id,
@@ -535,7 +528,7 @@ describe MiscController, type: :controller do
         @fixture_gender = GenderType.find_by_code('M')
         @fixture_category = CategoryType.find_by_code('M40')
         @fixture_events_by_pool_type = EventsByPoolType.find_by_id(((rand * 18) % 18).to_i + 1) # ASSERT: first 18 event by pool types are not relays
-        post( :fin_timing_calculation, xhr: true,
+        post( :compute_fin_timing, xhr: true,
           params: {
             gender_type_id:   @fixture_gender.id,
             category_type_id: @fixture_category.id,
@@ -593,7 +586,6 @@ describe MiscController, type: :controller do
       before(:each) do
         # Select from seasons that have badges and time standards
         fix_season = Meeting.for_season_type( SeasonType.find_by_code( 'MASFIN' )).has_results[ ( rand * Meeting.for_season_type( SeasonType.find_by_code( 'MASFIN' )).has_results.count - 1 ).to_i ].season
-
         # Get a random swimmer from the fixture season:
         swimmer = Swimmer
           .includes(:badges)
@@ -610,7 +602,7 @@ describe MiscController, type: :controller do
         expect( subject.current_user ).to be_an_instance_of( User )
         expect( subject.current_user.swimmer_id ).not_to be nil
 
-        post( :fin_timing_calculation, xhr: true,
+        post( :compute_fin_timing, xhr: true,
           params: {
             gender_type_id:   @fixture_gender.id,
             category_type_id: @fixture_category.id,

@@ -67,7 +67,6 @@ describe SwimmersController, type: :controller do
   shared_examples_for "(Swimmers restricted GET action as an unlogged user)" do |action_sym|
     before :each do
       @fixture = create( :swimmer )
-#      sign_out create(:user)
     end
 
     context "unlogged user" do
@@ -137,6 +136,10 @@ describe SwimmersController, type: :controller do
         get :medals, params: { id: @swimmer.id }
       end
 
+      it "handles successfully the request" do
+        expect(response.status).to eq( 200 )
+      end
+
       it "retrieves the medal types" do
         expect( assigns(:medal_types) ).to all( be_an_instance_of( MedalType ) )
       end
@@ -153,6 +156,10 @@ describe SwimmersController, type: :controller do
         login_user()
         @swimmer = Swimmer.find(23)
         get :medals, params: { id: @swimmer.id }
+      end
+
+      it "handles successfully the request" do
+        expect(response.status).to eq( 200 )
       end
 
       it "collects informations about at least one season type" do
@@ -202,26 +209,32 @@ describe SwimmersController, type: :controller do
   #++
 
 
-  describe '[GET #records/:id]' do
-    #it_behaves_like( "(Swimmers restricted GET action as an unlogged user)", :records )
-    #it_behaves_like( "(Swimmers restricted GET action as a logged-in user)", :records )
+# FIXME / TODO REMOVE THIS, SINCE IT'S NOT USED ANYMORE (route has been commented-out too)
 
-    context "as a logged-in user" do
-      before(:each) do
-        login_user()
-        @swimmer = create(:swimmer)
-        #get :records, params: { id: @swimmer.id }
-      end
-
-      xit "assigns an array of hashes as seasonal record collection which responds to :tot_season_records" do
-        assigns(:seasonal_record_collection).each do |seasonal_records|
-          expect( seasonal_records[:tot_season_records] ).to be >= 0
-        end
-      end
-    end
-  end
-  #-- -------------------------------------------------------------------------
-  #++
+  # describe '[GET #records/:id]' do
+    # #it_behaves_like( "(Swimmers restricted GET action as an unlogged user)", :records )
+    # #it_behaves_like( "(Swimmers restricted GET action as a logged-in user)", :records )
+#
+    # context "as a logged-in user" do
+      # before(:each) do
+        # login_user()
+        # @swimmer = create(:swimmer)
+        # get :records, params: { id: @swimmer.id }
+      # end
+#
+      # it "handles successfully the request" do
+        # expect(response.status).to eq( 200 )
+      # end
+#
+      # xit "assigns an array of hashes as seasonal record collection which responds to :tot_season_records" do
+        # assigns(:seasonal_record_collection).each do |seasonal_records|
+          # expect( seasonal_records[:tot_season_records] ).to be >= 0
+        # end
+      # end
+    # end
+  # end
+  # #-- -------------------------------------------------------------------------
+  # #++
 
 
   describe '[GET #best_timings/:id]' do
@@ -243,7 +256,11 @@ describe SwimmersController, type: :controller do
         get :full_history_1, params: { id: @swimmer.id }
       end
 
-      context "@full_history_by_date general structure," do
+      it "handles successfully the request" do
+        expect(response.status).to eq( 200 )
+      end
+
+      describe "the @full_history_by_date general structure," do
         it "is an hash" do
           expect( assigns( :full_history_by_date ) ).to be_a_kind_of( Hash )
         end
@@ -270,7 +287,7 @@ describe SwimmersController, type: :controller do
         end
       end
 
-      context "@full_history_events general structure," do
+      describe "the @full_history_events general structure," do
         it "is an hash" do
           expect( assigns( :full_history_events ) ).to be_a_kind_of( Hash )
         end
@@ -297,7 +314,7 @@ describe SwimmersController, type: :controller do
         end
       end
 
-      context "event_list element structure," do
+      describe "the event_list element structure," do
         it "assigns an hash with array of two elements as element and the first array element is a list" do
           result = assigns( :full_history_by_date )
           PoolType.only_for_meetings.each do |pool_type|
@@ -307,7 +324,7 @@ describe SwimmersController, type: :controller do
         end
       end
 
-      context "event_by_date element structure," do
+      describe "the event_by_date element structure," do
         it "assigns an hash with array of two elements as element and the second array element is an array" do
           result = assigns( :full_history_by_date )
           PoolType.only_for_meetings.each do |pool_type|
@@ -349,6 +366,9 @@ describe SwimmersController, type: :controller do
         get :full_history_1, params: { id: @swimmer.id }
       end
 
+      it "handles successfully the request" do
+        expect(response.status).to eq( 200 )
+      end
       it "prepares an event_list containing specific events" do
         result = assigns( :full_history_by_date )
         PoolType.only_for_meetings.each do |pool_type|
@@ -390,35 +410,36 @@ describe SwimmersController, type: :controller do
         get :full_history_2, params: { id: @swimmer.id }
       end
 
-      context "full_history_by_date general structure," do
-        it "assigns an hash with data collected" do
-          expect( assigns( :full_history_by_event ) ).to be_a_kind_of( Hash )
+      it "handles successfully the request" do
+        expect(response.status).to eq( 200 )
+      end
+      it "assigns an hash with data collected" do
+        expect( assigns( :full_history_by_event ) ).to be_a_kind_of( Hash )
+      end
+      it "assigns an hash with the same number of element of event by pool types not relays and suitable for meetings" do
+        expect( assigns( :full_history_by_event ).size ).to eq( events.count )
+      end
+      it "assigns an hash that responds to event type code - pool type code" do
+        result = assigns( :full_history_by_event )
+        events.each do |events_by_pool_type|
+          expect( result[events_by_pool_type.get_key] ).not_to be_nil
         end
-        it "assigns an hash with the same number of element of event by pool types not relays and suitable for meetings" do
-          expect( assigns( :full_history_by_event ).size ).to eq( events.count )
+      end
+      it "assigns an hash with array as elements" do
+        result = assigns( :full_history_by_event )
+        events.each do |events_by_pool_type|
+          expect( result[events_by_pool_type.get_key] ).to be_a_kind_of( Array )
         end
-        it "assigns an hash that responds to event type code - pool type code" do
-          result = assigns( :full_history_by_event )
-          events.each do |events_by_pool_type|
-            expect( result[events_by_pool_type.get_key] ).not_to be_nil
-          end
+      end
+      it "assigns an hash with array of four elements as element" do
+        result = assigns( :full_history_by_event )
+        events.each do |events_by_pool_type|
+          expect( result[events_by_pool_type.get_key].size ).to be 5
         end
-        it "assigns an hash with array as elements" do
-          result = assigns( :full_history_by_event )
-          events.each do |events_by_pool_type|
-            expect( result[events_by_pool_type.get_key] ).to be_a_kind_of( Array )
-          end
-        end
-        it "assigns an hash with array of four elements as element" do
-          result = assigns( :full_history_by_event )
-          events.each do |events_by_pool_type|
-            expect( result[events_by_pool_type.get_key].size ).to be 5
-          end
-        end
-        it "hasn't elements with results for invalid event for pool type" do
-          expect( assigns( :full_history_by_event )["100MI-50"] ).to be_nil
-          expect( assigns( :full_history_by_event )["25FA-55"] ).to be_nil
-        end
+      end
+      it "hasn't elements with results for invalid event for pool type" do
+        expect( assigns( :full_history_by_event )["100MI-50"] ).to be_nil
+        expect( assigns( :full_history_by_event )["25FA-55"] ).to be_nil
       end
 
       context "passages_list element structure," do
@@ -443,7 +464,9 @@ describe SwimmersController, type: :controller do
           result = assigns( :full_history_by_event )
           events.each do |events_by_pool_type|
             results_by_time = result[events_by_pool_type.get_key][1]
-            expect( results_by_time.count ).to eq( @swimmer.meeting_individual_results.for_event_by_pool_type(events_by_pool_type).count )
+            # [Steve, 20160929] If we use #count here below, instead of #size, ActiveRecord will try
+            # to convert results_by_time.count into a query and this will yield an error. Stick with #size here:
+            expect( results_by_time.size ).to eq( @swimmer.meeting_individual_results.for_event_by_pool_type(events_by_pool_type).count )
           end
         end
       end
@@ -477,24 +500,29 @@ describe SwimmersController, type: :controller do
         get :full_history_2, params: { id: @swimmer.id }
       end
 
+      it "handles successfully the request" do
+        expect(response.status).to eq( 200 )
+      end
       it "has elements with results for 50FA, 100FA, 200MI in each pool types" do
-        expect( assigns( :full_history_by_event )["200MI-50"][1].count ).to be > 0
-        expect( assigns( :full_history_by_event )["200MI-25"][1].count ).to be > 0
-        expect( assigns( :full_history_by_event )["100FA-50"][1].count ).to be > 0
-        expect( assigns( :full_history_by_event )["100FA-25"][1].count ).to be > 0
-        expect( assigns( :full_history_by_event )["50FA-50"][1].count ).to be > 0
-        expect( assigns( :full_history_by_event )["50FA-25"][1].count ).to be > 0
+        # [Steve, 20160929] If we use #count here below, instead of #size, ActiveRecord will try
+        # to convert results_by_time.count into a query and this will yield an error. Stick with #size here:
+        expect( assigns( :full_history_by_event )["200MI-50"][1].size ).to be > 0
+        expect( assigns( :full_history_by_event )["200MI-25"][1].size ).to be > 0
+        expect( assigns( :full_history_by_event )["100FA-50"][1].size ).to be > 0
+        expect( assigns( :full_history_by_event )["100FA-25"][1].size ).to be > 0
+        expect( assigns( :full_history_by_event )["50FA-50"][1].size ).to be > 0
+        expect( assigns( :full_history_by_event )["50FA-25"][1].size ).to be > 0
       end
       it "has elements with correct number of passages type" do
-        expect( assigns( :full_history_by_event )["200MI-25"][0].count ).to eq(4)
-        expect( assigns( :full_history_by_event )["200MI-50"][0].count ).to eq(4)
-        expect( assigns( :full_history_by_event )["100SL-25"][0].count ).to eq(2)
-        expect( assigns( :full_history_by_event )["100MI-25"][0].count ).to eq(4)
-        expect( assigns( :full_history_by_event )["50FA-50"][0].count ).to eq(0)
+        expect( assigns( :full_history_by_event )["200MI-25"][0].size ).to eq(4)
+        expect( assigns( :full_history_by_event )["200MI-50"][0].size ).to eq(4)
+        expect( assigns( :full_history_by_event )["100SL-25"][0].size ).to eq(2)
+        expect( assigns( :full_history_by_event )["100MI-25"][0].size ).to eq(4)
+        expect( assigns( :full_history_by_event )["50FA-50"][0].size ).to eq(0)
       end
       it "has elements with result and passages only at 50, 100, 150 and 200 for 200MI, 50 meters" do
         passages_list = assigns( :full_history_by_event )["200MI-50"][0]
-        expect( passages_list.count ).to eq(4)
+        expect( passages_list.size ).to eq(4)
         expect( passages_list ).to include( 50 )
         expect( passages_list ).to include( 100 )
         expect( passages_list ).to include( 150 )
@@ -504,7 +532,7 @@ describe SwimmersController, type: :controller do
       end
 
       # Should test with full seeds
-      context "index table structure," do
+      describe "the index table structure," do
         it "assigns an array with data collected" do
           expect( assigns( :index_table ) ).to be_a_kind_of( Array )
         end
@@ -568,10 +596,11 @@ describe SwimmersController, type: :controller do
         get :current_goggle_cup, params: { id: swimmer.id }
       end
 
-      context "current_goggle_cup general structure," do
-        it "assigns an array with goggle cup collected" do
-          expect( assigns( :goggle_cups ) ).to be_a_kind_of( Array )
-        end
+      it "handles successfully the request" do
+        expect(response.status).to eq( 200 )
+      end
+      it "assigns an array with goggle cup collected" do
+        expect( assigns( :goggle_cups ) ).to be_a_kind_of( Array )
       end
     end
   end
@@ -591,10 +620,11 @@ describe SwimmersController, type: :controller do
         get :closed_goggle_cup, params: { id: swimmer.id, goggle_cup_id: goggle_cup.id }
       end
 
-      context "current_goggle_cup general structure," do
-        it "assigns an array with goggle cup collected" do
-          expect( assigns( :goggle_cups ) ).to be_a_kind_of( Array )
-        end
+      it "handles successfully the request" do
+        expect(response.status).to eq( 200 )
+      end
+      it "assigns an array with goggle cup collected" do
+        expect( assigns( :goggle_cups ) ).to be_a_kind_of( Array )
       end
     end
   end
@@ -603,33 +633,46 @@ describe SwimmersController, type: :controller do
 
 
   describe '[GET #supermaster/:id]' do
-    context "as a logged-in user" do
-      let(:header_year) { Season.build_header_year_from_date }
-      let(:season_type) { SeasonType.find_by_code('MASFIN') }
-      let(:season) do
-        Season.exists?( season_type_id: season_type.id, header_year: header_year) ?
-          Season.where( season_type_id: season_type.id, header_year: header_year).first :
-          Season.find(152)
-      end
-      let(:team)        { Team.find(1) }
-      let(:swimmer)     { team.badges.for_season( season )[ ((rand * team.badges.for_season( season ).count) % team.badges.for_season( season ).count).to_i ].swimmer }
+    context "as a logged-in user," do
+      context "for a current season that has the chosen swimmer w/ badge in it," do
+        let(:header_year) { Season.build_header_year_from_date(Date.today - 1.year) }
+        let(:season_type) { SeasonType.find_by_code('MASFIN') }
+        let(:season) do
+          Season.exists?( season_type_id: season_type.id, header_year: header_year) ?
+            Season.where( season_type_id: season_type.id, header_year: header_year).first :
+            Season.find(152)
+        end
+        let(:team) { Team.find(1) }
+        let(:swimmer) do
+          swimmer = team.badges.for_season( season )[
+             ((rand * team.badges.for_season( season ).count) % team.badges.for_season( season ).count).to_i
+          ].swimmer
+          expect( swimmer ).to be_a( Swimmer )
+          expect( swimmer.has_badge_for_season_and_year?( header_year) ).to be true
+          swimmer
+        end
 
-      before(:each) do
-        request.env["HTTP_REFERER"] = swimmers_path()
-        login_user()
-        get :supermaster, params: { id: swimmer.id, season_id: season.id }
-      end
+        before(:each) do
+          request.env["HTTP_REFERER"] = swimmers_path()
+          login_user()
+          # We will force the header_year upon the action (when not present, header_year
+          # will default to nil, using the current season which may well be still without
+          # any badges in it at the beginning of the academic year)
+          get :supermaster, params: { id: swimmer.id, season_id: season.id, header_year: header_year }
+        end
 
-      context "supermaster general structure," do
+        it "handles successfully the request" do
+          expect(response.status).to eq( 200 )
+        end
         it "assigns required variables" do
-          expect( assigns( :season_type ) ).to be_a_instance_of( SeasonType )
-          expect( assigns( :header_year ) ).to be_a_kind_of( String )
-          expect( assigns( :badge ) ).to be_a_instance_of( Badge )
-          expect( assigns( :season ) ).to be_a_instance_of( Season )
-          expect( assigns( :team ) ).to be_a_instance_of( Team )
-          expect( assigns( :team_affiliation ) ).to be_a_instance_of( TeamAffiliation )
-          expect( assigns( :meetings ) ).to all(be_a_instance_of( Meeting ))
-          expect( assigns( :meeting_individual_results ) ).to all( be_a_instance_of( MeetingIndividualResult ) )
+          expect( assigns( :season_type ) ).to eq( season_type )
+          expect( assigns( :header_year ) ).to eq( header_year )
+          expect( assigns( :badge ) ).to be_a( Badge )
+          expect( assigns( :season ) ).to eq( season )
+          expect( assigns( :team ) ).to eq( team )
+          expect( assigns( :team_affiliation ) ).to be_a( TeamAffiliation )
+          expect( assigns( :meetings ) ).to all( be_a( Meeting ) )
+          expect( assigns( :meeting_individual_results ) ).to all( be_a( MeetingIndividualResult ) )
         end
       end
     end
@@ -651,7 +694,11 @@ describe SwimmersController, type: :controller do
         # FIXME This action requires "full goggler" (swimmer associated with user)
         #@swimmer = create(:swimmer)
         @swimmer = Swimmer.find_by_id(23)           # Assumes LIGABUE MARCO from seeds
-        get :trainings, id: @swimmer.id
+        get :trainings, params: { id: @swimmer.id }
+      end
+
+      it "handles successfully the request" do
+        expect(response.status).to eq( 200 )
       end
 
       # [Steve, 20140925] Not true. These can also be all nil:

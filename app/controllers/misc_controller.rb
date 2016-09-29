@@ -7,7 +7,7 @@ require 'wrappers/timing'
 
 = MiscController
 
-  - version:  4.00.855
+  - version:  6.002
   - author:   Leega, Steve A.
 
 =end
@@ -356,7 +356,7 @@ class MiscController < ApplicationController
     set_swimmer
     unless ( @swimmer )
       flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to(:back) and return
+      redirect_back( fallback_location: root_path ) and return
     end
   end
 

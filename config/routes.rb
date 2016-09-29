@@ -20,14 +20,11 @@ Goggles::Application.routes.draw do
       # A user associates himself/herself with a swimmer:
       match "socials/associate",                to: "socials#associate",  via: [:get, :post]
       post "socials/dissociate",                to: "socials#dissociate"
-
       # A user temporary skips the requested association with a swimmer:
       post "social/skip_associate",             to: "socials#skip_associate",           as: "social_skip_associate"
-
       # A user confirms or unconfirms another user's association with a swimmer:
       post "social/association_confirm/:id",    to: "socials#association_confirm",      as: "social_association_confirm"
       post "social/association_unconfirm/:id",  to: "socials#association_unconfirm",    as: "social_association_unconfirm"
-
       # Any user can manage his/her swimming buddies:
       get  "socials/show_all",                  to: "socials#show_all"
       match "social/invite/:id",                to: "socials#invite",                   as: "social_invite", via: [:get, :post]
@@ -68,19 +65,22 @@ Goggles::Application.routes.draw do
       get  "records/for_season_type",           to: "records#for_season_type"
       get  "records/for_team",                  to: "records#for_team"
       get  "records/for_swimmer",               to: "records#for_swimmer"
-      # FIXME
-      get  "records/show_for_team",             to: "records#show_for_team"
-      get  "records/for_personal_best",         to: "records#for_personal_best"
+# FIXME this has not been used yet: (both view & action are removed or missing) -- check it out and then remove it, if everything is ok
+#      get  "records/show_for_team",             to: "records#show_for_team"
+# FIXME this has not been used yet: (view removed or missing) -- check it out and then remove it, if everything is ok
+#      get  "records/for_personal_best",         to: "records#for_personal_best"
 
       # === Swimmers ===
       get  "swimmers/index",                    as: "swimmers"
       get  "swimmer/radio/:id",                 to: "swimmers#radio",                   as: "swimmer_radio"
       get  "swimmer/medals/:id",                to: "swimmers#medals",                  as: "swimmer_medals"
+# FIXME this has not been used yet: (view removed or missing) -- check it out and then remove it, if everything is ok
+#      get  "swimmer/records/:id",               to: "swimmers#records",                 as: "swimmer_records"
       get  "swimmer/best_timings/:id",          to: "swimmers#best_timings",            as: "swimmer_best_timings"
       get  "swimmer/full_history_1/:id",        to: "swimmers#full_history_1",          as: "swimmer_full_history_1"
       get  "swimmer/full_history_2/:id",        to: "swimmers#full_history_2",          as: "swimmer_full_history_2"
       get  "swimmer/current_goggle_cup/:id",    to: "swimmers#current_goggle_cup",      as: "swimmer_current_goggle_cup"
-      get  "swimmer/sumpermaster/:id",          to: "swimmers#supermaster",             as: "swimmer_supermaster"
+      get  "swimmer/supermaster/:id",           to: "swimmers#supermaster",             as: "swimmer_supermaster"
       get  "swimmer/trainings/:id",             to: "swimmers#trainings",               as: "swimmer_trainings"
       get  "swimmer/closed_goggle_cup/:id",     to: "swimmers#closed_goggle_cup",       as: "swimmer_closed_goggle_cup"
 

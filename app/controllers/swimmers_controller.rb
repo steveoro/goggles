@@ -127,6 +127,8 @@ class SwimmersController < ApplicationController
   #++
 
 
+# FIXME / TODO REMOVE THIS, SINCE IT'S NOT USED ANYMORE (route has been commented-out too)
+
   # Radiography for a specified swimmer id: "Records" tab rendering
   #
   # == Params:
@@ -134,45 +136,45 @@ class SwimmersController < ApplicationController
   #
   # TODO Show the record held by swimmer summary
   #
-  def records
-    # --- "Medals" tab: ---
-    @tab_title = I18n.t('radiography.records_tab')
-    @tot_season_records_for_this_swimmer = 0
-    @seasonal_record_collection = []
-
-    # TODO Until we'll have finished FIN import this scan will be used
-    # for CSI only.
-    # FIXME this has not been tested yet:
-    #all_championships_records = MeetingIndividualResult.includes(
-    #  :season, :event_type, :category_type, :gender_type, :pool_type
-    #).is_valid.select(
-    #  'seasons.id, meeting_program_id, swimmer_id, min(minutes*6000 + seconds*100 + hundreds) as timing, event_types.code, category_types.code, gender_types.code, pool_types.code'
-    #).group(
-    #  'seasons.id, event_types.code, category_types.code, gender_types.code, pool_types.code'
-    #)
-                                                    # Filter all_championships_records and find out how many records this swimmer still holds (if any)
-    # FIXME this has not been tested yet:
-    #all_championships_records.each{ | mir |
-    #  @tot_season_records_for_this_swimmer += 1 if (mir.swimmer_id == @swimmer.id)
-    #}
-
-    @swimmer.season_types.uniq.each do |season_type|
-      # Creates an hash for seasonal medals
-      seasonal_records = Hash.new
-      seasonal_records[:season_type] = season_type.get_full_name
-      seasonal_records[:tot_season_records] = 0
-
-      # FIXME this has not been tested yet:
-      #all_championships_records.each{ | mir |
-      #  if mir.season_type && (mir.swimmer_id == @swimmer.id) && (mir.season_type.id == season_type.id)
-      #    seasonal_medals[:tot_season_records] += 1
-      #  end
-      #}
-      @seasonal_record_collection << seasonal_records
-    end
-  end
-  #-- -------------------------------------------------------------------------
-  #++
+  # def records
+    # # --- "Medals" tab: ---
+    # @tab_title = I18n.t('radiography.records_tab')
+    # @tot_season_records_for_this_swimmer = 0
+    # @seasonal_record_collection = []
+#
+    # # TODO Until we'll have finished FIN import this scan will be used
+    # # for CSI only.
+    # # FIXME this has not been tested yet:
+    # #all_championships_records = MeetingIndividualResult.includes(
+    # #  :season, :event_type, :category_type, :gender_type, :pool_type
+    # #).is_valid.select(
+    # #  'seasons.id, meeting_program_id, swimmer_id, min(minutes*6000 + seconds*100 + hundreds) as timing, event_types.code, category_types.code, gender_types.code, pool_types.code'
+    # #).group(
+    # #  'seasons.id, event_types.code, category_types.code, gender_types.code, pool_types.code'
+    # #)
+                                                    # # Filter all_championships_records and find out how many records this swimmer still holds (if any)
+    # # FIXME this has not been tested yet:
+    # #all_championships_records.each{ | mir |
+    # #  @tot_season_records_for_this_swimmer += 1 if (mir.swimmer_id == @swimmer.id)
+    # #}
+#
+    # @swimmer.season_types.uniq.each do |season_type|
+      # # Creates an hash for seasonal medals
+      # seasonal_records = Hash.new
+      # seasonal_records[:season_type] = season_type.get_full_name
+      # seasonal_records[:tot_season_records] = 0
+#
+      # # FIXME this has not been tested yet:
+      # #all_championships_records.each{ | mir |
+      # #  if mir.season_type && (mir.swimmer_id == @swimmer.id) && (mir.season_type.id == season_type.id)
+      # #    seasonal_medals[:tot_season_records] += 1
+      # #  end
+      # #}
+      # @seasonal_record_collection << seasonal_records
+    # end
+  # end
+  # #-- -------------------------------------------------------------------------
+  # #++
 
 
   # Radiography for a specified swimmer id: "Best timings" tab rendering
@@ -339,37 +341,38 @@ class SwimmersController < ApplicationController
       results_by_time = @swimmer.meeting_individual_results
         .for_event_by_pool_type( events_by_pool_type )
         .sort_by_timing( 'ASC' )
-        .select([
+        .select(
             'meeting_individual_results.id', 'minutes', 'seconds', 'hundreds', 'rank',
             'standard_points', 'reaction_time', 'meeting_program_id',
             'is_personal_best'
-        ])
+        )
       # This is used only for the graphs:
       results_by_date = @swimmer.meeting_individual_results
-        .is_valid
-        .sort_by_date( 'ASC' )
+        .is_valid.sort_by_date( 'ASC' )
         .for_event_by_pool_type( events_by_pool_type )
-        .select([
+        .select(
             'meeting_individual_results.id', 'minutes', 'seconds', 'hundreds', 'rank',
             'standard_points', 'reaction_time', 'meeting_program_id',
             'is_personal_best'
-        ])
+        )
 
       # If has results collect passages and prepares hash for index table
-      if results_by_time.count > 0
+      # [Steve, 20160929] If we use #count here below, instead of #size, ActiveRecord will try
+      # to convert results_by_time.count into a query and this will yield an error. Stick with #size here:
+      if results_by_time.size > 0
         # Collect all passages
         passages = Passage.joins( :event_type, :pool_type, :passage_type )
           .where( swimmer_id: @swimmer.id )
           .where( ['event_types.id = ? AND pool_types.id = ?', events_by_pool_type.event_type_id, events_by_pool_type.pool_type_id] )
-          .select([
+          .select(
             'meeting_individual_result_id', 'passage_type_id',
-            'minutes', 'seconds', 'hundreds'
-          ])
-          .select( 'passage_types.length_in_meters' )
+            'minutes', 'seconds', 'hundreds',
+            'passage_types.length_in_meters'
+          )
 
         # Collects the passage list
         passages_list = passages.select( 'passage_types.length_in_meters' )
-          .map{ |pt| pt.length_in_meters }.uniq.sort
+            .map{ |pt| pt.length_in_meters }.uniq.sort
 
         # Adds the event type in the hash index table
         stroke_type_code = events_by_pool_type.stroke_type_code
@@ -437,8 +440,12 @@ class SwimmersController < ApplicationController
   # == Params:
   # id: the swimmer id to be processed
   #
+  # header_year: typically nil, it's a current date override for when checking
+  #      for @swimmer badges in current season (mainly used only inside specs
+  #      to test a couple of edge conditions)
+  #
   def supermaster
-    unless ( @swimmer.has_badge_for_season_and_year? )
+    unless ( @swimmer.has_badge_for_season_and_year?( params[:header_year] ) )
       flash[:error] = I18n.t(:invalid_action_request)
       redirect_back( fallback_location: swimmers_path ) and return
     end
@@ -446,15 +453,18 @@ class SwimmersController < ApplicationController
     # --- "Supermaster" tab: ---
     @tab_title        = I18n.t('supermaster.supermaster')
     @season_type      = SeasonType.find_by_code('MASFIN')
-    @header_year      = Season.build_header_year_from_date
+    @header_year      = params[:header_year] || Season.build_header_year_from_date
     @badge            = @swimmer.badges.for_season_type( @season_type ).for_year( @header_year ).first
     @season           = @badge.season
     @team             = @badge.team
-    @team_affiliation = @team.get_current_affiliation( @season_type )
-    @meetings         = @badge.meetings.sort_by_date.uniq
-
+    # Check for overrides
+    @team_affiliation = if params[:header_year].present?
+      @team.team_affiliations.for_season_type( @season_type ).for_year( @header_year ).first
+    else
+      @team.get_current_affiliation( @season_type )
+    end
+    @meetings = @badge.meetings.sort_by_date.distinct
     @sssc = SwimmerSeasonalScoreCalculator.new( @swimmer, @season )
-
     @meeting_individual_results = @sssc.get_results
   end
 

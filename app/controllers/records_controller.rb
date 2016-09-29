@@ -6,12 +6,11 @@ require 'common/format'
 
 = RecordsController
 
-  - version:  4.00.369
+  - version:  6.002
   - author:   Steve A.
 
 =end
 class RecordsController < ApplicationController
-
 
   # Collects individual records grouped by SeasonType (classified as 'generic').
   #
@@ -136,6 +135,8 @@ class RecordsController < ApplicationController
   #++
 
 
+# FIXME this has not been used yet: (view removed or missing) -- check it out and then remove it, if everything is ok
+
   # Collects individual personal bests for a specified Swimmer.
   #
   # Dual-phase action:
@@ -143,41 +144,41 @@ class RecordsController < ApplicationController
   # - Phase 2: XHR GET => renders AJAX grid with result, expects parameter:
   #            - params[:swimmer][:id] => the swimmers.id for the filtering
   #
-  def for_personal_best
-    # AJAX call? Parse parameter and retrieve records range:
-    if request.xhr? && params['swimmer'] && params['swimmer']['id']
-      swimmer = Swimmer.find_by_id( params['swimmer']['id'] )
-      collector = PersonalBestCollector.new( swimmer: swimmer )
-
-      if swimmer
-        # Collect personal bests
-        collector.full_scan do |this, events_by_pool_type|
-          this.collect_from_all_category_results_having( events_by_pool_type, 'SPB' )
-        end
-        # Collect last result
-        collector.full_scan do |this, events_by_pool_type|
-          this.collect_last_results_having( events_by_pool_type, 'SLP' )
-        end
-        # Collect seasonal bests
-        current_season = Season.get_last_season_by_type( 'MASFIN' )
-        collector.set_start_date( current_season.begin_date )
-        collector.set_end_date( current_season.end_date )
-        collector.full_scan do |this, events_by_pool_type|
-          this.collect_from_all_category_results_having( events_by_pool_type, 'SSB' )
-        end
-      end
-
-      @title = I18n.t('records.swimmer_title') + (swimmer ? " (#{swimmer.get_full_name})" : '')
-      @grid_builder = PersonalBestGridBuilder.new( collector )
-    else
-      @title = I18n.t('records.swimmer_search_title')
-    end
-    # Respond according to requested format (GET request => .html, AJAX request => .js)
-    respond_to do |format|
-      format.html
-      format.js
-    end
-  end
+  # def for_personal_best
+    # # AJAX call? Parse parameter and retrieve records range:
+    # if request.xhr? && params['swimmer'] && params['swimmer']['id']
+      # swimmer = Swimmer.find_by_id( params['swimmer']['id'] )
+      # collector = PersonalBestCollector.new( swimmer: swimmer )
+#
+      # if swimmer
+        # # Collect personal bests
+        # collector.full_scan do |this, events_by_pool_type|
+          # this.collect_from_all_category_results_having( events_by_pool_type, 'SPB' )
+        # end
+        # # Collect last result
+        # collector.full_scan do |this, events_by_pool_type|
+          # this.collect_last_results_having( events_by_pool_type, 'SLP' )
+        # end
+        # # Collect seasonal bests
+        # current_season = Season.get_last_season_by_type( 'MASFIN' )
+        # collector.set_start_date( current_season.begin_date )
+        # collector.set_end_date( current_season.end_date )
+        # collector.full_scan do |this, events_by_pool_type|
+          # this.collect_from_all_category_results_having( events_by_pool_type, 'SSB' )
+        # end
+      # end
+#
+      # @title = I18n.t('records.swimmer_title') + (swimmer ? " (#{swimmer.get_full_name})" : '')
+      # @grid_builder = PersonalBestGridBuilder.new( collector )
+    # else
+      # @title = I18n.t('records.swimmer_search_title')
+    # end
+    # # Respond according to requested format (GET request => .html, AJAX request => .js)
+    # respond_to do |format|
+      # format.html
+      # format.js
+    # end
+  # end
   #-- -------------------------------------------------------------------------
   #++
 end
