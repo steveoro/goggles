@@ -2,7 +2,7 @@
 
 = SwimmerDecorator
 
-  - version:  4.00.409
+  - version:  6.002
   - author:   Steve A.
 
   Decorator for the Swimmer model.
@@ -56,9 +56,9 @@ class SwimmerDecorator < Draper::Decorator
   def get_confirm_path_for( another_user )
     strategy = SwimmerUserStrategy.new(object)
     if strategy.is_confirmable_by( another_user )
-      h.social_association_confirm_path( id: object.associated_user_id )
+      h.social_association_confirm_url( id: object.associated_user_id )
     elsif strategy.is_unconfirmable_by( another_user )
-      h.social_association_unconfirm_path( id: object.associated_user_id )
+      h.social_association_unconfirm_url( id: object.associated_user_id )
     else
       nil
     end
@@ -112,9 +112,9 @@ class SwimmerDecorator < Draper::Decorator
   def get_invite_path_for( another_user )
    strategy = SwimmerUserStrategy.new(object)
    if strategy.is_invitable_by( another_user )
-     h.social_invite_path( id: object.associated_user_id )
+     h.social_invite_url( id: object.associated_user_id )
    elsif strategy.is_approvable_by( another_user )
-     h.social_approve_path( id: object.associated_user_id )
+     h.social_approve_url( id: object.associated_user_id )
    else
      nil
    end
@@ -166,9 +166,11 @@ class SwimmerDecorator < Draper::Decorator
   def get_block_path_for( another_user )
    strategy = SwimmerUserStrategy.new(object)
    if strategy.is_blockable_by( another_user )
-     h.social_block_path( id: object.associated_user_id )
+     h.social_block_url( id: object.associated_user_id )
+     # This is the same as writing:
+     # social_block_path( id: object.associated_user_id )
    elsif strategy.is_unblockable_by( another_user )
-     h.social_unblock_path( id: object.associated_user_id )
+     h.social_unblock_url( id: object.associated_user_id )
    else
      nil
    end
@@ -212,7 +214,7 @@ class SwimmerDecorator < Draper::Decorator
   def get_remove_path_for( another_user )
    strategy = SwimmerUserStrategy.new(object)
    if strategy.is_editable_by( another_user )
-     h.social_remove_path( id: object.associated_user_id )
+     h.social_remove_url( id: object.associated_user_id )
    else
      nil
    end
@@ -256,7 +258,7 @@ class SwimmerDecorator < Draper::Decorator
   def get_edit_path_for( another_user )
    strategy = SwimmerUserStrategy.new(object)
    if strategy.is_editable_by( another_user )
-     h.social_edit_path( id: swimmer.associated_user_id )
+     h.social_edit_url( id: swimmer.associated_user_id )
    else
      nil
    end

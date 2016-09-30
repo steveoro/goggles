@@ -6,7 +6,7 @@ require 'common/format'
 
 = HomeController
 
-  - version:  4.00.763
+  - version:  6.002
   - author:   Steve A.
 
 =end
@@ -46,14 +46,12 @@ class HomeController < ApplicationController
         # (condition that can be requested by the user by clicking on a dedicated link
         #  in the association view: "skip association for now").
         unless current_user.goggle_uid.to_i > 0
-          redirect_to( associate_path ) and return
+          redirect_to( socials_associate_path ) and return
         end
       end
-      @articles  = Article.find(
-        :all,
-        order: "is_sticky DESC, updated_at DESC",
-        :limit => AppParameter.get_default_pagination_rows_for( :articles )
-      )
+      @articles  = Article.all
+          .order( "is_sticky DESC, updated_at DESC" )
+          .limit( AppParameter.get_default_pagination_rows_for( :articles ) )
       @news_feed = NewsFeed.unread.where( user_id: current_user.id )
     end
   end

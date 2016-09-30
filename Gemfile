@@ -55,7 +55,9 @@ gem "goggles_core", git: "https://github.com/steveoro/goggles_core", branch: "ra
 gem "simple-navigation"
 gem 'simple-navigation-bootstrap'
 
-gem "wice_grid"
+# FIXME Testing this fork while waiting for master to catch on Rails5:
+# (original master is located at /leikind/wice_grid)
+gem "wice_grid", git: "https://github.com/lewis-fidlers/wice_grid", branch: "rails5"
 
 # [Steve] Customized version. For Facebook-like friendship management
 # XXX When using ssh key use the protocol below:

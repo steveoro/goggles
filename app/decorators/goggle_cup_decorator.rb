@@ -2,7 +2,7 @@
 
 = GoggleCupDecorator
 
-  - version:  4.00.837
+  - version:  6.002
   - author:   Leega
 
   Decorator for the GoggleCup model.

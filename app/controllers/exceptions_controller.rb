@@ -5,14 +5,13 @@
 
 = ExceptionsController
 
-  - version:  4.00.839
+  - version:  6.002
   - author:   Steve A.
 
   Exceptions controller.
 =end
 class ExceptionsController < ApplicationController
   layout 'application'
-
 
   # Catches & renders a generic application error
   def render_error
@@ -21,4 +20,6 @@ class ExceptionsController < ApplicationController
     log_error( @exception, true ) if @exception
     render :error_page, status: @status_code, layout: true
   end
+  #-- -------------------------------------------------------------------------
+  #++
 end

@@ -2,7 +2,7 @@
 
 = RecordCollectionDecorator
 
-  - version:  4.00.407
+  - version:  6.002
   - author:   Steve A.
 
   Decorator for the RecordCollection model.
@@ -26,7 +26,7 @@ class RecordCollectionDecorator < Draper::Decorator
   #
   def to_short_html_list
     key, record = first
-    record ? "#{record.get_timing}".html_safe : "".html_safe 
+    record ? "#{record.get_timing}".html_safe : "".html_safe
   end
   #-- -------------------------------------------------------------------------
   #++

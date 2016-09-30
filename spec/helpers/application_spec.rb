@@ -2,7 +2,7 @@ require 'rails_helper'
 require 'ffaker'
 
 
-describe ApplicationHelper, :type => :helper do
+describe ApplicationHelper, type: :helper do
   include Devise::Test::ControllerHelpers
   include ERB::Util
 

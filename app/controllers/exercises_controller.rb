@@ -8,7 +8,7 @@ require 'json'
 
 = ExercisesController
 
-  - version:  4.00.317.20140616
+  - version:  6.002
   - author:   Steve A., Leega
 
 =end

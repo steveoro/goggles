@@ -2,7 +2,7 @@
 
 = MeetingDecorator
 
-  - version:  4.00.793
+  - version:  6.002
   - author:   Steve A.
 
   Decorator for the MeetingIndividualResult model.

@@ -2,7 +2,7 @@
 
 = SeasonDecorator
 
-  - version:  4.00.470
+  - version:  6.002
   - author:   Leega
 
   Decorator for the Season model.

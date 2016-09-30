@@ -10,7 +10,7 @@ require 'passages_batch_updater'
 
 = MeetingsController
 
-  - version:  4.00.851
+  - version:  6.002
   - author:   Steve A.
 
 =end
@@ -260,7 +260,7 @@ class MeetingsController < ApplicationController
       @meeting_team_scores = team_scores_hash.values
     end
                                                     # Do the manual sorting of the array to assure a valorized ranking:
-    @meeting_team_scores.sort!{ |a, b|
+    @meeting_team_scores.to_a.sort!{ |a, b|
       (
         b.meeting_individual_points + b.meeting_relay_points + b.meeting_team_points
       ) <=> (

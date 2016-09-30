@@ -13,7 +13,8 @@ describe ExercisesController, type: :controller do
         expect(response.status).to eq( 401 )            # invalid request / not found
       end
     end
-    # -------------------------------------------------------------------------
+    #-- -----------------------------------------------------------------------
+    #++
 
     context "logged-in user" do
       before(:each) { login_user() }
@@ -22,7 +23,6 @@ describe ExercisesController, type: :controller do
         get( :json_list, xhr: true )
         expect(response.status).to eq(200)     # 302 (redirect) means the user is not logged in
       end
-
       it "retrieves a list of rows" do
         get( :json_list, xhr: true )
         expect( response.body ).not_to be_nil

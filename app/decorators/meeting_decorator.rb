@@ -2,7 +2,7 @@
 
 = MeetingDecorator
 
-  - version:  4.00.419
+  - version:  6.002
   - author:   Steve A.
 
   Decorator for the Meeting model.
@@ -102,14 +102,14 @@ class MeetingDecorator < Draper::Decorator
           linked_name = h.link_to( object.send(name_method), meeting_show_invitation_path(id: object.id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.manifest_tooltip') } )
         else
           linked_name = object.send(name_method)
-        end 
+        end
       end
-    end    
+    end
     linked_name
   end
   #-- -------------------------------------------------------------------------
   #++
-  
+
   # Computes a short session warm-up schedule in html mode
   # using a new line for each session
   #
@@ -125,7 +125,7 @@ class MeetingDecorator < Draper::Decorator
     object.get_session_begin_times('<br><br>').html_safe
   end
   # ----------------------------------------------------------------------------
-  
+
   # Computes a short session event program in html mode
   # using a new line for each session
   #

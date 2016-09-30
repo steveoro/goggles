@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 
-describe HomeController, :type => :controller do
+describe HomeController, type: :controller do
   before :each do
     @swimming_buddy = create( :user )
     @unlogged_user = create( :user )
@@ -45,7 +45,7 @@ describe HomeController, :type => :controller do
     context "as a logged-in user (NOT associated w/ swimmer)," do
       before(:each) { login_user() }
 
-      it "redirects to associate_path()" do
+      it "redirects to socials_associate_path()" do
         get :index
         expect( response ).to redirect_to( controller: :socials, action: :associate )
       end

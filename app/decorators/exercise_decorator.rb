@@ -2,7 +2,7 @@
 
 = ExerciseDecorator
 
-  - version:  4.00.525
+  - version:  6.002
   - author:   Steve A., Leega
 
   Decorator for the Exercise model.
@@ -77,24 +77,24 @@ class ExerciseDecorator < Draper::Decorator
   # the same base movement it will precede the description, never repeated
   # eg: SL (25 fast + 50 slow + 25 fast)      instead of
   #     25 SL fast + 50 SL slow + 25 SL fast
-  # 
+  #
   # If exercise rows of exercises with multiple rows has
   # the same training mode it will forward the description enclosed in parethesiys
   # eg: (25 SL + 25 DO) fast                  instead of
   #     25 SL fast + 25 DO fast
   #  (maybe shuld be better: SL/DO fast change at 25)
-  # 
+  #
   # If the training mode is A2 it sohuld be omissed (it's the default)
   # eg: 50 SL + 50 DO                         instead of
   #     50 SL resistance + 50 DO resistance
   #  or 25 FA fast + 25 SL                    instead of
   #     25 FA fast + 25 SL resistance
-  # 
+  #
   # If the distance is unknown and rows have same %, should compress
   # description suppressing percentage
   # eg: SL fast + DO slow                     instead of
   #     50% SL fast + 50% DO slow
-  # 
+  #
   # Remove slow indication on pure technique movements (movement_type_code = 'T')
   # eg: SL 1 arm ahead + SL resistance        instead of
   #     50% SL 1 arm ahead slow + 50% SL resistance
@@ -118,10 +118,10 @@ class ExerciseDecorator < Draper::Decorator
     # If only one row should use exercise short description
     # suppressing training mode if A2
     if er.count == 1
-      natural_description = er.first.decorate.get_short_description( 
-        total_distance, 
-        :true, 
-        (er.first.training_mode_type_code != 'A2' && er.first.base_movement.movement_type_code != 'T'), 
+      natural_description = er.first.decorate.get_short_description(
+        total_distance,
+        :true,
+        (er.first.training_mode_type_code != 'A2' && er.first.base_movement.movement_type_code != 'T'),
         :true)
     else
       # Check if same movement in all rows
@@ -130,33 +130,33 @@ class ExerciseDecorator < Draper::Decorator
       if is_same_movement
         natural_description = er.first.base_movement_i18n_short + ' '
       end
-      
+
       # Check if same trainng mode in all rows
       is_same_mode = ( training_mode_types.uniq.count == 1 )
 
       # Check if same distance
-      is_same_distance = ( er.select(:percentage).uniq.map{ |row| row.percentage }.count == 1 && er.first.percentage > 0 ) 
-      
-      # If same movements or training mode open parenthesys 
+      is_same_distance = ( er.select(:percentage).uniq.map{ |row| row.percentage }.count == 1 && er.first.percentage > 0 )
+
+      # If same movements or training mode open parenthesys
       natural_description += '(' if is_same_movement or is_same_mode
 
       natural_description += er.collect{ |row|
-        ExerciseRowDecorator.decorate( row ).get_short_description( 
-          total_distance, 
-          not(is_same_movement), 
-          (not(is_same_mode) && row.base_movement.movement_type_code != 'T'), 
-          not(is_same_distance) 
+        ExerciseRowDecorator.decorate( row ).get_short_description(
+          total_distance,
+          not(is_same_movement),
+          (not(is_same_mode) && row.base_movement.movement_type_code != 'T'),
+          not(is_same_distance)
         )
       }.join(separator)
-      
+
       # If same movements close parenthesys
       natural_description += ')' if is_same_movement or is_same_mode
-      
+
       # If same mode add mode
       natural_description += ' ' + er.first.training_mode_type_i18n_alternate if is_same_mode
-      
+
       # debug. Remove this
-      #natural_description += ' [' + code + ']' 
+      #natural_description += ' [' + code + ']'
     end
     natural_description
   end

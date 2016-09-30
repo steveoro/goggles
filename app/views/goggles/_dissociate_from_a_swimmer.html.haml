@@ -1,3 +1,3 @@
 .row-fluid
   %p
-    = link_to( I18n.t('user_association.unlink_yourself_from_this_swimmer'), dissociate_path(), { method: :post, confirm: I18n.t('netzke.basepack.grid_panel.are_you_sure'), disable_with: I18n.t(:please_wait), class: 'disabled' } )
+    = link_to( I18n.t('user_association.unlink_yourself_from_this_swimmer'), socials_dissociate_path(), { method: :post, confirm: I18n.t('netzke.basepack.grid_panel.are_you_sure'), disable_with: I18n.t(:please_wait), class: 'disabled' } )

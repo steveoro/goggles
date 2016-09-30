@@ -6,7 +6,7 @@ require 'common/format'
 
 = ChampionshipsController
 
-  - version:  6.02
+  - version:  6.002
   - author:   Leega, Steve A.
 
 =end

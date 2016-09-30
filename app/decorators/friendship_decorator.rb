@@ -2,7 +2,7 @@
 
 = FriendshipDecorator
 
-  - version:  4.00.313.20140610
+  - version:  6.002
   - author:   Steve A.
 
   Decorator for the Friendship model (inherited by Amistad gem).

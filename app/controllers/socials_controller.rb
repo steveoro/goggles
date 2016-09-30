@@ -41,7 +41,7 @@ class SocialsController < ApplicationController
         second_list.where( year_of_birth: current_user.year_of_birth )
       end
                                                     # Choose a list with results:
-      @possible_swimmers = second_list.size > 0 ? second_list : first_list
+      @possible_swimmers = second_list.size > 0 ? second_list.to_a : first_list.to_a
       @possible_swimmers.delete_if { |swimmer_row|  # Filter out the worst results:
         (swimmer_row.complete_name =~ Regexp.new(first_name.upcase)).nil? ||
         (swimmer_row.complete_name =~ Regexp.new(last_name.upcase)).nil?

@@ -22,7 +22,7 @@ describe MeetingsController, type: :controller do
   shared_examples_for "(GET search index with a preselected swimmer_id)" do |action_sym|
     before(:each) do
       @swimmer = create(:swimmer)
-      get action_sym, swimmer_id: @swimmer.id
+      get action_sym, params: { swimmer_id: @swimmer.id }
     end
     it_behaves_like( "(response ok with index grid rendering)", action_sym )
 
@@ -35,7 +35,7 @@ describe MeetingsController, type: :controller do
   shared_examples_for "(GET search index with a preselected team_id)" do |action_sym|
     before(:each) do
       @team = create(:team)
-      get action_sym, team_id: @team.id
+      get action_sym, params: { team_id: @team.id }
     end
     it_behaves_like( "(response ok with index grid rendering)", action_sym )
 
@@ -48,7 +48,7 @@ describe MeetingsController, type: :controller do
   shared_examples_for "(GET search index with a text added to the title)" do |action_sym|
     before(:each) do
       @text = FFaker::Lorem.paragraph[0..99]
-      get action_sym, text: @text
+      get action_sym, params: { text: @text }
     end
     it_behaves_like( "(response ok with index grid rendering)", action_sym )
 
@@ -60,7 +60,7 @@ describe MeetingsController, type: :controller do
   #++
 
   shared_examples_for "(GET http action with an invalid meeting id)" do |action_sym|
-    before(:each) { get action_sym, id: 0}
+    before(:each) { get action_sym, params: { id: 0} }
 
     it "handles the request with a redirect" do
       expect(response.status).to eq( 302 )
@@ -73,7 +73,7 @@ describe MeetingsController, type: :controller do
   #++
 
   shared_examples_for "(GET http action with a valid meeting id)" do |action_sym, fixture_id|
-    before(:each) { get action_sym, id: fixture_id }
+    before(:each) { get action_sym, params: { id: fixture_id } }
 
     it "handles successfully the request" do
       expect(response.status).to eq( 200 )
@@ -117,7 +117,7 @@ describe MeetingsController, type: :controller do
 
       it "stores the search text in the session" do
         @text = FFaker::Lorem.paragraph[0..99]
-        get :simple_search, text: @text, team_id: 1, swimmer_id: 142
+        get :simple_search, params: { text: @text, team_id: 1, swimmer_id: 142 }
         expect( session[:text] ).to include( @text )
       end
     end
@@ -155,8 +155,8 @@ describe MeetingsController, type: :controller do
 
     before(:each) do
       #@meeting = create(:meeting)
-      #get :show_start_list, id: @meeting.id
-      get :show_start_list, id: 13106
+      #get :show_start_list, params: { id: @meeting.id }
+      get :show_start_list, params: { id: 13106 }
     end
 
     it "assigns the meeting event list" do
@@ -177,8 +177,8 @@ describe MeetingsController, type: :controller do
 
     before(:each) do
       #@meeting = create(:meeting)
-      #get :show_team_entries, id: @meeting.id, team_id: @team.id
-      get :show_team_entries, id: 13106, team_id: 1
+      #get :show_team_entries, params: { id: @meeting.id, team_id: @team.id }
+      get :show_team_entries, params: { id: 13106, team_id: 1 }
     end
 
     it "assigns the meeting event list" do
@@ -200,8 +200,8 @@ describe MeetingsController, type: :controller do
 
     before(:each) do
       #@meeting = create(:meeting)
-      #get :show_start_list_by_category, id: @meeting.id
-      get :show_start_list_by_category, id: 13106
+      #get :show_start_list_by_category, params: { id: @meeting.id }
+      get :show_start_list_by_category, params: { id: 13106 }
     end
 
     it "assigns the meeting event list" do
@@ -237,7 +237,7 @@ describe MeetingsController, type: :controller do
 
     before(:each) do
       @meeting = create(:meeting)
-      get :show_stats, id: @meeting.id
+      get :show_stats, params: { id: @meeting.id }
     end
 
     it "assigns the meeting stats" do
@@ -274,7 +274,7 @@ describe MeetingsController, type: :controller do
         # - (Assert the user/manager should manage teams that have MIRs loaded for the meeting, otherwise nothing should be rendered)
 
         login_user( User.find(2) )
-        get :edit_passages, id: 15202
+        get :edit_passages, params: { id: 15202 }
       end
 
       it "accepts the request" do
@@ -318,7 +318,7 @@ describe MeetingsController, type: :controller do
         # - (Assert the user/manager should manage teams that have MIRs loaded for the meeting, otherwise nothing should be rendered)
 
         login_user( User.find(2) )
-        post :update_passages, id: 15202
+        post :update_passages, params: { id: 15202 }
       end
 
       it "accepts the request" do

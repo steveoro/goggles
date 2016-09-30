@@ -6,6 +6,15 @@ Goggles::Application.configure do
   # since you don't have to restart the web server when you make code changes.
   config.cache_classes = false
 
+  # Eager load code on boot. This eager loads most of Rails and
+  # your application in memory, allowing both threaded web servers
+  # and those relying on copy on write to perform better.
+  # Rake tasks automatically ignore this option for performance.
+  #
+  # [Steve, 201609] eager_load required by Rails 5 config.
+  # true for production ENVs & when using a pre-loader like Zeus.
+  config.eager_load = true
+
   # Log error messages when you accidentally call methods on nil.
   config.whiny_nils = true
 

@@ -232,6 +232,10 @@ Goggles::Application.routes.draw do
   # Wildcard route to match all the remaining possibilities:
 #  match "*path", to: "exceptions#render_error"
 
+  # TODO TEST THESE 2 and customize the error pages:
+  match "/404", to: "exceptions#render_error", via: :all
+  match "/500", to: "exceptions#render_error", via: :all
+
   # Sample of regular route:
   #   match 'products/:id' => 'catalog#view'
   # Keep in mind you can assign values other than :controller and :action

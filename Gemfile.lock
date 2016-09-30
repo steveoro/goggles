@@ -14,6 +14,16 @@ GIT
       ruport
 
 GIT
+  remote: https://github.com/lewis-fidlers/wice_grid
+  revision: f02ed2f0aafa4a6b93200ac99d93b2923fcd6ccf
+  branch: rails5
+  specs:
+    wice_grid (3.6.3)
+      activerecord (> 3.2)
+      coffee-rails (> 3.2)
+      kaminari (~> 0.17)
+
+GIT
   remote: https://github.com/steveoro/goggles_core
   revision: d10cc4af9b20e3567408a9408625f908e4f28f88
   branch: rails5
@@ -432,10 +442,6 @@ GEM
     websocket-driver (0.6.4)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.2)
-    wice_grid (3.6.2)
-      activerecord (> 3.2)
-      coffee-rails (> 3.2)
-      kaminari (~> 0.16)
     xpath (2.0.0)
       nokogiri (~> 1.3)
     zeus (0.15.10)
@@ -502,7 +508,7 @@ DEPENDENCIES
   tzinfo-data
   uglifier (>= 1.3.0)
   web-console
-  wice_grid
+  wice_grid!
   zeus
   zip
 
