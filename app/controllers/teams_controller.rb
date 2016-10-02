@@ -23,6 +23,8 @@ class TeamsController < ApplicationController
   # Index/Search action
   #
   def index
+    # [Steve, 20161001] We need to whitelist all parameters for the search query:
+    params.permit!()
     # Leega
     # TODO Verify order by name:
     # Team CITTA' DEI RAGAZZI (alias NUOTO AZZURRO) doesn't result correctly ordered
