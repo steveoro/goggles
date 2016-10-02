@@ -6,7 +6,7 @@
   .row-fluid#pageTop
 
   = render( partial: 'supermaster_google_gauge', locals: { supermaster_score: supermaster_score, ironmaster_score: ironmaster_score, team_ranking_score: team_ranking_score } )
-  -#= render( partial: 'supermaster_jqpilot_gauge', locals: { supermaster_score: supermaster_score, ironmaster_score: ironmaster_score, team_ranking_score: team_ranking_score } )
+  -#= render( partial: 'supermaster_jqplot_gauge', locals: { supermaster_score: supermaster_score, ironmaster_score: ironmaster_score, team_ranking_score: team_ranking_score } )
   -#= render( partial: 'supermaster_plain_charts', locals: { supermaster_score: supermaster_score, ironmaster_score: ironmaster_score, team_ranking_score: team_ranking_score } )
 
   .row-fluid.goggles-category-gap#rankings
@@ -129,7 +129,7 @@
                 = meeting.get_swimming_pool.pool_type.code
               %td
                 = meeting.get_city
-  
+
     -# Shows all supermaster results
     .span7
       %table.table.table-striped.table-bordered.table-hover.table-condensed
@@ -189,5 +189,5 @@
         %b= "#{I18n.t('supermaster.team_ranking_short')} - #{I18n.t('supermaster.team_ranking')}:"
       .span10
         = I18n.t('supermaster.how_to_team_ranking')
-    
+
   .row-fluid.goggles-category-gap#bottom_of_page

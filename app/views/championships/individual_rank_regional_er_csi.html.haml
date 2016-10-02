@@ -12,7 +12,7 @@
   
       %ul.offset10.span2.nav.nav-tab.nav-stacked.navbar-fixed-bottom.goggles-divlist-odd
         %li
-          %a(href="#topOfPage")= I18n.t(:top_of_page)
+          %a(href="#pageTop")= I18n.t(:top_of_page)
         - GenderType.individual_only.sort_by_courtesy.each do |gender_type|
           %li
             %a(href="\##{gender_type.code}")= gender_type.i18n_description 

@@ -5,7 +5,8 @@
         %td.span3.goggles-centeralign
           %b
             %i= I18n.t('meeting_stats.team_athletes')
-            %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
+          = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+            = image_tag('bullet_arrow_up.png')
         %td.span1.goggles-centeralign
           %i= I18n.t('meeting_stats.females')
         %td.span1.goggles-centeralign
@@ -26,11 +27,11 @@
 
       - gtot_fem = gtot_mal = gtot_rel = gtot = 0
       - tot_gold = tot_silver = tot_bronze = tot_medals = 0
-      - @meeting_stats.teams.each do |team_stat|  
+      - @meeting_stats.teams.each do |team_stat|
         - is_highlighted = ( team_stat.team.id == @preselected_team_id )
         - gtot_fem   += team_stat.female_swimmers
         - gtot_mal   += team_stat.male_swimmers
-        - gtot_rel   += team_stat.relay_results if @meeting_stat_calculator.has_relays? 
+        - gtot_rel   += team_stat.relay_results if @meeting_stat_calculator.has_relays?
         - gtot       += team_stat.get_swimmers_count
         - tot_gold   += team_stat.get_golds_count
         - tot_silver += team_stat.get_silvers_count

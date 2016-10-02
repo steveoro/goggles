@@ -1,4 +1,4 @@
-%ul.nav.nav-tabs#topOfPage
+%ul.nav.nav-tabs#pageTop
   - is_active = ( params[:action] == 'radio' )
   %li{ class: is_active ? 'active' : '' }
     = link_to( t('radiography.radio_tab'),                  is_active ? '#' : team_radio_path(id: @team.id) )

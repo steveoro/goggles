@@ -26,7 +26,7 @@
               - mir = MeetingIndividualResultDecorator.decorate( individual_result )
               %tr
                 %td.span4
-                  %a{'id'=>"swimmer#{mir.id}", 'href'=>"#{ meeting_show_swimmer_results_path(:id=>@meeting.id, :team_id=>@team.id, :swimmer_id=>mir.swimmer_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip')}
+                  = link_to(meeting_show_swimmer_results_path(:id=>@meeting.id, :team_id=>@team.id, :swimmer_id=>mir.swimmer_id), {'id'=>"swimmer#{mir.id}"}, 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip')) do
                     = mir.get_swimmer_name
                 %td.span1
                   = mir.category_type_short_name

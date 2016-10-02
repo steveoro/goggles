@@ -5,7 +5,8 @@
         %td.span3.goggles-centeralign{'rowspan'=>'2'}
           %b
             %i= I18n.t('meeting_stats.team_athletes')
-            %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
+          = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+            = image_tag('bullet_arrow_up.png')
         %td.span1.goggles-centeralign{'colspan'=>'3'}
           %i= I18n.t('meeting_stats.swimmers')
         %td.span1.goggles-centeralign{'colspan'=>'3'}
@@ -26,7 +27,7 @@
 
       - gtot_fem = gtot_mal = gtot = 0
       - gtot_ent_fem = gtot_ent_mal = gtot_ent = 0
-      - @meeting_stats.teams.each do |team_stat|  
+      - @meeting_stats.teams.each do |team_stat|
         - is_highlighted = ( team_stat.team.id == @preselected_team_id )
         - gtot_fem     += team_stat.female_ent_swimmers
         - gtot_mal     += team_stat.male_ent_swimmers

@@ -1,9 +1,8 @@
-%script
-  new WOW().init();
-
+-#%script
+-#  new WOW().init();
 - # Preloader mask:
-#preloader
-  #load
+-##preloader
+-#  #load
 
 = render( partial: 'meeting_header' )
 = render( partial: 'tabs_and_radio_title' )
@@ -23,7 +22,7 @@
           - previous_event = mir.meeting_event
           %tr.info
             %td
-              %a(href="##{mir.meeting_event.event_type.code}")
+              = link_to("##{mir.meeting_event.event_type.code}", 'data-turbolinks'=>'false') do
                 %b= mir.meeting_event.get_verbose_name
             - passage_types.each do |passage_type|
               %td.goggles-rightalign
@@ -37,7 +36,7 @@
           - if has_passages
             - passages.order(:passage_type_id).each_with_index do |passage, index|
               %td.goggles-rightalign{'colspan'=>'1'}
-                - if passage.get_passage_distance != passage_types[index].length_in_meters 
+                - if passage.get_passage_distance != passage_types[index].length_in_meters
                   %i= "#{ passage.get_passage_distance } mt."
                   %br
                 = text_field_tag(                                             |

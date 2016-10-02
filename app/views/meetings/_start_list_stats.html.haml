@@ -27,7 +27,7 @@
             - gtot      += sub_tot
             %tr{'class' => is_highlighted ? 'warning' : ''}
               %td.span3
-                %a{'id'=>"team#{team_id}", 'href'=>"#{ meeting_show_team_results_path(:id=>@meeting.id, :team_id=>team_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_team_results_tooltip')}
+                = link_to( meeting_show_team_results_path(id: @meeting.id, team_id: team_id), {'id'=>"team#{team_id}", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_team_results_tooltip')} ) do
                   = name
               %td.span1.goggles-rightalign
                 = tot_fem

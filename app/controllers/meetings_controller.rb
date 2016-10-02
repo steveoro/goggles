@@ -104,6 +104,8 @@ class MeetingsController < ApplicationController
   # - team_id:    a Team id to be highlighted among the results.
   #
   def simple_search
+    # [Steve, 20161001] We need to whitelist all parameters for the search query:
+    params.permit!()
     # Clear the saved text search when request with special code:
     session[:text] = params[:text] = nil if params[:text] == '*'
     # Store the search text when it changes to something:
@@ -165,6 +167,8 @@ class MeetingsController < ApplicationController
   # - team_id:    a Team id to be used as a pre-filter for domain passed to the grid;
   #
   def custom_search
+    # [Steve, 20161001] We need to whitelist all parameters for the search query:
+    params.permit!()
     @title = if params[:text].to_s.size > 0
       I18n.t('meeting.index_title') + " ('#{ params[:text] }')"
     else
@@ -176,10 +180,14 @@ class MeetingsController < ApplicationController
     # Prepare pre-selection parameters:
     if @preselected_swimmer_id
       swimmer = Swimmer.find_by_id( @preselected_swimmer_id )
-      ids = swimmer.meetings.includes(:season, :season_type).map{ |row| row.id }.uniq
+      ids = swimmer.meetings.joins(:season, :season_type)
+        .includes(:season, :season_type)
+        .map{ |row| row.id }.uniq
     elsif @preselected_team_id
       team = Team.find_by_id( @preselected_team_id )
-      ids = team.meetings.includes(:season, :season_type).map{ |row| row.id }.uniq
+      ids = team.meetings.joins(:season, :season_type)
+        .includes(:season, :season_type)
+        .map{ |row| row.id }.uniq
     end
     # Initialize the grid:
     @meetings_grid = initialize_grid(
@@ -232,9 +240,9 @@ class MeetingsController < ApplicationController
     @preselected_team_id = params[:team_id]
 
     if ( @meeting.meeting_team_scores.count > 0 )
-      @meeting_team_scores = @meeting.meeting_team_scores.includes(
-        :team, :team_affiliation
-      )
+      @meeting_team_scores = @meeting.meeting_team_scores
+        .joins( :team, :team_affiliation )
+        .includes( :team, :team_affiliation )
       # [Steve, 20131231] Cannot order via SQL since rank could be blank for CSI meetings
       #  (as in  .order('meeting_team_scores.rank'))
 
@@ -320,7 +328,10 @@ class MeetingsController < ApplicationController
     end
 
                                                     # Get the swimmer list and some stats:
-    @meeting_team_swimmers =  mir.includes(:swimmer).group(:swimmer_id).order('swimmers.complete_name ASC').collect{ |row| row.swimmer }
+    @meeting_team_swimmers =  mir.joins(:swimmer).includes(:swimmer)
+      .group(:swimmer_id)
+      .order('swimmers.complete_name ASC')
+      .map{ |row| row.swimmer }
 
     # TODO
     # Refactor with medal_types
@@ -335,21 +346,19 @@ class MeetingsController < ApplicationController
                                                     # Collect an Hash with the swimmer_id pointing to the description of all the events performed by each swimmer:
     meeting_team_swimmers_ids = @meeting_team_swimmers.collect{|row| row.id}
     @events_per_swimmers = {}
-    meeting_team_swimmers_ids.each{ |id|
-      @events_per_swimmers[ id ] = mir.where(
-        [ 'meeting_individual_results.swimmer_id = ?', id ]
-      )
-    }
+    meeting_team_swimmers_ids.each do |id|
+      @events_per_swimmers[ id ] = mir
+          .where([ 'meeting_individual_results.swimmer_id = ?', id ])
+    end
 
-    ind_event_ids = mir.collect{ |row| row.meeting_event.id }.uniq
-    rel_event_ids = mrr.collect{ |row| row.meeting_event.id }.uniq
+    ind_event_ids = mir.map{ |row| row.meeting_event.id }.uniq
+    rel_event_ids = mrr.map{ |row| row.meeting_event.id }.uniq
     event_ids = (ind_event_ids + rel_event_ids).uniq.sort
     @team_tot_events = event_ids.size
-    @meeting_events_list = MeetingEvent.where( id: event_ids ).includes(
-      :event_type, :stroke_type
-    ).order(
-      'event_types.is_a_relay, meeting_events.event_order'
-    )
+    @meeting_events_list = MeetingEvent.where( id: event_ids )
+      .joins( :event_type, :stroke_type )
+      .includes( :event_type, :stroke_type )
+      .order( 'event_types.is_a_relay, meeting_events.event_order' )
                                                     # Add to the stats the relay results:
     @team_ranks_1 += mrr.is_valid.has_rank(1).count
     @team_ranks_2 += mrr.is_valid.has_rank(2).count
@@ -358,20 +367,29 @@ class MeetingsController < ApplicationController
     @team_outstanding_scores += mrr.is_valid.for_over_that_score().count
 
     # Get the programs filtered by team_id:
-    ind_prg_ids = MeetingIndividualResult.includes(:meeting, :meeting_program).where(
-      [ 'meetings.id = ? AND meeting_individual_results.team_id = ?',
-        @meeting.id, @team.id ]
-    ).collect{ |row| row.meeting_program_id }.uniq
-    rel_prg_ids = MeetingRelayResult.includes(:meeting, :meeting_program).where(
-      [ 'meetings.id = ? AND meeting_relay_results.team_id = ?',
-        @meeting.id, @team.id ]
-    ).collect{ |row| row.meeting_program_id }.uniq
+    ind_prg_ids = MeetingIndividualResult.joins(:meeting, :meeting_program)
+      .includes(:meeting, :meeting_program)
+      .where([
+        'meetings.id = ? AND meeting_individual_results.team_id = ?',
+        @meeting.id, @team.id
+      ])
+      .map{ |row| row.meeting_program_id }
+      .uniq
+
+    rel_prg_ids = MeetingRelayResult.joins(:meeting, :meeting_program)
+      .includes(:meeting, :meeting_program)
+      .where([
+        'meetings.id = ? AND meeting_relay_results.team_id = ?',
+        @meeting.id, @team.id
+      ])
+      .map{ |row| row.meeting_program_id }
+      .uniq
+
     prg_ids = (ind_prg_ids + rel_prg_ids).uniq.sort
-    @meeting_programs_list = MeetingProgram.where( id: prg_ids ).includes(
-      :event_type, :stroke_type
-    ).order(
-      'event_types.is_a_relay, meeting_events.event_order'
-    )
+    @meeting_programs_list = MeetingProgram.where( id: prg_ids )
+      .joins( :event_type, :stroke_type )
+      .includes( :event_type, :stroke_type )
+      .order( 'event_types.is_a_relay, meeting_events.event_order' )
 
     # Find out top scorer
     @top_scores = {}
@@ -436,11 +454,10 @@ class MeetingsController < ApplicationController
     # Prepare the start-list according to the meeting specs
     # male/female joined and so on
     # Need specific flags on meeting events
-    @meeting_events_list = @meeting.meeting_events.includes(
-      :event_type, :stroke_type
-    ).order(
-      'meeting_events.event_order'
-    )
+    @meeting_events_list = @meeting.meeting_events
+      .joins(:event_type, :stroke_type)
+      .includes(:event_type, :stroke_type)
+      .order('meeting_events.event_order')
 
     # TODO
     # Prepares team stats
@@ -455,11 +472,10 @@ class MeetingsController < ApplicationController
   # Meeting start list category divided viewer
   #
   def show_start_list_by_category
-    @meeting_events_list = @meeting.meeting_events.includes(
-      :event_type, :stroke_type
-    ).order(
-      'meeting_events.event_order'
-    )
+    @meeting_events_list = @meeting.meeting_events
+      .joins(:event_type, :stroke_type)
+      .includes(:event_type, :stroke_type)
+      .order('meeting_events.event_order')
 
     # Get a timestamp for the cache key:
     @max_entry_updated_at = get_timestamp_from_relation_chain(:meeting_entries)
@@ -472,11 +488,10 @@ class MeetingsController < ApplicationController
   # Intended to show team swimmers distribution among sessions
   #
   def show_team_entries
-    @meeting_events_list = @meeting.meeting_events.includes(
-      :event_type, :stroke_type
-    ).order(
-      'meeting_events.event_order'
-    )
+    @meeting_events_list = @meeting.meeting_events
+      .joins(:event_type, :stroke_type)
+      .includes(:event_type, :stroke_type)
+      .order('meeting_events.event_order')
 
     # Get a timestamp for the cache key:
     @max_entry_updated_at = get_timestamp_from_relation_chain(:meeting_entries)
@@ -512,7 +527,7 @@ class MeetingsController < ApplicationController
     @editable_stuff = @meeting.meeting_individual_results
         .sort_by_event_and_timing
         .joins( :event_type, :pool_type )
-        .where( ['meeting_individual_results.team_id = ? and event_types.length_in_meters > pool_types.length_in_meters', @managed_team_ids] )
+        .where(['meeting_individual_results.team_id = ? and event_types.length_in_meters > pool_types.length_in_meters', @managed_team_ids])
         .includes( :passages )
         .map{ |mir| { mir => mir.passages } }
 
@@ -627,11 +642,10 @@ class MeetingsController < ApplicationController
     @preselected_swimmer_id = params[:swimmer_id]
     @preselected_team_id    = params[:team_id]
 
-    @meeting_events_list = @meeting.meeting_events.includes(
-      :event_type, :stroke_type
-    ).order(
-      'event_types.is_a_relay, meeting_events.event_order'
-    )
+    @meeting_events_list = @meeting.meeting_events
+      .joins(:event_type, :stroke_type)
+      .includes(:event_type, :stroke_type)
+      .order('event_types.is_a_relay, meeting_events.event_order')
 
     # Get a timestamp for the cache key:
     @max_mir_updated_at = get_timestamp_from_relation_chain() # default: MIR

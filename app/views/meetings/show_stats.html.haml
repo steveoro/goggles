@@ -11,10 +11,11 @@
           = render( partial: 'meeting_stats_teams' )
     - if @meeting_stats.categories.size > 0 || @meeting_stats.events.size > 0
       %div{'class'=>"goggles-category-gap", 'id'=>'meeting_stats_categories'}
-        .row-fluid
-          - if @meeting_stats.categories.size > 0
+        - if @meeting_stats.categories.size > 0
+          .row-fluid.goggles-category-gap
             = render( partial: 'meeting_stats_categories' )
-          - if @meeting_stats.events.size > 0
+        - if @meeting_stats.events.size > 0
+          .row-fluid.goggles-category-gap
             = render( partial: 'meeting_stats_events' )
     - if @meeting_stats.best_std_female_scores.size > 0 || @meeting_stats.best_std_male_scores.size > 0
       %div{'class'=>"goggles-category-gap", 'id'=>'meeting_stats_evidence'}
@@ -34,11 +35,12 @@
           = render( partial: 'meeting_stats_ent_teams' )
     - if @meeting_stats.categories.size > 0 || @meeting_stats.events.size > 0
       %div{'class'=>"goggles-category-gap", 'id'=>'meeting_stats_ent_categories'}
-        .row-fluid
-          - if @meeting_stats.categories.size > 0
+        - if @meeting_stats.categories.size > 0
+          .row-fluid.goggles-category-gap
             = render( partial: 'meeting_stats_ent_categories' )
-          - if @meeting_stats.events.size > 0
+        - if @meeting_stats.events.size > 0
+          .row-fluid.goggles-category-gap
             = render( partial: 'meeting_stats_ent_events' )
-    
+
   .row-fluid.goggles-category-gap
 

@@ -46,7 +46,7 @@
               %i= I18n.t('meeting.standard')
             %td.goggles-centeralign
               %i= I18n.t('meeting.meeting')
-            - if has_goggle_cup 
+            - if has_goggle_cup
               %td.goggles-centeralign
                 %i= team.get_current_goggle_cup_name_at( @meeting.header_date )
 
@@ -73,7 +73,7 @@
               - if has_goggle_cup
                 %td.goggles-rightalign
                   = mir.get_formatted_goggle_cup_points(true)
-               
+
     .span4.offset1
       %table.table.table-striped.table-bordered.table-hover.table-condensed
         %tbody
@@ -124,10 +124,10 @@
                   - else
                     = ''
   .row-fluid.span12
-    
+
   - @individual_result_list.each do |individual_result|
     - passages = individual_result.passages.joins(:passage_type)
-    - if passages 
+    - if passages
       - passage_list = passages.select('passage_types.length_in_meters').map{ |pt| pt.length_in_meters }.uniq.sort
       - if passage_list.size > 5
         .row-fluid.span8

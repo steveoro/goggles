@@ -6,23 +6,27 @@
           %b= I18n.t('meeting_stats.numbers')
       %tr
         %td.span2
-          %a(href="#meeting_stats_teams")= I18n.t('meeting_stats.tot_teams')
+          = link_to("#meeting_stats_teams", {'data-turbolinks'=>'false'}) do
+            = I18n.t('meeting_stats.tot_teams')
         %td.span1.goggles-rightalign
           = @meeting_stats.get_teams_count
       %tr
         %td.span2
-          %a(href="#meeting_stats_categories")= I18n.t('meeting_stats.tot_swimmers')
+          = link_to("#meeting_stats_categories", {'data-turbolinks'=>'false'}) do
+            = I18n.t('meeting_stats.tot_swimmers')
         %td.span1.goggles-rightalign
           = @meeting_stats.get_swimmers_count
       %tr
         %td.span2
-          %a(href="#meeting_stats_events")= I18n.t('meeting_stats.tot_athletes_by_event')
+          = link_to("#meeting_stats_categories", {'data-turbolinks'=>'false'}) do
+            = I18n.t('meeting_stats.tot_athletes_by_event')
         %td.span1.goggles-rightalign
           = @meeting_stats.get_results_count
       - if @meeting_stat_calculator.has_relays?
         %tr
           %td.span2
-            %a(href="#meeting_stats_events")= I18n.t('meeting_stats.tot_relays')
+            = link_to("#meeting_stats_categories", {'data-turbolinks'=>'false'}) do
+              = I18n.t('meeting_stats.tot_relays')
           %td.span1.goggles-rightalign
             = @meeting_stats.get_results_relay_count
       %tr
@@ -46,7 +50,8 @@
         %tr
           %td.span2
             - if @meeting_stats.over_1000_count > 0
-              %a(href="#meeting_stats_specials")= I18n.t('meeting_stats.over_1000')
+              = link_to("#meeting_stats_specials", {'data-turbolinks'=>'false'}) do
+                = I18n.t('meeting_stats.over_1000')
             - else
               = I18n.t('meeting_stats.over_1000')
           %td.span1.goggles-rightalign
@@ -54,7 +59,8 @@
         %tr
           %td.span2
             - if @meeting_stats.over_950_count > 0
-              %a(href="#meeting_stats_specials")= I18n.t('meeting_stats.over_950')
+              = link_to("#meeting_stats_specials", {'data-turbolinks'=>'false'}) do
+                = I18n.t('meeting_stats.over_950')
             - else
               = I18n.t('meeting_stats.over_950')
           %td.span1.goggles-rightalign
@@ -62,7 +68,8 @@
         %tr
           %td.span2
             - if @meeting_stats.over_900_count > 0
-              %a(href="#meeting_stats_specials")= I18n.t('meeting_stats.over_900')
+              = link_to("#meeting_stats_specials", {'data-turbolinks'=>'false'}) do
+                = I18n.t('meeting_stats.over_900')
             - else
               = I18n.t('meeting_stats.over_900')
           %td.span1.goggles-rightalign

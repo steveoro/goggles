@@ -16,7 +16,7 @@
     .span4#tr_chart
 
 :javascript
-  $(document).ready( function(){
+  readyFunct = function(){
     $.jqplot( 'sm_chart',
       [[ sm_score ]],
       {
@@ -73,4 +73,7 @@
         }
       }
     );
-  });
+  };
+  // Bind the on-ready function to the "page-load" Turbolinks5 event:
+  // $(document).ready( readyFunct ); // Standard "ready" event; w/ TL5 we need just the one below:
+  $(document).on('turbolinks:load', readyFunct );

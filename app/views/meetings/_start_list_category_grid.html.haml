@@ -5,7 +5,7 @@
     -# --- Sub-legend for each category + gender
     = render( partial: 'show_full_sub_legend', locals: { meeting_event: meeting_event } )
 
-    - meeting_event.meeting_programs.includes(:category_type, :gender_type).order('gender_types.code, category_types.id').each do |meeting_program|
+    - meeting_event.meeting_programs.joins(:category_type, :gender_type).includes(:category_type, :gender_type).order('gender_types.code, category_types.id').each do |meeting_program|
       - if meeting_program.meeting_entries.count > 0
         %div{'class'=>"goggles-category-gap", 'id'=>"mprg#{meeting_program.id}"}
           %table.table.table-striped.table-bordered.table-hover.table-condensed

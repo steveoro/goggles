@@ -1,7 +1,7 @@
 .accordion#accordionShw
   .accordion-group
     .accordion-heading
-      %a.accordion-toggle{'data-toggle' => 'collapse', 'data-parent' => '#accordionshw', :href => '#collapseShw'}
+      %a.accordion-toggle{'data-toggle' => 'collapse', 'data-parent' => '#accordionshw', :href => '#collapseShw', 'data-turbolinks'=>'false'}
         %h3#headerShw{'data-toggle' => 'tooltip', 'title' => I18n.t(:detail_show_tooltip)}= @meeting.get_verbose_name
     .accordion-body.collapse#collapseShw
       .accordion-inner

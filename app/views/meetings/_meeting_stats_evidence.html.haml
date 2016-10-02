@@ -4,7 +4,8 @@
       %tr{'class'=>'success'}
         %td.goggles-centeralign{'colspan'=>8}
           %b= I18n.t('meeting_stats.specials')
-          %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
+          = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+            = image_tag('bullet_arrow_up.png')
       %tr{'class'=>'success'}
         %td.goggles-centeralign{'colspan'=>4}
           %b
