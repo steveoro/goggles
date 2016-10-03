@@ -4,7 +4,7 @@
       .span3
         = I18n.t('swimmers.total_team_records') +':'
       .span9
-        %a#totalCount{ href: "#", onclick: "$('#loadingIndicator').show(); loadAJAXRecordCount();", 'data-toggle' => 'tooltip', title: I18n.t('records.total_count_disclaimer_tooltip') }
+        %a#totalCount{ href: "#", onclick: "$('#loadingIndicator').show(); loadAJAXRecordCount();", 'data-turbolinks'=>'false', 'data-toggle' => 'tooltip', title: I18n.t('records.total_count_disclaimer_tooltip') }
           = I18n.t('records.compute_label')
         - SeasonType.uniq.each do |season_type|
           %span{ id: "labelSeasonType#{season_type.id}", hidden: true }

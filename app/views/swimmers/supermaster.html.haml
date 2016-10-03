@@ -16,7 +16,8 @@
           %tr{'class'=>'info'}
             %td
               %b= I18n.t('rankings')
-              %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
+              = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+                = image_tag('bullet_arrow_up.png')
             %td.goggles-rightalign
               %b= I18n.t('number_short')
             %td.goggles-rightalign
@@ -78,7 +79,8 @@
           %tr{'class'=>'info'}
             %td{'colspan'=>2}
               %b= I18n.t('supermaster.medals_summary')
-              %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
+              = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+                = image_tag('bullet_arrow_up.png')
           - MedalType.are_not_jokes.sort_by_rank.each do |medal_type|
             %tr
               %td
@@ -118,7 +120,8 @@
             %td{'colspan'=>4}
               %b= I18n.t('meetings')
               %b= " (#{@meetings.count})"
-              %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
+              = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+                = image_tag('bullet_arrow_up.png')
           - @meetings.each do |meeting|
             %tr
               %td
@@ -137,7 +140,8 @@
           %tr{'class'=>'info'}
             %td
               %b= I18n.t('supermaster.results_detail')
-              %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
+              = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+                = image_tag('bullet_arrow_up.png')
             %td
               %b= I18n.t('event')
             %td.goggles-rightalign

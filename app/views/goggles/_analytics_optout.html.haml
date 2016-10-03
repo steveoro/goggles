@@ -3,8 +3,8 @@
     %i
       %strong= t('privacy.we_use_cookies')
     .row-fluid
-      .btn= link_to( t('privacy.agreed'),  '#', onclick: "gaOptIn(); $('#ga-opt-out').hide(); return false",  class: "nav_link" )
-      .btn= link_to( t('privacy.disable'), '#', onclick: "gaOptOut(); $('#ga-opt-out').hide(); return false", class: "nav_link" )
+      .btn= link_to( t('privacy.agreed'),  '#', onclick: "gaOptIn(); $('#ga-opt-out').hide(); return false", 'data-turbolinks'=>'false', class: "nav_link" )
+      .btn= link_to( t('privacy.disable'), '#', onclick: "gaOptOut(); $('#ga-opt-out').hide(); return false", 'data-turbolinks'=>'false', class: "nav_link" )
 
 :javascript
   if ( document.cookie.indexOf(disableStr) < 0 ) {

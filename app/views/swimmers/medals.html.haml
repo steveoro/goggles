@@ -5,18 +5,22 @@
     .navbar
       %ul.nav
         %li
-          %a.goggles-nav-compact(href="#summary")= I18n.t('radiography.medals_summary')
+          = link_to( "#summary", {'data-turbolinks'=>'false', class: "goggles-nav-compact"} ) do
+            = I18n.t('radiography.medals_summary')
         %li
-          %a.goggles-nav-compact(href="#by_season_type")= I18n.t('radiography.medals_by_season_type')
+          = link_to( "#by_season_type", {'data-turbolinks'=>'false', class: "goggles-nav-compact"} ) do
+            = I18n.t('radiography.medals_by_season_type')
         - @event_medal_collection.keys.each do |pool_type|
           %li
-            %a.goggles-nav-compact(href="#by_event_type_#{pool_type}")= I18n.t('radiography.medals_by_event_type').gsub('{POOL_TYPE}', pool_type)
+            = link_to( "#by_event_type_#{pool_type}", {'data-turbolinks'=>'false', class: "goggles-nav-compact"} ) do
+              = I18n.t('radiography.medals_by_event_type').gsub('{POOL_TYPE}', pool_type)
       .ghost-divider-vertical
-  
-  .row-fluid.goggles-category-gap{ 'id' => "summary" }
+
+  .row-fluid.goggles-category-gap{ id: "summary" }
     %h3
       = I18n.t('radiography.medals_summary')
-      %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
+      = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+        = image_tag('bullet_arrow_up.png')
     .row-fluid
       .span2
         = image_tag('medal_gold_3.png')
@@ -40,11 +44,12 @@
         = I18n.t('radiography.total_wooden_medals') +':'
       .span1
         = @wooden_medals
-  
-  .row-fluid.goggles-category-gap{ 'id' => "by_season_type" }
+
+  .row-fluid.goggles-category-gap{ id: "by_season_type" }
     %h3
       = I18n.t('radiography.medals_by_season_type')
-      %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
+      = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+        = image_tag('bullet_arrow_up.png')
     .row-fluid
       .span5
         %table.table.table-striped.table-bordered.table-hover.table-condensed
@@ -69,12 +74,13 @@
                       = medal_collection[medal_type.rank]
                 %td.goggles-rightalign
                   %b= tot_medals_for_type
-  
+
   - @event_medal_collection.keys.each do |pool_type|
-    .row-fluid.goggles-category-gap{ 'id' => "by_event_type_#{pool_type}" }
+    .row-fluid.goggles-category-gap{ id: "by_event_type_#{pool_type}" }
       %h3
         = I18n.t('radiography.medals_by_event_type').gsub('{POOL_TYPE}', pool_type)
-        %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
+        = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+          = image_tag('bullet_arrow_up.png')
       %table.table.table-striped.table-bordered.table-hover.table-condensed
         %tbody
           %tr{'class'=>'info'}
@@ -97,5 +103,5 @@
                     = medal_collection[medal_type.rank]
               %td.goggles-rightalign
                 %b= tot_medals_for_type
-  
+
   .row-fluid.goggles-category-gap

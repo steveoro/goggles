@@ -20,11 +20,13 @@
             %td
               - if index_row[pool_type_25].respond_to?(:each)
                 - index_row[pool_type_25].each do |event_type|
-                  %a(href="##{event_type}#{index_row[:stroke_code]}-25")= event_type
+                  = link_to("##{event_type}#{index_row[:stroke_code]}-25", {'data-turbolinks'=>'false'}) do
+                    = event_type
             %td
               - if index_row[pool_type_50].respond_to?(:each)
                 - index_row[pool_type_50].each do |event_type|
-                  %a(href="##{event_type}#{index_row[:stroke_code]}-50")= event_type
+                  = link_to("##{event_type}#{index_row[:stroke_code]}-50", {'data-turbolinks'=>'false'}) do
+                    = event_type
     - event_key = nil
     %script
       var dataSeries = {};
@@ -41,7 +43,8 @@
           .row-fluid.goggles-category-gap
           .row-fluid.offset5
             %b= event_name
-            %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
+            = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+              = image_tag('bullet_arrow_up.png')
           .row-fluid.graph-container-full
             .graph-placeholder-full{ 'id' => "graph#{event_key}" }
           -# Store data for the graph in a brand new series list:
@@ -68,7 +71,8 @@
                   = ' ('
                   = full_history_element[1].size if full_history_element[1].respond_to?(:size)
                   = I18n.t('results') + ')'
-                  %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
+                  = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+                    = image_tag('bullet_arrow_up.png')
                 %td.goggles-rightalign
                   %b= I18n.t('meeting.reaction_time')
                 - passage_list = full_history_element[0]

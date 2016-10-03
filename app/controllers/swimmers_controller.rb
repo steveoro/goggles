@@ -480,7 +480,7 @@ class SwimmersController < ApplicationController
   # id: the swimmer id to be processed
   # goggle_cup_id: the goggle_cup id to be processed
   #
-  # TODO Verify if better using the same view for current and closed
+  # TODO Verify if it's better using the same view for current and closed
   def closed_goggle_cup
     # --- "Closed Goggle cup" tab (not shown): ---
     unless ( params[:goggle_cup_id] ) && GoggleCup.exists?( params[:goggle_cup_id].to_i )

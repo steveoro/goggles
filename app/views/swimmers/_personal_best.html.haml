@@ -5,7 +5,8 @@
       %ul.nav
         - @grid_builder.pool_types.each do |pool_type|
           %li
-            %a.goggles-nav-compact(href="##{pool_type.code}")= pool_type.i18n_short
+            = link_to("##{pool_type.code}", {'data-turbolinks'=>'false', class: 'goggles-nav-compact'}) do
+              = pool_type.i18n_short
         .ghost-divider-vertical
   - @grid_builder.pool_types.each do |pool_type|
     = render( partial: 'personal_bests_grid', locals: { pool_type: pool_type, grid_builder: @grid_builder } )
