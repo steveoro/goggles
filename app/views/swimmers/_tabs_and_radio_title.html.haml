@@ -1,60 +1,12 @@
 %ul.nav.nav-tabs#pageTop
-  - if ( params[:action] == 'radio' )
-    %li.active
-      = link_to( t('radiography.radio_tab'), '#', {'data-turbolinks'=>'false'} )
-  - else
-    %li
-      = link_to( t('radiography.radio_tab'), swimmer_radio_path(id: @swimmer.id) )
-
-  - if @swimmer.has_badge_for_season_and_year?
-    - if ( params[:action] == 'supermaster' )
-      %li.active
-        = link_to( t('radiography.supermaster'), '#', {'data-turbolinks'=>'false'} )
-    - else
-      %li
-        = link_to( t('radiography.supermaster'), swimmer_supermaster_path(id: @swimmer.id) )
-
-  - if ( params[:action] == 'current_goggle_cup' )
-    %li.active
-      = link_to( @goggle_cups_tab_title, '#', {'data-turbolinks'=>'false'} )
-  - else
-    %li
-      = link_to( @goggle_cups_tab_title, swimmer_current_goggle_cup_path(id: @swimmer.id) )
-
-  - if ( params[:action] == 'medals' )
-    %li.active
-      = link_to( t('radiography.medals_tab'), '#', {'data-turbolinks'=>'false'} )
-  - else
-    %li
-      = link_to( t('radiography.medals_tab'), swimmer_medals_path(id: @swimmer.id) )
-
-  - if ( params[:action] == 'best_timings' )
-    %li.active
-      = link_to( t('radiography.best_timings_tab'), '#', {'data-turbolinks'=>'false'} )
-  - else
-    %li
-      = link_to( t('radiography.best_timings_tab'), swimmer_best_timings_path(id: @swimmer.id) )
-
-  - if ( params[:action] == 'full_history_by_date' )
-    %li.active
-      = link_to( t('radiography.full_history_by_date'), '#', {'data-turbolinks'=>'false'} )
-  - else
-    %li
-      = link_to( t('radiography.full_history_by_date'), swimmer_full_history_1_path(id: @swimmer.id) )
-
-  - if ( params[:action] == 'full_history_by_time' )
-    %li.active
-      = link_to( t('radiography.full_history_by_event'), '#', {'data-turbolinks'=>'false'} )
-  - else
-    %li
-      = link_to( t('radiography.full_history_by_event'), swimmer_full_history_2_path(id: @swimmer.id) )
-
-  - if ( params[:action] == 'trainings' )
-    %li.active
-      = link_to( t('radiography.trainings_tab'), '#', {'data-turbolinks'=>'false'} )
-  - else
-    %li
-      = link_to( t('radiography.trainings_tab'), swimmer_trainings_path(id: @swimmer.id) )
+  = show_tab_link( params, 'radio', t('radiography.radio_tab'), swimmer_radio_path(id: @swimmer.id) )
+  = show_tab_link( params, 'supermaster', t('supermaster.title'), swimmer_supermaster_path(id: @swimmer.id) )
+  = show_tab_link( params, 'current_goggle_cup', @goggle_cups_tab_title, swimmer_current_goggle_cup_path(id: @swimmer.id) )
+  = show_tab_link( params, 'medals', t('radiography.medals_tab'), swimmer_medals_path(id: @swimmer.id) )
+  = show_tab_link( params, 'best_timings', t('radiography.best_timings_tab'), swimmer_best_timings_path(id: @swimmer.id) )
+  = show_tab_link( params, 'full_history_by_date', t('radiography.full_history_by_date'), swimmer_full_history_1_path(id: @swimmer.id) )
+  = show_tab_link( params, 'full_history_by_time', t('radiography.full_history_by_event'), swimmer_full_history_2_path(id: @swimmer.id) )
+  = show_tab_link( params, 'trainings', t('radiography.trainings_tab'), swimmer_trainings_path(id: @swimmer.id) )
 
 .container-fluid
   .row-fluid.span12.alert.alert-success.goggles-div-centeralign
