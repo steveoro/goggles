@@ -6,11 +6,13 @@
         -# --- Sub-legend for each gender + pool-type
         .navbar
           - @grid_builder.gender_types.each do |gender_type|
-            %a.goggles-small-brand(href='#')= gender_type.i18n_short + ':'
+            = link_to("#", {'data-turbolinks'=>'false', class: 'goggles-small-brand'}) do
+              = gender_type.i18n_short + ':'
             %ul.nav
               - @grid_builder.pool_types.each do |pool_type|
                 %li
-                  %a.goggles-nav-compact(href="##{gender_type.code}#{pool_type.code}")= pool_type.i18n_short
+                  = link_to("##{gender_type.code}#{pool_type.code}", {'data-turbolinks'=>'false', class: 'goggles-nav-compact'}) do
+                    = pool_type.i18n_short
               .ghost-divider-vertical
       - @grid_builder.gender_types.each do |gender_type|
         - @grid_builder.pool_types.each do |pool_type|
