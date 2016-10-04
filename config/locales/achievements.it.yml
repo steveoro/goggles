@@ -1,0 +1,5 @@
+it:
+  achievement:
+    generic_title: "Trofeo sbloccato!"
+    approve_body: "Stabilisci amicizia con #{N} Swimming Buddy(/ies)."
+    confirm_body: "Ricevi conferma da #{N} Swimming Buddy(/ies)."

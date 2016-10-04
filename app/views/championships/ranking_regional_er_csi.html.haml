@@ -5,22 +5,29 @@
     - cache( cache_key_for_meeting( 'team_ranking', @season.id, @ranking_updated_at, @team ? @team.id : 0 ) ) do
       - col_x_meeting = @championship_ranking.columns.count + 1
       - meeting_stats = []
-    
       -# --- Sub-legend for each argument
       .navbar
         %ul.nav
           - if @season.id != @current_season_id
             %li
-              = link_to( t('championships.back_to_current'), championships_ranking_regional_er_csi_path( id: @current_season_id ), {class: "goggles-nav-compact"})
+              = link_to( t('championships.back_to_current'), championships_ranking_regional_er_csi_path( id: @current_season_id ), {class: "btn"})
           %li
-            %a.goggles-nav-compact(href="#team_ranking")= t('championships.team_ranking')
+            &nbsp;
           %li
-            %a.goggles-nav-compact(href="#team_stats")= t('championships.team_stats')
-        .ghost-divider-vertical
-  
+            = link_to("#team_ranking", {class: 'btn', 'data-turbolinks'=>'false'}) do
+              = t('championships.team_ranking')
+          %li
+            &nbsp;
+          %li
+            = link_to("#team_stats", {class: 'btn', 'data-turbolinks'=>'false'}) do
+              = t('championships.team_stats')
+          .ghost-divider-vertical
+      .goggles-category-gap
+      %br/
       %h3
         = t('championships.team_ranking')
-        %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
+        = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+          = image_tag('bullet_arrow_up.png')
       %table.table.table-striped.table-bordered.table-hover.table-condensed#team_ranking
         %tbody
           %tr{'class'=>'info'}
@@ -57,12 +64,12 @@
                   %b= meeting_total.to_i
               %td.goggles-rightalign
                 %b= team_score.total_points.to_i
-          
       .row-fluid
         .goggles-category-gap
           %h3
             = t('championships.team_stats')
-            %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
+            = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+              = image_tag('bullet_arrow_up.png')
           %table.table.table-striped.table-bordered.table-hover.table-condensed#team_stats
             %tbody
               %tr{'class'=>'info'}
@@ -87,7 +94,7 @@
                   %td
                     = team_score.team.decorate.get_linked_name
                   - meeting_stats.each do |meeting_stat|
-                    - team = meeting_stat.teams.rindex{ |team_stat| team_stat.team == team_score.team } 
+                    - team = meeting_stat.teams.rindex{ |team_stat| team_stat.team == team_score.team }
                     %td.goggles-rightalign
                       - if team
                         = meeting_stat.teams[team].female_swimmers
