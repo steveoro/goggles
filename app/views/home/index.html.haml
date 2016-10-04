@@ -7,8 +7,9 @@
       = render( partial: 'goggles/associate_to_a_swimmer' ) unless current_user.has_associated_swimmer?
       - # Articles/News flash list:
       = render( partial: 'goggles/news_articles_list' )
-      - # Be patient with this very very work in progress creature!
-      = render( partial: 'forgive_us' )
+      -# [Steve, 2016103] After 3+ years, we should indeed comment-out this one:
+      -# Be patient with this very very work in progress creature!
+      -#= render( partial: 'forgive_us' )
     .row-fluid.span2
       = render( partial: 'right_shortcuts' )
 - else

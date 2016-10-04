@@ -11,7 +11,7 @@
       .container-fluid
         .fluid-row.span12
           .page-scroll.text-right
-            %a.animated{ href: "#what_can_i_do", 'data-toggle' => 'tooltip', title: t('tutorial.next_argument') }
+            %a.animated{ href: "#what_can_i_do", 'data-turbolinks'=>'false', 'data-toggle' => 'tooltip', title: t('tutorial.next_argument') }
               = image_tag( "control_ff_down_blue.png")
               = t('tutorial.what_can_i_do')
     = render( partial: 'how_to_register' )
@@ -19,12 +19,12 @@
       .container-fluid
         .fluid-row.span6
           .page-scroll.text-left
-            %a.animated{ href: "#tutorial_top", 'data-toggle' => 'tooltip', title: t('tutorial.back_argument') }
+            %a.animated{ href: "#tutorial_top", 'data-turbolinks'=>'false', 'data-toggle' => 'tooltip', title: t('tutorial.back_argument') }
               = image_tag( "control_ff_up_blue.png")
               = t('tutorial.how_to_register')
         .fluid-row.span6
           .page-scroll.text-right
-            %a.animated{ href: "#what_can_i_do", 'data-toggle' => 'tooltip', title: t('tutorial.next_argument') }
+            %a.animated{ href: "#what_can_i_do", 'data-turbolinks'=>'false', 'data-toggle' => 'tooltip', title: t('tutorial.next_argument') }
               = image_tag( "control_ff_down_blue.png")
               = t('tutorial.what_can_i_do')
 
@@ -34,12 +34,12 @@
     .container-fluid
       .fluid-row.span6
         .page-scroll.text-left
-          %a.animated{ href: "#after_register", 'data-toggle' => 'tooltip', title: t('tutorial.back_argument') }
+          %a.animated{ href: "#after_register", 'data-turbolinks'=>'false', 'data-toggle' => 'tooltip', title: t('tutorial.back_argument') }
             = image_tag( "control_ff_up_blue.png")
             = t('tutorial.what_can_i_do')
       .fluid-row.span6
         .page-scroll.text-right
-          %a.animated{ href: "#what_about_meetings", 'data-toggle' => 'tooltip', title: t('tutorial.next_argument') }
+          %a.animated{ href: "#what_about_meetings", 'data-turbolinks'=>'false', 'data-toggle' => 'tooltip', title: t('tutorial.next_argument') }
             = image_tag( "control_ff_down_blue.png")
             = t('tutorial.what_about_meetings')
 
@@ -49,12 +49,12 @@
     .container-fluid
       .fluid-row.span6
         .page-scroll.text-left
-          %a.animated{ href: "#what_about_meetings", 'data-toggle' => 'tooltip', title: t('tutorial.back_argument') }
+          %a.animated{ href: "#what_about_meetings", 'data-turbolinks'=>'false', 'data-toggle' => 'tooltip', title: t('tutorial.back_argument') }
             = image_tag( "control_ff_up_blue.png")
             = t('tutorial.what_about_meetings')
       .fluid-row.span6
         .page-scroll.text-right
-          %a.animated{ href: "#how_to_view_passages", 'data-toggle' => 'tooltip', title: t('tutorial.next_argument') }
+          %a.animated{ href: "#how_to_view_passages", 'data-turbolinks'=>'false', 'data-toggle' => 'tooltip', title: t('tutorial.next_argument') }
             = image_tag( "control_ff_down_blue.png")
             = t('tutorial.how_to_view_passages')
 
@@ -64,12 +64,12 @@
     .container-fluid
       .fluid-row.span6
         .page-scroll.text-left
-          %a.animated{ href: "#after_what_about_meetings", 'data-toggle' => 'tooltip', title: t('tutorial.back_argument') }
+          %a.animated{ href: "#after_what_about_meetings", 'data-turbolinks'=>'false', 'data-toggle' => 'tooltip', title: t('tutorial.back_argument') }
             = image_tag( "control_ff_up_blue.png")
             = t('tutorial.how_to_view_passages')
       .fluid-row.span6
         .page-scroll.text-right
-          %a.animated{ href: "#what_about_trainings", 'data-toggle' => 'tooltip', title: t('tutorial.next_argument') }
+          %a.animated{ href: "#what_about_trainings", 'data-turbolinks'=>'false', 'data-toggle' => 'tooltip', title: t('tutorial.next_argument') }
             = image_tag( "control_ff_down_blue.png")
             = t('tutorial.what_about_trainings')
 
@@ -79,12 +79,12 @@
     .container-fluid
       .fluid-row.span6
         .page-scroll.text-left
-          %a.animated{ href: "#after_how_to_view_passages", 'data-toggle' => 'tooltip', title: t('tutorial.back_argument') }
+          %a.animated{ href: "#after_how_to_view_passages", 'data-turbolinks'=>'false', 'data-toggle' => 'tooltip', title: t('tutorial.back_argument') }
             = image_tag( "control_ff_up_blue.png")
             = t('tutorial.what_about_trainings')
       .fluid-row.span6
         .page-scroll.text-right
-          %a.animated{ href: "#how_to_calculate_fin_score", 'data-toggle' => 'tooltip', title: t('tutorial.next_argument') }
+          %a.animated{ href: "#how_to_calculate_fin_score", 'data-turbolinks'=>'false', 'data-toggle' => 'tooltip', title: t('tutorial.next_argument') }
             = image_tag( "control_ff_down_blue.png")
             = t('tutorial.how_to_calculate_fin_score')
 
@@ -94,11 +94,11 @@
     .container-fluid
       .fluid-row.span6
         .page-scroll.text-left
-          %a.animated{ href: "#after_what_about_trainings", 'data-toggle' => 'tooltip', title: t('tutorial.back_argument') }
+          %a.animated{ href: "#after_what_about_trainings", 'data-turbolinks'=>'false', 'data-toggle' => 'tooltip', title: t('tutorial.back_argument') }
             = image_tag( "control_ff_up_blue.png")
             = t('tutorial.how_to_calculate_fin_score')
       .fluid-row.span6
         .page-scroll.text-right
-          %a.animated{ href: "#tutorial_top", 'data-toggle' => 'tooltip', title: t('tutorial.back_to_start') }
+          %a.animated{ href: "#tutorial_top", 'data-turbolinks'=>'false', 'data-toggle' => 'tooltip', title: t('tutorial.back_to_start') }
             = image_tag( "control_eject_blue.png")
             = t('tutorial.back_to_start')
