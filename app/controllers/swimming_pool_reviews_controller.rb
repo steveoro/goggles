@@ -20,6 +20,8 @@ class SwimmingPoolReviewsController < ApplicationController
     if request.format.json?
       respond_with( @reviews = SwimmingPoolReview.all )
     else
+      # [Steve, 20161001] We need to whitelist all parameters for the search query:
+      params.permit!()
       @title = I18n.t('swimming_pool_review.title_index')
       @reviews_grid = initialize_grid(
         SwimmingPoolReview,

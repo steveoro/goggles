@@ -2,7 +2,7 @@
 
 = MiscHelper
 
-  - Goggles framework vers.:  4.00.855
+  - Goggles framework vers.:  6.003
   - author: Steve A.
 
 =end
@@ -28,6 +28,7 @@ module MiscHelper
           id: "btn_#{field_name}",
           class: 'btn',
           'onclick' => "$('##{field_name}').val(#{key}); $('##{display_field_name}').text('#{label}')",
+          'data-turbolinks'=>'false',
           'data-toggle' => 'tooltip',
           title: label
         }

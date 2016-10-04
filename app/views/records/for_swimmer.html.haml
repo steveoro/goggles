@@ -24,7 +24,7 @@
 
 :javascript
   /* Lopk-up function for IDs stored in the list of result objects */
-  function lookupIdInResultListByName( name, resultList ) {
+  function lookupIdInResultListBySwimmerName( name, resultList ) {
     for ( var j = 0; j < resultList.length; j++ ) {
       if ( resultList[j].complete_name.match( name ) )
         return resultList[j].id;
@@ -33,11 +33,11 @@
   }
 
   // (Wait for the page to be ready)
-  $(function() {
+  document.addEventListener("turbolinks:load", function() {
     var resultList = [];
 
     // Define the typeahead callback handlers:
-    $( ".typeahead" ).typeahead({
+    $( "#swimmer_name" ).typeahead({
       items:     20,
       minLength: 3,
 
@@ -70,7 +70,7 @@
         //console.log( "getChosenSwimmer matchedText: ", matchedText );
         //console.log( this.$element.context.id );
         // Extract just the name part (brakets will mess up with Regexp.match
-        var remote_id = lookupIdInResultListByName( matchedText.split("(")[0], resultList );
+        var remote_id = lookupIdInResultListBySwimmerName( matchedText.split("(")[0], resultList );
         //console.log( "remote_id: ", remote_id );
         $("#swimmer_id").val( remote_id );
         return matchedText;

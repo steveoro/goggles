@@ -1,6 +1,6 @@
 .span4
   .control-group
-    = label_tag( :local_swimmer, t('misc.local_swimmer'), :for => :local_swimmer, class: 'control-label' )
+    = label_tag( :local_swimmer, t('misc.local_swimmer'), for: :local_swimmer, class: 'control-label' )
     .controls
       .ui-widget.text-left
         = hidden_field( :local_swimmer, :id, value: (@local_swimmer ? @local_swimmer.id : nil) )
@@ -10,7 +10,7 @@
 .span1
 .span4
   .control-group
-    = label_tag( :visitor_swimmer, t('misc.visitor_swimmer'), :for => :visitor_swimmer, class: 'control-label' )
+    = label_tag( :visitor_swimmer, t('misc.visitor_swimmer'), for: :visitor_swimmer, class: 'control-label' )
     .controls
       .ui-widget.text-left
         = hidden_field( :visitor_swimmer, :id )

@@ -17,6 +17,8 @@ class SwimmingPoolsController < ApplicationController
   #
   def index
     redirect_to root_path and return if request.format.json?
+    # [Steve, 20161001] We need to whitelist all parameters for the search query:
+    params.permit!()
     @title = I18n.t('swimming_pool.index_title')
     @pools_grid = initialize_grid(
       SwimmingPool,

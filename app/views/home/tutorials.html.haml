@@ -14,12 +14,14 @@
             %a.animated{ href: "#what_can_i_do", 'data-turbolinks'=>'false', 'data-toggle' => 'tooltip', title: t('tutorial.next_argument') }
               = image_tag( "control_ff_down_blue.png")
               = t('tutorial.what_can_i_do')
+
     = render( partial: 'how_to_register' )
+
     %section.section-heading#after_register
       .container-fluid
         .fluid-row.span6
           .page-scroll.text-left
-            %a.animated{ href: "#tutorial_top", 'data-turbolinks'=>'false', 'data-toggle' => 'tooltip', title: t('tutorial.back_argument') }
+            %a.animated{ href: "#before_register", 'data-turbolinks'=>'false', 'data-toggle' => 'tooltip', title: t('tutorial.back_argument') }
               = image_tag( "control_ff_up_blue.png")
               = t('tutorial.how_to_register')
         .fluid-row.span6
@@ -27,14 +29,15 @@
             %a.animated{ href: "#what_can_i_do", 'data-turbolinks'=>'false', 'data-toggle' => 'tooltip', title: t('tutorial.next_argument') }
               = image_tag( "control_ff_down_blue.png")
               = t('tutorial.what_can_i_do')
+    %hr
 
-  %hr
   = render( partial: 'what_can_i_do' )
+
   %section.section-heading#after_what_can_i_do
     .container-fluid
       .fluid-row.span6
         .page-scroll.text-left
-          %a.animated{ href: "#after_register", 'data-turbolinks'=>'false', 'data-toggle' => 'tooltip', title: t('tutorial.back_argument') }
+          %a.animated{ href: "#tutorial_top", 'data-turbolinks'=>'false', 'data-toggle' => 'tooltip', title: t('tutorial.back_argument') }
             = image_tag( "control_ff_up_blue.png")
             = t('tutorial.what_can_i_do')
       .fluid-row.span6
@@ -44,6 +47,7 @@
             = t('tutorial.what_about_meetings')
 
   %hr
+
   = render( partial: 'what_about_meetings' )
   %section.section-heading#after_what_about_meetings
     .container-fluid
@@ -59,6 +63,7 @@
             = t('tutorial.how_to_view_passages')
 
   %hr
+
   = render( partial: 'how_to_view_passages' )
   %section.section-heading#after_how_to_view_passages
     .container-fluid

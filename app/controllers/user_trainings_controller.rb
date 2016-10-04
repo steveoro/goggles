@@ -85,6 +85,8 @@ class UserTrainingsController < ApplicationController
   # Index/Search action.
   #
   def index
+    # [Steve, 20161001] We need to whitelist all parameters for the search query:
+    params.permit!()
     @title = I18n.t('user_trainings.index_title')
     @user_trainings_grid = initialize_grid(
       UserTraining.visible_to_user( current_user ),
