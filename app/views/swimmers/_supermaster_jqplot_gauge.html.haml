@@ -6,14 +6,14 @@
   var tr_score = Number.parseFloat( "#{team_ranking_score.score}" );
   var tr_label = "#{t('supermaster.team_ranking')}: #{team_ranking_score.score}";
 
-.row-fluid.goggles-category-gap
-  .span5
+.row.goggles-category-gap
+  .col-xs-5
     = render( partial: 'swimmer_badge', locals: { season: @season, swimmer: @swimmer, badge: @badge, team: @team, team_affiliation: @team_affiliation } )
 
-  .span7
-    .span4#sm_chart
-    .span4#im_chart
-    .span4#tr_chart
+  .col-xs-7
+    .col-xs-4#sm_chart
+    .col-xs-4#im_chart
+    .col-xs-4#tr_chart
 
 :javascript
   readyFunct = function(){

@@ -1,4 +1,4 @@
-.span8
+.col-xs-8
   %table.table.table-striped.table-bordered.table-hover.table-condensed
     %tbody
       %tr{'class'=>'success'}
@@ -16,21 +16,21 @@
       %tr
         - if @meeting_stats.oldest_female_swimmers.size > 0
           - swimmer = @meeting_stats.oldest_female_swimmers.first
-          %td.span3
+          %td.col-xs-3
             %a{'id'=>"swimmer#{swimmer.id}", 'href'=>"#{ meeting_show_swimmer_results_path( id: @meeting.id, swimmer_id: swimmer.id, team_id: swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip')}
               = swimmer.get_full_name
-          %td.span1.goggles-rightalign
+          %td.col-xs-1.goggles-rightalign
             = swimmer.year_of_birth
-          %td.span1.goggles-rightalign
+          %td.col-xs-1.goggles-rightalign
             %b= @meeting.header_date.year - swimmer.year_of_birth.to_i
             = image_tag( "cake.png" )
         - if @meeting_stats.oldest_male_swimmers.size > 0
           - swimmer = @meeting_stats.oldest_male_swimmers.first
-          %td.span3
+          %td.col-xs-3
             %a{'id'=>"swimmer#{swimmer.id}", 'href'=>"#{ meeting_show_swimmer_results_path(id: @meeting.id, swimmer_id: swimmer.id, team_id: swimmer.id ) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip')}
               = swimmer.get_full_name
-          %td.span1.goggles-rightalign
+          %td.col-xs-1.goggles-rightalign
             = swimmer.year_of_birth
-          %td.span1.goggles-rightalign
+          %td.col-xs-1.goggles-rightalign
             %b= @meeting.header_date.year - swimmer.year_of_birth.to_i
             = image_tag( "cake.png" )

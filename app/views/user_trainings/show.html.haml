@@ -1,8 +1,8 @@
 = render( partial: 'show_header_links' )
 = render( partial: 'show_title' )
 
-.row-fluid
-  .span12
+.row
+  .col-xs-12
     - curr_group_id = old_group_id = 0
     - group_list_hash = @user_training.build_group_list_hash()
     - previous_step = 'none'

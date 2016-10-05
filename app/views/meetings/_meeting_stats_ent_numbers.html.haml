@@ -1,25 +1,25 @@
-.span3
+.col-xs-3
   %table.table.table-striped.table-bordered.table-hover.table-condensed
     %tbody
       %tr{'class'=>'success'}
         %td.goggles-centeralign{'colspan'=>2}
           %b= I18n.t('meeting_stats.numbers')
       %tr
-        %td.span2
+        %td.col-xs-2
           = link_to("#meeting_stats_ent_teams", {'data-turbolinks'=>'false'}) do
             = I18n.t('meeting_stats.tot_teams')
-        %td.span1.goggles-rightalign
+        %td.col-xs-1.goggles-rightalign
           = @meeting_stats.get_ent_teams_count
       %tr
-        %td.span2
+        %td.col-xs-2
           = link_to("#meeting_stats_ent_categories", {'data-turbolinks'=>'false'}) do
             = I18n.t('meeting_stats.tot_swimmers')
-        %td.span1.goggles-rightalign
+        %td.col-xs-1.goggles-rightalign
           = @meeting_stats.get_entered_swimmers_count
       %tr
-        %td.span2
+        %td.col-xs-2
           = link_to("#meeting_stats_ent_events", {'data-turbolinks'=>'false'}) do
             = I18n.t('meeting_stats.tot_athletes_by_event')
-        %td.span1.goggles-rightalign
+        %td.col-xs-1.goggles-rightalign
           = @meeting_stats.get_entries_count
 

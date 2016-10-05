@@ -1,10 +1,10 @@
 = render partial: 'search_training_grid'
 %h3= @title
 
-.row-fluid
-  .span12
+.row
+  .col-xs-12
     = render_grid( @trainings_grid )
 
-.row-fluid
-  .span12
+.row
+  .col-xs-12
     = link_to( I18n.t(:add_new), new_training_path() )

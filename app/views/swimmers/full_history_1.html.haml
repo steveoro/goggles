@@ -1,20 +1,20 @@
 = render( partial: 'tabs_and_radio_title' )
 
 - cache( cache_key_for_swimmer( 'full_history_1', @swimmer.id, @max_updated_at ) ) do
-  .row-fluid#pageTop
+  .row#pageTop
     - PoolType.only_for_meetings.each do |pool_type|
-      .span6.graph-container-full
+      .col-xs-6.graph-container-full
         .graph-placeholder-full{ 'id' => "pie#{pool_type.code}" }
-  .row-fluid
+  .row
     - PoolType.only_for_meetings.each do |pool_type|
-      .span6
-        .offset5
+      .col-xs-6
+        .col-xs-offset-5
           = link_to("##{pool_type.code}", {'data-turbolinks'=>'false'}) do
             = pool_type.i18n_description
 
-  .row-fluid.goggles-category-gap#full_history_by_date_grid
+  .row.goggles-category-gap#full_history_by_date_grid
     - PoolType.only_for_meetings.each do |pool_type|
-      .row-fluid
+      .row
         .goggles-category-gap{ 'id' => "#{pool_type.code}" }
           %h3
             = "#{pool_type.i18n_description}"
@@ -38,7 +38,7 @@
                 %td.goggles-centeralign
                   %b= event
 
-  .row-fluid.goggles-category-gap
+  .row.goggles-category-gap
 
   :javascript
     // Custom label formatter:

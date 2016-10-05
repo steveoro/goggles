@@ -1,4 +1,4 @@
-.span10
+.col-xs-10
   %table.table.table-striped.table-bordered.table-hover.table-condensed
     %tbody
       %tr{'class'=>'success'}
@@ -17,24 +17,24 @@
         - mir = MeetingIndividualResultDecorator.decorate( individual_result )
         - swimmer = mir.swimmer
         %tr
-          %td.span3
+          %td.col-xs-3
             %a{'id'=>"#{swimmer.id}", 'href'=>"#{ meeting_show_swimmer_results_path(:id=>@meeting.id, :team_id=>mir.team_id, :swimmer_id=>swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip')}
               = swimmer.get_full_name + ' (' + mir.get_category_type_short_name + ')'
-          %td.span2
+          %td.col-xs-2
             = mir.get_event_type
-          %td.span1.goggles-rightalign
+          %td.col-xs-1.goggles-rightalign
             = mir.get_timing.to_s
-          %td.span1.goggles-rightalign
+          %td.col-xs-1.goggles-rightalign
             %b= mir.get_formatted_standard_points(true)
           - individual_result = @meeting_stats.best_std_male_scores.at(index)
           - mir = MeetingIndividualResultDecorator.decorate( individual_result )
           - swimmer = mir.swimmer
-          %td.span3
+          %td.col-xs-3
             %a{'id'=>"#{swimmer.id}", 'href'=>"#{ meeting_show_swimmer_results_path(:id=>@meeting.id, :team_id=>mir.team_id, :swimmer_id=>swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip')}
               = swimmer.get_full_name + ' (' + mir.get_category_type_short_name + ')'
-          %td.span2
+          %td.col-xs-2
             = mir.get_event_type
-          %td.span1.goggles-rightalign
+          %td.col-xs-1.goggles-rightalign
             = mir.get_timing.to_s
-          %td.span1.goggles-rightalign
+          %td.col-xs-1.goggles-rightalign
             %b= mir.get_formatted_standard_points(true)

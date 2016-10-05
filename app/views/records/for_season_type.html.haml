@@ -6,7 +6,7 @@
     .accordion-body
       .accordion-inner
         = form_tag( :records_for_season_type, remote: true, method: :get, class: 'form-horizontal', onsubmit: "$('#loadingIndicator').show();") do
-          .row-fluid
+          .row
             .control-group
               #tooltipLabel= label_tag( :season_type, I18n.t('activerecord.models.season_type'), for: :season_type, class: 'control-label', 'data-toggle'=>'tooltip', 'title'=>I18n.t('combobox_generic_tooltip') )
               .controls
@@ -15,7 +15,7 @@
               %script
                 $('#season_type_id').combobox();
                 $('#tooltipLabel').tooltip();
-          .row-fluid
+          .row
             .controls
               = submit_tag( I18n.t(:submit), data: { disable_with: I18n.t(:please_wait), class: 'btn disabled' }, class: 'btn' )
               %span(id='loadingIndicator' hidden='true')

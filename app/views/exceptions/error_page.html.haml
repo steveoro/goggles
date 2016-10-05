@@ -1,10 +1,10 @@
-.row-fluid
-  .offset3
+.row
+  .col-xs-offset-3
     %h2
       @*?#!%GrBlzkmnH!@*!
-.row-fluid
-  .offset3.span6.item.thumbnail.active
-    = image_tag("404.jpg", class: 'img-thumbnail img-responsive')
+.row
+  .col-xs-offset-3.col-xs-6.item.img-thumbnail.active
+    = image_tag("404.jpg", class: 'img-responsive')
 %br
-.row-fluid
+.row
   %p= @exception

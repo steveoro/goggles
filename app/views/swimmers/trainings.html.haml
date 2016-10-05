@@ -1,7 +1,7 @@
 = render( partial: 'tabs_and_radio_title' )
 
-.row-fluid.goggles-category-gap#pageTop
-  .span9
+.row.goggles-category-gap#pageTop
+  .col-xs-9
     %table.table.table-striped.table-bordered.table-hover.table-condensed#trainingSummary
       %tbody
         %tr{'class'=>'info'}
@@ -20,7 +20,7 @@
           %td.goggles-rightalign
             %b= I18n.t('radiography.average_100_meters')
         %tr
-          %td.span3
+          %td.col-xs-3
             %b= I18n.t('radiography.global_training')
           %td.goggles-rightalign
             = @global_distance[:distance]
@@ -35,7 +35,7 @@
           %td.goggles-rightalign
             = Timing.to_minute_string( @global_distance[:avg_100_meters] )
         %tr
-          %td.span3
+          %td.col-xs-3
             %b= I18n.t('radiography.season_training')
           %td.goggles-rightalign
             = @season_distance[:distance]
@@ -50,7 +50,7 @@
           %td.goggles-rightalign
             = Timing.to_minute_string( @season_distance[:avg_100_meters] )
         %tr
-          %td.span3
+          %td.col-xs-3
             %b= I18n.t('radiography.month_training')
           %td.goggles-rightalign
             = @last_month[:distance]
@@ -65,7 +65,7 @@
           %td.goggles-rightalign
             = Timing.to_minute_string( @last_month[:avg_100_meters] )
         %tr
-          %td.span3
+          %td.col-xs-3
             %b= I18n.t('radiography.week_training')
           %td.goggles-rightalign
             = @last_week[:distance]
@@ -80,7 +80,7 @@
           %td.goggles-rightalign
             = Timing.to_minute_string( @last_week[:avg_100_meters] )
         %tr
-          %td.span3
+          %td.col-xs-3
             %b= I18n.t('radiography.last_training')
           %td.goggles-rightalign
             = @last_training[:distance]
@@ -92,5 +92,5 @@
           %td.goggles-rightalign
             = Timing.to_minute_string( @last_training[:avg_100_meters] )
 
-.row-fluid
+.row
   %p

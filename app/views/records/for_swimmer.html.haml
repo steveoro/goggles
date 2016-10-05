@@ -6,7 +6,7 @@
     .accordion-body
       .accordion-inner
         = form_tag( :records_for_swimmer, remote: true, method: :get, class: 'form-horizontal', onsubmit: "$('#loadingIndicator').show();") do
-          .row-fluid
+          .row
             .control-group
               = label_tag( :swimmer, I18n.t('activerecord.models.swimmer'), for: :swimmer, class: 'control-label' )
               .controls
@@ -14,7 +14,7 @@
                   = hidden_field( :swimmer, :id )
                   = text_field_tag( :swimmer_name, nil, {autocomplete: 'off', class: "input-xlarge typeahead",  |
                       "data-provide"=>"typeahead", placeholder: I18n.t('combobox_3char_tooltip')} )        |
-          .row-fluid
+          .row
             .controls
               = submit_tag( I18n.t(:submit), data: { disable_with: I18n.t(:please_wait), class: 'btn disabled' }, class: 'btn' )
               %span(id='loadingIndicator' hidden='true')

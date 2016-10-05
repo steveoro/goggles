@@ -1,8 +1,8 @@
 = render( partial: 'tabs_and_radio_title' )
 
 - if @closed_goggle_cup
-  .row-fluid#goggle_cup_grid
-    .offset1.span10
+  .row#goggle_cup_grid
+    .col-xs-offset-1.col-xs-10
       %table.table.table-striped.table-bordered.table-hover.table-condensed
         %tbody
           %tr{'class'=>'info'}
@@ -40,5 +40,5 @@
               %td.goggles-rightalign
                 = sprintf( "%02.2f", rank_element[:min] )
 - else
-  .row-fluid
+  .row
     %p= I18n.t('goggle_cup.send_us_your_goggle_cups')

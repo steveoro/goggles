@@ -1,29 +1,29 @@
 - has_passages = ( individual_result.passages.count > 0 )
 - mir = MeetingIndividualResultDecorator.decorate( individual_result )
 %tr{ 'class' => is_highlighted ? 'warning' : '' }
-  %td.span1.goggles-rightalign
+  %td.col-xs-1.goggles-rightalign
     = mir.show_any_rank_medal
     = mir.get_rank_description
-  %td.span4
+  %td.col-xs-4
     = link_to( meeting_show_swimmer_results_path(id: @meeting.id, team_id: mir.team_id, swimmer_id: mir.swimmer_id), {id: "swimmer#{mir.id}", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_swimmer_results_tooltip')} ) do
       = mir.get_swimmer_name
-  %td.span1
+  %td.col-xs-1
     = mir.get_year_of_birth
-  %td.span4
+  %td.col-xs-4
     = link_to( meeting_show_team_results_path( id: @meeting.id, team_id: mir.team_id), {id: "team#{mir.id}", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_team_results_tooltip')} ) do
       = mir.get_team_name
-  %td.span1.goggles-rightalign
+  %td.col-xs-1.goggles-rightalign
     - if has_passages
       .btn-link{ id: "passages#{mir.id}", 'data-toggle' => 'popover', 'data-trigger' => 'click', 'data-placement' => "top" }
         %b= mir.get_timing
     - else
       %b= mir.get_timing
-  %td.span1.goggles-rightalign
+  %td.col-xs-1.goggles-rightalign
     = mir.get_formatted_standard_points
-  %td.span1.goggles-rightalign
+  %td.col-xs-1.goggles-rightalign
     = mir.get_formatted_individual_points
   - if @meeting.has_start_list
-    %td.span1.goggles-rightalign
+    %td.col-xs-1.goggles-rightalign
       - if @meeting.meeting_entries.where(['swimmer_id = ? AND meeting_program_id = ?', mir.swimmer_id, mir.meeting_program_id]).count > 0
         = @meeting.meeting_entries.where(['swimmer_id = ? AND meeting_program_id = ?', mir.swimmer_id, mir.meeting_program_id]).first.get_timing
 

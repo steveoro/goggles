@@ -10,19 +10,19 @@
 
     .accordion-body.collapse.in#collapseFlt
       .accordion-inner
-        .row-fluid
-          .span2
+        .row
+          .col-xs-2
             = I18n.t('name')
-          .span10
+          .col-xs-10
             = grid_filter @teams_grid, :flt_team_name
-        .row-fluid
-          .span12
+        .row
+          .col-xs-12
             .external-buttons
               %button.btn.btn-primary.wg-external-submit-button{'data-grid-name' => 'grid'}
                 = I18n.t(:submit)
               %button.btn.wg-external-reset-button{'data-grid-name' => 'grid'}
                 = I18n.t(:reset)
 
-.row-fluid
-  .span12
+.row
+  .col-xs-12
     = render_grid( @teams_grid )

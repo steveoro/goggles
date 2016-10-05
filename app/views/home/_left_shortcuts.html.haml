@@ -1,23 +1,23 @@
 - if user_signed_in? && current_user && current_user.has_associated_swimmer?
-  .row-fluid
+  .row
     %p
-      %a.btn.btn-large.btn-block.btn-primary.thumbnail{ :href => swimmer_radio_path(id: current_user.swimmer_id), 'data-toggle'=>'tooltip', 'title'=>I18n.t('radiography.id_card_button_tooltip') }
+      %a.btn.btn-lg.btn-block.btn-primary.img-thumbnail{ :href => swimmer_radio_path(id: current_user.swimmer_id), 'data-toggle'=>'tooltip', 'title'=>I18n.t('radiography.id_card_button_tooltip') }
         = image_tag( 'img_radiography.jpg', class: 'img-circle', style: "width: 50%;" )
         %br
         = I18n.t('radiography.id_card_button')
 
 - @teams.each do |team|
-  .row-fluid
+  .row
     %p
-      %a.btn.btn-large.btn-block.btn-success.thumbnail{ :href => team_radio_path(id: team.id), 'data-toggle'=>'tooltip', 'title'=>I18n.t('radiography.team_radio_tab_tooltip') }
+      %a.btn.btn-lg.btn-block.btn-success.img-thumbnail{ :href => team_radio_path(id: team.id), 'data-toggle'=>'tooltip', 'title'=>I18n.t('radiography.team_radio_tab_tooltip') }
         = image_tag( 'user-group-128.png', class: 'img-circle', style: "width: 50%;" )
         %br
         = team.get_full_name
 
 - @goggle_cups.each do |goggle_cup|
-  .row-fluid
+  .row
     %p
-      %a.btn.btn-large.btn-block.btn-info.thumbnail{ :href => team_goggle_cup_path(id: goggle_cup.team_id), 'data-toggle'=>'tooltip', 'title'=>I18n.t('radiography.goggle_cup_tooltip') }
+      %a.btn.btn-lg.btn-block.btn-info.img-thumbnail{ :href => team_goggle_cup_path(id: goggle_cup.team_id), 'data-toggle'=>'tooltip', 'title'=>I18n.t('radiography.goggle_cup_tooltip') }
         = image_tag( 'trophy-128.png', class: 'img-circle', style: "width: 50%;" )
         %br
         = goggle_cup.get_full_name

@@ -1,15 +1,15 @@
-.row-fluid#fin_score_calculation
+.row#fin_score_calculation
   .goggles-category-gap#pageTop
 
-.container-fluid
-  .row-fluid.alert.alert-success.goggles-div-centeralign
+.container
+  .row.alert.alert-success.goggles-div-centeralign
     %h4
       = @tab_title
-  .row-fluid
+  .row
     = I18n.t('misc.how_to_calculate')
-  .row-fluid
+  .row
     %p/
-  .row-fluid
+  .row
     = form_tag( :misc_compute_fin_score, class: 'form-horizontal', remote: true, onsubmit: "$('#loadingIndicator').show(); $('#score_calculation_result').hide(); $('#fin_highlights').hide(); $('#teams_record').hide();" ) do
       = render( partial: 'calculation_parameters' )
       = render( partial: 'timing_parameters' )

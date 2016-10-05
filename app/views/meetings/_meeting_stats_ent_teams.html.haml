@@ -1,28 +1,28 @@
-.span10
+.col-xs-10
   %table.table.table-striped.table-bordered.table-hover.table-condensed
     %tbody
       %tr{'class'=>'success'}
-        %td.span3.goggles-centeralign{'rowspan'=>'2'}
+        %td.col-xs-3.goggles-centeralign{'rowspan'=>'2'}
           %b
             %i= I18n.t('meeting_stats.team_athletes')
           = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
             = image_tag('bullet_arrow_up.png')
-        %td.span1.goggles-centeralign{'colspan'=>'3'}
+        %td.col-xs-1.goggles-centeralign{'colspan'=>'3'}
           %i= I18n.t('meeting_stats.swimmers')
-        %td.span1.goggles-centeralign{'colspan'=>'3'}
+        %td.col-xs-1.goggles-centeralign{'colspan'=>'3'}
           %i= I18n.t('meeting_stats.athletes_by_event')
       %tr{'class'=>'success'}
-        %td.span1.goggles-centeralign
+        %td.col-xs-1.goggles-centeralign
           %i= I18n.t('meeting_stats.females')
-        %td.span1.goggles-centeralign
+        %td.col-xs-1.goggles-centeralign
           %i= I18n.t('meeting_stats.males')
-        %td.span1.goggles-centeralign
+        %td.col-xs-1.goggles-centeralign
           %i= I18n.t('meeting_stats.total')
-        %td.span1.goggles-centeralign
+        %td.col-xs-1.goggles-centeralign
           %i= I18n.t('meeting_stats.females')
-        %td.span1.goggles-centeralign
+        %td.col-xs-1.goggles-centeralign
           %i= I18n.t('meeting_stats.males')
-        %td.span1.goggles-centeralign
+        %td.col-xs-1.goggles-centeralign
           %i= I18n.t('meeting_stats.total')
 
       - gtot_fem = gtot_mal = gtot = 0
@@ -37,32 +37,32 @@
         - gtot_ent     += team_stat.get_entries_count
 
         %tr{'class' => is_highlighted ? 'warning' : ''}
-          %td.span3
+          %td.col-xs-3
             = team_stat.team.decorate.get_linked_to_results_name(@meeting)
-          %td.span1.goggles-rightalign
+          %td.col-xs-1.goggles-rightalign
             = team_stat.female_ent_swimmers
-          %td.span1.goggles-rightalign
+          %td.col-xs-1.goggles-rightalign
             = team_stat.male_ent_swimmers
-          %td.span1.goggles-rightalign
+          %td.col-xs-1.goggles-rightalign
             %b= team_stat.get_ent_swimmers_count
-          %td.span1.goggles-rightalign
+          %td.col-xs-1.goggles-rightalign
             = team_stat.female_entries
-          %td.span1.goggles-rightalign
+          %td.col-xs-1.goggles-rightalign
             = team_stat.male_entries
-          %td.span1.goggles-rightalign
+          %td.col-xs-1.goggles-rightalign
             %b= team_stat.get_entries_count
       %tr{'class'=>'success'}
-        %td.span3.goggles-rightalign
+        %td.col-xs-3.goggles-rightalign
           %i= @meeting_stats.teams.count
-        %td.span1.goggles-rightalign
+        %td.col-xs-1.goggles-rightalign
           %i= gtot_fem
-        %td.span1.goggles-rightalign
+        %td.col-xs-1.goggles-rightalign
           %i= gtot_mal
-        %td.span1.goggles-rightalign
+        %td.col-xs-1.goggles-rightalign
           %i= gtot
-        %td.span1.goggles-rightalign
+        %td.col-xs-1.goggles-rightalign
           %i= gtot_ent_fem
-        %td.span1.goggles-rightalign
+        %td.col-xs-1.goggles-rightalign
           %i= gtot_ent_mal
-        %td.span1.goggles-rightalign
+        %td.col-xs-1.goggles-rightalign
           %i= gtot_ent

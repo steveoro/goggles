@@ -1,5 +1,5 @@
 -# --- Header with unique ID for each starting event_type "group":
-.span10
+.col-xs-10
   - @meeting_events_list.each do |meeting_event|
     = render( partial: 'show_full_sub_legend', locals: { meeting_event: meeting_event } )
     - is_a_relay = meeting_event.event_type.is_a_relay
@@ -33,5 +33,5 @@
               - if is_a_relay
                 - meeting_program.meeting_relay_results.sort_by_timing.each do |relay_result|
                   = render( partial: 'show_full_relay_result', locals: { relay_result: relay_result } )
-.row-fluid
-  .span12
+.row
+  .col-xs-12

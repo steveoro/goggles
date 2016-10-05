@@ -1,19 +1,19 @@
-.row-fluid#rules_regional_er_csi
+.row#rules_regional_er_csi
   .goggles-category-gap#pageTop
     = render( partial: 'regional_er_csi_tabs' )
     = render( partial: 'title' )
     
     - if @season.id != @current_season_id
       .navbar
-        %ul.nav
+        %ul.nav.navbar-nav
           %li
             = link_to( t('championships.back_to_current'), championships_rules_regional_er_csi_path( id: @current_season_id ), {class: "goggles-nav-compact"})
         .ghost-divider-vertical
 
     - if @season.rules
       - html_doc = Nokogiri::HTML( @season.rules )
-      .row-fluid
+      .row
         = html_doc.css('style').to_html.html_safe
         = html_doc.css('body').inner_html.html_safe
 
-.row-fluid.goggles-category-gap
+.row.goggles-category-gap

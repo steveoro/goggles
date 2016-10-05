@@ -3,14 +3,14 @@
   - supermaster_score = @sssc.calculate_supermaster_score
   - ironmaster_score = @sssc.calculate_ironmaster_score
   - team_ranking_score = @sssc.calculate_team_ranking_score
-  .row-fluid#pageTop
+  .row#pageTop
 
   = render( partial: 'supermaster_google_gauge', locals: { supermaster_score: supermaster_score, ironmaster_score: ironmaster_score, team_ranking_score: team_ranking_score } )
   -#= render( partial: 'supermaster_jqplot_gauge', locals: { supermaster_score: supermaster_score, ironmaster_score: ironmaster_score, team_ranking_score: team_ranking_score } )
   -#= render( partial: 'supermaster_plain_charts', locals: { supermaster_score: supermaster_score, ironmaster_score: ironmaster_score, team_ranking_score: team_ranking_score } )
 
-  .row-fluid.goggles-category-gap#rankings
-    .span8
+  .row.goggles-category-gap#rankings
+    .col-xs-8
       %table.table.table-bordered.table-hover.table-condensed
         %tbody
           %tr{'class'=>'info'}
@@ -73,7 +73,7 @@
                 = team_ranking_score.max
               %td.goggles-rightalign
                 = team_ranking_score.min
-    .span2
+    .col-xs-2
       %table.table.table-bordered.table-hover.table-condensed
         %tbody
           %tr{'class'=>'info'}
@@ -88,7 +88,7 @@
                 %b= medal_type.i18n_description
               %td.goggles-rightalign
                 %b= @meeting_individual_results.has_rank(medal_type.rank).count
-    .span2
+    .col-xs-2
       %table.table.table-bordered.table-hover.table-condensed
         %tbody
           %tr{'class'=>'info'}
@@ -111,9 +111,9 @@
             %td.goggles-rightalign
               %b= (@meeting_individual_results.collect{ |row| row.standard_points }.sum / @meeting_individual_results.count).round(2)
 
-  .row-fluid.goggles-category-gap#meetings
+  .row.goggles-category-gap#meetings
     -# Shows all meetings attended
-    .span5
+    .col-xs-5
       %table.table.table-striped.table-bordered.table-hover.table-condensed
         %tbody
           %tr{'class'=>'info'}
@@ -134,7 +134,7 @@
                 = meeting.get_city
 
     -# Shows all supermaster results
-    .span7
+    .col-xs-7
       %table.table.table-striped.table-bordered.table-hover.table-condensed
         %tbody
           %tr{'class'=>'info'}
@@ -176,22 +176,22 @@
               %td.goggles-centeralign{'data-toggle'=>'tooltip', 'title'=>"#{I18n.t('supermaster.ranked_for')} #{I18n.t('supermaster.team_ranking')}"}
                 = show_tag( team_ranking_score.results.include?( mir ) )
 
-  .row-fluid.goggles-category-gap#Rules
+  .row.goggles-category-gap#Rules
     %h3= I18n.t('supermaster.ranking_rules')
-    .row-fluid
-      .span2
+    .row
+      .col-xs-2
         %b= "#{I18n.t('supermaster.supermaster_short')} - #{I18n.t('supermaster.supermaster')}:"
-      .span10
+      .col-xs-10
         = I18n.t('supermaster.how_to_supermaster')
-    .row-fluid.goggles-category-gap
-      .span2
+    .row.goggles-category-gap
+      .col-xs-2
         %b= "#{I18n.t('supermaster.ironmaster_short')} - #{I18n.t('supermaster.ironmaster')}:"
-      .span10
+      .col-xs-10
         = I18n.t('supermaster.how_to_ironmaster')
-    .row-fluid.goggles-category-gap
-      .span2
+    .row.goggles-category-gap
+      .col-xs-2
         %b= "#{I18n.t('supermaster.team_ranking_short')} - #{I18n.t('supermaster.team_ranking')}:"
-      .span10
+      .col-xs-10
         = I18n.t('supermaster.how_to_team_ranking')
 
-  .row-fluid.goggles-category-gap#bottom_of_page
+  .row.goggles-category-gap#bottom_of_page

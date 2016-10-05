@@ -2,7 +2,7 @@
 - cache( cache_key_for_swimmer( 'full_history_2', @swimmer.id, @max_updated_at ) ) do
   - pool_type_25 = PoolType.find_by_code('25').i18n_verbose
   - pool_type_50 = PoolType.find_by_code('50').i18n_verbose
-  .row-fluid#full_history_by_date_grid
+  .row#full_history_by_date_grid
     .goggles-category-gap#pageTop
     %table.table.table-striped.table-bordered.table-hover.table-condensed
       %tbody
@@ -40,12 +40,12 @@
           - event_name = full_history_element[3].split(" - ")[0]
           -# Get the data for the graph:
           - event_data = full_history_element[4].map{ |mir| [mir.get_scheduled_date.to_datetime.to_i * 1000, mir.get_timing_instance.to_hundreds] }
-          .row-fluid.goggles-category-gap
-          .row-fluid.offset5
+          .row.goggles-category-gap
+          .row.col-xs-offset-5
             %b= event_name
             = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
               = image_tag('bullet_arrow_up.png')
-          .row-fluid.graph-container-full
+          .row.graph-container-full
             .graph-placeholder-full{ 'id' => "graph#{event_key}" }
           -# Store data for the graph in a brand new series list:
           %script
@@ -61,7 +61,7 @@
             // console.log( dataSeries[ "#{ event_key }" ] );
           - event_key = nil
 
-        .row-fluid
+        .row
           .goggles-category-gap{ 'id' => "#{full_history_key}" }
           %table.table.table-striped.table-bordered.table-hover.table-condensed
             %tbody
@@ -93,7 +93,7 @@
                   - passages = full_history_element[2].where(meeting_individual_result: meeting_individual_result) if full_history_element[2].respond_to?(:where)
                   = render( partial: 'full_history_by_time_meeting_row', locals: { meeting_individual_result: meeting_individual_result, passage_list: passage_list, meeting: meeting, passages: passages } )
 
-  .row-fluid.goggles-category-gap
+  .row.goggles-category-gap
 
   :javascript
     // Custom label formatter:

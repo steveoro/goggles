@@ -1,5 +1,5 @@
 - has_goggle_cup = @team.has_goggle_cup_at?( @meeting.header_date )
-.span10
+.col-xs-10
   %div{'class'=>"goggles-category-gap"}
     %table.table.table-striped.table-bordered.table-hover.table-condensed
       %tbody
@@ -25,25 +25,25 @@
             - meeting_event.meeting_individual_results.for_team(@team).sort_by_swimmer.each do |individual_result|
               - mir = MeetingIndividualResultDecorator.decorate( individual_result )
               %tr
-                %td.span4
+                %td.col-xs-4
                   = link_to(meeting_show_swimmer_results_path(:id=>@meeting.id, :team_id=>@team.id, :swimmer_id=>mir.swimmer_id), {'id'=>"swimmer#{mir.id}"}, 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip')) do
                     = mir.get_swimmer_name
-                %td.span1
+                %td.col-xs-1
                   = mir.category_type_short_name
-                %td.span1.goggles-rightalign
+                %td.col-xs-1.goggles-rightalign
                   = mir.show_any_rank_medal
                   = mir.get_rank_description
-                %td.span1.goggles-rightalign
+                %td.col-xs-1.goggles-rightalign
                   = mir.get_timing
-                %td.span1.goggles-rightalign
+                %td.col-xs-1.goggles-rightalign
                   = mir.get_formatted_standard_points(true)
-                %td.span1.goggles-rightalign
+                %td.col-xs-1.goggles-rightalign
                   = mir.get_formatted_individual_points(true)
                 - if has_goggle_cup
-                  %td.span2.goggles-rightalign
+                  %td.col-xs-2.goggles-rightalign
                     = mir.get_formatted_goggle_cup_points(true)
                 - if @meeting.has_start_list
-                  %td.span1.goggles-rightalign
+                  %td.col-xs-1.goggles-rightalign
                     - if @meeting.meeting_entries.where(['swimmer_id = ? AND meeting_program_id = ?', mir.swimmer_id, mir.meeting_program_id]).count > 0
                       = @meeting.meeting_entries.where(['swimmer_id = ? AND meeting_program_id = ?', mir.swimmer_id, mir.meeting_program_id]).first.get_timing
           -# --- Team Relay result rows:
@@ -83,5 +83,5 @@
                         %td
 
 
-.row-fluid
-  .span12
+.row
+  .col-xs-12

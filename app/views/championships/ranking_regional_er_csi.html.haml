@@ -1,4 +1,4 @@
-.row-fluid#regional_er_csi
+.row#regional_er_csi
   .goggles-category-gap#pageTop
     = render( partial: 'regional_er_csi_tabs' )
     = render( partial: 'title' )
@@ -7,7 +7,7 @@
       - meeting_stats = []
       -# --- Sub-legend for each argument
       .navbar
-        %ul.nav
+        %ul.nav.navbar-nav
           - if @season.id != @current_season_id
             %li
               = link_to( t('championships.back_to_current'), championships_ranking_regional_er_csi_path( id: @current_season_id ), {class: "btn"})
@@ -64,7 +64,7 @@
                   %b= meeting_total.to_i
               %td.goggles-rightalign
                 %b= team_score.total_points.to_i
-      .row-fluid
+      .row
         .goggles-category-gap
           %h3
             = t('championships.team_stats')
@@ -115,4 +115,4 @@
                   %td.goggles-rightalign
                     %b= meeting_stat.results_relay_count
 
-      .row-fluid.goggles-category-gap
+      .row.goggles-category-gap

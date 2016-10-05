@@ -1,54 +1,54 @@
 %li.full_row.nested-fields
-  .group_hdr.row-fluid.control-row{ hidden: 'true' }
-    .span1.g-w25
+  .group_hdr.row.control-row{ hidden: 'true' }
+    .col-xs-1.g-w25
       = f.input :group_id, label: false, wrapper: false, input_html: {class: 'group_id group_clear'}
-    .span2.g-w150
-    .span1.g-w25
+    .col-xs-2.g-w150
+    .col-xs-1.g-w25
       = f.input :group_times, label: false, wrapper: false, input_html: {class: 'group_times group_clear'}
-    .span1.g-w50
-    .span4.g-w320
-    .span1.g-w40
+    .col-xs-1.g-w50
+    .col-xs-4.g-w320
+    .col-xs-1.g-w40
       .ui-widget
         = f.input :group_start_and_rest, label: false, wrapper: false, collection: @start_rest_options_array, input_html: { class: 'combobox' }
-    .span1.g-w40
+    .col-xs-1.g-w40
       .ui-widget
         = f.input :group_pause, label: false, wrapper: false, collection: @pause_options_array, input_html: { class: 'combobox group_clear' }
-    .span1.g-w50
+    .col-xs-1.g-w50
       .toolTip{'data-toggle' => 'tooltip', 'title' => I18n.t('trainings.link_break_tooltip') }
         = link_to( image_tag('link_break.png'), '#', onclick: "clickBreakGrouping( $(this).closest('.full_row') ); return false",  class: "nav_link" )
 
   %ul.group_detail.droppable.sortable
-    %li.data_row.row-fluid.control-row
-      .span1.g-w25
+    %li.data_row.row.control-row
+      .col-xs-1.g-w25
         = f.input :part_order, label: false, wrapper: false, input_html: {class: 'autosequence'}
-      .span2.g-w150
+      .col-xs-2.g-w150
         = f.association :training_step_type, label: false, wrapper: false, collection: @step_type_options_array, prompt: I18n.t('please_select'), input_html: {class: 'training_step_type'}
-      .span1.g-w25
+      .col-xs-1.g-w25
         = f.input :times, label: false, wrapper: false
-      .span1.g-w50
+      .col-xs-1.g-w50
         = f.input :distance, label: false, wrapper: false
-      .span4.g-w320
+      .col-xs-4.g-w320
         .ui-widget
           = f.association( :exercise, label: false, wrapper: false, collection: @exercise_options_array, input_html: { class: 'input-xlarge combobox' } )
-      .span1.g-w40
+      .col-xs-1.g-w40
         .ui-widget
           = f.input :start_and_rest, label: false, wrapper: false, collection: @start_rest_options_array, input_html: { class: 'combobox' }
-      .span1.g-w40
+      .col-xs-1.g-w40
         .ui-widget
           = f.input :pause, label: false, wrapper: false, collection: @pause_options_array, input_html: { class: 'combobox' }
-      .span1.g-w50
+      .col-xs-1.g-w50
         .ungrouped-row-controls
           .toolTip{'data-toggle' => 'tooltip', 'title' => I18n.t('trainings.delete_row_tooltip') }
             = link_to_remove_association( image_tag('delete.png'), f, confirm: I18n.t('netzke.basepack.grid_panel.are_you_sure') )
 
-      .row-fluid.control-row
-        .offset5.span1.g-w80
+      .row.control-row
+        .col-xs-offset-5.col-xs-1.g-w80
           = f.association :arm_aux_type, label: false, wrapper: false, collection: @arm_aux_options_array, prompt: I18n.t('please_select'), input_html: {class: 'arm_aux_type'}
-        .span1.g-w80
+        .col-xs-1.g-w80
           = f.association :kick_aux_type, label: false, wrapper: false, collection: @kick_aux_options_array, prompt: I18n.t('please_select'), input_html: {class: 'kick_aux_type'}
-        .span1.g-w80
+        .col-xs-1.g-w80
           = f.association :body_aux_type, label: false, wrapper: false, collection: @body_aux_options_array, prompt: I18n.t('please_select'), input_html: {class: 'body_aux_type'}
-        .span1.g-w80
+        .col-xs-1.g-w80
           = f.association :breath_aux_type, label: false, wrapper: false, collection: @breath_aux_options_array, prompt: I18n.t('please_select'), input_html: {class: 'breath_aux_type'}
 
 %script

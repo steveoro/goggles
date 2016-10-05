@@ -1,4 +1,4 @@
-.row-fluid#history_regional_er_csi
+.row#history_regional_er_csi
   .goggles-category-gap#pageTop
     = render( partial: 'regional_er_csi_tabs' )
     = render( partial: 'title' )
@@ -6,7 +6,7 @@
 
       -# --- Sub-legend for each gender + pool-type
       .navbar
-        %ul.nav
+        %ul.nav.navbar-nav
           - if @season.id != @current_season_id
             %li
               = link_to( t('championships.back_to_current'), championships_ranking_regional_er_csi_path( id: @current_season_id ), {class: "btn"})
@@ -50,7 +50,7 @@
                   = computed_season_ranking.team.decorate.get_linked_name
                 %td.goggles-rightalign
                   = computed_season_ranking.total_points
-  .span7
+  .col-xs-7
     .goggles-category-gap
       %h3
         = t('championships.hall_of_fame')
@@ -79,4 +79,4 @@
               %td.goggles-rightalign
                 = ranked_team[:third_place]
 
-  .row-fluid.goggles-category-gap
+  .row.goggles-category-gap

@@ -1,45 +1,45 @@
 %h2= t('devise.new_user_title')
 = render( partial: 'goggles/privacy_disclaimer' )
 
-.row-fluid
+.row
   = form_for(resource, as: resource_name, url: registration_path(resource_name), html: {class: 'form-horizontal'}) do |f|
     = devise_error_messages!
-    .row-fluid.control-group
+    .row.control-group
       = f.label( :email, for: :user_email, class: 'control-label' )
       .controls
         = f.email_field( :email, autofocus: true )
-    .row-fluid.control-group
+    .row.control-group
       = f.label( :password, for: :user_password, class: 'control-label' )
       .controls
         = f.password_field( :password, autocomplete: "off" )
-    .row-fluid.control-group
+    .row.control-group
       = f.label( :password_confirmation, for: :user_password_confirmation, class: 'control-label' )
       .controls
         = f.password_field( :password_confirmation )
-    .row-fluid.control-group
+    .row.control-group
       = f.label( :name, for: :user_name, class: 'control-label' )
       .controls
         = f.text_field( :name )
-    .row-fluid.control-group
+    .row.control-group
       = f.label( :first_name, for: :user_first_name, class: 'control-label' )
       .controls
         = f.text_field( :first_name )
-    .row-fluid.control-group
+    .row.control-group
       = f.label( :last_name, for: :user_last_name, class: 'control-label' )
       .controls
         = f.text_field( :last_name )
-    .row-fluid.control-group
+    .row.control-group
       = f.label( :description, for: :user_description, class: 'control-label' )
       .controls
         = f.text_field( :description )
-    .row-fluid.control-group
+    .row.control-group
       = f.label( :year_of_birth, for: :user_year_of_birth, class: 'control-label' )
       .controls
         = f.text_field( :year_of_birth, class: 'input-mini', autocomplete: 'off',       |
             'data-provide' => 'typeahead',                                              |
             'data-source' => (1900 .. Date.today.year+1).to_a.collect{|e|e.to_s}.to_s,  |
             placeholder: Date.today.year - 50 )                                         |
-    .row-fluid
+    .row
       .control-group
         = f.label( :use_email_data_updates_notify, for: :user_use_email_data_updates_notify, class: 'control-label' )
         .controls
@@ -61,7 +61,7 @@
           = f.check_box( :use_email_community_notify )
           %i= t('devise.use_email_community_notify_info')
 
-    .row-fluid.control-group
+    .row.control-group
       .controls
         = f.submit( t('devise.new_user_submit') )
 

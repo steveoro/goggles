@@ -1,17 +1,17 @@
-.span5
+.col-xs-5
   %table.table.table-striped.table-bordered.table-hover.table-condensed
     %tbody
       %tr{'class'=>'success'}
-        %td.span2.goggles-centeralign
+        %td.col-xs-2.goggles-centeralign
           %b
             %i= I18n.t('meeting_stats.category_athletes')
           = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
             = image_tag('bullet_arrow_up.png')
-        %td.span1.goggles-centeralign
+        %td.col-xs-1.goggles-centeralign
           %i= I18n.t('meeting_stats.females')
-        %td.span1.goggles-centeralign
+        %td.col-xs-1.goggles-centeralign
           %i= I18n.t('meeting_stats.males')
-        %td.span1.goggles-centeralign
+        %td.col-xs-1.goggles-centeralign
           %i= I18n.t('meeting_stats.total')
       - gtot_fem = gtot_mal = gtot = 0
       - @meeting_stats.categories.each do |category_stat|
@@ -19,21 +19,21 @@
         - gtot_mal  += category_stat.male_swimmers
         - gtot      += category_stat.get_swimmers_count
         %tr
-          %td.span2
+          %td.col-xs-2
             = category_stat.category_type.code
-          %td.span1.goggles-rightalign
+          %td.col-xs-1.goggles-rightalign
             = category_stat.female_swimmers
-          %td.span1.goggles-rightalign
+          %td.col-xs-1.goggles-rightalign
             = category_stat.male_swimmers
-          %td.span1.goggles-rightalign
+          %td.col-xs-1.goggles-rightalign
             = category_stat.get_swimmers_count
       -# Totals
       %tr{'class'=>'success'}
-        %td.span2.goggles-rightalign
+        %td.col-xs-2.goggles-rightalign
           %i= @meeting_stats.categories.count
-        %td.span1.goggles-rightalign
+        %td.col-xs-1.goggles-rightalign
           %i= gtot_fem
-        %td.span1.goggles-rightalign
+        %td.col-xs-1.goggles-rightalign
           %i= gtot_mal
-        %td.span1.goggles-rightalign
+        %td.col-xs-1.goggles-rightalign
           %i= gtot

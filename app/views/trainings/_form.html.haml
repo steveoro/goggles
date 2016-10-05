@@ -1,27 +1,27 @@
-.row-fluid.span12
+.row.col-xs-12
 
 = simple_form_for @training do |f|
-  = f.input :title, input_html: { class: 'span5' }
-  = f.input :description, input_html: { rows: 3, class: 'span8' }
+  = f.input :title, input_html: { class: 'col-xs-5' }
+  = f.input :description, input_html: { rows: 3, class: 'col-xs-8' }
   = f.input :min_swimmer_level, as: :select, collection: [[I18n.t('trainings.chose_min_swimmer_level'), 0]] + ( SwimmerLevelType.to_dropdown(nil, :level) )
   = f.input :max_swimmer_level, as: :select, collection: [[I18n.t('trainings.chose_max_swimmer_level'), 0]] + ( SwimmerLevelType.to_dropdown(nil, :level) )
 
-  .row-fluid.goggles-div-centeralign
-    .span1
+  .row.goggles-div-centeralign
+    .col-xs-1
       %i= I18n.t('activerecord.attributes.training_rows.part_order') + ' / ' + I18n.t('trainings.group')
-    .span2
+    .col-xs-2
       %i= I18n.t('activerecord.models.training_step_type')
-    .span1
+    .col-xs-1
       %i= I18n.t('activerecord.attributes.training_rows.times')
-    .span1
+    .col-xs-1
       %i= I18n.t('activerecord.attributes.training_rows.distance')
-    .span4
+    .col-xs-4
       %i= I18n.t('activerecord.attributes.training_rows.exercise')
-    .span1
+    .col-xs-1
       %i= I18n.t('activerecord.attributes.training_rows.start_and_rest')
-    .span1
+    .col-xs-1
       %i= I18n.t('activerecord.attributes.training_rows.pause')
-    .span1
+    .col-xs-1
       .toolTip{'data-toggle' => 'tooltip', 'title' => I18n.t('trainings.toggle_frames_tooltip') }
         = link_to( image_tag('shape_group.png'), '#', onclick: "$('.full_row').toggleClass('framed'); return false",  class: "nav_link" )
   %ul.droppable.sortable#training_rows

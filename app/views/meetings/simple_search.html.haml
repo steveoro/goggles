@@ -8,7 +8,7 @@
     .accordion-body
       .accordion-inner
         = form_tag( :meetings_simple_search, method: :get, class: 'form-horizontal', onsubmit: "$('#loadingIndicator').show();") do
-          .row-fluid
+          .row
             .control-group
               .control-label#tooltipLabel
                 = label_tag( :text, I18n.t('meeting.text_to_be_searched'), for: :text, 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.simple_search_tooltip') )

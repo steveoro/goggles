@@ -1,5 +1,5 @@
-.row-fluid
-  .offset1.span10
+.row
+  .col-xs-offset-1.col-xs-10
     %table.table.table-striped.table-bordered.table-hover.table-condensed
       %tbody
         %tr{'class'=>'info'}
@@ -19,14 +19,14 @@
           %td
             %b= @team_affiliation.number
 
-.row-fluid
+.row
   .goggles-category-gap#charts
-    .span4
-      .btn.btn-large.btn-block.btn-warning
+    .col-xs-4
+      .btn.btn-lg.btn-block.btn-warning
         %b= "#{I18n.t('supermaster.supermaster')}<br>#{supermaster_score.score}".html_safe
-    .span4
-      .btn.btn-large.btn-block.btn-success
+    .col-xs-4
+      .btn.btn-lg.btn-block.btn-success
         %b= "#{I18n.t('supermaster.ironmaster')}<br>#{ironmaster_score.score}".html_safe
-    .span4
-      %p.btn.btn-large.btn-block.btn-info
+    .col-xs-4
+      %p.btn.btn-lg.btn-block.btn-info
         %b= "#{I18n.t('supermaster.team_ranking')}<br>#{team_ranking_score.score}".html_safe

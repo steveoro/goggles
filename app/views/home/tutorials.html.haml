@@ -1,11 +1,11 @@
 %script
   new WOW().init();
 
-.container-fluid#tutorial_top
+.container#tutorial_top
   - if not user_signed_in?
     %section.section-heading#before_register
-      .container-fluid
-        .fluid-row.span12
+      .container
+        .fluid-row.col-xs-12
           .page-scroll.text-right
             %a.animated{ href: "#what_can_i_do", 'data-turbolinks'=>'false', 'data-toggle' => 'tooltip', title: t('tutorial.next_argument') }
               = image_tag( "control_ff_down_blue.png")
@@ -14,13 +14,13 @@
     = render( partial: 'how_to_register' )
 
     %section.section-heading#after_register
-      .container-fluid
-        .fluid-row.span6
+      .container
+        .fluid-row.col-xs-6
           .page-scroll.text-left
             %a.animated{ href: "#before_register", 'data-turbolinks'=>'false', 'data-toggle' => 'tooltip', title: t('tutorial.back_argument') }
               = image_tag( "control_ff_up_blue.png")
               = t('tutorial.how_to_register')
-        .fluid-row.span6
+        .fluid-row.col-xs-6
           .page-scroll.text-right
             %a.animated{ href: "#what_can_i_do", 'data-turbolinks'=>'false', 'data-toggle' => 'tooltip', title: t('tutorial.next_argument') }
               = image_tag( "control_ff_down_blue.png")
@@ -30,13 +30,13 @@
   = render( partial: 'what_can_i_do' )
 
   %section.section-heading#after_what_can_i_do
-    .container-fluid
-      .fluid-row.span6
+    .container
+      .fluid-row.col-xs-6
         .page-scroll.text-left
           %a.animated{ href: "#tutorial_top", 'data-turbolinks'=>'false', 'data-toggle' => 'tooltip', title: t('tutorial.back_argument') }
             = image_tag( "control_ff_up_blue.png")
             = t('tutorial.what_can_i_do')
-      .fluid-row.span6
+      .fluid-row.col-xs-6
         .page-scroll.text-right
           %a.animated{ href: "#what_about_meetings", 'data-turbolinks'=>'false', 'data-toggle' => 'tooltip', title: t('tutorial.next_argument') }
             = image_tag( "control_ff_down_blue.png")
@@ -46,13 +46,13 @@
 
   = render( partial: 'what_about_meetings' )
   %section.section-heading#after_what_about_meetings
-    .container-fluid
-      .fluid-row.span6
+    .container
+      .fluid-row.col-xs-6
         .page-scroll.text-left
           %a.animated{ href: "#what_about_meetings", 'data-turbolinks'=>'false', 'data-toggle' => 'tooltip', title: t('tutorial.back_argument') }
             = image_tag( "control_ff_up_blue.png")
             = t('tutorial.what_about_meetings')
-      .fluid-row.span6
+      .fluid-row.col-xs-6
         .page-scroll.text-right
           %a.animated{ href: "#how_to_view_passages", 'data-turbolinks'=>'false', 'data-toggle' => 'tooltip', title: t('tutorial.next_argument') }
             = image_tag( "control_ff_down_blue.png")
@@ -62,13 +62,13 @@
 
   = render( partial: 'how_to_view_passages' )
   %section.section-heading#after_how_to_view_passages
-    .container-fluid
-      .fluid-row.span6
+    .container
+      .fluid-row.col-xs-6
         .page-scroll.text-left
           %a.animated{ href: "#after_what_about_meetings", 'data-turbolinks'=>'false', 'data-toggle' => 'tooltip', title: t('tutorial.back_argument') }
             = image_tag( "control_ff_up_blue.png")
             = t('tutorial.how_to_view_passages')
-      .fluid-row.span6
+      .fluid-row.col-xs-6
         .page-scroll.text-right
           %a.animated{ href: "#what_about_trainings", 'data-turbolinks'=>'false', 'data-toggle' => 'tooltip', title: t('tutorial.next_argument') }
             = image_tag( "control_ff_down_blue.png")
@@ -77,13 +77,13 @@
   %hr
   = render( partial: 'what_about_trainings' )
   %section.section-heading#after_what_about_trainings
-    .container-fluid
-      .fluid-row.span6
+    .container
+      .fluid-row.col-xs-6
         .page-scroll.text-left
           %a.animated{ href: "#after_how_to_view_passages", 'data-turbolinks'=>'false', 'data-toggle' => 'tooltip', title: t('tutorial.back_argument') }
             = image_tag( "control_ff_up_blue.png")
             = t('tutorial.what_about_trainings')
-      .fluid-row.span6
+      .fluid-row.col-xs-6
         .page-scroll.text-right
           %a.animated{ href: "#how_to_calculate_fin_score", 'data-turbolinks'=>'false', 'data-toggle' => 'tooltip', title: t('tutorial.next_argument') }
             = image_tag( "control_ff_down_blue.png")
@@ -92,13 +92,13 @@
   %hr
   = render( partial: 'how_to_calculate_fin_score' )
   %section.section-heading#after_how_to_calculate_fin_score
-    .container-fluid
-      .fluid-row.span6
+    .container
+      .fluid-row.col-xs-6
         .page-scroll.text-left
           %a.animated{ href: "#after_what_about_trainings", 'data-turbolinks'=>'false', 'data-toggle' => 'tooltip', title: t('tutorial.back_argument') }
             = image_tag( "control_ff_up_blue.png")
             = t('tutorial.how_to_calculate_fin_score')
-      .fluid-row.span6
+      .fluid-row.col-xs-6
         .page-scroll.text-right
           %a.animated{ href: "#tutorial_top", 'data-turbolinks'=>'false', 'data-toggle' => 'tooltip', title: t('tutorial.back_to_start') }
             = image_tag( "control_eject_blue.png")

@@ -1,11 +1,11 @@
 %tr{ 'class' => is_highlighted ? 'warning' : '' }
-  %td.span1.goggles-rightalign
+  %td.col-xs-1.goggles-rightalign
     = entry.start_list_number
-  %td.span4
+  %td.col-xs-4
     = entry.swimmer.decorate.get_linked_swimmer_name
-  %td.span1
+  %td.col-xs-1
     = entry.get_category_type_code
-  %td.span4
+  %td.col-xs-4
     = entry.team.decorate.get_linked_name
-  %td.span1.goggles-rightalign
+  %td.col-xs-1.goggles-rightalign
     = entry.get_timing

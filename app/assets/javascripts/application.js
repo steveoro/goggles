@@ -22,4 +22,6 @@
 //= require wice_grid
 //= require turbolinks
 //= require turbolinks-compatibility
+//= require bootstrap.min
+//= require jasny-bootstrap.min
 //= require_tree .

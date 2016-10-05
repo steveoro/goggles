@@ -1,6 +1,6 @@
 %script{ 'type' => "text/javascript", 'src' => "https://www.gstatic.com/charts/loader.js" }
 
-.row-fluid#pageTop
+.row#pageTop
   .goggles-category-gap#swimmer_goggle_cup
     - if @goggle_cups.size == 0
       %p= I18n.t('goggle_cup.send_us_your_goggle_cups')
@@ -11,7 +11,7 @@
           - total_points += mir.goggle_cup_points
         - total_results = goggle_cup.meeting_individual_results.for_swimmer(@swimmer).has_points('goggle_cup_points').count
         - ranked_results = goggle_cup.max_performance > total_results ? total_results : goggle_cup.max_performance
-        .span8
+        .col-xs-8
           %table.table.table-striped.table-bordered.table-hover.table-condensed
             %tbody
               %tr{'class'=>'info'}
@@ -45,14 +45,14 @@
                 %td.goggles-centeralign
                   %b= ranked_results
 
-        .span4
+        .col-xs-4
           %script
             var score = Number.parseFloat( "#{total_points}" );
             var title = "#{goggle_cup.get_full_name}_chart"
             var gauge_height = Number.parseInt( "#{total_results < 4 ? 200 : 300 }" )
           .div{'align' => 'center', 'id' => "#{goggle_cup.get_full_name}_chart" }
       
-.row-fluid.goggles-category-gap#standards
+.row.goggles-category-gap#standards
   - events_list = []
   - EventsByPoolType.not_relays.for_pool_type_code( '25' ).distance_more_than(50).distance_less_than(1500).sort_by_event.each do |events_by_pool_type|
     - events_list << events_by_pool_type.event_type
@@ -74,7 +74,7 @@
               %td.goggles-rightalign
                 = @swimmer.goggle_cup_standards.for_goggle_cup(goggle_cup).for_event_type(event_type).for_pool_type(pool_type).first.get_timing if @swimmer.goggle_cup_standards.for_goggle_cup(goggle_cup).for_event_type(event_type).for_pool_type(pool_type).count > 0
         
-.row-fluid.goggles-category-gap#bottom_of_page
+.row.goggles-category-gap#bottom_of_page
 
 :javascript
   google.charts.load('current', {'packages':['gauge']});

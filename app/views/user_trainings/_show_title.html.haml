@@ -1,30 +1,30 @@
 .accordion
   .accordion-group
     .accordion-heading.goggles-accordion-heading
-      .row-fluid
-        .span12
+      .row
+        .col-xs-12
           %h3= @title
     .accordion-body
       .accordion-inner
-        .row-fluid
-          .span2
+        .row
+          .col-xs-2
             = I18n.t('activerecord.attributes.training.user') + ':'
-          .span2
+          .col-xs-2
             %b= @user_training.get_user_name
-          .span2
+          .col-xs-2
             = I18n.t('trainings.suggested_level') + ':'
-          .span2
+          .col-xs-2
             = @user_training.get_swimmer_level_type( :i18n_description )
-          .span2
+          .col-xs-2
             %i= I18n.t(:updated_at) + ':'
-          .span2
+          .col-xs-2
             %i= Format.a_short_datetime( @user_training.updated_at )
-        .row-fluid
-          .span2
+        .row
+          .col-xs-2
             = I18n.t('trainings.total_meters') + ':'
-          .span2
+          .col-xs-2
             %b= @user_training.compute_total_distance
-          .span2
+          .col-xs-2
             = I18n.t('trainings.esteemed_timing') + ':'
-          .span6
+          .col-xs-6
             %b= Timing.to_hour_string( @user_training.compute_total_seconds() )

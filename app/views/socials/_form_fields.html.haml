@@ -1,24 +1,24 @@
 - unless message_body.nil?
-  .row-fluid
-    .control-group.span3
+  .row
+    .control-group.col-xs-3
       = label_tag( :text_message, I18n.t('social.message_title') +':', :for => :text_message, class: 'control-label' )
       .controls
         = text_area_tag( :text_message, message_body, class: 'input-xxlarge' )
-.row-fluid
+.row
   %label.checkbox
     = I18n.t('social.request_to_shares_passages')
     = check_box_tag( :shares_passages, '1', @friendship.shares_passages, id: "spanSharePass#{@swimming_buddy.id}", 'data-toggle' => 'tooltip', title: I18n.t('social.shares_passages_hint') )
-.row-fluid
+.row
   %label.checkbox
     = check_box_tag( :shares_trainings, '1', @friendship.shares_trainings, id: "spanShareTrain#{@swimming_buddy.id}", 'data-toggle' => 'tooltip', title: I18n.t('social.shares_trainings_hint') )
     = I18n.t('social.request_to_shares_trainings')
-.row-fluid
+.row
   %label.checkbox
     = check_box_tag( :shares_calendars, '1', @friendship.shares_calendars, id: "spanShareCal#{@swimming_buddy.id}", 'data-toggle' => 'tooltip', title: I18n.t('social.shares_calendars_hint') )
     = I18n.t('social.request_to_shares_calendars')
-.row-fluid
+.row
   %hr
-.row-fluid
+.row
   .control-group
     .controls
       = f.submit( @submit_title, id: 'submitBtn', :data => {disable_with: I18n.t(:please_wait), class: 'btn disabled'}, class: 'btn' )

@@ -1,8 +1,8 @@
-.row-fluid#records_4x_grid
+.row#records_4x_grid
   .goggles-category-gap#pageTop
     -# --- Sub-legend for each gender + pool-type
     .navbar
-      %ul.nav
+      %ul.nav.navbar-nav
         - @grid_builder.pool_types.each do |pool_type|
           %li
             = link_to("##{pool_type.code}", {'data-turbolinks'=>'false', class: 'goggles-nav-compact'}) do
@@ -10,4 +10,4 @@
         .ghost-divider-vertical
   - @grid_builder.pool_types.each do |pool_type|
     = render( partial: 'personal_bests_grid', locals: { pool_type: pool_type, grid_builder: @grid_builder } )
-.row-fluid.goggles-category-gap
+.row.goggles-category-gap

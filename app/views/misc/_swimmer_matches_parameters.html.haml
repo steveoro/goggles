@@ -1,20 +1,20 @@
-.span4
+.col-xs-4
   .control-group
     = label_tag( :local_swimmer, t('misc.local_swimmer'), for: :local_swimmer, class: 'control-label' )
     .controls
       .ui-widget.text-left
         = hidden_field( :local_swimmer, :id, value: (@local_swimmer ? @local_swimmer.id : nil) )
         = text_field_tag( :local_swimmer_name, (@local_swimmer ? @local_swimmer.complete_name : nil), |
-            {autocomplete: 'off', class: "input-large typeahead",                                    |
+            {autocomplete: 'off', class: "input-lg typeahead",                                    |
             "data-provide"=>"typeahead", placeholder: I18n.t('combobox_3char_tooltip')} )             |
-.span1
-.span4
+.col-xs-1
+.col-xs-4
   .control-group
     = label_tag( :visitor_swimmer, t('misc.visitor_swimmer'), for: :visitor_swimmer, class: 'control-label' )
     .controls
       .ui-widget.text-left
         = hidden_field( :visitor_swimmer, :id )
-        = text_field_tag( :visitor_swimmer_name, nil, {autocomplete: 'off', class: "input-large typeahead",  |
+        = text_field_tag( :visitor_swimmer_name, nil, {autocomplete: 'off', class: "input-lg typeahead",  |
             "data-provide"=>"typeahead", placeholder: I18n.t('combobox_3char_tooltip')} )                     |
 
 :javascript

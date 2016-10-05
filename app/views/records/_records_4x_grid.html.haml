@@ -1,6 +1,6 @@
 - if @grid_builder
   - cache( @grid_builder.cache_key ) do
-    .row-fluid#records_4x_grid
+    .row#records_4x_grid
       .goggles-category-gap#pageTop
         %h2= @title
         -# --- Sub-legend for each gender + pool-type
@@ -8,7 +8,7 @@
           - @grid_builder.gender_types.each do |gender_type|
             = link_to("#", {'data-turbolinks'=>'false', class: 'goggles-small-brand'}) do
               = gender_type.i18n_short + ':'
-            %ul.nav
+            %ul.nav.navbar-nav
               - @grid_builder.pool_types.each do |pool_type|
                 %li
                   = link_to("##{gender_type.code}#{pool_type.code}", {'data-turbolinks'=>'false', class: 'goggles-nav-compact'}) do
@@ -17,4 +17,4 @@
       - @grid_builder.gender_types.each do |gender_type|
         - @grid_builder.pool_types.each do |pool_type|
           = render( partial: 'records_grid', locals: { gender_type: gender_type, pool_type: pool_type, grid_builder: @grid_builder } )
-    .row-fluid.goggles-category-gap
+    .row.goggles-category-gap

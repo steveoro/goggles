@@ -1,8 +1,8 @@
 - if user_signed_in?
-  .row-fluid
-    .row-fluid.span2
+  .row
+    .row.col-xs-2
       = render( partial: 'left_shortcuts' )
-    .row-fluid.span8
+    .row.col-xs-8
       - # Association request link:
       = render( partial: 'goggles/associate_to_a_swimmer' ) unless current_user.has_associated_swimmer?
       - # Articles/News flash list:
@@ -10,12 +10,12 @@
       -# [Steve, 2016103] After 3+ years, we should indeed comment-out this one:
       -# Be patient with this very very work in progress creature!
       -#= render( partial: 'forgive_us' )
-    .row-fluid.span2
+    .row.col-xs-2
       = render( partial: 'right_shortcuts' )
 - else
   - # Not-logged-in welcome part:
-  .row-fluid.offset1.span10
-    .row-fluid
+  .row.col-xs-offset-1.col-xs-10
+    .row
       = render( partial: 'goggles/not_logged_in' )
-    .row-fluid
+    .row
       = render( partial: 'jumbotron' )
