@@ -50,7 +50,7 @@ describe ApplicationHelper, type: :helper do
       expect( subject.show_tag(false) ).to include('--')
     end
     it "returns an image tag for a true value" do
-      expect( subject.show_tag(true) ).to include('tick.png')
+      expect( subject.show_tag(true) ).to include('tick')
     end
   end
   #-- -------------------------------------------------------------------------
@@ -68,7 +68,7 @@ describe ApplicationHelper, type: :helper do
       end
 
       it "returns an ActiveSupport::SafeBuffer" do
-        expect( result ).to be_an_instance_of(ActiveSupport::SafeBuffer)
+        expect( result ).to be_an(ActiveSupport::SafeBuffer)
       end
       it "returns a non empty text" do
         expect( result.size ).to be >= 1
@@ -78,7 +78,9 @@ describe ApplicationHelper, type: :helper do
       end
       it "returns a string containing the image for the number of steps required" do
         total_steps = count / step
-        expect( result.split(image_name).size ).to be( total_steps + 1 )
+        expect(
+          result.split( File.basename(image_name).gsub(File.extname(image_name),'') ).size
+        ).to eq( total_steps + 1 )
       end
     end
   end
@@ -163,9 +165,9 @@ describe ApplicationHelper, type: :helper do
     end
     it "returns a text containing the image for the number of steps required" do
       if score > bias
-        expect( result ).to include('asterisk_orange.png')
+        expect( result ).to include('asterisk_orange')
       else
-        expect( result ).not_to include('asterisk_orange.png')
+        expect( result ).not_to include('asterisk_orange')
       end
     end
   end

@@ -1,9 +1,3 @@
--#%script
--#  new WOW().init();
--# Preloader mask:
--#preloader
--#  #load
-
 = render( partial: 'meeting_header' )
 = render( partial: 'tabs_and_radio_title' )
 - cache( cache_key_for_meeting( 'show_full', @meeting.id, @max_mir_updated_at, @team ? @team.id : 0 ) ) do
