@@ -13,9 +13,6 @@
     .row.col-xs-2
       = render( partial: 'right_shortcuts' )
 - else
-  - # Not-logged-in welcome part:
-  .row.col-xs-offset-1.col-xs-10
-    .row
-      = render( partial: 'goggles/not_logged_in' )
-    .row
-      = render( partial: 'jumbotron' )
+  -# Not-logged-in welcome part:
+  = render( partial: 'goggles/not_logged_in' )
+  = render( partial: 'jumbotron' )

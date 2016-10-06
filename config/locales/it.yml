@@ -340,7 +340,7 @@ it:
   not_available: "N.D."
 
   tech_deployment_details: "Roba tecnica per gli addetti ai lavori"
-  more_info: "Cos'e'?..."
+  more_info: "Info"
   maintenance_title: "Siamo in manutenzione!"
   maintenance_info: "Il server e' temporaneamente sotto manutenzione per aggiornamento dati e applicazione, sino al {DATETIME} (presumibilmente; ore italiane). Riprova piu' tardi! ;-)"
 
