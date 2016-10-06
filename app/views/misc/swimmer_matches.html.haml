@@ -8,7 +8,7 @@
     .row.col-xs-12
       = render( partial: 'swimmer_matches_parameters' )
     .row.col-xs-12
-      .control-group
+      .form-group
         .controls
           = submit_tag( I18n.t('misc.find_matches'), id: "btn_submit", data: {disable_with: I18n.t(:please_wait), class: 'btn disabled'}, class: 'btn' )
           %span( id='loadingIndicator' hidden='true' )

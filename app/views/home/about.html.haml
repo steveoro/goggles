@@ -3,15 +3,14 @@
   = render( partial: 'what_is_goggles' )
 %hr
 
-.accordion#accordionShw
+.accordion
   .accordion-group
     .accordion-heading
-      %a.accordion-toggle{'data-toggle' => 'collapse', 'data-parent' => '#accordionshw', :href => '#collapseShw', 'data-turbolinks'=>'false'}
-        %h3#headerShw{'data-toggle' => 'tooltip', 'title' => I18n.t(:detail_show_tooltip)}= I18n.t( :tech_deployment_details )
-    .accordion-body.collapse#collapseShw
+      %h3= I18n.t( :tech_deployment_details )
+    .accordion-body
       .accordion-inner
         .row
-          .col-xs-6
+          .col-xs-12
             .row
               %h3
                 Versioning:
@@ -66,11 +65,13 @@
                   AgeX Framework structure (p) 2006-2013,
                   = image_tag( 'fasar_logo_1.png', size: '256x32', alt: 'FASAR Software' )
             %br
-          .col-xs-offset-6
-            .row.col-xs-offset-6.col-xs-6
-              %h3
-                Installed Gems:
-            .row.col-xs-offset-6.col-xs-6
-              %ul
-                - @gem_info.each do |row|
-                  %li= row
+
+          -# The following is left here just for debugging purposes:
+          -#.col-xs-offset-6
+          -#  .row.col-xs-offset-6.col-xs-6
+          -#    %h3
+          -#      Installed Gems:
+          -#  .row.col-xs-offset-6.col-xs-6
+          -#    %ul
+          -#      - @gem_info.each do |row|
+          -#        %li= row

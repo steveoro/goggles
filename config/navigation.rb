@@ -49,24 +49,44 @@ SimpleNavigation::Configuration.run do |navigation|
     #                            when the item should be highlighted, you can set a regexp which is matched
     #                            against the current URI.  You may also use a proc, or the symbol <tt>:subpath</tt>.
     #
-    primary.item( :key_home,            t('home'), '#' ) do |lev2_nav|
-      lev2_nav.item( :key_main,         t('main'),        root_path() )
-      lev2_nav.item( :key_about,        t('about'),       home_about_path() )
-      lev2_nav.item( :key_contact_us,   t('contact_us'),  home_contact_us_path() )
-      lev2_nav.item( :key_separator1_0, content_tag(:span, ''), class: 'divider', if: Proc.new { user_signed_in? && current_user && current_user.has_associated_swimmer? } )
-      lev2_nav.item(
-        :key_user_radio_id,
-        t('radiography.id_card'),
-        Proc.new { current_user.nil? ? '' : swimmer_radio_path(id: current_user.swimmer_id) },
-        if: Proc.new { user_signed_in? && current_user && current_user.has_associated_swimmer? }
-      )
-      lev2_nav.item(
-        :key_social_index,
-        t('social.menu_social_index'),
-        socials_show_all_path(),
-        if: Proc.new { user_signed_in? && current_user && current_user.has_associated_swimmer? }
-      )
-    end
+    primary.item( :key_main,         t('main'),        root_path() )
+    primary.item( :key_about,        t('about'),       home_about_path() )
+    primary.item( :key_contact_us,   t('contact_us'),  home_contact_us_path() )
+    primary.item :key_separator0_0, '<hr/>', '#', class: 'disabled'
+
+    primary.item(
+      :key_user_radio_id,
+      t('radiography.id_card'),
+      Proc.new { current_user.nil? ? '' : swimmer_radio_path(id: current_user.swimmer_id) },
+      if: Proc.new { user_signed_in? && current_user && current_user.has_associated_swimmer? }
+    )
+    primary.item(
+      :key_social_index,
+      t('social.menu_social_index'),
+      socials_show_all_path(),
+      if: Proc.new { user_signed_in? && current_user && current_user.has_associated_swimmer? }
+    )
+    primary.item( :key_separator0_1, '<hr/>', '#', class: 'disabled', if: Proc.new { user_signed_in? && current_user && current_user.has_associated_swimmer? } )
+
+    # [Steve, 2016106] Same stuff above, but this is a version with single primary menu item & submenu:
+    # primary.item( :key_home,            t('home'), '#' ) do |lev2_nav|
+      # lev2_nav.item( :key_main,         t('main'),        root_path() )
+      # lev2_nav.item( :key_about,        t('about'),       home_about_path() )
+      # lev2_nav.item( :key_contact_us,   t('contact_us'),  home_contact_us_path() )
+      # lev2_nav.item( :key_separator1_0, content_tag(:span, ''), class: 'divider', if: Proc.new { user_signed_in? && current_user && current_user.has_associated_swimmer? } )
+      # lev2_nav.item(
+        # :key_user_radio_id,
+        # t('radiography.id_card'),
+        # Proc.new { current_user.nil? ? '' : swimmer_radio_path(id: current_user.swimmer_id) },
+        # if: Proc.new { user_signed_in? && current_user && current_user.has_associated_swimmer? }
+      # )
+      # lev2_nav.item(
+        # :key_social_index,
+        # t('social.menu_social_index'),
+        # socials_show_all_path(),
+        # if: Proc.new { user_signed_in? && current_user && current_user.has_associated_swimmer? }
+      # )
+    # end
 
     primary.item( :key_meetings,              t('meetings'), '#' ) do |lev2_nav|
       lev2_nav.item :key_meetings_current,    t('meeting.current_menu'), meetings_current_path(), highlights_on: /current/ do |lev3_nav|
@@ -88,18 +108,22 @@ SimpleNavigation::Configuration.run do |navigation|
       lev2_nav.item :key_records_team,        t('records.menu_by_team'),        records_for_team_path()
       lev2_nav.item :key_records_swimmer,     t('records.menu_by_swimmer'),     records_for_swimmer_path()
     end
+    primary.item :key_separator0_2, '<hr/>', '#', class: 'disabled'
 
-    primary.item( :key_swimmers,              t('swimmers.swimmers'), '#' ) do |lev2_nav|
-      lev2_nav.item :key_swimmers_index,      t('swimmers.search_swimmers'), swimmers_path(), highlights_on: %r(/swimmers) do |lev3_nav|
-        lev3_nav.item :key_swimmers_id,       t('radiography.id_card'), '#', highlights_on: %r(/swimmers/\d/radio)
-      end
-    end
-
-    primary.item( :key_teams,                 t('team.title'), '#' ) do |lev2_nav|
-      lev2_nav.item :key_teams_index,         t('team.search_title'), teams_path(), highlights_on: %r(/teams) do |lev3_nav|
-        lev3_nav.item :key_teams_id,          t('radiography.id_card'), '#', highlights_on: %r(/teams/\d/radio)
-      end
-    end
+    primary.item :key_swimmers_index,         t('swimmers.search_swimmers'), swimmers_path(), highlights_on: %r(/swimmers)
+    primary.item :key_teams_index,            t('team.search_title'), teams_path(), highlights_on: %r(/teams)
+    # [Steve, 2016106] Same stuff above, but this is a version with single primary menu item & submenu:
+    # primary.item( :key_swimmers,              t('swimmers.swimmers'), '#' ) do |lev2_nav|
+      # lev2_nav.item :key_swimmers_index,      t('swimmers.search_swimmers'), swimmers_path(), highlights_on: %r(/swimmers) do |lev3_nav|
+        # lev3_nav.item :key_swimmers_id,       t('radiography.id_card'), '#', highlights_on: %r(/swimmers/\d/radio)
+      # end
+    # end
+    # primary.item( :key_teams,                 t('team.title'), '#' ) do |lev2_nav|
+      # lev2_nav.item :key_teams_index,         t('team.search_title'), teams_path(), highlights_on: %r(/teams) do |lev3_nav|
+        # lev3_nav.item :key_teams_id,          t('radiography.id_card'), '#', highlights_on: %r(/teams/\d/radio)
+      # end
+    # end
+    primary.item :key_separator0_3, '<hr/>', '#', class: 'disabled'
 
     primary.item( :key_misc,                  t('misc_main_menu.title'), '#' ) do |lev2_nav|
       lev2_nav.item :key_pools,               t('swimming_pool.pools'),                   swimming_pools_path()
@@ -116,8 +140,6 @@ SimpleNavigation::Configuration.run do |navigation|
       lev2_nav.item :key_tutorial,            t('tutorials_title'),                       home_tutorials_path()
     end
 
-    primary.item :key_separator0, '&nbsp;', '#', class: 'disabled'
-
     primary.item(
       :key_user_who_is_it,
       content_tag(:span, t('who_are_you') ), '#', class: 'disabled',
@@ -125,7 +147,7 @@ SimpleNavigation::Configuration.run do |navigation|
     )
     primary.item(
       :key_user_login,
-      content_tag(:span, t(:login), class:"label label-important" ),
+      content_tag(:span, t(:login), class:"btn btn-default" ),
       new_user_session_path(),
       :unless => Proc.new { user_signed_in? }
     )
@@ -137,13 +159,13 @@ SimpleNavigation::Configuration.run do |navigation|
     )
     primary.item(
       :key_user_logout,
-      content_tag( :span, t('admin.misc.log_out'), class:"label label-important" ),
+      content_tag( :span, t('admin.misc.log_out'), class:"btn btn-default" ),
       destroy_user_session_path(),
       method: Devise.sign_out_via,
       if: Proc.new { user_signed_in? }
     )
 
-    primary.item :key_separator3,     '&nbsp;', '#', class: 'disabled'
+    primary.item :key_separator0_5, '<hr/>', '#', class: 'disabled'
     primary.item( :key_locale,         content_tag(:span, image_tag('it.png') +"/"+ image_tag('us.png') ), '#'
     ) do |lev2_nav|
       lev2_nav.item :key_locale_it,    image_tag('it.png'), url_for( request.filtered_parameters.dup.merge('locale'=>'it') )
@@ -156,7 +178,7 @@ SimpleNavigation::Configuration.run do |navigation|
     primary.dom_class = 'nav navmenu-nav'
 
     # You can turn off auto highlighting for a specific level
-    primary.auto_highlight = false
+    primary.auto_highlight = true
   end
 
 end

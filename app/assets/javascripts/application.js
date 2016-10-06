@@ -23,5 +23,6 @@
 //= require turbolinks
 //= require turbolinks-compatibility
 //= require bootstrap.min
+//= require offcanvas
 //= require jasny-bootstrap.min
 //= require_tree .

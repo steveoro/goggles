@@ -13,11 +13,10 @@
     = form_tag( :misc_compute_fin_timing, class: 'form-horizontal', remote: true, onsubmit: "$('#loadingIndicator').show(); $('#score_calculation_result').hide(); $('#fin_highlights').hide(); $('#teams_record').hide();" ) do
       = render( partial: 'calculation_parameters' )
       = render( partial: 'score_parameters' )
-      .control-group
-        .controls
-          = submit_tag( I18n.t('misc.compute_goal_timing'), id: "btn_submit", data: {disable_with: I18n.t(:please_wait), class: 'btn disabled'}, class: 'btn' )
-          %span( id='loadingIndicator' hidden='true' )
-            = image_tag( 'indicator.gif' )
+      .form-group
+        = submit_tag( I18n.t('misc.compute_goal_timing'), id: "btn_submit", data: {disable_with: I18n.t(:please_wait), class: 'btn disabled'}, class: 'btn btn-primary' )
+        %span( id='loadingIndicator' hidden='true' )
+          = image_tag( 'indicator.gif' )
 
 #calculation_result
 #fin_highlights

@@ -7,7 +7,7 @@
       .accordion-inner
         = form_tag( :records_for_swimmer, remote: true, method: :get, class: 'form-horizontal', onsubmit: "$('#loadingIndicator').show();") do
           .row
-            .control-group
+            .form-group
               = label_tag( :swimmer, I18n.t('activerecord.models.swimmer'), for: :swimmer, class: 'control-label' )
               .controls
                 .ui-widget

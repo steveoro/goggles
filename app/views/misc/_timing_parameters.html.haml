@@ -2,11 +2,11 @@
 - default_seconds = @timing ? @timing.seconds : 0
 - default_hundreds = @timing ? @timing.hundreds : 0
 
-.control-group
+.form-group
   = label_tag( :timing, t('misc.timing'), for: :timing, class: 'control-label' )
   .controls
-    = text_field_tag( :minutes, default_minutes, class: 'input-micro' )
+    = text_field_tag( :minutes, default_minutes, class: 'form-control input-micro' )
     '
-    = text_field_tag( :seconds, default_seconds, class: 'input-micro' )
+    = text_field_tag( :seconds, default_seconds, class: 'form-control input-micro' )
     "
-    = text_field_tag( :hundreds, default_hundreds, class: 'input-micro' )
+    = text_field_tag( :hundreds, default_hundreds, class: 'form-control input-micro' )

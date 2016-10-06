@@ -1,4 +1,4 @@
-%ul.nav.navbar-nav.nav.navbar-nav-tabs#pageTop
+%ul.nav.nav-tabs#pageTop{role: "tablist"}
   = show_tab_link( params, 'radio', t('radiography.radio_tab'), swimmer_radio_path(id: @swimmer.id) )
   = show_tab_link( params, 'supermaster', t('supermaster.title'), swimmer_supermaster_path(id: @swimmer.id) )
   = show_tab_link( params, 'current_goggle_cup', @goggle_cups_tab_title, swimmer_current_goggle_cup_path(id: @swimmer.id) )

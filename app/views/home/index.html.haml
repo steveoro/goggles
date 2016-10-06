@@ -1,16 +1,17 @@
 - if user_signed_in?
-  .row
-    .row.col-xs-2
+  .col-xs-12
+    - # Articles/News flash list:
+    = render( partial: 'goggles/news_articles_list' )
+    - # Association request link:
+    = render( partial: 'goggles/associate_to_a_swimmer' ) unless current_user.has_associated_swimmer?
+    -# [Steve, 2016103] After 3+ years, we should indeed comment-out this one:
+    -# Be patient with this very very work in progress creature!
+    -#= render( partial: 'forgive_us' )
+  .col-xs-12
+    .col-xs-4
       = render( partial: 'left_shortcuts' )
-    .row.col-xs-8
-      - # Association request link:
-      = render( partial: 'goggles/associate_to_a_swimmer' ) unless current_user.has_associated_swimmer?
-      - # Articles/News flash list:
-      = render( partial: 'goggles/news_articles_list' )
-      -# [Steve, 2016103] After 3+ years, we should indeed comment-out this one:
-      -# Be patient with this very very work in progress creature!
-      -#= render( partial: 'forgive_us' )
-    .row.col-xs-2
+    .col-xs-4
+    .col-xs-4
       = render( partial: 'right_shortcuts' )
 - else
   -# Not-logged-in welcome part:

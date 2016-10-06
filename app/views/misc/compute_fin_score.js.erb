@@ -2,7 +2,7 @@ $('#loadingIndicator').hide();
 <% if flash[:error] %>
  alert('<%= escape_javascript( flash[:error] ) %>' );
 <% end %>
-$('#calculation_result').replaceWith('<%= escape_javascript( render(partial: 'score_calculation_result') ) %>');
+$('#calculation_result').replaceWith('<%= escape_javascript( render(partial: 'calculation_result', locals: {from_value: @timing.to_s, result: format_score( @standard_points )}) ) %>');
 $('#fin_highlights').replaceWith('<%= escape_javascript( render(partial: 'fin_highlights') ) %>');
 $('#teams_record').replaceWith('<%= escape_javascript( render(partial: 'teams_record') ) %>');
 $('#calculation_result').show();

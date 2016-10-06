@@ -7,14 +7,16 @@ Goggles::Application.routes.draw do
   # [Steve, 20130716] Root's route required by Devise:
   root :to => "home#index", locale: /en|it/
 
+  get "/(:locale)", locale: /en|it/, to: "home#index"
+
   scope "/" do
     scope "(:locale)", locale: /en|it/ do
       # === Home ===
-      get "home/wip",                           to: "home#wip"
-      get "home/about",                         to: "home#about"
-      get "home/contact_us",                    to: "home#contact_us"
-      get "home/maintenance",                   to: "home#maintenance"
-      get "home/tutorials",                     to: "home#tutorials"
+      match "wip",                              to: "home#wip",           via: :get,    as: "home_wip"
+      match "about",                            to: "home#about",         via: :get,    as: "home_about"
+      match "contact_us",                       to: "home#contact_us",    via: :get,    as: "home_contact_us"
+      match "maintenance",                      to: "home#maintenance",   via: :get,    as: "home_maintenance"
+      match "tutorials",                        to: "home#tutorials",     via: :get,    as: "home_tutorials"
 
       # === Socials ===
       # A user associates himself/herself with a swimmer:
@@ -233,8 +235,9 @@ Goggles::Application.routes.draw do
 #  match "*path", to: "exceptions#render_error"
 
   # TODO TEST THESE 2 and customize the error pages:
-  match "/404", to: "exceptions#render_error", via: :all
-  match "/500", to: "exceptions#render_error", via: :all
+  match "/404",  to: "exceptions#error_page", via: :all
+  match "/500",  to: "exceptions#error_page", via: :all
+#  match "*path", to: "exceptions#error_page", via: :all
 
   # Sample of regular route:
   #   match 'products/:id' => 'catalog#view'

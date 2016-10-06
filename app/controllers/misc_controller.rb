@@ -7,7 +7,7 @@ require 'wrappers/timing'
 
 = MiscController
 
-  - version:  6.002
+  - version:  6.003
   - author:   Leega, Steve A.
 
 =end

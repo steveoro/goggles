@@ -1,5 +1,5 @@
 .goggles-category-gap#pageTop
-  %ul.nav.navbar-nav.nav.navbar-nav-tabs
+  %ul.nav.nav-tabs{role: "tablist"}
     - if @meeting.invitation
       = show_tab_link( params, 'show_invitation', t('meeting.invitation'), meeting_show_invitation_path( id: @meeting.id ) )
 

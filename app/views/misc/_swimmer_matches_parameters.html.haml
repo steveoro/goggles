@@ -1,5 +1,5 @@
 .col-xs-4
-  .control-group
+  .form-group
     = label_tag( :local_swimmer, t('misc.local_swimmer'), for: :local_swimmer, class: 'control-label' )
     .controls
       .ui-widget.text-left
@@ -9,7 +9,7 @@
             "data-provide"=>"typeahead", placeholder: I18n.t('combobox_3char_tooltip')} )             |
 .col-xs-1
 .col-xs-4
-  .control-group
+  .form-group
     = label_tag( :visitor_swimmer, t('misc.visitor_swimmer'), for: :visitor_swimmer, class: 'control-label' )
     .controls
       .ui-widget.text-left

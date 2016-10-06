@@ -5,13 +5,17 @@
 
 = ApplicationController
 
-  - version:  4.00.839
+  - version:  6.003
   - author:   Steve A.
 
   Main Application controller.
 =end
 class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
+
+  # Use a custom page for routing errors:
+  rescue_from ActionController::RoutingError,
+              with: -> { render(controller: :exceptions, action: :error_page_path, error: 404) }
 
   before_action :set_locale, :check_maintenance_mode
 

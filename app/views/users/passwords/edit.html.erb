@@ -4,21 +4,21 @@
     <%= devise_error_messages! %>
     <%= f.hidden_field :reset_password_token %>
 
-    <div class="control-group">
+    <div class="form-group">
         <%= f.label( :password, t('devise.edit_password_new_password'), for: :user_password, class: 'control-label' ) %>
         <div class="controls">
             <%= f.password_field :password, autofocus: true %>
         </div>
     </div>
 
-    <div class="control-group">
+    <div class="form-group">
         <%= f.label( :password_confirmation, t('devise.edit_password_confirm'), for: :user_password_confirmation, class: 'control-label' ) %>
         <div class="controls">
             <%= f.password_field :password_confirmation %>
         </div>
     </div>
 
-    <div class="control-group">
+    <div class="form-group">
         <div class="controls">
             <%= f.submit( t('devise.edit_password_submit') ) %>
         </div>

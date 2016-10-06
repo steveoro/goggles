@@ -15,21 +15,29 @@
 
     <hr/>
 
-    <p><%= I18n.t(:title_wrong_meeting_result) %>
-    <%= mail_to( "leegaweb@gmail.com" , "Leega" ,
-                 subject: "[#{GogglesCore::AppConstants::WEB_APP_NAME}] #{I18n.t(:title_wrong_meeting_result)}",
-                 encode: "javascript" ) %>
-    </p>
+    <ul>
+    <li>
+        <%= I18n.t(:title_wrong_meeting_result) %>
+        <%= mail_to( "leegaweb@gmail.com" , "Leega" ,
+                     subject: "[#{GogglesCore::AppConstants::WEB_APP_NAME}] #{I18n.t(:title_wrong_meeting_result)}",
+                     encode: "javascript" ) %>
+        <p/>
+    </li>
 
-    <p><%= I18n.t(:title_feature_request) %>
-    <%= mail_to( "fasar.software@email.it" , "Steve" ,
-                 subject: "[#{GogglesCore::AppConstants::WEB_APP_NAME}] #{I18n.t(:title_feature_request)}",
-                 encode: "javascript" ) %>
-    </p>
+    <li>
+        <%= I18n.t(:title_feature_request) %>
+        <%= mail_to( "fasar.software@email.it" , "Steve" ,
+                     subject: "[#{GogglesCore::AppConstants::WEB_APP_NAME}] #{I18n.t(:title_feature_request)}",
+                     encode: "javascript" ) %>
+        <p/>
+    </li>
 
-    <p><%= I18n.t(:title_enable_passages_editing) %>
-    <%= mail_to( "leegaweb@gmail.com" , "Leega" ,
-                 subject: "[#{GogglesCore::AppConstants::WEB_APP_NAME}] #{I18n.t(:title_enable_passages_editing)}",
-                 encode: "javascript" ) %>
-    </p>
+    <li>
+        <%= I18n.t(:title_enable_passages_editing) %>
+        <%= mail_to( "leegaweb@gmail.com" , "Leega" ,
+                     subject: "[#{GogglesCore::AppConstants::WEB_APP_NAME}] #{I18n.t(:title_enable_passages_editing)}",
+                     encode: "javascript" ) %>
+        <p/>
+    </li>
+    <ul/>
 </div>

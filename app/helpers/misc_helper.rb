@@ -19,14 +19,16 @@ module MiscHelper
     rendered_html = hidden_field_tag( field_name, default_value ) + "\r\n".html_safe
     display_field_name = field_name.to_s.gsub( '_id', '_label' )
                                                     # For each defined option couple:
-    rendered_html += "<div data-toggle=\"buttons-radio\">\r\n".html_safe
+    rendered_html += "<div class=\"btn-group btn-group-sm\" role=\"group\">\r\n".html_safe
     array_of_labels_and_keys_couples.each do |label, key|
       rendered_html += link_to(
         content_tag( :span, get_image_tag_for( field_name, key, label ) ),
-        '#',
+        "##{field_name}",
         {
           id: "btn_#{field_name}",
-          class: 'btn',
+          class: 'btn btn-default',
+          role: 'button',
+          'aria-describedby' => display_field_name,
           'onclick' => "$('##{field_name}').val(#{key}); $('##{display_field_name}').text('#{label}')",
           'data-turbolinks'=>'false',
           'data-toggle' => 'tooltip',
@@ -35,14 +37,11 @@ module MiscHelper
       )
       rendered_html += "\r\n".html_safe
     end
+    rendered_html += "</div>\r\n".html_safe
     if show_additional_display_label
       default_label_text = array_of_labels_and_keys_couples.kind_of?(Array) && default_value && array_of_labels_and_keys_couples[default_value] ? array_of_labels_and_keys_couples[default_value].first : ''
-      rendered_html += content_tag( :span, default_label_text, id: display_field_name )
-      # [Steve A., 20160127] Alternative rendering with a disabled text field as current selection label:
-#      rendered_html += "<p></p>\r\n".html_safe
-#      rendered_html += text_field_tag( display_field_name, '', class: 'input-mini disabled', disabled: true )
+      rendered_html += content_tag( :span, default_label_text, id: display_field_name, class: "help-block" )
     end
-    rendered_html += "</div>\r\n".html_safe
     rendered_html.html_safe
   end
   #-- -------------------------------------------------------------------------

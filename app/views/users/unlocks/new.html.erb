@@ -3,14 +3,14 @@
 <%= form_for(resource, as: resource_name, url: unlock_path(resource_name), html: {method: :post, class: 'form-horizontal'}) do |f| %>
     <%= devise_error_messages! %>
 
-    <div class="control-group">
+    <div class="form-group">
         <%= f.label( :email, for: :user_email, class: 'control-label' ) %>
         <div class="controls">
             <%= f.email_field :email, autofocus: true %>
         </div>
     </div>
 
-    <div class="control-group">
+    <div class="form-group">
         <div class="controls">
             <%= f.submit( t('devise.unlock_user_submit') ) %>
         </div>

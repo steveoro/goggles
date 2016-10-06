@@ -1,6 +1,6 @@
 - unless message_body.nil?
   .row
-    .control-group.col-xs-3
+    .form-group.col-xs-3
       = label_tag( :text_message, I18n.t('social.message_title') +':', :for => :text_message, class: 'control-label' )
       .controls
         = text_area_tag( :text_message, message_body, class: 'input-xxlarge' )
@@ -19,7 +19,7 @@
 .row
   %hr
 .row
-  .control-group
+  .form-group
     .controls
       = f.submit( @submit_title, id: 'submitBtn', :data => {disable_with: I18n.t(:please_wait), class: 'btn disabled'}, class: 'btn' )
       %span(id='loadingIndicator' hidden='true')

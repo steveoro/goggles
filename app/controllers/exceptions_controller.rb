@@ -14,10 +14,9 @@ class ExceptionsController < ApplicationController
   layout 'application'
 
   # Catches & renders a generic application error
-  def render_error
-    @exception = env["action_dispatch.exception"]
-    @status_code = ActionDispatch::ExceptionWrapper.new( env, @exception ).status_code
-    log_error( @exception, true ) if @exception
+  def error_page
+    @status_code = params[:error]
+    log_error( @status_code, true ) if @status_code
     render :error_page, status: @status_code, layout: true
   end
   #-- -------------------------------------------------------------------------

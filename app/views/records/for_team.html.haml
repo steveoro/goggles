@@ -7,7 +7,7 @@
       .accordion-inner
         = form_tag( :records_for_team, remote: true, method: :get, class: 'form-horizontal', onsubmit: "$('#loadingIndicator').show();") do
           .row
-            .control-group
+            .form-group
               #tooltipLabel= label_tag( :team, I18n.t('activerecord.models.team'), for: :team, class: 'control-label' )
               .controls
                 .ui-widget
