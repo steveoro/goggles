@@ -29,7 +29,7 @@
         = f.input :distance, label: false, wrapper: false
       .col-xs-4.g-w320
         .ui-widget
-          = f.association( :exercise, label: false, wrapper: false, collection: @exercise_options_array, input_html: { class: 'input-xlarge combobox' } )
+          = f.association( :exercise, label: false, wrapper: false, collection: @exercise_options_array, input_html: { class: 'input-lg combobox' } )
       .col-xs-1.g-w40
         .ui-widget
           = f.input :start_and_rest, label: false, wrapper: false, collection: @start_rest_options_array, input_html: { class: 'combobox' }

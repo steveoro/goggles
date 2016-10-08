@@ -1,23 +1,24 @@
-.accordion#accordionFlt
-  .accordion-group
-    .accordion-inner
-      .accordion-heading
-        %h3= @title
-    .accordion-body
-      .accordion-inner
-        = form_tag( :records_for_season_type, remote: true, method: :get, class: 'form-horizontal', onsubmit: "$('#loadingIndicator').show();") do
-          .row
-            .form-group
-              #tooltipLabel= label_tag( :season_type, I18n.t('activerecord.models.season_type'), for: :season_type, class: 'control-label', 'data-toggle'=>'tooltip', 'title'=>I18n.t('combobox_generic_tooltip') )
-              .controls
-                .ui-widget
-                  = select( :season_type, :id, SeasonType.to_dropdown(), { class: 'input-xlarge' } )
-              %script
-                $('#season_type_id').combobox();
-                $('#tooltipLabel').tooltip();
-          .row
-            .controls
-              = submit_tag( I18n.t(:submit), data: { disable_with: I18n.t(:please_wait), class: 'btn disabled' }, class: 'btn' )
-              %span(id='loadingIndicator' hidden='true')
-                = image_tag( 'indicator.gif' )
+.container
+  .row.col-xs-12
+    .goggles-div-centeralign
+      %h3= @title
+  .row.col-xs-12
+    = form_tag( :records_for_season_type, remote: true, method: :get, class: 'form-horizontal', onsubmit: "$('#loadingIndicator').show();") do
+      .row.col-xs-12.form-group
+        .col-xs-3
+          #tooltipLabel= label_tag( :season_type, I18n.t('activerecord.models.season_type'), for: :season_type, class: 'control-label', 'data-toggle'=>'tooltip', 'title'=>I18n.t('combobox_generic_tooltip') )
+        .col-xs-5
+          .ui-widget
+            = select( :season_type, :id, SeasonType.to_dropdown(), { class: 'input-lg' } )
+      .row.col-xs-12.form-group
+        .col-xs-5
+          = submit_tag( I18n.t(:submit), data: { disable_with: I18n.t(:please_wait), class: 'btn disabled' }, class: 'btn btn-primary' )
+          %span(id='loadingIndicator' hidden='true')
+            = image_tag( 'indicator.gif' )
+
 #records_4x_grid
+%p/
+
+%script
+  $('#season_type_id').combobox();
+  $('#tooltipLabel').tooltip();

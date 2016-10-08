@@ -1,20 +1,21 @@
 - if @grid_builder
   - cache( @grid_builder.cache_key ) do
-    .row#records_4x_grid
+    .row.col-xs-12#records_4x_grid
       .goggles-category-gap#pageTop
         %h2= @title
         -# --- Sub-legend for each gender + pool-type
-        .navbar
+        .row.col-xs-12
           - @grid_builder.gender_types.each do |gender_type|
-            = link_to("#", {'data-turbolinks'=>'false', class: 'goggles-small-brand'}) do
-              = gender_type.i18n_short + ':'
-            %ul.nav.navbar-nav
+            %ul.nav.nav-pills
+              %li
+                .btn.disabled
+                  = gender_type.i18n_short + ':'
               - @grid_builder.pool_types.each do |pool_type|
                 %li
-                  = link_to("##{gender_type.code}#{pool_type.code}", {'data-turbolinks'=>'false', class: 'goggles-nav-compact'}) do
+                  = link_to("##{gender_type.code}#{pool_type.code}", {'data-turbolinks'=>'false', class: 'btn'}) do
                     = pool_type.i18n_short
               .ghost-divider-vertical
       - @grid_builder.gender_types.each do |gender_type|
         - @grid_builder.pool_types.each do |pool_type|
           = render( partial: 'records_grid', locals: { gender_type: gender_type, pool_type: pool_type, grid_builder: @grid_builder } )
-    .row.goggles-category-gap
+    .row.col-xs-12.goggles-category-gap
