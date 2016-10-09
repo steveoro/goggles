@@ -89,37 +89,36 @@
     }
   });
 
+  var typeAheadSwimmerOptions = {
+    name:   'swimmer-names',
+    // This is just for the displaying limit for the menu, not the actual returned results:
+    limit:  10,
+    asynch: true,
+    source: suggestedSwimmerNames,
+    // Displayable value for selections:
+    display: function( datum ) {
+      // Combine the individual tokens into a displayable value:
+      var tokens = detokenizeSwimmerName( datum );
+      var namePart = tokens[0];
+      var yearPart = tokens[1];
+      return namePart + ' (' + yearPart + ')';
+    },
+    templates: {
+      suggestion: function( datum ) {
+        var tokens = detokenizeSwimmerName( datum );
+        // DEBUG
+        //console.log('tokens: ', tokens);
+        return '<div>' + tokens[0] + '&nbsp;<i>(' + tokens[1] + ')</i></div>'
+      }
+    }
+  };
+
   // (Wait for the page to be ready)
   $( function() {
     // Define the typeahead callback handlers:
-    $( ".typeahead" ).typeahead(
-      {
-        minLength: 3,
-        highlight: true
-      },
-      {
-        name:   'swimmer-names',
-        // This is just for the displaying limit for the menu, not the actual returned results:
-        limit:  10,
-        asynch: true,
-        source: suggestedSwimmerNames,
-        // Displayable value for selections:
-        display: function( datum ) {
-          // Combine the individual tokens into a displayable value:
-          var tokens = detokenizeSwimmerName( datum );
-          var namePart = tokens[0];
-          var yearPart = tokens[1];
-          return namePart + ' (' + yearPart + ')';
-        },
-        templates: {
-          suggestion: function( datum ) {
-            var tokens = detokenizeSwimmerName( datum );
-            // DEBUG
-            //console.log('tokens: ', tokens);
-            return '<div>' + tokens[0] + '&nbsp;<i>(' + tokens[1] + ')</i></div>'
-          }
-        }
-      }
+    $("#local_swimmer_name, #visitor_swimmer_name").typeahead(
+      { minLength: 3, highlight: true },
+      typeAheadSwimmerOptions
     ).bind('typeahead:select', function( ev, suggestion ) {
         // DEBUG
         //console.log('Selection: ', suggestion);
