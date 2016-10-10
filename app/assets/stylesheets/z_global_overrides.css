@@ -56,12 +56,27 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
     padding: 2px;
     vertical-align: middle;
 }
+
 select, input[type="file"] {
 /* [Steve, 20161006] These values are not mobile-friendly:
     height: 22px;
 */
     line-height: 20px;
 }
+
+
+/* Bottom-side nav legend (#show_full & other very long views) */
+ul.navpill_side {
+    line-height: 1em;
+    font-size: 14px;
+    padding: 2px;
+}
+ul.navpill_side>li>a {
+    padding: 5px;
+    text-decoration: none;
+    text-align: center;
+}
+
 
 .ui-autocomplete {
 	max-height: 218px;

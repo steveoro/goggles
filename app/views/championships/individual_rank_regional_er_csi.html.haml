@@ -9,17 +9,18 @@
         %p= I18n.t('meeting_stats.rank_disclaimer')
 
       %p= @individual_ranking.get_html_ranking_description
-      %ul.col-xs-offset-10.col-xs-2.nav.navbar-nav.nav.navbar-nav-tab.nav.navbar-nav-stacked.navbar-fixed-bottom.goggles-divlist-odd
+      %ul.col-xs-offset-10.col-xs-2.col-sm-offset-11.col-sm-1.col-md-offset-11.col-md-1.nav.nav-pills.nav-stacked.navbar-fixed-bottom.goggles-divlist-odd.navpill_side
         %li
-          = link_to(I18n.t(:top_of_page), "#pageTop", {'data-turbolinks'=>'false'})
+          = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+            = image_tag('bullet_arrow_up.png')
         - GenderType.individual_only.sort_by_courtesy.each do |gender_type|
           %li
             = link_to("\##{gender_type.code}", {'data-turbolinks'=>'false'}) do
-              = gender_type.i18n_description
+              = "- #{ gender_type.i18n_short } -"
           - @category_types.each do |category_type|
             %li
               = link_to("\##{gender_type.code}-#{category_type.code}", {'data-turbolinks'=>'false'}) do
-                = "- #{category_type.get_full_name}"
+                = category_type.get_short_name
       .col-xs-10
         - GenderType.individual_only.sort_by_courtesy.each do |gender_type|
           .row.goggles-category-gap{'id'=>"#{gender_type.code}"}
