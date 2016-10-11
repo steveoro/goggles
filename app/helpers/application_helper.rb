@@ -103,7 +103,7 @@ module ApplicationHelper
       # If the path specified is a null anchor, we'll assume some of the required
       # data is missing or protected behind login:
       if action_path == '#'
-        content_tag( :li, class: 'disabled', 'data-toggle' => 'tooltip', 'title' => I18n.t(:login_to_view_this_data) ) do
+        content_tag( :li, class: 'disabled', 'data-turbolinks'=>'false', 'data-toggle' => 'tooltip', 'title' => I18n.t(:login_to_view_this_data) ) do
           link_to( label_text, action_path )
         end
       else

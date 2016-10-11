@@ -1,87 +1,84 @@
 - has_goggle_cup = @team.has_goggle_cup_at?( @meeting.header_date )
-.col-xs-10
-  %div{'class'=>"goggles-category-gap"}
-    %table.table.table-striped.table-bordered.table-hover.table-condensed
-      %tbody
-        - @meeting_events_list.each do |meeting_event|
-          - is_a_relay = meeting_event.event_type.is_a_relay
-          -# --- Header with unique ID for each starting event_type "group":
-          %tr{'class'=>"#{is_a_relay ? 'success' : 'info'}", 'id'=>"#{meeting_event.event_type.code}"}
-            %td{'colspan'=>'4'}
-              %b= meeting_event.event_type.i18n_description
-            %td.goggles-centeralign
-              %i= I18n.t('meeting.standard')
-            %td.goggles-centeralign
-              %i= I18n.t('meeting.meeting')
+%table.table.table-striped.table-bordered.table-hover.table-condensed
+  %tbody
+    - @meeting_events_list.each do |meeting_event|
+      - is_a_relay = meeting_event.event_type.is_a_relay
+      -# --- Header with unique ID for each starting event_type "group":
+      %tr{'class'=>"#{is_a_relay ? 'success' : 'info'}", 'id'=>"#{meeting_event.event_type.code}"}
+        %td{'colspan'=>'4'}
+          %b= meeting_event.event_type.i18n_description
+        %td.goggles-centeralign
+          %i= I18n.t('meeting.standard')
+        %td.goggles-centeralign
+          %i= I18n.t('meeting.meeting')
+        - if has_goggle_cup
+          %td.goggles-rightalign
+            - unless is_a_relay
+              = @team.get_current_goggle_cup_name_at( @meeting.header_date )
+        - if @meeting.has_start_list and !is_a_relay
+          %td.goggles-rightalign
+            = '(' + t('meeting.entry_time') + ')'
+      - # Individual results
+      - unless is_a_relay
+        - meeting_event.meeting_individual_results.for_team(@team).sort_by_swimmer.each do |individual_result|
+          - mir = MeetingIndividualResultDecorator.decorate( individual_result )
+          %tr
+            %td.col-xs-4
+              = link_to(meeting_show_swimmer_results_path(:id=>@meeting.id, :team_id=>@team.id, :swimmer_id=>mir.swimmer_id), {'id'=>"swimmer#{mir.id}"}, 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip')) do
+                = mir.get_swimmer_name
+            %td.col-xs-1
+              = mir.category_type_short_name
+            %td.col-xs-1.goggles-rightalign
+              = mir.show_any_rank_medal
+              = mir.get_rank_description
+            %td.col-xs-1.goggles-rightalign
+              = mir.get_timing
+            %td.col-xs-1.goggles-rightalign
+              = mir.get_formatted_standard_points(true)
+            %td.col-xs-1.goggles-rightalign
+              = mir.get_formatted_individual_points(true)
             - if has_goggle_cup
-              %td.goggles-rightalign
-                - unless is_a_relay
-                  = @team.get_current_goggle_cup_name_at( @meeting.header_date )
-            - if @meeting.has_start_list and !is_a_relay
-              %td.goggles-rightalign
-                = '(' + t('meeting.entry_time') + ')'
-          - # Individual results
-          - unless is_a_relay
-            - meeting_event.meeting_individual_results.for_team(@team).sort_by_swimmer.each do |individual_result|
-              - mir = MeetingIndividualResultDecorator.decorate( individual_result )
-              %tr
-                %td.col-xs-4
-                  = link_to(meeting_show_swimmer_results_path(:id=>@meeting.id, :team_id=>@team.id, :swimmer_id=>mir.swimmer_id), {'id'=>"swimmer#{mir.id}"}, 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip')) do
-                    = mir.get_swimmer_name
-                %td.col-xs-1
-                  = mir.category_type_short_name
-                %td.col-xs-1.goggles-rightalign
-                  = mir.show_any_rank_medal
-                  = mir.get_rank_description
-                %td.col-xs-1.goggles-rightalign
-                  = mir.get_timing
-                %td.col-xs-1.goggles-rightalign
-                  = mir.get_formatted_standard_points(true)
-                %td.col-xs-1.goggles-rightalign
-                  = mir.get_formatted_individual_points(true)
-                - if has_goggle_cup
-                  %td.col-xs-2.goggles-rightalign
-                    = mir.get_formatted_goggle_cup_points(true)
-                - if @meeting.has_start_list
-                  %td.col-xs-1.goggles-rightalign
-                    - if @meeting.meeting_entries.where(['swimmer_id = ? AND meeting_program_id = ?', mir.swimmer_id, mir.meeting_program_id]).count > 0
-                      = @meeting.meeting_entries.where(['swimmer_id = ? AND meeting_program_id = ?', mir.swimmer_id, mir.meeting_program_id]).first.get_timing
-          -# --- Team Relay result rows:
-          - if is_a_relay
-            - meeting_event.meeting_relay_results.for_team(@team).sort_by_category.each do |relay_result|
-              - mrr = MeetingRelayResultDecorator.decorate( relay_result )
-              %tr
-                %td
-                  %b= mrr.get_relay_name
-                %td
-                  = mrr.gender_type.code
-                  = '-'
-                  = mrr.category_type.short_name
-                %td.goggles-rightalign
-                  = mrr.show_any_rank_medal()
-                  = mrr.get_rank_description
-                %td.goggles-rightalign
-                  = mrr.get_timing
-                %td.goggles-rightalign
-                  = mrr.get_formatted_standard_points(true)
-                %td.goggles-rightalign
-                  = mrr.get_formatted_meeting_points(true)
-                - if has_goggle_cup
+              %td.col-xs-2.goggles-rightalign
+                = mir.get_formatted_goggle_cup_points(true)
+            - if @meeting.has_start_list
+              %td.col-xs-1.goggles-rightalign
+                - if @meeting.meeting_entries.where(['swimmer_id = ? AND meeting_program_id = ?', mir.swimmer_id, mir.meeting_program_id]).count > 0
+                  = @meeting.meeting_entries.where(['swimmer_id = ? AND meeting_program_id = ?', mir.swimmer_id, mir.meeting_program_id]).first.get_timing
+      -# --- Team Relay result rows:
+      - if is_a_relay
+        - meeting_event.meeting_relay_results.for_team(@team).sort_by_category.each do |relay_result|
+          - mrr = MeetingRelayResultDecorator.decorate( relay_result )
+          %tr
+            %td
+              %b= mrr.get_relay_name
+            %td
+              = mrr.gender_type.code
+              = '-'
+              = mrr.category_type.short_name
+            %td.goggles-rightalign
+              = mrr.show_any_rank_medal()
+              = mrr.get_rank_description
+            %td.goggles-rightalign
+              = mrr.get_timing
+            %td.goggles-rightalign
+              = mrr.get_formatted_standard_points(true)
+            %td.goggles-rightalign
+              = mrr.get_formatted_meeting_points(true)
+            - if has_goggle_cup
+              %td
+            - if mrr.meeting_relay_swimmers.count > 0
+              - mrr.meeting_relay_swimmers.sort_by_order.each do |meeting_relay_swimmer|
+                %tr
+                  %td.goggles-rightalign{'colspan'=>'3'}
+                    %i= "#{meeting_relay_swimmer.get_swimmer_name} (#{@meeting.header_date.year - meeting_relay_swimmer.swimmer.year_of_birth}) - #{meeting_relay_swimmer.get_stroke_type}"
+                  %td.goggles-rightalign
+                    = meeting_relay_swimmer.get_timing
                   %td
-                - if mrr.meeting_relay_swimmers.count > 0
-                  - mrr.meeting_relay_swimmers.sort_by_order.each do |meeting_relay_swimmer|
-                    %tr
-                      %td.goggles-rightalign{'colspan'=>'3'}
-                        %i= "#{meeting_relay_swimmer.get_swimmer_name} (#{@meeting.header_date.year - meeting_relay_swimmer.swimmer.year_of_birth}) - #{meeting_relay_swimmer.get_stroke_type}"
-                      %td.goggles-rightalign
-                        = meeting_relay_swimmer.get_timing
-                      %td
-                      %td
-                      - if has_goggle_cup
-                        %td
-                      - if @meeting.has_start_list
-                        %td
+                  %td
+                  - if has_goggle_cup
+                    %td
+                  - if @meeting.has_start_list
+                    %td
 
-
-.row
-  .col-xs-12
+.row.goggles-category-gap.col-xs-12
+  &nbsp;

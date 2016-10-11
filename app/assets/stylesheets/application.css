@@ -59,6 +59,11 @@
 	line-height: 0px;
 }
 */
+.nav-pills>li>a.goggles-nav-compact {
+    padding: 5px;
+}
+
+
 .navbar .ghost-divider-vertical {
     height: 20px;
     margin: 0px 9px;

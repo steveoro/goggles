@@ -8,18 +8,21 @@
           $('#headerFlt').tooltip({ placement: 'bottom' });
     .accordion-body.collapse.in#collapseFlt
       .accordion-inner
-        .row
+        .row.col-xs-12
           .col-xs-2
             = I18n.t('name')
           .col-xs-10
             = grid_filter @teams_grid, :flt_team_name
-        .row
-          .col-xs-12
-            .external-buttons
-              %button.btn.btn-primary.wg-external-submit-button{'data-grid-name' => 'grid'}
-                = I18n.t(:submit)
-              %button.btn.wg-external-reset-button{'data-grid-name' => 'grid'}
-                = I18n.t(:reset)
-.row
-  .col-xs-12
-    = render_grid( @teams_grid )
+        .row.col-xs-12
+          &nbsp;
+        .row.col-xs-12
+          .external-buttons
+            %button.btn.btn-primary.wg-external-submit-button{'data-grid-name' => 'grid'}
+              = I18n.t(:submit)
+            %button.btn.btn-default.wg-external-reset-button{'data-grid-name' => 'grid'}
+              = I18n.t(:reset)
+        .row.col-xs-12
+          &nbsp;
+
+.row.col-xs-12
+  = render_grid( @teams_grid )

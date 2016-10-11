@@ -605,6 +605,8 @@ class MeetingsController < ApplicationController
   # Search meeting results for a specific swimmer
   #
   def search_swimmer
+    # [Steve, 20161001] We need to whitelist all parameters for the search query:
+    params.permit!()
     @title = I18n.t(:search_by_swimmer, { scope: [:meeting] })
     @swimmers_grid = initialize_grid(
       Swimmer,
@@ -620,6 +622,8 @@ class MeetingsController < ApplicationController
   # Search meeting results for a specific team
   #
   def search_team
+    # [Steve, 20161001] We need to whitelist all parameters for the search query:
+    params.permit!()
     @title = I18n.t(:search_by_team, { scope: [:meeting] })
     @teams_grid = initialize_grid(
       Team,

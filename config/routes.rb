@@ -5,7 +5,7 @@ Goggles::Application.routes.draw do
   mount GogglesCore::Engine => "/"
 
   # [Steve, 20130716] Root's route required by Devise:
-  root :to => "home#index", locale: /en|it/
+  root to: "home#index", locale: /en|it/
 
   get "/(:locale)", locale: /en|it/, to: "home#index"
 
