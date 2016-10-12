@@ -1,5 +1,7 @@
 # Use this setup block to configure all options available in SimpleForm.
 SimpleForm.setup do |config|
+  config.default_input_size = 30
+
   # Wrappers are used by the form builder to generate a
   # complete input. You can remove any component from the
   # wrapper, change the order or even add your own to the
@@ -55,7 +57,7 @@ SimpleForm.setup do |config|
   config.boolean_style = :nested
 
   # Default class for buttons
-  config.button_class = 'btn'
+  config.button_class = 'btn btn-default'
 
   # Method used to tidy up errors. Specify any Rails Array method.
   # :first lists the first message for each field.
@@ -139,4 +141,10 @@ SimpleForm.setup do |config|
 
   # Cache SimpleForm inputs discovery
   # config.cache_discovery = !Rails.env.development?
+
+  # Wrappers for forms and inputs using the Twitter Bootstrap toolkit.
+  # Check the Bootstrap docs (http://twitter.github.com/bootstrap)
+  # to learn about the different styles for forms and inputs,
+  # buttons and other elements.
+  config.default_wrapper = :bootstrap
 end

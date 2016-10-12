@@ -99,6 +99,7 @@ it:
     pool: "Piscina"
     federation: "Federazione"
     scheduled_date: "Data"
+    select_scheduled_date: "Scegli la data di inizio"
     pool_type: "Vasca"
     meeting: "Meeting"
     meeting_program: "Programma gare"

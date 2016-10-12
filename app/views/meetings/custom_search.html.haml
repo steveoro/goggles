@@ -13,28 +13,29 @@
         .row.col-xs-12
           .col-xs-2
             = I18n.t('meeting_calendar.federation')
-          .col-xs-10
+          .col-xs-6
             = grid_filter @meetings_grid, :flt_season_type_id
         .row.col-xs-12
           .col-xs-2
             = I18n.t('meeting_calendar.season')
-          .col-xs-10
-            .ui-widget
-              = grid_filter @meetings_grid, :flt_season_id
+          .col-xs-8
+            = grid_filter @meetings_grid, :flt_season_id
         .row.col-xs-12
           .col-xs-2
             = I18n.t('meeting_calendar.meeting')
-          .col-xs-10
+          .col-xs-8
             = grid_filter @meetings_grid, :flt_description
+        .row.col-xs-12
+          %br/
         .row.col-xs-12
           .col-xs-2
             = I18n.t('meeting_calendar.pool_type')
-          .col-xs-10
+          .col-xs-4
             = grid_filter @meetings_grid, :flt_pool_type
         .row.col-xs-12
           .col-xs-2
-            = I18n.t(:date_from_to)
-          .col-xs-10
+            = I18n.t('meeting_calendar.scheduled_date')
+          .col-xs-8
             = grid_filter @meetings_grid, :flt_entry_header_date
         .row.col-xs-12
           &nbsp;
@@ -51,6 +52,3 @@
 
 .row.col-xs-12
   = render_grid( @meetings_grid )
-
-%script
-  $('#grid_f_season_id').combobox();

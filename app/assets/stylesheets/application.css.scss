@@ -16,6 +16,9 @@
  *= require_tree .
  *= require_self
  */
+@import "font-awesome-sprockets";
+@import "font-awesome";
+
 /* ----- Navbar & Titlebar ----- */
 #goggles-inner-navbar {
     min-height: 26px;

@@ -99,6 +99,7 @@ en:
     pool: "Swimming Pool"
     federation: "Federation"
     scheduled_date: "Date"
+    select_scheduled_date: "Choose the scheduled date"
     pool_type: "Pool"
     meeting: "Meeting"
     meeting_program: "Programma gare"

@@ -51,22 +51,27 @@
     end
 
     g.column(
-        name: I18n.t('meeting_calendar.scheduled_date'),
-        attribute: 'header_date',
+        name: I18n.t('date_from_to'),
+        attribute: 'scheduled_date',
+        assoc: :meeting_sessions,
+        filter_type: :jquery_datepicker,
         detach_with_id: :flt_entry_header_date
     ) do |meeting|
-    	session_date_list = []
-    	session_date = ''
-        meeting.get_session_dates.split("\r\n").each do |scheduled_date|
-          if session_date != scheduled_date
-          	session_date_list << scheduled_date
-            session_date = scheduled_date
-          else
-          	session_date_list << ''
-          end
-        end
-        session_date_list.join('<br><br>').html_safe
+        meeting.meeting_sessions.sort_by_order.first.scheduled_date.to_s(:db)
     end
+#    ) do |meeting|
+#    	session_date_list = []
+#    	session_date = ''
+#        meeting.get_session_dates.split("\r\n").each do |scheduled_date|
+#          if session_date != scheduled_date
+#          	session_date_list << scheduled_date
+#            session_date = scheduled_date
+#          else
+#          	session_date_list << ''
+#          end
+#        end
+#        session_date_list.join('<br><br>').html_safe
+#    end
 
     g.column(
         name: I18n.t('meeting_calendar.meeting_program'),
@@ -82,3 +87,13 @@
     	meeting.decorate.get_linked_swimming_pool( :get_city_and_attributes )
     end
 end -%>
+
+
+<script>
+/*
+  // (Wait for the page to be ready)
+  $( function() {
+      $('#grid_f_season_id').combobox();
+  });
+*/
+</script>

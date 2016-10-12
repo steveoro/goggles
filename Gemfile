@@ -13,6 +13,8 @@ gem "mysql2"
 gem 'puma', '~> 3.0'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
+# [Steve, 20161005] Font Awesome is used by WiceGrid instead of the old icons:
+gem 'font-awesome-sass', '~> 4.6.2'
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
 # Use CoffeeScript for .coffee assets and views
@@ -57,9 +59,8 @@ gem "goggles_core", git: "https://github.com/steveoro/goggles_core", branch: "ra
 gem "simple-navigation"
 gem 'simple-navigation-bootstrap'
 
-# FIXME Testing this fork while waiting for master to catch on Rails5:
+gem "wice_grid", git: "https://github.com/fasar-sw/wice_grid", branch: "rails5"
 # (original master is located at /leikind/wice_grid)
-gem "wice_grid", git: "https://github.com/lewis-fidlers/wice_grid", branch: "rails5"
 
 # [Steve] Customized version. For Facebook-like friendship management
 # XXX When using ssh key use the protocol below:

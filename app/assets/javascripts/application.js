@@ -13,13 +13,13 @@
 //= require jquery.turbolinks
 //= require jquery_ujs
 //= require jquery-ui.min
+//= require wice_grid
 //= require jquery.ui.datepicker.min
 //= require cocoon
 //= require jquery.flot.min
 //= require jquery.colorhelpers.min
 //= require jquery.jqplot.min
 //= require jqplot.meterGaugeRenderer.min
-//= require wice_grid
 //= require turbolinks
 //= require turbolinks-compatibility
 //= require bootstrap.min
