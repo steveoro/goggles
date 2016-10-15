@@ -1,42 +1,41 @@
 = render( partial: 'tabs_and_radio_title' )
-
 - cache( cache_key_for_swimmer( 'full_history_1', @swimmer.id, @max_updated_at ) ) do
-  .row#pageTop
+  .row.col-xs-12#pageTop
     - PoolType.only_for_meetings.each do |pool_type|
-      .col-xs-6.graph-container-full
+      .col-xs-6.graph-container-half
         .graph-placeholder-full{ 'id' => "pie#{pool_type.code}" }
-  .row
-    - PoolType.only_for_meetings.each do |pool_type|
-      .col-xs-6
-        .col-xs-offset-5
-          = link_to("##{pool_type.code}", {'data-turbolinks'=>'false'}) do
-            = pool_type.i18n_description
+        %br/
+        .col-xs-offset-4
+          %ul.nav.nav-pills
+            %li
+              = link_to("##{pool_type.code}", {'data-turbolinks'=>'false'}) do
+                = pool_type.i18n_description
 
-  .row.goggles-category-gap#full_history_by_date_grid
-    - PoolType.only_for_meetings.each do |pool_type|
-      .row
-        .goggles-category-gap{ 'id' => "#{pool_type.code}" }
-          %h3
-            = "#{pool_type.i18n_description}"
-            = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
-              = image_tag('bullet_arrow_up.png')
-        %table.table.table-striped.table-bordered.table-hover.table-condensed
-          %tbody
-            %tr{'class'=>'info'}
+  .goggles-category-gap#full_history_1
+  - PoolType.only_for_meetings.each do |pool_type|
+    .row.col-xs-12
+      .goggles-category-gap{ 'id' => "#{pool_type.code}" }
+        %h3
+          = "#{pool_type.i18n_description}"
+          = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+            = image_tag('bullet_arrow_up.png')
+      %table.table.table-striped.table-bordered.table-hover.table-condensed
+        %tbody
+          %tr{'class'=>'info'}
+            %td.goggles-centeralign
+              %b= I18n.t('meeting.meeting')
+            - event_list = @full_history_by_date[pool_type.code][0]
+            - event_list.each do |event|
               %td.goggles-centeralign
-                %b= I18n.t('meeting.meeting')
-              - event_list = @full_history_by_date[pool_type.code][0]
-              - event_list.each do |event|
-                %td.goggles-centeralign
-                  %b= event
-            - @full_history_by_date[pool_type.code][1].each do |event_by_date|
-              = render( partial: 'full_history_by_date_meeting_row', locals: { event_by_date: event_by_date, event_list: event_list } )
-            %tr{'class'=>'info'}
+                %b= event
+          - @full_history_by_date[pool_type.code][1].each do |event_by_date|
+            = render( partial: 'full_history_by_date_meeting_row', locals: { event_by_date: event_by_date, event_list: event_list } )
+          %tr{'class'=>'info'}
+            %td.goggles-centeralign
+            - event_list = @full_history_by_date[pool_type.code][0]
+            - event_list.each do |event|
               %td.goggles-centeralign
-              - event_list = @full_history_by_date[pool_type.code][0]
-              - event_list.each do |event|
-                %td.goggles-centeralign
-                  %b= event
+                %b= event
 
   .row.goggles-category-gap
 
@@ -47,30 +46,40 @@
              label + "<br/>" + Math.round(series.percent) + "%</div>";
     }
 
-    $( function() {
-        var data25 = JSON.parse( "#{ escape_javascript @full_history_events['25'].to_json }" );
-        var data50 = JSON.parse( "#{ escape_javascript @full_history_events['50'].to_json }" );
-        var options = {
-            series: {
-                pie: {
-                    show: true,
-                    radius: 1,
-                    // tilt: 0.5,
-                    label: {
-                        show: true,
-                        radius: 3/4,
-                        formatter: labelFormatter,
-                        background: { opacity: 0.5 }
-                    }
-                }
-            },
-            grid: {
-                hoverable: true
-            },
-            legend: { show: false }
-        };
+    /**
+     * Defines and plots the pie graphs for #full_history_1
+     *
+     * [Steve, 20161014] Keep always functions names unique to avoid clash.
+     */
+    function plotFullHistory1Charts() {
+      var data25 = JSON.parse( "#{ escape_javascript @full_history_events['25'].to_json }" );
+      var data50 = JSON.parse( "#{ escape_javascript @full_history_events['50'].to_json }" );
+      var options = {
+          series: {
+              pie: {
+                  show: true,
+                  radius: 1,
+                  // tilt: 0.5,
+                  label: {
+                      show: true,
+                      radius: 3/4,
+                      formatter: labelFormatter,
+                      background: { opacity: 0.5 }
+                  }
+              }
+          },
+          grid: {
+              hoverable: true
+          },
+          legend: { show: false }
+      };
 
-        $.plot( "#pie25", data25, options );
-        $.plot( "#pie50", data50, options );
+      $.plot( "#pie25", data25, options );
+      $.plot( "#pie50", data50, options );
+    }
+
+    $( function() {
+      if ( $('#full_history_1')['length'] == 1 ) {
+        plotFullHistory1Charts();
       }
-    );
+    });

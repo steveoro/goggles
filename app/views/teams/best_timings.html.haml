@@ -1,18 +1,18 @@
-- if @team_best_finder 
+- if @team_best_finder
   = render( partial: 'tabs_and_radio_title' )
   - cache( cache_key_for_team( 'best_timnigs', @team.id, @max_updated_at, @highlight_swimmer_id ) ) do
-  
+
     .row#sub_legend
       -# --- Sub-legend for each gender + pool-type
       .navbar
         - @team_best_finder.gender_types.each do |gender_type|
           %a.goggles-small-brand(href='#')= gender_type.i18n_short + ':'
-          %ul.nav.navbar-nav
+          %ul.nav..nav-pills
             - @team_best_finder.pool_types.each do |pool_type|
               %li
                 %a.goggles-nav-compact(href="##{gender_type.code}#{pool_type.code}")= pool_type.i18n_short
             .ghost-divider-vertical
-      
+
       - @team_best_finder.gender_types.each do |gender_type|
         - @team_best_finder.pool_types.each do |pool_type|
           .row
@@ -21,7 +21,7 @@
                 = "#{gender_type.i18n_alternate}, #{pool_type.i18n_description}"
                 %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
           .row
-            - valid_categories = @team_best_finder.get_categories_with_records( pool_type, gender_type, @team_bests ) 
+            - valid_categories = @team_best_finder.get_categories_with_records( pool_type, gender_type, @team_bests )
             %table.table.table-striped.table-bordered.table-hover.table-condensed
               %tbody
                 %tr{'class'=>'info'}
@@ -29,7 +29,7 @@
                   - valid_categories.each do |category_type|
                     %td.goggles-centeralign
                       %b= category_type.get_full_name
-          
+
                 - @team_best_finder.get_events_with_records( pool_type, gender_type, @team_bests ).each do |event_type|
                   %tr
                     %td.goggles-td.goggles-rightalign{'class'=>'info'}
@@ -48,12 +48,11 @@
                               %p= Format.a_date( sched_date )
                           - else
                             %p= '-'
-    
+
                 %tr{'class'=>'info'}
                   %td
                   - valid_categories.each do |category_type|
                     %td.goggles-centeralign
                       %b= category_type.get_full_name
-    
+
           .row.goggles-category-gap
-        

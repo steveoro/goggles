@@ -2,7 +2,7 @@
   .goggles-category-gap#pageTop
     -# --- Sub-legend for each gender + pool-type
     .navbar
-      %ul.nav.navbar-nav
+      %ul.nav.nav-pills
         - @grid_builder.pool_types.each do |pool_type|
           %li
             = link_to("##{pool_type.code}", {'data-turbolinks'=>'false', class: 'goggles-nav-compact'}) do

@@ -8,8 +8,9 @@
   = show_tab_link( params, 'full_history_by_time', t('radiography.full_history_by_event'), swimmer_full_history_2_path(id: @swimmer.id) )
   = show_tab_link( params, 'trainings', t('radiography.trainings_tab'), swimmer_trainings_path(id: @swimmer.id) )
 
-.container
-  .row.col-xs-12.alert.alert-success.goggles-div-centeralign
-    %h4
-      = "#{@tab_title} -- "
-      = I18n.t('radiography.radio_tab_title').gsub('{SWIMMER_NAME}', @swimmer.get_full_name)
+.goggles-category-gap.col-xs-12
+
+.col-xs-12.alert.alert-success.goggles-div-centeralign
+  %h4
+    = "#{@tab_title} -- "
+    = I18n.t('radiography.radio_tab_title').gsub('{SWIMMER_NAME}', @swimmer.get_full_name)

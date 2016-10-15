@@ -2,7 +2,7 @@
 - cache( cache_key_for_swimmer( 'full_history_2', @swimmer.id, @max_updated_at ) ) do
   - pool_type_25 = PoolType.find_by_code('25').i18n_verbose
   - pool_type_50 = PoolType.find_by_code('50').i18n_verbose
-  .row#full_history_by_date_grid
+  .row#full_history_2
     .goggles-category-gap#pageTop
     %table.table.table-striped.table-bordered.table-hover.table-condensed
       %tbody
@@ -116,63 +116,73 @@
       return label;
     }
 
-    $( function() {
-        var eventKeys = Object.keys( dataSeries );
-        var options = {
-            xaxis: {
-              mode: "time",
-              timeformat: "#{ Date::DATE_FORMATS[I18n.locale] }"
-            },
-            yaxis: {
-              transform: function (v) { return -v; },
-              inverseTransform: function (v) { return -v; },
-              tickFormatter: tickFormatter
-            },
-            series: {
-              lines: {
+    /**
+     * Defines and plots the line graphs for #full_history_2
+     *
+     * [Steve, 20161014] Keep always functions names unique to avoid clash.
+     */
+    function plotFullHistory2Charts() {
+      var eventKeys = Object.keys( dataSeries );
+      var options = {
+          xaxis: {
+            mode: "time",
+            timeformat: "#{ Date::DATE_FORMATS[I18n.locale] }"
+          },
+          yaxis: {
+            transform: function (v) { return -v; },
+            inverseTransform: function (v) { return -v; },
+            tickFormatter: tickFormatter
+          },
+          series: {
+            lines: {
+              show: true,
+              label: {
                 show: true,
-                label: {
-                  show: true,
-                }
-              },
-              points: {
-                show: true
               }
             },
-            grid: {
-              hoverable: true
-            },
-            legend: {
-              show: true,
-              position: "sw"
+            points: {
+              show: true
             }
-        };
+          },
+          grid: {
+            hoverable: true
+          },
+          legend: {
+            show: true,
+            position: "sw"
+          }
+      };
 
-        $( "<div id='tooltip'></div>" ).css({
-          position: "absolute",
-          display: "none",
-          border: "1px solid #fdd",
-          padding: "2px",
-          "background-color": "#fee",
-          opacity: 0.80
-        }).appendTo( "body" );
+      $( "<div id='tooltip'></div>" ).css({
+        position: "absolute",
+        display: "none",
+        border: "1px solid #fdd",
+        padding: "2px",
+        "background-color": "#fee",
+        opacity: 0.80
+      }).appendTo( "body" );
 
-        // Plot each graph:
-        for ( index = 0; index < eventKeys.length; index++ ) {
-          var currKey = eventKeys[index];
-          $.plot( "#graph" + currKey, dataSeries[ currKey ], options );
+      // Plot each graph:
+      for ( index = 0; index < eventKeys.length; index++ ) {
+        var currKey = eventKeys[index];
+        $.plot( "#graph" + currKey, dataSeries[ currKey ], options );
 
-          $("#graph" + currKey).bind( "plothover", function (event, pos, item) {
-            if (item) {
-              // console.log( item );
-              var x = new Date( item.datapoint[0] ).toLocaleDateString();
-              var y = tickFormatter( item.datapoint[1].toFixed(2) );
-              $("#tooltip").html(
-                y + ", " + x
-              ).css( { top: item.pageY+5, left: item.pageX+5 } )
-               .fadeIn(200);
-            }
-          } );
-        }
+        $("#graph" + currKey).bind( "plothover", function (event, pos, item) {
+          if (item) {
+            // console.log( item );
+            var x = new Date( item.datapoint[0] ).toLocaleDateString();
+            var y = tickFormatter( item.datapoint[1].toFixed(2) );
+            $("#tooltip").html(
+              y + ", " + x
+            ).css( { top: item.pageY+5, left: item.pageX+5 } )
+             .fadeIn(200);
+          }
+        } );
       }
-    );
+    }
+
+    $( function() {
+      if ( $('#full_history_2')['length'] == 1 ) {
+        plotFullHistory2Charts();
+      }
+    });

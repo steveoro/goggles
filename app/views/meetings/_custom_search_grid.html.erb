@@ -5,7 +5,7 @@
 #    end
 
     g.blank_slate do
-        content_tag( :div, t(:no_data_found), class: 'well' )
+        content_tag( :div, t('meeting.no_records_matching_search_text'), class: 'well' )
     end
 
     g.column(
@@ -87,13 +87,3 @@
     	meeting.decorate.get_linked_swimming_pool( :get_city_and_attributes )
     end
 end -%>
-
-
-<script>
-/*
-  // (Wait for the page to be ready)
-  $( function() {
-      $('#grid_f_season_id').combobox();
-  });
-*/
-</script>

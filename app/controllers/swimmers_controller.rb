@@ -448,7 +448,7 @@ class SwimmersController < ApplicationController
   #
   def supermaster
     unless ( @swimmer.has_badge_for_season_and_year?( params[:header_year] ) )
-      flash[:error] = I18n.t(:invalid_action_request)
+      flash[:error] = I18n.t('swimmers.no_associated_badge_found')
       redirect_back( fallback_location: swimmers_path ) and return
     end
 
@@ -579,7 +579,7 @@ class SwimmersController < ApplicationController
       @last_week[:avg_100_meters]       = @last_week[:avg_duration] / ( @last_week[:avg_distance] / 100 ) if @last_week[:avg_distance].to_i > 0
       @last_training[:avg_100_meters]   = @last_training[:duration] / ( @last_training[:distance] / 100 ) if @last_training[:distance].to_i > 0
     else
-      flash[:error] = I18n.t(:invalid_action_request)
+      flash[:error] = I18n.t('swimmers.no_associated_goggler_found')
       redirect_back( fallback_location: swimmers_path ) and return
     end
   end

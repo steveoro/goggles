@@ -76,35 +76,30 @@
             <!-- Alerts & error messages -->
             <div class="col-xs-12">
                 <% if notice || flash[:info] %>
-                    <div class="alert alert-info">
+                    <div class="alert alert-info" role="alert">
                         <button type="button" class="close" data-dismiss="alert">&times;</button>
                         <%= notice || flash[:info] %>
                     </div>
                 <% end %>
                 <% if flash[:warning] %>
-                    <div class="alert alert-block">
+                    <div class="alert alert-warning" role="alert">
                         <button type="button" class="close" data-dismiss="alert">&times;</button>
                         <%= flash[:warning] %>
                     </div>
                 <% end %>
                 <% if alert %>
-                    <div class="col-xs-12">
-                        <ul class="inline">
-                            <li class="col-xs-9">
-                                <div class="alert alert-block">
-                                    <button type="button" class="close" data-dismiss="alert">&times;</button>
-                                    <h4>Mmmh...</h4>
-                                    <%= alert %>
-                                </div>
-                            </li>
-                            <li class="col-xs-3">
-                                <%= image_tag( "mmh.jpg", size: '180x135', class: 'img-thumbnail' ) %>
-                            </li>
-                        </ul>
+                    <div class="media alert alert-warning">
+                        <div class="media-left">
+                            <%= image_tag( "mmh.jpg", size: '180x135' ) %>
+                        </div>
+                        <div class="media-body">
+                            <h4 class="media-heading">Mmmh...</h4>
+                            <%= alert %>
+                        </div>
                     </div>
                 <% end %>
                 <% if flash[:error] %>
-                    <div class="alert alert-danger">
+                    <div class="alert alert-danger" role="alert">
                         <button type="button" class="close" data-dismiss="alert">&times;</button>
                         <h4>Oh no!</h4>
                         <%= flash[:error] %>

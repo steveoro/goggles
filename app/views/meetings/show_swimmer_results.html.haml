@@ -6,7 +6,7 @@
 = render( partial: 'meeting_header' )
 = render( partial: 'tabs_and_radio_title' )
 - cache( cache_key_for_meeting( 'show_swimmer_results', @meeting.id, @max_mir_updated_at, team_id, @swimmer.id) ) do
-  .row.goggles-category-gap.col-xs-12
+  .goggles-category-gap.col-xs-12
     .col-xs-3.alert.alert-success
       %h4
         %a{'id'=>"swimmer#{@swimmer.id}", 'href'=>"#{ swimmer_radio_path(:id=>@swimmer.id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('radiography.radio_tab_tooltip')}
@@ -23,8 +23,8 @@
         %a{'id'=>"swimmer#{@swimmer.id}", 'href'=>"#{ meeting_show_team_results_path(:id=>@meeting.id, :team_id=>team_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_team_results_tooltip')}
           = team_name
 
-  .row.goggles-category-gap.col-xs-12
-    .col-xs-5
+  .goggles-category-gap.col-xs-12
+    .col-xs-6
       %table.table.table-striped.table-bordered.table-hover.table-condensed
         %tbody
           %tr
@@ -74,7 +74,7 @@
                 %td.goggles-rightalign
                   = mir.get_formatted_goggle_cup_points(true)
 
-    .col-xs-4.col-xs-offset-1
+    .col-xs-5.col-xs-offset-1
       %table.table.table-striped.table-bordered.table-hover.table-condensed
         %tbody
           %tr
@@ -124,7 +124,7 @@
                   - else
                     = ''
 
-  .row.goggles-category-gap.col-xs-12
+  .goggles-category-gap.col-xs-12
     - @individual_result_list.each do |individual_result|
       - passages = individual_result.passages.joins(:passage_type)
       - if passages
@@ -137,8 +137,8 @@
             = render( partial: 'swimmer_result_passages', locals: { individual_result: individual_result, passage_list: passage_list, passages: passages } )
         .row.col-xs-12
 
-  .row.goggles-category-gap.col-xs-12
+  .goggles-category-gap.col-xs-12
     = render( partial: 'swimmer_previous_edition', locals: { event_list: event_list } )
 
-  .row.goggles-category-gap.col-xs-12
+  .goggles-category-gap.col-xs-12
     &nbsp;

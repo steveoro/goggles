@@ -1,10 +1,7 @@
-.row
-  .col-xs-offset-4
-    %h2
+.media.alert.alert-danger
+  .media-left
+    = image_tag("404.jpg", size: '200x200')
+  .media-body
+    .media-heading
       @*?#!%GrBlzkmnH!@*!
-.row
-  .col-xs-12.item
-    = image_tag("404.jpg", class: 'img-responsive img-rounded')
-%br
-.row
-  %p= @status_code
+      %p= @status_code
