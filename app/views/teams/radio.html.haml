@@ -1,6 +1,6 @@
 = render( partial: 'tabs_and_radio_title' )
 
-.row
+.row.col-xs-12
   .col-xs-9
     .row
       .col-xs-3
@@ -39,11 +39,12 @@
         = @team.get_last_meeting_name.html_safe
 
   .col-xs-3
-    = image_tag( 'img_radiography.jpg', class: "img-polaroid" )
+    .text-center
+      = image_tag( 'img_radiography.jpg', class: "img-thumbnail" )
     .row
-      %br
-    .row
-      = link_to( t('team.all_races'), meetings_custom_search_path( text: @team.get_full_name, team_id: @team.id ), {class: "btn"} )
+      &nbsp;
+    .row.text-center
+      = link_to( t('team.all_races'), meetings_custom_search_path( text: @team.get_full_name, team_id: @team.id ), {class: "btn btn-default"} )
 
-.row
-  %p
+.row.col-xs-12
+  &nbsp;

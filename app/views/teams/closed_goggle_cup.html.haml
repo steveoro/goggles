@@ -1,44 +1,44 @@
 = render( partial: 'tabs_and_radio_title' )
 
 - if @closed_goggle_cup
-  .row#goggle_cup_grid
-    .col-xs-offset-1.col-xs-10
-      %table.table.table-striped.table-bordered.table-hover.table-condensed
-        %tbody
-          %tr{'class'=>'info'}
+  .col-xs-12.table-responsive#goggle_cup_grid
+    %table.table.table-striped.table-bordered.table-hover.table-condensed
+      %tbody
+        %tr{'class'=>'info'}
+          %td.text-center
+            %b= I18n.t('goggle_cup.rank')
+          %td.text-center
+            %b= I18n.t('activerecord.models.swimmer')
+          %td.text-center
+            %b= I18n.t('goggle_cup.total')
+          %td.text-center
+            %b= I18n.t('goggle_cup.count')
+          %td.text-center
+            %b= I18n.t('goggle_cup.average')
+          %td.text-center
+            %b= I18n.t('goggle_cup.max')
+          %td.text-center
+            %b= I18n.t('goggle_cup.min')
+        - @closed_goggle_cup_rank.each_with_index do |rank_element,index|
+          %tr
             %td.goggles-rightalign
-              %b= I18n.t('goggle_cup.rank')
+              = show_tag( index==0, "medal_gold_3.png", '' )
+              = show_tag( index==1, "medal_silver_3.png", '' )
+              = show_tag( index==2, "medal_bronze_3.png", '' )
+              = index + 1
             %td
-              %b= I18n.t('activerecord.models.swimmer')
+              = rank_element[:swimmer].decorate.get_linked_swimmer_name_to_goggle_cup( @closed_goggle_cup.id )
             %td.goggles-rightalign
-              %b= I18n.t('goggle_cup.total')
+              %b= sprintf( "%02.2f", rank_element[:total] )
             %td.goggles-centeralign
-              %b= I18n.t('goggle_cup.count')
+              = rank_element[:count]
             %td.goggles-rightalign
-              %b= I18n.t('goggle_cup.average')
+              = sprintf( "%02.2f", rank_element[:average] )
             %td.goggles-rightalign
-              %b= I18n.t('goggle_cup.max')
+              = sprintf( "%02.2f", rank_element[:max] )
             %td.goggles-rightalign
-              %b= I18n.t('goggle_cup.min')
-          - @closed_goggle_cup_rank.each_with_index do |rank_element,index|
-            %tr
-              %td.goggles-rightalign
-                = show_tag( index==0, "medal_gold_3.png", '' )
-                = show_tag( index==1, "medal_silver_3.png", '' )
-                = show_tag( index==2, "medal_bronze_3.png", '' )
-                = index + 1
-              %td
-                = rank_element[:swimmer].decorate.get_linked_swimmer_name_to_goggle_cup( @closed_goggle_cup.id )
-              %td.goggles-rightalign
-                %b= sprintf( "%02.2f", rank_element[:total] )
-              %td.goggles-centeralign
-                = rank_element[:count]
-              %td.goggles-rightalign
-                = sprintf( "%02.2f", rank_element[:average] )
-              %td.goggles-rightalign
-                = sprintf( "%02.2f", rank_element[:max] )
-              %td.goggles-rightalign
-                = sprintf( "%02.2f", rank_element[:min] )
+              = sprintf( "%02.2f", rank_element[:min] )
+  .col-xs-12
+    &nbsp;
 - else
-  .row
-    %p= I18n.t('goggle_cup.send_us_your_goggle_cups')
+  = render( partial: 'goggles/no_goggle_cup_found' )

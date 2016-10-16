@@ -93,7 +93,8 @@
                   - passages = full_history_element[2].where(meeting_individual_result: meeting_individual_result) if full_history_element[2].respond_to?(:where)
                   = render( partial: 'full_history_by_time_meeting_row', locals: { meeting_individual_result: meeting_individual_result, passage_list: passage_list, meeting: meeting, passages: passages } )
 
-  .row.goggles-category-gap
+  .col-xs-12.goggles-category-gap
+    &nbsp;
 
   :javascript
     // Custom label formatter:

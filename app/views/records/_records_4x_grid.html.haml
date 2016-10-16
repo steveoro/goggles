@@ -12,9 +12,10 @@
                   = gender_type.i18n_short + ':'
               - @grid_builder.pool_types.each do |pool_type|
                 %li
-                  = link_to("##{gender_type.code}#{pool_type.code}", {'data-turbolinks'=>'false', class: 'btn'}) do
+                  = link_to("##{gender_type.code}#{pool_type.code}", {'data-turbolinks'=>'false', class: 'btn goggles-nav-compact'}) do
                     = pool_type.i18n_short
               .ghost-divider-vertical
+
       - @grid_builder.gender_types.each do |gender_type|
         - @grid_builder.pool_types.each do |pool_type|
           = render( partial: 'records_grid', locals: { gender_type: gender_type, pool_type: pool_type, grid_builder: @grid_builder } )

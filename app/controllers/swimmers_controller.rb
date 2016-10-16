@@ -447,7 +447,8 @@ class SwimmersController < ApplicationController
   #      to test a couple of edge conditions)
   #
   def supermaster
-    unless ( @swimmer.has_badge_for_season_and_year?( params[:header_year] ) )
+    params.permit! # (No unsafe params can be passed)
+    unless ( @swimmer.has_badge_for_season_and_year?( params['header_year'].to_i ) )
       flash[:error] = I18n.t('swimmers.no_associated_badge_found')
       redirect_back( fallback_location: swimmers_path ) and return
     end
@@ -455,12 +456,12 @@ class SwimmersController < ApplicationController
     # --- "Supermaster" tab: ---
     @tab_title        = I18n.t('supermaster.supermaster')
     @season_type      = SeasonType.find_by_code('MASFIN')
-    @header_year      = params[:header_year] || Season.build_header_year_from_date
+    @header_year      = params['header_year'].to_i || Season.build_header_year_from_date
     @badge            = @swimmer.badges.for_season_type( @season_type ).for_year( @header_year ).first
     @season           = @badge.season
     @team             = @badge.team
     # Check for overrides
-    @team_affiliation = if params[:header_year].present?
+    @team_affiliation = if params['header_year'].present?
       @team.team_affiliations.for_season_type( @season_type ).for_year( @header_year ).first
     else
       @team.get_current_affiliation( @season_type )
@@ -635,4 +636,30 @@ class SwimmersController < ApplicationController
     end
     @goggle_cups_tab_title = @goggle_cups.size == 1 ? @goggle_cups.first.description : I18n.t('radiography.goggle_cup_current')
   end
+
+
+  # Strong parameters checking.
+  # Returns the whitelisted, filtered params Hash.
+  def passage_params
+    params
+      .permit(
+        :user_id,
+        :passage_type_id,
+        :swimmer_id,
+        :team_id,
+        :meeting_program_id,
+        :meeting_entry_id,
+        :meeting_individual_result_id,
+        :minutes_from_start, :seconds_from_start, :hundreds_from_start,
+        :is_native_from_start,
+        :reaction_time, :position,
+        :minutes, :seconds, :hundreds,
+        :breath_number, :stroke_cycles,
+        :not_swam_part_seconds,
+        :not_swam_part_hundreds,
+        :not_swam_kick_number
+      )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 end

@@ -1,94 +1,92 @@
-%script{ 'type' => "text/javascript", 'src' => "https://www.gstatic.com/charts/loader.js" }
-
-.row#pageTop
-  .goggles-category-gap#swimmer_goggle_cup
-    - if @goggle_cups.size == 0
-      %p= I18n.t('goggle_cup.send_us_your_goggle_cups')
-    - else
-      - @goggle_cups.each do |goggle_cup|
-        - total_points = 0.00
-        - goggle_cup.meeting_individual_results.for_swimmer(@swimmer).has_points('goggle_cup_points').sort_by_goggle_cup.first(5).each do |mir|
-          - total_points += mir.goggle_cup_points
-        - total_results = goggle_cup.meeting_individual_results.for_swimmer(@swimmer).has_points('goggle_cup_points').count
-        - ranked_results = goggle_cup.max_performance > total_results ? total_results : goggle_cup.max_performance
-        .col-xs-8
-          %table.table.table-striped.table-bordered.table-hover.table-condensed
-            %tbody
-              %tr{'class'=>'info'}
+.col-xs-12.goggles-category-gap#swimmer_goggle_cup
+  - if @goggle_cups.size == 0
+    = render( partial: 'goggles/no_goggle_cup_found' )
+  - else
+    - @goggle_cups.each do |goggle_cup|
+      - total_points = 0.00
+      - goggle_cup.meeting_individual_results.for_swimmer(@swimmer).has_points('goggle_cup_points').sort_by_goggle_cup.first(5).each do |mir|
+        - total_points += mir.goggle_cup_points
+      - total_results = goggle_cup.meeting_individual_results.for_swimmer(@swimmer).has_points('goggle_cup_points').count
+      - ranked_results = goggle_cup.max_performance > total_results ? total_results : goggle_cup.max_performance
+      .col-xs-9.table-responsive
+        %table.table.table-striped.table-bordered.table-hover.table-condensed
+          %tbody
+            %tr{'class'=>'info'}
+              %td.text-center
+                %b= link_to( goggle_cup.get_verbose_name, team_goggle_cup_path(id: goggle_cup.team_id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('radiography.goggle_cup_tooltip') } )
+              %td.text-center
+                %b= I18n.t('event')
+              %td.text-center
+                %b= I18n.t('timing')
+              %td.text-center
+                %b= I18n.t('score')
+              %td.text-center
+                %b= I18n.t('goggle_cup.ranked')
+            - goggle_cup.meeting_individual_results.for_swimmer(@swimmer).has_points('goggle_cup_points').sort_by_goggle_cup.each_with_index do |mir,index|
+              %tr
                 %td
-                  %b= link_to( goggle_cup.get_verbose_name, team_goggle_cup_path(id: goggle_cup.team_id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('radiography.goggle_cup_tooltip') } )
+                  = mir.meeting.decorate.get_linked_full_name_with_date
                 %td
-                  %b= I18n.t('event')
+                  = mir.event_type.code
+                %td.goggles-rightalign{ 'class' => mir.is_personal_best ? 'success' : '' }
+                  = mir.get_timing
                 %td.goggles-rightalign
-                  %b= I18n.t('timing')
-                %td.goggles-rightalign
-                  %b= I18n.t('score')
+                  = mir.decorate.get_formatted_goggle_cup_points
                 %td.goggles-centeralign
-                  %b= I18n.t('goggle_cup.ranked')
-              - goggle_cup.meeting_individual_results.for_swimmer(@swimmer).has_points('goggle_cup_points').sort_by_goggle_cup.each_with_index do |mir,index|
-                %tr
-                  %td
-                    = mir.meeting.decorate.get_linked_full_name_with_date
-                  %td
-                    = mir.event_type.code
-                  %td.goggles-rightalign{ 'class' => mir.is_personal_best ? 'success' : '' }
-                    = mir.get_timing
-                  %td.goggles-rightalign
-                    = mir.decorate.get_formatted_goggle_cup_points
-                  %td.goggles-centeralign
-                    = show_tag( index < goggle_cup.max_performance )
-              %tr{'class'=>'info'}
-                %td{ colspan: 3 }
-                  = I18n.t('goggle_cup.summary').gsub('{USED_RESULTS}', ranked_results.to_s ).gsub('{TOTAL_RESULTS}', total_results.to_s)
-                %td.goggles-rightalign
-                  %b= total_points.round(2)
-                %td.goggles-centeralign
-                  %b= ranked_results
+                  = show_tag( index < goggle_cup.max_performance )
+            %tr{'class'=>'info'}
+              %td{ colspan: 3 }
+                = I18n.t('goggle_cup.summary').gsub('{USED_RESULTS}', ranked_results.to_s ).gsub('{TOTAL_RESULTS}', total_results.to_s)
+              %td.goggles-rightalign
+                %b= total_points.round(2)
+              %td.goggles-centeralign
+                %b= ranked_results
+      .col-xs-3
+        .goggle_cup_gauge{align: 'center', id: "goggle_cup_#{goggle_cup.id}", 'data-score' => total_points, 'data-count' => total_results }
 
-        .col-xs-4
-          %script
-            var score = Number.parseFloat( "#{total_points}" );
-            var title = "#{goggle_cup.get_full_name}_chart"
-            var gauge_height = Number.parseInt( "#{total_results < 4 ? 200 : 300 }" )
-          .div{'align' => 'center', 'id' => "#{goggle_cup.get_full_name}_chart" }
-      
-.row.goggles-category-gap#standards
+.col-xs-12.goggles-category-gap#standards
   - events_list = []
   - EventsByPoolType.not_relays.for_pool_type_code( '25' ).distance_more_than(50).distance_less_than(1500).sort_by_event.each do |events_by_pool_type|
     - events_list << events_by_pool_type.event_type
   - @goggle_cups.each do |goggle_cup|
     %h3= "#{I18n.t('goggle_cup.standard_times')} #{goggle_cup.get_full_name}"
-    %table.table.table-striped.table-bordered.table-hover.table-condensed
-      %tbody
-        %tr{'class'=>'info'}
-          %td.goggles-centeralign
-            %b= I18n.t('meeting_calendar.pool_type')
-          - events_list.each do |event_type|
+    .col-xs-12.table-responsive
+      %table.table.table-striped.table-bordered.table-hover.table-condensed
+        %tbody
+          %tr{'class'=>'info'}
             %td.goggles-centeralign
-              %b= event_type.code
-        - PoolType.only_for_meetings.each do |pool_type|
-          %tr
-            %td.goggles-centeralign{'class'=>'info'}
-              %b= pool_type.code
+              %b= I18n.t('meeting_calendar.pool_type')
             - events_list.each do |event_type|
-              %td.goggles-rightalign
-                = @swimmer.goggle_cup_standards.for_goggle_cup(goggle_cup).for_event_type(event_type).for_pool_type(pool_type).first.get_timing if @swimmer.goggle_cup_standards.for_goggle_cup(goggle_cup).for_event_type(event_type).for_pool_type(pool_type).count > 0
-        
-.row.goggles-category-gap#bottom_of_page
+              %td.goggles-centeralign
+                %b= event_type.code
+          - PoolType.only_for_meetings.each do |pool_type|
+            %tr
+              %td.goggles-centeralign{'class'=>'info'}
+                %b= pool_type.code
+              - events_list.each do |event_type|
+                %td.goggles-rightalign
+                  = @swimmer.goggle_cup_standards.for_goggle_cup(goggle_cup).for_event_type(event_type).for_pool_type(pool_type).first.get_timing if @swimmer.goggle_cup_standards.for_goggle_cup(goggle_cup).for_event_type(event_type).for_pool_type(pool_type).count > 0
+
+.col-xs-12.goggles-category-gap#bottom_of_page
 
 :javascript
-  google.charts.load('current', {'packages':['gauge']});
-  google.charts.setOnLoadCallback(drawChart);
-
-  function drawChart() {
-
+  /**
+   * Draws the Swimmer-related GoggleCup chart/gauge for each element
+   * passed as parameter
+   */
+  function drawSingleSwimmerGoggleCupGauge( idx, el ) {
+    // DEBUG
+    //console.log( idx, el );
+    var divId = el.id;
+    var score = Number.parseFloat( el.getAttribute('data-score') );
+    var count = Number.parseInt( el.getAttribute('data-count') );
+    var gaugeHeight = count < 4 ? 200 : 300;
     var data = google.visualization.arrayToDataTable([
       ['Label', 'Value'],
       ['', score]
     ]);
-
     var options = {
-      height: gauge_height,
+      height: gaugeHeight,
       greenFrom: 5000, greenTo: 5249,
       yellowFrom:5250, yellowTo: 5399,
       redFrom: 5400, redTo: 5500,
@@ -96,8 +94,24 @@
       majorTicks: ['4500', '', '5000', '', '5500'],
       minorTicks: 5
     };
-
-    var chart = new google.visualization.Gauge(document.getElementById(title));
-
+    var chart = new google.visualization.Gauge( el );
     chart.draw(data, options);
   };
+
+  /**
+   * Callback that draws a bunch of gauges when the library is ready.
+   */
+  function drawAllSwimmerGoggleCupGauges() {
+    $('.goggle_cup_gauge').each( function(index, element) {
+      drawSingleSwimmerGoggleCupGauge( index, element );
+    });
+  }
+
+  /* Wait for the page to be ready */
+  $( function() {
+    if ( $('.goggle_cup_gauge')['length'] == 1 ) {
+      // Load the Goggle Charts lib and set a callback when it's ready:
+      google.charts.load('current', {'packages':['gauge']});
+      google.charts.setOnLoadCallback( drawAllSwimmerGoggleCupGauges );
+    }
+  });

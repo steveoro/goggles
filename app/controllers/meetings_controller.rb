@@ -268,18 +268,14 @@ class MeetingsController < ApplicationController
       @meeting_team_scores = team_scores_hash.values
     end
                                                     # Do the manual sorting of the array to assure a valorized ranking:
-    @meeting_team_scores.to_a.sort!{ |a, b|
-      (
-        b.meeting_individual_points + b.meeting_relay_points + b.meeting_team_points
-      ) <=> (
-        a.meeting_individual_points + a.meeting_relay_points + a.meeting_team_points
-      )
-    }
+    @meeting_team_scores = @meeting_team_scores.sort_by do |row|
+      (row.meeting_individual_points + row.meeting_relay_points + row.meeting_team_points).to_i
+    end.reverse
                                                     # Finally, update ranking according to the sorted array:
-    @total_team_bonus = 0
+    @existing_team_bonus_sum = 0
     @meeting_team_scores.each_with_index{ |team_score, index|
       team_score.rank = index + 1
-      @total_team_bonus += team_score.meeting_team_points
+      @existing_team_bonus_sum += team_score.meeting_team_points
     }
 
     # Get a timestamp for the cache key:

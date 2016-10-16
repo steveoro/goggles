@@ -78,6 +78,7 @@ it:
     ranking: "Classifica parziale società"
     attending_teams: "Società partecipanti"
     team_total_athletes: "Atleti"
+    team_total_athletes_for_current_year: "Atleti per l'anno in corso"
     total: "Totale"
     sum_individual_points: "Individuali"
     sum_relay_points: "Staffette"

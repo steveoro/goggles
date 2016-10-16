@@ -1,46 +1,45 @@
 = render( partial: 'tabs_and_radio_title' )
 - cache( cache_key_for_team( 'current_swimmers', @team.id, @max_updated_at ) ) do
-
-  .row
-    .col-xs-3.goggles-div-centeralign
-      %b= I18n.t(:name)
-    .col-xs-1.goggles-div-centeralign
-      %b= I18n.t('swimmers.year_of_birth')
-    .col-xs-1.goggles-div-centeralign
-      %b= I18n.t('swimmers.age_current')
-    - @affiliations.each do |team_affiliation|
-      .col-xs-1.goggles-div-centeralign
-        %b= team_affiliation.season.federation_type.get_short_name
-        = " (#{I18n.t('meetings')})"
-    .col-xs-1.goggles-div-centeralign
-      %b= I18n.t('swimmers.meeting_presence')
-    .col-xs-1.goggles-div-centeralign
-      %b= I18n.t('swimmers.events_attended')
-
-  - @swimmers.each do |swimmer|
-    - swimmer = swimmer.decorate
-    .row
-      .col-xs-3
-        = swimmer.get_linked_swimmer_name
-      .col-xs-1.goggles-div-centeralign
-        = swimmer.year_of_birth
-      .col-xs-1.goggles-div-centeralign
-        = Date::today.year - swimmer.year_of_birth
-      - @affiliations.each do |team_affiliation|
-        - badge = swimmer.badges.for_team_affiliation(team_affiliation).first if swimmer.badges.for_team_affiliation(team_affiliation).count > 0
-        .col-xs-1.goggles-div-centeralign{'data-toggle'=>'tooltip', 'title'=> badge ? "#{badge.category_type.code} - #{badge.number}" : 'N/A' }
-          = show_tag( badge )
-          - if badge
-            = " (#{badge.meeting_individual_results.includes( :meeting ).select('meetings.id').uniq.count})"
-      .col-xs-1.goggles-div-rightalign
-        = count_with_small_star( swimmer.meeting_individual_results.for_team( @team ).includes( :meeting ).select('meetings.id').uniq.count, 50, :left )
-      .col-xs-1.goggles-div-rightalign
-        = count_with_small_star( swimmer.meeting_individual_results.for_team( @team ).count + swimmer.meeting_relay_results.for_team( @team ).count, 100, :left )
-
-  .row
-    .col-xs-4
-      %i= "#{ I18n.t('meeting_team_score.team_total_athletes') }: #{ @swimmers.size }"
-  .row
-    %p
-
-
+  - if @swimmers.size > 0
+    .col-xs-12.table-responsive
+      %table.table.table-striped.table-bordered.table-hover.table-condensed
+        %tbody
+          %tr{'class'=>'info'}
+            %td.text-center
+              %b= I18n.t(:name)
+            %td.text-center
+              %b= I18n.t('swimmers.year_of_birth')
+            %td.text-center
+              %b= I18n.t('swimmers.age_current')
+            - @affiliations.each do |team_affiliation|
+              %td.text-center
+                %b= team_affiliation.season.federation_type.get_short_name
+                = " (#{I18n.t('meetings')})"
+            %td.text-center
+              %b= I18n.t('swimmers.meeting_presence')
+            %td.text-center
+              %b= I18n.t('swimmers.events_attended')
+          - @swimmers.each do |swimmer|
+            - swimmer = swimmer.decorate
+            %tr
+              %td.goggles-td.goggles-rightalign
+                = swimmer.get_linked_swimmer_name
+              %td.goggles-td.text-center
+                = swimmer.year_of_birth
+              %td.goggles-td.text-center
+                = Date::today.year - swimmer.year_of_birth
+              - @affiliations.each do |team_affiliation|
+                - badge = swimmer.badges.for_team_affiliation(team_affiliation).first if swimmer.badges.for_team_affiliation(team_affiliation).count > 0
+                %td.goggles-div-centeralign{'data-toggle'=>'tooltip', 'title'=> badge ? "#{badge.category_type.code} - #{badge.number}" : 'N/A' }
+                  = show_tag( badge )
+                  = " (#{badge.meeting_individual_results.joins(:meeting).includes(:meeting).select('meetings.id').uniq.count})" if badge
+              %td.goggles-td.goggles-rightalign
+                = count_with_small_star( swimmer.meeting_individual_results.for_team( @team ).joins(:meeting).includes(:meeting).select('meetings.id').uniq.count, 50, :left )
+              %td.goggles-td.goggles-rightalign
+                = count_with_small_star( swimmer.meeting_individual_results.for_team( @team ).count + swimmer.meeting_relay_results.for_team( @team ).count, 100, :left )
+  .col-xs-12
+    %i
+      = I18n.t('meeting_team_score.team_total_athletes_for_current_year') + ": "
+      = @swimmers.size
+  .col-xs-12
+    &nbsp;

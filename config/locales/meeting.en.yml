@@ -78,6 +78,7 @@ en:
     ranking: "Partial Team ranking"
     attending_teams: "Attending teams"
     team_total_athletes: "Athletes"
+    team_total_athletes_for_current_year: "Athletes for the current (academic) year"
     total: "Total"
     sum_individual_points: "Individ. pts."
     sum_relay_points: "Relay pts."

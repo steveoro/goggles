@@ -1,4 +1,4 @@
-.col-xs-3
+.col-xs-8
   %table.table.table-striped.table-bordered.table-hover.table-condensed
     %tbody
       %tr{'class'=>'success'}
@@ -35,8 +35,38 @@
         %td.col-xs-1.goggles-rightalign
           = @meeting_stats.get_disqualifieds_count + @meeting_stats.dsqs_relay_count
 
+.col-xs-4
+  %table.table.table-striped.table-bordered.table-hover.table-condensed
+    %tbody
+      %tr{'class'=>'success'}
+        %td.goggles-centeralign{'colspan'=>2}
+          %b= I18n.t('meeting_stats.disqualified')
+      %tr
+        %td
+          = I18n.t('meeting_stats.females')
+        %td.goggles-rightalign
+          = @meeting_stats.dsqs_female_count
+      %tr
+        %td
+          = I18n.t('meeting_stats.males')
+        %td.col-xs-1.goggles-rightalign
+          = @meeting_stats.dsqs_male_count
+      %tr
+        %td
+          = I18n.t('meeting_stats.relays')
+        %td.goggles-rightalign
+          = @meeting_stats.dsqs_relay_count
+      %tr
+        %td
+          %i= I18n.t('meeting_stats.total')
+        %td.goggles-rightalign
+          %i= @meeting_stats.get_disqualifieds_count + @meeting_stats.dsqs_relay_count
+
+.col-xs-12
+  &nbsp;
+
 - if @meeting_stats.average_total_score > 0
-  .col-xs-3
+  .col-xs-6
     %table.table.table-striped.table-bordered.table-hover.table-condensed
       %tbody
         %tr{'class'=>'success'}
@@ -74,8 +104,7 @@
               = I18n.t('meeting_stats.over_900')
           %td.col-xs-1.goggles-rightalign
             = @meeting_stats.over_900_count
-
-  .col-xs-3
+  .col-xs-4
     %table.table.table-striped.table-bordered.table-hover.table-condensed
       %tbody
         %tr{'class'=>'success'}
@@ -96,30 +125,3 @@
             = I18n.t('meeting_stats.relays')
           %td.col-xs-1.goggles-rightalign
             = sprintf( "%02.2f", @meeting_stats.average_relay_score)
-
-.col-xs-3
-  %table.table.table-striped.table-bordered.table-hover.table-condensed
-    %tbody
-      %tr{'class'=>'success'}
-        %td.goggles-centeralign{'colspan'=>2}
-          %b= I18n.t('meeting_stats.disqualified')
-      %tr
-        %td
-          = I18n.t('meeting_stats.females')
-        %td.goggles-rightalign
-          = @meeting_stats.dsqs_female_count
-      %tr
-        %td
-          = I18n.t('meeting_stats.males')
-        %td.col-xs-1.goggles-rightalign
-          = @meeting_stats.dsqs_male_count
-      %tr
-        %td
-          = I18n.t('meeting_stats.relays')
-        %td.goggles-rightalign
-          = @meeting_stats.dsqs_relay_count
-      %tr
-        %td
-          %i= I18n.t('meeting_stats.total')
-        %td.goggles-rightalign
-          %i= @meeting_stats.get_disqualifieds_count + @meeting_stats.dsqs_relay_count

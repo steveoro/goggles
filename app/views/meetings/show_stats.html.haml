@@ -2,46 +2,36 @@
 = render( partial: 'tabs_and_radio_title' )
 - cache( cache_key_for_meeting( 'show_stats', @meeting.id, @max_mir_updated_at, @team ? @team.id : 0 ) ) do
   - if @meeting_stat_calculator.has_results?
-    #meeting_stats_numbers.goggles-category-gap
-      .row.col-xs-12
-        = render( partial: 'meeting_stats_numbers' )
-      .row.col-xs-12.goggles-category-gap
+    .col-xs-12.goggles-category-gap#meeting_stats_numbers
+      = render( partial: 'meeting_stats_numbers' )
+    .col-xs-12.goggles-category-gap
     - if @meeting_stats.teams.size > 0
-      #meeting_stats_teams.goggles-category-gap
-        .row
-          = render( partial: 'meeting_stats_teams' )
+      .col-xs-12.goggles-category-gap#meeting_stats_teams
+        = render( partial: 'meeting_stats_teams' )
     - if @meeting_stats.categories.size > 0 || @meeting_stats.events.size > 0
-      #meeting_stats_categories.goggles-category-gap
-        - if @meeting_stats.categories.size > 0
-          .row.goggles-category-gap
-            = render( partial: 'meeting_stats_categories' )
-        - if @meeting_stats.events.size > 0
-          .row.goggles-category-gap
-            = render( partial: 'meeting_stats_events' )
+      .col-xs-12.goggles-category-gap#meeting_stats_categories
+        = render( partial: 'meeting_stats_categories' ) if @meeting_stats.categories.size > 0
+        = render( partial: 'meeting_stats_events' ) if @meeting_stats.events.size > 0
     - if @meeting_stats.best_std_female_scores.size > 0 || @meeting_stats.best_std_male_scores.size > 0
-      #meeting_stats_highlights.goggles-category-gap
-        .row
-          = render( partial: 'meeting_stats_highlights' )
+      .col-xs-12.goggles-category-gap#meeting_stats_highlights
+        = render( partial: 'meeting_stats_highlights' )
     - if @meeting_stats.oldest_female_swimmers.size > 0 || @meeting_stats.oldest_male_swimmers.size > 0
-      #meeting_stats_specials.goggles-category-gap
-        .row
-          = render( partial: 'meeting_stats_specials' )
+      .col-xs-12.goggles-category-gap#meeting_stats_specials
+        = render( partial: 'meeting_stats_specials' )
   - else
-    #meeting_stats_ent_numbers.goggles-category-gap
-      .row
-        = render( partial: 'meeting_stats_ent_numbers' )
+    .col-xs-12.goggles-category-gap#meeting_stats_ent_numbers
+      = render( partial: 'meeting_stats_ent_numbers' )
     - if @meeting_stats.teams.size > 0
-      #meeting_stats_ent_teams.goggles-category-gap
-        .row
-          = render( partial: 'meeting_stats_ent_teams' )
+      .col-xs-12.goggles-category-gap#meeting_stats_ent_teams
+        = render( partial: 'meeting_stats_ent_teams' )
     - if @meeting_stats.categories.size > 0 || @meeting_stats.events.size > 0
-      #meeting_stats_ent_categories.goggles-category-gap
+      .col-xs-12.goggles-category-gap#meeting_stats_ent_categories
         - if @meeting_stats.categories.size > 0
-          .row.goggles-category-gap
+          .col-xs-12.goggles-category-gap
             = render( partial: 'meeting_stats_ent_categories' )
         - if @meeting_stats.events.size > 0
-          .row.goggles-category-gap
+          .col-xs-12.goggles-category-gap
             = render( partial: 'meeting_stats_ent_events' )
 
-.row.goggles-category-gap
+.col-xs-12.goggles-category-gap
   &nbsp;

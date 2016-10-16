@@ -1,27 +1,21 @@
-%script{ 'type' => "text/javascript", 'src' => "https://www.gstatic.com/charts/loader.js" }
-
-%script
-  var sm_score = Number.parseFloat( "#{supermaster_score.score}" );
-  var im_score = Number.parseFloat( "#{ironmaster_score.score}" );
-  var tr_score = Number.parseFloat( "#{team_ranking_score.score}" );
-
-.row#charts.goggles-category-gap
-  .col-xs-5
-    = render( partial: 'swimmer_badge', locals: { season: @season, swimmer: @swimmer, badge: @badge, team: @team, team_affiliation: @team_affiliation } )
-
-  .col-xs-7
-    .col-xs-4
-      .div{'align' => 'center', 'id' => 'supermaster_chart' }
-    .col-xs-4
-      .div{'align' => 'center', 'id' => 'ironmaster_chart' }
-    .col-xs-4
-      .div{'align' => 'center', 'id' => 'team_ranking_chart' }
+.col-xs-12.col-md-5#charts.goggles-category-gap
+  = render( partial: 'swimmer_badge', locals: { season: @season, swimmer: @swimmer, badge: @badge, team: @team, team_affiliation: @team_affiliation } )
+.col-xs-12.col-md-7
+  .col-xs-4
+    .div{'align' => 'center', 'id' => 'supermaster_chart' }
+  .col-xs-4
+    .div{'align' => 'center', 'id' => 'ironmaster_chart' }
+  .col-xs-4
+    .div{'align' => 'center', 'id' => 'team_ranking_chart' }
 
 :javascript
   google.charts.load('current', {'packages':['gauge']});
   google.charts.setOnLoadCallback(drawChart);
 
   function drawChart() {
+    var sm_score = Number.parseFloat( "#{supermaster_score.score}" );
+    var im_score = Number.parseFloat( "#{ironmaster_score.score}" );
+    var tr_score = Number.parseFloat( "#{team_ranking_score.score}" );
 
     var dataSM = google.visualization.arrayToDataTable([
       ['Label', 'Value'],

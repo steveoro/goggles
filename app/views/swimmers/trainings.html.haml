@@ -1,96 +1,95 @@
 = render( partial: 'tabs_and_radio_title' )
 
-.row.goggles-category-gap#pageTop
-  .col-xs-9
-    %table.table.table-striped.table-bordered.table-hover.table-condensed#trainingSummary
-      %tbody
-        %tr{'class'=>'info'}
-          %td
-            %b= I18n.t('radiography.trainings_summary')
-          %td.goggles-rightalign
-            %b= I18n.t('radiography.distance_swam')
-          %td.goggles-rightalign
-            %b= I18n.t('radiography.training_duration')
-          %td.goggles-rightalign
-            %b= I18n.t('radiography.trainings_number')
-          %td.goggles-rightalign
-            %b= I18n.t('radiography.average_distance')
-          %td.goggles-rightalign
-            %b= I18n.t('radiography.average_duration')
-          %td.goggles-rightalign
-            %b= I18n.t('radiography.average_100_meters')
-        %tr
-          %td.col-xs-3
-            %b= I18n.t('radiography.global_training')
-          %td.goggles-rightalign
-            = @global_distance[:distance]
-          %td.goggles-rightalign
-            = Timing.to_hour_string( @global_distance[:duration] )
-          %td.goggles-rightalign
-            = @global_distance[:number]
-          %td.goggles-rightalign
-            = @global_distance[:avg_distance]
-          %td.goggles-rightalign
-            = Timing.to_hour_string( @global_distance[:avg_duration] )
-          %td.goggles-rightalign
-            = Timing.to_minute_string( @global_distance[:avg_100_meters] )
-        %tr
-          %td.col-xs-3
-            %b= I18n.t('radiography.season_training')
-          %td.goggles-rightalign
-            = @season_distance[:distance]
-          %td.goggles-rightalign
-            = Timing.to_hour_string( @season_distance[:duration] )
-          %td.goggles-rightalign
-            = @season_distance[:number]
-          %td.goggles-rightalign
-            = @season_distance[:avg_distance]
-          %td.goggles-rightalign
-            = Timing.to_hour_string( @season_distance[:avg_duration] )
-          %td.goggles-rightalign
-            = Timing.to_minute_string( @season_distance[:avg_100_meters] )
-        %tr
-          %td.col-xs-3
-            %b= I18n.t('radiography.month_training')
-          %td.goggles-rightalign
-            = @last_month[:distance]
-          %td.goggles-rightalign
-            = Timing.to_hour_string( @last_month[:duration] )
-          %td.goggles-rightalign
-            = @last_month[:number]
-          %td.goggles-rightalign
-            = @last_month[:avg_distance]
-          %td.goggles-rightalign
-            = Timing.to_hour_string( @last_month[:avg_duration] )
-          %td.goggles-rightalign
-            = Timing.to_minute_string( @last_month[:avg_100_meters] )
-        %tr
-          %td.col-xs-3
-            %b= I18n.t('radiography.week_training')
-          %td.goggles-rightalign
-            = @last_week[:distance]
-          %td.goggles-rightalign
-            = Timing.to_hour_string( @last_week[:duration] )
-          %td.goggles-rightalign
-            = @last_week[:number]
-          %td.goggles-rightalign
-            = @last_week[:avg_distance]
-          %td.goggles-rightalign
-            = Timing.to_hour_string( @last_week[:avg_duration] )
-          %td.goggles-rightalign
-            = Timing.to_minute_string( @last_week[:avg_100_meters] )
-        %tr
-          %td.col-xs-3
-            %b= I18n.t('radiography.last_training')
-          %td.goggles-rightalign
-            = @last_training[:distance]
-          %td.goggles-rightalign
-            = Timing.to_hour_string( @last_training[:duration] )
-          %td.goggles-rightalign
-          %td.goggles-rightalign
-          %td.goggles-rightalign
-          %td.goggles-rightalign
-            = Timing.to_minute_string( @last_training[:avg_100_meters] )
+.col-xs-12.col-md-9.goggles-category-gap
+  %table.table.table-striped.table-bordered.table-hover.table-condensed#trainingSummary
+    %tbody
+      %tr{'class'=>'info'}
+        %td
+          %b= I18n.t('radiography.trainings_summary')
+        %td.goggles-rightalign
+          %b= I18n.t('radiography.distance_swam')
+        %td.goggles-rightalign
+          %b= I18n.t('radiography.training_duration')
+        %td.goggles-rightalign
+          %b= I18n.t('radiography.trainings_number')
+        %td.goggles-rightalign
+          %b= I18n.t('radiography.average_distance')
+        %td.goggles-rightalign
+          %b= I18n.t('radiography.average_duration')
+        %td.goggles-rightalign
+          %b= I18n.t('radiography.average_100_meters')
+      %tr
+        %td.col-xs-3
+          %b= I18n.t('radiography.global_training')
+        %td.goggles-rightalign
+          = @global_distance[:distance]
+        %td.goggles-rightalign
+          = Timing.to_hour_string( @global_distance[:duration] )
+        %td.goggles-rightalign
+          = @global_distance[:number]
+        %td.goggles-rightalign
+          = @global_distance[:avg_distance]
+        %td.goggles-rightalign
+          = Timing.to_hour_string( @global_distance[:avg_duration] )
+        %td.goggles-rightalign
+          = Timing.to_minute_string( @global_distance[:avg_100_meters] )
+      %tr
+        %td.col-xs-3
+          %b= I18n.t('radiography.season_training')
+        %td.goggles-rightalign
+          = @season_distance[:distance]
+        %td.goggles-rightalign
+          = Timing.to_hour_string( @season_distance[:duration] )
+        %td.goggles-rightalign
+          = @season_distance[:number]
+        %td.goggles-rightalign
+          = @season_distance[:avg_distance]
+        %td.goggles-rightalign
+          = Timing.to_hour_string( @season_distance[:avg_duration] )
+        %td.goggles-rightalign
+          = Timing.to_minute_string( @season_distance[:avg_100_meters] )
+      %tr
+        %td.col-xs-3
+          %b= I18n.t('radiography.month_training')
+        %td.goggles-rightalign
+          = @last_month[:distance]
+        %td.goggles-rightalign
+          = Timing.to_hour_string( @last_month[:duration] )
+        %td.goggles-rightalign
+          = @last_month[:number]
+        %td.goggles-rightalign
+          = @last_month[:avg_distance]
+        %td.goggles-rightalign
+          = Timing.to_hour_string( @last_month[:avg_duration] )
+        %td.goggles-rightalign
+          = Timing.to_minute_string( @last_month[:avg_100_meters] )
+      %tr
+        %td.col-xs-3
+          %b= I18n.t('radiography.week_training')
+        %td.goggles-rightalign
+          = @last_week[:distance]
+        %td.goggles-rightalign
+          = Timing.to_hour_string( @last_week[:duration] )
+        %td.goggles-rightalign
+          = @last_week[:number]
+        %td.goggles-rightalign
+          = @last_week[:avg_distance]
+        %td.goggles-rightalign
+          = Timing.to_hour_string( @last_week[:avg_duration] )
+        %td.goggles-rightalign
+          = Timing.to_minute_string( @last_week[:avg_100_meters] )
+      %tr
+        %td.col-xs-3
+          %b= I18n.t('radiography.last_training')
+        %td.goggles-rightalign
+          = @last_training[:distance]
+        %td.goggles-rightalign
+          = Timing.to_hour_string( @last_training[:duration] )
+        %td.goggles-rightalign
+        %td.goggles-rightalign
+        %td.goggles-rightalign
+        %td.goggles-rightalign
+          = Timing.to_minute_string( @last_training[:avg_100_meters] )
 
-.row
-  %p
+.col-xs-12
+  &nbsp;
