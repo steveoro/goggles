@@ -1,7 +1,7 @@
 = render( partial: 'tabs_and_radio_title' )
 - cache( cache_key_for_team( 'current_swimmers', @team.id, @max_updated_at ) ) do
   - if @swimmers.size > 0
-    .col-xs-12.table-responsive
+    .row
       %table.table.table-striped.table-bordered.table-hover.table-condensed
         %tbody
           %tr{'class'=>'info'}

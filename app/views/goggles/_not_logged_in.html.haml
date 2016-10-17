@@ -1,10 +1,16 @@
 .jumbotron
   .container
-    %h3= t(:welcome)
-    %p
+    %p/
+    .col-xs-7
+      %h3= t(:welcome)
       %a.btn.btn-primary(href="#{ new_user_session_path() }")= t(:login)
       = t(:or)
       %a.btn.btn-primary(href="#{ new_user_registration_path() }")= t(:sign_up)
-    %p
-      %a.btn(href="#{ home_about_path() }")= t(:more_info)
-      %a.btn(href="#{ home_tutorials_path() }")= t('tutorials_title')
+    .col-xs-5
+      %p
+        %a.btn.btn-default(href="#{ home_about_path() }")= t(:more_info)
+      %p
+        %a.btn.btn-default(href="#{ home_tutorials_path() }")= t('tutorials_title')
+      %p
+        %a.btn.twitter-follow-button(href="https://twitter.com/master_goggles" data-size="large" data-show-count="false" data-show-screen-name="false")
+          = t('follow_us')

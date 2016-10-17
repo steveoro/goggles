@@ -10,6 +10,8 @@
         %li
           = link_to("##{me.event_type.code}", {'data-turbolinks'=>'false'}) do
             = me.event_type.i18n_short
-  .row
-    .col-xs-12
-      = render( partial: 'full_results_grid' )
+  .row.col-xs-12
+    = render( partial: 'full_results_grid' )
+
+  .col-xs-12
+    &nbsp;

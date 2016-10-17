@@ -47,7 +47,7 @@ module SwimmersHelper
     label_txt = decorated_swimmer.get_confirm_label_text_for( current_user )
     tooltip   = decorated_swimmer.get_confirm_tooltip_text_for( current_user )
     path      = decorated_swimmer.get_confirm_path_for( current_user )
-    build_link_result( "confirm#{swimmer.id}", label_txt, "label", tooltip, path, :post ) if path
+    build_link_result( "confirm#{swimmer.id}", label_txt, "label label-default", tooltip, path, :post ) if path
   end
 
 
@@ -90,7 +90,7 @@ module SwimmersHelper
     label_txt = decorated_swimmer.get_remove_label_text_for( current_user )
     tooltip   = decorated_swimmer.get_remove_tooltip_text_for( current_user )
     path      = decorated_swimmer.get_remove_path_for( current_user )
-    build_link_result( "remove#{swimmer.id}", label_txt, "label label-important", tooltip, path ) if path
+    build_link_result( "remove#{swimmer.id}", label_txt, "label label-danger", tooltip, path ) if path
   end
 
 

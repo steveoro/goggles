@@ -1,115 +1,122 @@
+.row.col-xs-12
+  = link_to( I18n.t(:back_to_index_view), swimming_pools_path() )
+.row.col-xs-12
+  &nbsp;
+
 .row
-  .col-xs-12
-    = link_to( I18n.t(:back_to_index_view), swimming_pools_path() )
+  %ul.nav.nav-tabs#pageTop{role: "tablist"}
+    %li.active
+      = link_to(t('swimming_pool.details'), '#')
+    %li
+      = link_to(t('swimming_pool.reviews'), for_pool_swimming_pool_reviews_path(@pool.id))
 
-%ul.nav.nav-tabs#pageTop{role: "tablist"}
-  %li.active
-    = link_to(t('swimming_pool.details'), '#')
-  %li
-    = link_to(t('swimming_pool.reviews'), for_pool_swimming_pool_reviews_path(@pool.id))
-
-.accordion
-  .accordion-group
-    .accordion-heading.goggles-accordion-heading
-      .row
-        .col-xs-11
-          %h3= "#{I18n.t('meeting_calendar.pool')} #{@pool.get_verbose_name}"
-        .col-xs-1
-          - decorated_pool = SwimmingPoolDecorator.decorate(@pool)
-          - unless decorated_pool.get_maps_url.nil?
-            #mapsLink{'data-toggle' => 'tooltip', 'title' => I18n.t('swimming_pool.maps_link_tooltip')}= link_to( image_tag('gmaps_new_32.png'), decorated_pool.get_maps_url )
-    .accordion-body
-      .accordion-inner
+.row
+  .accordion
+    .accordion-group
+      .accordion-heading.goggles-accordion-heading
         .row
-          .col-xs-12
+          &nbsp;
         .row
-          .col-xs-2
-            = I18n.t('activerecord.attributes.swimming_pool.nick_name') + ':'
-          .col-xs-10
-            = decorated_pool.nick_name
-        .row
-          .col-xs-2
-            = I18n.t('activerecord.models.pool_type') + ':'
-          .col-xs-10
-            = decorated_pool.get_pool_type
-        .row
-          .col-xs-2
-            = I18n.t('activerecord.attributes.swimming_pool.lanes_number') + ':'
-          .col-xs-10
-            = decorated_pool.get_pool_lanes_number
-        .row
-          .col-xs-2
-            = I18n.t('activerecord.attributes.swimming_pool.phone_number') + ':'
-          .col-xs-10
-            = decorated_pool.phone_number
-        .row
-          .col-xs-2
-            = I18n.t('activerecord.attributes.swimming_pool.fax_number') + ':'
-          .col-xs-10
-            = decorated_pool.fax_number
-        .row
-          .col-xs-2
-            = I18n.t('activerecord.attributes.swimming_pool.e_mail') + ':'
-          .col-xs-10
-            = decorated_pool.e_mail
-        .row
-          .col-xs-2
-            = I18n.t('activerecord.attributes.swimming_pool.contact_name') + ':'
-          .col-xs-10
-            = decorated_pool.contact_name
-        .row
-          .col-xs-2
-            = I18n.t('activerecord.attributes.swimming_pool.has_multiple_pools') + ':'
-          .col-xs-10
-            = show_tag( decorated_pool.has_multiple_pools )
-        .row
-          .col-xs-2
-            = I18n.t('activerecord.attributes.swimming_pool.has_open_area') + ':'
-          .col-xs-10
-            = show_tag( decorated_pool.has_open_area )
-        .row
-          .col-xs-2
-            = I18n.t('activerecord.attributes.swimming_pool.has_bar') + ':'
-          .col-xs-10
-            = show_tag( decorated_pool.has_bar )
-        .row
-          .col-xs-2
-            = I18n.t('activerecord.attributes.swimming_pool.has_restaurant_service') + ':'
-          .col-xs-10
-            = show_tag( decorated_pool.has_restaurant_service )
-        .row
-          .col-xs-2
-            = I18n.t('activerecord.attributes.swimming_pool.has_gym_area') + ':'
-          .col-xs-10
-            = show_tag( decorated_pool.has_gym_area )
-        .row
-          .col-xs-2
-            = I18n.t('activerecord.attributes.swimming_pool.has_children_area') + ':'
-          .col-xs-10
-            = show_tag( decorated_pool.has_children_area )
-        .row
-          .col-xs-2
-            = I18n.t('activerecord.models.locker_cabinet_type') + ':'
-          .col-xs-10
-            = decorated_pool.get_locker_cabinet_type
-        .row
-          .col-xs-2
-            = I18n.t('activerecord.models.shower_type') + ':'
-          .col-xs-10
-            = decorated_pool.get_shower_type
-        .row
-          .col-xs-2
-            = I18n.t('activerecord.models.hair_dryer_type') + ':'
-          .col-xs-10
-            = decorated_pool.get_hair_dryer_type
-        .row
-          .col-xs-2
-            %i= I18n.t(:updated_at) + ':'
-          .col-xs-10
-            %i= Format.a_short_datetime( decorated_pool.updated_at )
-        %script
-          $('#mapsLink').tooltip(placement:'bottom')
-        - unless decorated_pool.maps_uri.nil? || decorated_pool.maps_uri.empty?
-          .row
-            %hr
-          %iframe(src="#{@pool.maps_uri}" width="100%" height="450" frameborder="0" style="border:0")
+          .col-xs-11
+            %h3= "#{I18n.t('meeting_calendar.pool')} #{@pool.get_verbose_name}"
+          .col-xs-1
+            - decorated_pool = SwimmingPoolDecorator.decorate(@pool)
+            - unless decorated_pool.get_maps_url.nil?
+              #mapsLink{'data-toggle' => 'tooltip', 'title' => I18n.t('swimming_pool.maps_link_tooltip')}= link_to( image_tag('gmaps_new_32.png'), decorated_pool.get_maps_url )
+      .accordion-body
+        .accordion-inner
+          %table.table.table-striped.table-hover.table-condensed.table-bordered
+            %tbody
+              %tr
+                %td.col-xs-4.col-md-3
+                  = I18n.t('activerecord.attributes.swimming_pool.nick_name') + ':'
+                %td.col-xs-8.col-md-9
+                  %b= decorated_pool.nick_name
+              %tr
+                %td.col-xs-4.col-md-3
+                  = I18n.t('activerecord.models.pool_type') + ':'
+                %td.col-xs-8.col-md-9
+                  = decorated_pool.get_pool_type
+              %tr
+                %td.col-xs-4.col-md-3
+                  = I18n.t('activerecord.attributes.swimming_pool.lanes_number') + ':'
+                %td.col-xs-8.col-md-9
+                  = decorated_pool.get_pool_lanes_number
+              %tr
+                %td.col-xs-4.col-md-3
+                  = I18n.t('activerecord.attributes.swimming_pool.phone_number') + ':'
+                %td.col-xs-8.col-md-9
+                  = decorated_pool.phone_number
+              %tr
+                %td.col-xs-4.col-md-3
+                  = I18n.t('activerecord.attributes.swimming_pool.fax_number') + ':'
+                %td.col-xs-8.col-md-9
+                  = decorated_pool.fax_number
+              %tr
+                %td.col-xs-4.col-md-3
+                  = I18n.t('activerecord.attributes.swimming_pool.e_mail') + ':'
+                %td.col-xs-8.col-md-9
+                  = decorated_pool.e_mail
+              %tr
+                %td.col-xs-4.col-md-3
+                  = I18n.t('activerecord.attributes.swimming_pool.contact_name') + ':'
+                %td.col-xs-8.col-md-9
+                  = decorated_pool.contact_name
+              %tr
+                %td.col-xs-4.col-md-3
+                  = I18n.t('activerecord.attributes.swimming_pool.has_multiple_pools') + ':'
+                %td.col-xs-8.col-md-9
+                  = show_tag( decorated_pool.has_multiple_pools )
+              %tr
+                %td.col-xs-4.col-md-3
+                  = I18n.t('activerecord.attributes.swimming_pool.has_open_area') + ':'
+                %td.col-xs-8.col-md-9
+                  = show_tag( decorated_pool.has_open_area )
+              %tr
+                %td.col-xs-4.col-md-3
+                  = I18n.t('activerecord.attributes.swimming_pool.has_bar') + ':'
+                %td.col-xs-8.col-md-9
+                  = show_tag( decorated_pool.has_bar )
+              %tr
+                %td.col-xs-4.col-md-3
+                  = I18n.t('activerecord.attributes.swimming_pool.has_restaurant_service') + ':'
+                %td.col-xs-8.col-md-9
+                  = show_tag( decorated_pool.has_restaurant_service )
+              %tr
+                %td.col-xs-4.col-md-3
+                  = I18n.t('activerecord.attributes.swimming_pool.has_gym_area') + ':'
+                %td.col-xs-8.col-md-9
+                  = show_tag( decorated_pool.has_gym_area )
+              %tr
+                %td.col-xs-4.col-md-3
+                  = I18n.t('activerecord.attributes.swimming_pool.has_children_area') + ':'
+                %td.col-xs-8.col-md-9
+                  = show_tag( decorated_pool.has_children_area )
+              %tr
+                %td.col-xs-4.col-md-3
+                  = I18n.t('activerecord.models.locker_cabinet_type') + ':'
+                %td.col-xs-8.col-md-9
+                  = decorated_pool.get_locker_cabinet_type
+              %tr
+                %td.col-xs-4.col-md-3
+                  = I18n.t('activerecord.models.shower_type') + ':'
+                %td.col-xs-8.col-md-9
+                  = decorated_pool.get_shower_type
+              %tr
+                %td.col-xs-4.col-md-3
+                  = I18n.t('activerecord.models.hair_dryer_type') + ':'
+                %td.col-xs-8.col-md-9
+                  = decorated_pool.get_hair_dryer_type
+              %tr
+                %td.col-xs-4.col-md-3
+                  %i= I18n.t(:updated_at) + ':'
+                %td.col-xs-8.col-md-9
+                  %i= Format.a_short_datetime( decorated_pool.updated_at )
+          %script
+            $('#mapsLink').tooltip(placement:'bottom')
+          - unless decorated_pool.maps_uri.nil? || decorated_pool.maps_uri.empty?
+            .row
+              %hr
+            %iframe(src="#{@pool.maps_uri}" width="100%" height="450" frameborder="0" style="border:0")
+.row
+  &nbsp;

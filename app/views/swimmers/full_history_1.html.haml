@@ -1,6 +1,6 @@
 = render( partial: 'tabs_and_radio_title' )
 - cache( cache_key_for_swimmer( 'full_history_1', @swimmer.id, @max_updated_at ) ) do
-  .row.col-xs-12#pageTop
+  .col-xs-12#pageTop
     - PoolType.only_for_meetings.each do |pool_type|
       .col-xs-6.graph-container-half
         .graph-placeholder-full{ 'id' => "pie#{pool_type.code}" }
@@ -11,14 +11,15 @@
               = link_to("##{pool_type.code}", {'data-turbolinks'=>'false'}) do
                 = pool_type.i18n_description
 
-  .goggles-category-gap#full_history_1
+  .col-xs-12.goggles-category-gap#full_history_1
   - PoolType.only_for_meetings.each do |pool_type|
-    .row.col-xs-12
+    .col-xs-12
       .goggles-category-gap{ 'id' => "#{pool_type.code}" }
         %h3
           = "#{pool_type.i18n_description}"
           = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
             = image_tag('bullet_arrow_up.png')
+    .col-xs-12.table-responsive
       %table.table.table-striped.table-bordered.table-hover.table-condensed
         %tbody
           %tr{'class'=>'info'}

@@ -28,48 +28,50 @@
         = t('championships.team_ranking')
         = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
           = image_tag('bullet_arrow_up.png')
-      %table.table.table-striped.table-bordered.table-hover.table-condensed#team_ranking
-        %tbody
-          %tr{'class'=>'info'}
-            %td.goggles-rightalign{ rowspan: 2 }
-              %b= t('championships.position')
-            %td{ rowspan: 2 }
-              %b= t('championships.team')
-            - @championship_ranking.meetings.each do |meeting|
-              %td.goggles-centeralign{ colspan: col_x_meeting }
-                = meeting.decorate.get_linked_city_with_date
-            %td.goggles-rightalign{ rowspan: 2 }
-              %b= t('championships.total_points')
-          %tr{'class'=>'info'}
-            - @championship_ranking.meetings.each do |meeting|
-              - @championship_ranking.columns.each do |column|
-                %td.goggles-rightalign
-                  = t('championships.' + column.to_s)
-              %td.goggles-rightalign
-                = t('championships.meeting_total')
-          - @championship_ranking.team_scores.each_with_index do |team_score,index|
-            %tr
-              %td.goggles-rightalign
-                %b= (index + 1).to_i
-              %td
-                = team_score.team.decorate.get_linked_name
-              - @championship_ranking.meetings.each_with_index do |meeting,index_meeting|
-                - meeting_total = 0
+      .table-responsive
+        %table.table.table-striped.table-bordered.table-hover.table-condensed#team_ranking
+          %tbody
+            %tr{'class'=>'info'}
+              %td.goggles-rightalign{ rowspan: 2 }
+                %b= t('championships.position')
+              %td{ rowspan: 2 }
+                %b= t('championships.team')
+              - @championship_ranking.meetings.each do |meeting|
+                %td.goggles-centeralign{ colspan: col_x_meeting }
+                  = meeting.decorate.get_linked_city_with_date
+              %td.goggles-rightalign{ rowspan: 2 }
+                %b= t('championships.total_points')
+            %tr{'class'=>'info'}
+              - @championship_ranking.meetings.each do |meeting|
                 - @championship_ranking.columns.each do |column|
                   %td.goggles-rightalign
-                    - if team_score.meetings[index_meeting]
-                      = team_score.meetings[index_meeting][column].to_i
-                      - meeting_total += team_score.meetings[index_meeting][column].to_i
+                    = t('championships.' + column.to_s)
                 %td.goggles-rightalign
-                  %b= meeting_total.to_i
-              %td.goggles-rightalign
-                %b= team_score.total_points.to_i
+                  = t('championships.meeting_total')
+            - @championship_ranking.team_scores.each_with_index do |team_score,index|
+              %tr
+                %td.goggles-rightalign
+                  %b= (index + 1).to_i
+                %td
+                  = team_score.team.decorate.get_linked_name
+                - @championship_ranking.meetings.each_with_index do |meeting,index_meeting|
+                  - meeting_total = 0
+                  - @championship_ranking.columns.each do |column|
+                    %td.goggles-rightalign
+                      - if team_score.meetings[index_meeting]
+                        = team_score.meetings[index_meeting][column].to_i
+                        - meeting_total += team_score.meetings[index_meeting][column].to_i
+                  %td.goggles-rightalign
+                    %b= meeting_total.to_i
+                %td.goggles-rightalign
+                  %b= team_score.total_points.to_i
       .row
         .goggles-category-gap
           %h3
             = t('championships.team_stats')
             = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
               = image_tag('bullet_arrow_up.png')
+        .table-responsive
           %table.table.table-striped.table-bordered.table-hover.table-condensed#team_stats
             %tbody
               %tr{'class'=>'info'}
@@ -115,4 +117,5 @@
                   %td.goggles-rightalign
                     %b= meeting_stat.results_relay_count
 
-      .row.goggles-category-gap
+      .col-xs-12.goggles-category-gap
+        &nbsp;

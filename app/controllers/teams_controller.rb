@@ -55,9 +55,18 @@ class TeamsController < ApplicationController
   # == Params:
   # id: the team id to be processed
   #
+  # header_year: typically nil, it's a current date override for when checking
+  #      for @swimmer badges in current season (mainly used only inside specs
+  #      to test a couple of edge conditions)
+  #
   def current_swimmers
+    params.permit! # (No unsafe params can be passed)
     @tab_title = I18n.t('radiography.team_current_swimmers_tab')
-    @last_seasons = Season.is_not_ended.map{ |season| season.id }
+    @last_seasons = if params['header_year'].present?
+      Season.where( "header_year LIKE '%#{ params['header_year'] }%'" ).to_a
+    else
+      Season.is_not_ended.map{ |season| season.id }
+    end
     @affiliations = @team.team_affiliations.where( ['season_id in (?)', @last_seasons] )
     current_badges = @team.badges.where( ['season_id in (?)', @last_seasons] ) if @last_seasons && @team.badges
     @swimmers = if current_badges.nil?

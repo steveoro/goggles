@@ -1,9 +1,9 @@
 = render( partial: 'tabs_and_radio_title' )
 
 .col-xs-12
-  .col-xs-8
+  .col-xs-8.col-md-6
     = "#{ I18n.t('team.meeting_presence') }:"
-  .col-xs-4
+  .col-xs-4.col-md-6
     = count_with_award_star( @team.meetings.collect{|row| row.id}.uniq.size )
 
 .col-xs-12
@@ -11,9 +11,9 @@
 
 - @team.season_types.uniq.each do |season_type|
   .col-xs-12
-    .col-xs-8
+    .col-xs-8.col-md-6
       = "#{ I18n.t('team.season_presence') } #{season_type.get_full_name}"
-    .col-xs-4
+    .col-xs-4.col-md-6
       = @team.seasons.where(season_type_id: season_type.id).count
 
 .col-xs-12
