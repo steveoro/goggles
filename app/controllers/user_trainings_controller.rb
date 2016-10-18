@@ -95,7 +95,6 @@ class UserTrainingsController < ApplicationController
       order_direction: 'asc',
       per_page: 20
     )
-    flash[:warning] = I18n.t('feature_wip_disclaimer')
   end
 
 
@@ -119,7 +118,6 @@ class UserTrainingsController < ApplicationController
     @user_training = UserTraining.new
     @user_training_max_part_order = 0
     assign_all_options_array()
-    flash[:warning] = I18n.t('feature_wip_disclaimer')
     render :edit
   end
 
@@ -157,7 +155,6 @@ class UserTrainingsController < ApplicationController
     @training_max_part_order = @user_training.user_training_rows.maximum(:part_order)
     @title = I18n.t('trainings.show_title').gsub( "{TRAINING_TITLE}", @user_training.description )
     assign_all_options_array()
-    flash[:warning] = I18n.t('feature_wip_disclaimer')
   end
 
   # Update action.

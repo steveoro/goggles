@@ -8,8 +8,8 @@
 
     g.column(
         name: I18n.t(:user, { scope: [:activerecord, :models] }),
-        attribute: 'user_id',
-        custom_filter: User.to_dropdown,
+#        attribute: 'user_id',
+#        custom_filter: User.to_dropdown,
     ) do |user_training|
         user_training.get_user_name
     end

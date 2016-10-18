@@ -208,6 +208,9 @@ en:
         has_restaurant_service: "With restaurant?"
         has_gym_area: "With gym?"
         has_children_area: "With children area?"
+      swimming_pool_review:
+        title: "Title"
+        entry_text: "Review"
       training:
         title: "Title"
         description: "Description"

@@ -15,20 +15,16 @@
         name: I18n.t('activerecord.models.swimming_pool'),
         assoc: :swimming_pool,
         attribute: 'id',
-        custom_filter: SwimmingPool.to_dropdown,
+        custom_filter: SwimmingPool.to_dropdown( nil, :id, :get_verbose_name ),
         detach_with_id: :flt_swimming_pool_id,
     ) do |review|
         if review.swimming_pool
-          link_to( review.swimming_pool_name(:get_full_name), for_pool_swimming_pool_reviews_path(review.swimming_pool_id) ) +
-          ", #{review.swimming_pool_name(:get_full_address)}"
+            "#{ link_to( review.swimming_pool_name(:get_full_name), for_pool_swimming_pool_reviews_path(review.swimming_pool_id) ) }, #{review.swimming_pool_name(:get_full_address)}".html_safe
         end
     end
 
     g.column(
         name: I18n.t('swimming_pool_review.review_by'),
-        assoc: :user,
-        attribute: 'id',
-        custom_filter: User.to_dropdown
     ) do |review|
         review.user_name
     end

@@ -9,8 +9,11 @@
   .row.col-xs-12
     %i= I18n.t('swimming_pool_review.no_reviews')
 
-- if current_user && current_user.has_swimmer_confirmations?
+- if current_user && current_user.has_swimmer_confirmations? && @swimming_pool_id
   .row.col-xs-12
     &nbsp;
   .row.col-xs-12
-    %a.btn.btn-primary(href="#{new_swimming_pool_review_path(swimming_pool_id: @swimming_pool_id)}")= t('swimming_pool_review.add_new_review')
+    %a.btn.btn-primary(href="#{ new_swimming_pool_review_path(swimming_pool_id: @swimming_pool_id) }")= t('swimming_pool_review.add_new_review')
+
+%script
+  $(function () { $('[data-toggle="tooltip"]').tooltip(); });

@@ -209,6 +209,10 @@ Goggles::Application.routes.draw do
       get    "swimmers/index",                to: "swimmers#index",         as: "swimmers"
       get    "swimmers/show/:id",             to: "swimmers#show",          as: "swimmer_show"
 
+      # === SwimmingPools ===
+      get    "swimming_pools/index",          to: "swimming_pools#index",   as: "swimming_pools"
+      get    "swimming_pools/show/:id",       to: "swimming_pools#show",    as: "swimming_pool_show"
+
       # === Teams ===
       get    "team/count_meetings/:id",       to: "teams#count_meetings",   as: "team_count_meetings"
       get    "team/count_results/:id",        to: "teams#count_results",    as: "team_count_results"

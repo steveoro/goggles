@@ -10,24 +10,22 @@
 
     .accordion-body.collapse.in#collapseFlt
       .accordion-inner
-        .row.col-xs-12
-          .col-xs-3.col-md-2
+        .row.col-xs-12.form-group
+          .col-xs-3.col-sm-3.col-md-2
             = I18n.t(:name)
-          .col-xs-9.col-md-10
+          .col-xs-9.col-sm-6.col-md-6
             = grid_filter @pools_grid, :flt_pool_name
-        .row.col-xs-12
-          .col-xs-3.col-md-2
+        .row.col-xs-12.form-group
+          .col-xs-3.col-sm-3.col-md-2
             = I18n.t('activerecord.attributes.swimming_pool.nick_name')
-          .col-xs-9.col-md-10
+          .col-xs-9.col-sm-6.col-md-6
             = grid_filter @pools_grid, :flt_pool_nick_name
-        .row.col-xs-12
-          .col-xs-3.col-md-2
+        .row.col-xs-12.form-group
+          .col-xs-3.col-sm-3.col-md-2
             = I18n.t(:city, { scope: [:activerecord, :models] })
-          .col-xs-9.col-md-10
+          .col-xs-9.col-sm-6.col-md-6
             = grid_filter @pools_grid, :flt_pool_city_id
-        .row.col-xs-12
-          &nbsp;
-        .row.col-xs-12
+        .row.col-xs-12.form-group
           .col-xs-6
             .external-buttons
               %button.btn.btn-primary.wg-external-submit-button{'data-grid-name' => 'grid'}

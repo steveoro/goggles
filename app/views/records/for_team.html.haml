@@ -61,7 +61,7 @@
 
     // Since we're bound to return a list of tokenized & comparable strings,
     // we'll store the additional data to display into the same result row,
-    // concatenated with an underscore (which is surely not used for a name).
+    // concatenated with a pipe (which is surely not used for a name).
     for ( idx = 0; idx < data.length; idx++ ) {
       var composedName = data[idx].name + "|" + data[idx].id;
       responseTeamNamesBuffer.push( composedName );

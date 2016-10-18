@@ -9,3 +9,6 @@
   %h3= @title
 
 = render( partial: 'review_detail', locals: {review: @review} )
+
+%script
+  $(function () { $('[data-toggle="tooltip"]').tooltip(); });

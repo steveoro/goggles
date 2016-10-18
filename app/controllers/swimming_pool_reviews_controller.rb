@@ -13,7 +13,8 @@ class SwimmingPoolReviewsController < ApplicationController
   # Require authorization before invoking some of this controller's actions:
 #  before_action :authenticate_user_from_token!, except: [:index, :show, :for_swimming_pool, :for_user]
   before_action :authenticate_user!, except: [:index, :show, :for_swimming_pool, :for_user] # Devise HTTP log-in strategy
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   def index
@@ -32,7 +33,8 @@ class SwimmingPoolReviewsController < ApplicationController
       )
     end
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Returns the review for a specific review id.
@@ -52,7 +54,8 @@ class SwimmingPoolReviewsController < ApplicationController
     @title = I18n.t('swimming_pool_review.title_show')
     respond_with( @review )
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Returns the reviews found for a specific swimmin_pool id.
@@ -66,7 +69,8 @@ class SwimmingPoolReviewsController < ApplicationController
     @reviews.sort{ |a,b| (a.votes_for.down.count - a.votes_for.up.count) <=> (b.votes_for.down.count - b.votes_for.up.count) }
     respond_with( @reviews )
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Returns the reviews found for a specific user id.
@@ -78,7 +82,8 @@ class SwimmingPoolReviewsController < ApplicationController
     @user_id = params[:id]
     respond_with( @reviews = SwimmingPoolReview.where( user_id: @user_id ) )
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Sends an e-mail abuse report for a specific SwimmingPoolReview id.
@@ -98,7 +103,8 @@ class SwimmingPoolReviewsController < ApplicationController
     end
     redirect_to(root_path) and return
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Casts a vote (either up or down) for the specified review id.
@@ -119,7 +125,8 @@ class SwimmingPoolReviewsController < ApplicationController
     end
     redirect_to(root_path) and return
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Prepares the form for the creation of a new Review.
@@ -134,10 +141,12 @@ class SwimmingPoolReviewsController < ApplicationController
     @review = SwimmingPoolReview.new
     @review.user_id = current_user.id
     @review.swimming_pool_id = params[:swimming_pool_id]
-    @title = I18n.t('swimming_pool_review.title_show')
-    respond_with( @review )
+    @title = I18n.t('swimming_pool_review.new_review')
+#    respond_with( @review )
+    render( action: :edit )
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Creates a new Review.
@@ -152,7 +161,8 @@ class SwimmingPoolReviewsController < ApplicationController
     @review.user_id = current_user.id
     respond_with( @review )
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Prepares the form for the editing of a new Review.
@@ -167,7 +177,8 @@ class SwimmingPoolReviewsController < ApplicationController
     @title = I18n.t('swimming_pool_review.title_show')
     respond_with( @review )
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Updates an existing Review.
@@ -182,7 +193,8 @@ class SwimmingPoolReviewsController < ApplicationController
     @review.update_attributes( swimming_pool_review_params )
     respond_with( @review )
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Deletes an existing Review.
@@ -201,7 +213,8 @@ class SwimmingPoolReviewsController < ApplicationController
     end
     redirect_to( swimming_pool_reviews_path() ) and return
   end
-  # ---------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   private

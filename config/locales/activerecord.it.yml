@@ -188,6 +188,7 @@ it:
         has_children_area: "Con area bimbi?"
       swimming_pool_review:
         title: "Titolo"
+        entry_text: "Recensione"
       team:
         name: Nome
         address: "Indirizzo"

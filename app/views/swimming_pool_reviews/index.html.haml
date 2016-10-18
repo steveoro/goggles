@@ -10,19 +10,17 @@
 
     .accordion-body.collapse.in#collapseFlt
       .accordion-inner
-        .row.col-xs-12
-          .col-xs-2
+        .row.col-xs-12.form-group
+          .col-xs-3.col-sm-3.col-md-2
             = I18n.t(:title)
-          .col-xs-10
+          .col-xs-9.col-sm-6.col-md-6
             = grid_filter @reviews_grid, :flt_review_title
-        .row.col-xs-12
-          .col-xs-2
+        .row.col-xs-12.form-group
+          .col-xs-3.col-sm-3.col-md-2
             = I18n.t('activerecord.models.swimming_pool')
-          .col-xs-10
+          .col-xs-9.col-sm-6.col-md-6
             = grid_filter @reviews_grid, :flt_swimming_pool_id
-        .row.col-xs-12
-          &nbsp;
-        .row.col-xs-12
+        .row.col-xs-12.form-group
           .col-xs-6
             .external-buttons
               %button.btn.btn-primary.wg-external-submit-button{'data-grid-name' => 'grid'}
