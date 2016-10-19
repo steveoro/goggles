@@ -295,6 +295,19 @@ en:
               blank: "can't be blank"
         user:
           attributes:
+            email:
+              blank: "can't be blank"
+              too_short: "is too short"
+            name:
+              blank: "can't be blank"
+              too_short: "is too short"
             password:
+              blank: "can't be blank"
+              too_short: "is too short"
+            password_confirmation:
+              confirmation: "needs to be equal to the password"
+              blank: "can't be blank"
+              too_short: "is too short"
+            current_password:
               blank: "can't be blank"
               too_short: "is too short"

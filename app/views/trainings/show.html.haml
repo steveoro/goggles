@@ -2,11 +2,15 @@
   .col-xs-3
     = link_to_trainings()
   .col-xs-2
-    .btn.btn-default= link_to_training_printout( @training )
+    = link_to_training_printout( @training )
   .col-xs-2
-    .btn.btn-default= link_to_training_edit( @training )
+    = link_to_training_edit( @training )
   .col-xs-2
-    .btn.btn-default= link_to_training_duplicate( @training )
+    = link_to_training_duplicate( @training )
+
+.row.col-xs-12
+  &nbsp;
+
 - # From down here to below we just need the decorated instance:
 - @training = TrainingDecorator.decorate( @training )
 

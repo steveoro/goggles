@@ -1,10 +1,13 @@
 = render partial: 'search_training_story_grid'
+= render( partial: 'goggles/feature_wip_disclaimer' )
+
 %h3= @title
 
-.row
-  .col-xs-12
-    = render_grid( @user_training_stories_grid )
+.row.col-xs-12
+  = render_grid( @user_training_stories_grid )
 
-.row
-  .col-xs-12
-    = link_to( I18n.t(:add_new), new_user_training_story_path() )
+.row.col-xs-12
+  &nbsp;
+.row.col-xs-12
+  %a.btn.btn-primary(href="#{ new_user_training_story_path() }")
+    = I18n.t('add_new')

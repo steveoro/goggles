@@ -87,7 +87,6 @@ class UserTrainingStoriesController < ApplicationController
         "{TRAINING_TITLE}",
         UserTrainingStoryDecorator.decorate(@user_training_story).get_user_training_name
       )
-    flash[:warning] = I18n.t('feature_wip_disclaimer')
   end
 
 

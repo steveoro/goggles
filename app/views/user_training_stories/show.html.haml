@@ -3,6 +3,10 @@
     = link_to_user_training_stories()
   .col-xs-2
     = link_to_user_training_story_edit( @user_training_story )
+
+.row.col-xs-12
+  &nbsp;
+
 - # From down here to below we just need the decorated instance:
 - @user_training_story = UserTrainingStoryDecorator.decorate( @user_training_story )
 

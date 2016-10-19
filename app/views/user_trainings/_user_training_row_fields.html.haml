@@ -1,5 +1,5 @@
-%li.full_row.nested-fields
-  .group_hdr.row.control-row{ hidden: 'true' }
+%li.row.full_row.nested-fields
+  .form-group.group_hdr.row.col-xs-12.control-row{ hidden: 'true' }
     .col-xs-1.g-w30
       = f.input :group_id, label: false, wrapper: false, input_html: {class: 'group_id group_clear'}
     .col-xs-2.g-w150
@@ -18,39 +18,40 @@
         = link_to( image_tag('link_break.png'), '#', onclick: "clickBreakGrouping( $(this).closest('.full_row') ); return false",  class: "nav_link" )
 
   %ul.group_detail.droppable.sortable
-    %li.data_row.row.control-row
-      .col-xs-1.g-w30
-        = f.input :part_order, label: false, wrapper: false, input_html: {class: 'autosequence'}
-      .col-xs-2.g-w150
-        = f.association :training_step_type, label: false, wrapper: false, collection: @step_type_options_array, prompt: I18n.t('please_select'), input_html: {class: 'training_step_type'}
-      .col-xs-1.g-w30
-        = f.input :times, label: false, wrapper: false
-      .col-xs-1.g-w50
-        = f.input :distance, label: false, wrapper: false
-      .col-xs-4.g-w320
-        .ui-widget
-          = f.association( :exercise, label: false, wrapper: false, collection: @exercise_options_array, input_html: { class: 'input-lg combobox' } )
-      .col-xs-1.g-w40
-        .ui-widget
-          = f.input :start_and_rest, label: false, wrapper: false, collection: @start_rest_options_array, input_html: { class: 'combobox' }
-      .col-xs-1.g-w40
-        .ui-widget
-          = f.input :pause, label: false, wrapper: false, collection: @pause_options_array, input_html: { class: 'combobox' }
-      .col-xs-1.g-w25
-        .ungrouped-row-controls
-          .toolTip{'data-toggle' => 'tooltip', 'title' => I18n.t('trainings.delete_row_tooltip') }
-            = link_to_remove_association( image_tag('delete.png'), f, confirm: I18n.t('netzke.basepack.grid_panel.are_you_sure') )
+    %li.data_row.control-row
+      .form-group.col-xs-12
+        .col-xs-1.g-w30
+          = f.input :part_order, label: false, wrapper: false, input_html: {class: 'autosequence'}
+        .col-xs-2.g-w150
+          = f.association :training_step_type, label: false, wrapper: false, collection: @step_type_options_array, prompt: I18n.t('please_select'), input_html: {class: 'training_step_type'}
+        .col-xs-1.g-w30
+          = f.input :times, label: false, wrapper: false
+        .col-xs-1.g-w50
+          = f.input :distance, label: false, wrapper: false
+        .col-xs-4.g-w320
+          .ui-widget
+            = f.association( :exercise, label: false, wrapper: false, collection: @exercise_options_array, input_html: { class: 'input-lg combobox' } )
+        .col-xs-2.g-w40
+          .ui-widget
+            = f.input :start_and_rest, label: false, wrapper: false, collection: @start_rest_options_array
+        .col-xs-1.g-w40
+          .ui-widget
+            = f.input :pause, label: false, wrapper: false, collection: @pause_options_array
 
-      .row.control-row
-        .col-xs-offset-4.col-xs-1.g-w80
+      .form-group.col-xs-12.control-row
+        .col-xs-1.g-w80
+          .ungrouped-row-controls
+            .toolTip{'data-toggle' => 'tooltip', 'title' => I18n.t('trainings.delete_row_tooltip') }
+              = link_to_remove_association( image_tag('delete.png'), f, confirm: I18n.t('netzke.basepack.grid_panel.are_you_sure') )
+        .col-xs-3.g-w80
           = 'Attrezzi:'
-        .col-xs-1.g-w80
+        .col-xs-2.g-w80
           = f.association :arm_aux_type, label: false, wrapper: false, collection: @arm_aux_options_array, prompt: I18n.t('please_select'), input_html: {class: 'arm_aux_type'}
-        .col-xs-1.g-w80
+        .col-xs-2.g-w80
           = f.association :kick_aux_type, label: false, wrapper: false, collection: @kick_aux_options_array, prompt: I18n.t('please_select'), input_html: {class: 'kick_aux_type'}
-        .col-xs-1.g-w80
+        .col-xs-2.g-w80
           = f.association :body_aux_type, label: false, wrapper: false, collection: @body_aux_options_array, prompt: I18n.t('please_select'), input_html: {class: 'body_aux_type'}
-        .col-xs-1.g-w80
+        .col-xs-2.g-w80
           = f.association :breath_aux_type, label: false, wrapper: false, collection: @breath_aux_options_array, prompt: I18n.t('please_select'), input_html: {class: 'breath_aux_type'}
 
 %script

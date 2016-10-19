@@ -1,21 +1,22 @@
 = render( partial: 'show_header_links' )
 = render( partial: 'show_title' )
+.row.col-xs-12
+  &nbsp;
 
-.row
-  .col-xs-12
-    - curr_group_id = old_group_id = 0
-    - group_list_hash = @user_training.build_group_list_hash()
-    - previous_step = 'none'
-    - @user_training_rows.each do |user_training_row|
-      - if (user_training_row.group_id > 0) && group_list_hash.has_key?( user_training_row.group_id) && (curr_group_id != user_training_row.group_id)
+.row.col-xs-12
+  - curr_group_id = old_group_id = 0
+  - group_list_hash = @user_training.build_group_list_hash()
+  - previous_step = 'none'
+  - @user_training_rows.each do |user_training_row|
+    - if (user_training_row.group_id > 0) && group_list_hash.has_key?( user_training_row.group_id) && (curr_group_id != user_training_row.group_id)
+      - fields = user_training_row.to_array()
+      - group_hash = group_list_hash[ user_training_row.group_id ]
+      = render( partial: 'show_group_rows', locals: { group_hash: group_hash, previous_step: previous_step } )
+      - curr_group_id = user_training_row.group_id
+      - previous_step = fields[1]
+    - else
+      - if (user_training_row.group_id == 0)                                       # Not in a group?
         - fields = user_training_row.to_array()
-        - group_hash = group_list_hash[ user_training_row.group_id ]
-        = render( partial: 'show_group_rows', locals: { group_hash: group_hash, previous_step: previous_step } )
-        - curr_group_id = user_training_row.group_id
+        = render( partial: 'show_single_row', locals: { fields: fields, previous_step: previous_step } )
         - previous_step = fields[1]
-      - else
-        - if (user_training_row.group_id == 0)                                       # Not in a group?
-          - fields = user_training_row.to_array()
-          = render( partial: 'show_single_row', locals: { fields: fields, previous_step: previous_step } )
-          - previous_step = fields[1]
 

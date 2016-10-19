@@ -12,7 +12,7 @@
       &nbsp;
       %i= review.swimming_pool.get_verbose_name
     - else
-      = f.association :swimming_pool, disabled: (review.swimming_pool_id.to_i > 0), label: I18n.t('activerecord.models.swimming_pool'), collection: SwimmingPool.all, prompt: I18n.t('please_select')
+      = f.association :swimming_pool, disabled: (review.swimming_pool_id.to_i > 0), label: I18n.t('activerecord.models.swimming_pool'), collection: SwimmingPool.to_dropdown( nil, :id, :get_verbose_name ), prompt: I18n.t('please_select')
   .form-group
     = f.label :title
     = f.input :title, label: false

@@ -297,6 +297,19 @@ it:
               blank: "non puo' essere vuota"
         user:
           attributes:
+            email:
+              blank: "non puo' essere vuota"
+              too_short: "e' troppo corta"
+            name:
+              blank: "non puo' essere vuoto"
+              too_short: "e' troppo corto"
+            password:
+              blank: "non puo' essere vuota"
+              too_short: "e' troppo corta"
+            password_confirmation:
+              confirmation: "deve essere uguale alla password scelta"
+              blank: "non puo' essere vuota"
+              too_short: "e' troppo corta"
             current_password:
               blank: "non puo' essere vuota"
               too_short: "e' troppo corta"

@@ -1,8 +1,11 @@
 .row
-  .col-xs-3
+  .col-xs-4
     = link_to_trainings()
   .col-xs-2
     = link_to_training_show( @training )
+
+.row.col-xs-12
+  &nbsp;
 
 %h3= @title
 = render( partial: 'form' )
