@@ -21,13 +21,18 @@ class SocialsController < ApplicationController
   # === Params:
   # :id || :swimmer[:swimmer_id] => both are interpreted as the swimmer id for the association
   def associate
+# DEBUG
+#    logger.debug "\r\n\r\n!! ------ #{self.class.name} -----"
+#    logger.debug "> #{params.inspect}"
+#    logger.debug "> #{request.inspect}"
+#    logger.debug "\r\n=====================================================\r\n\r\n"
     if request.post?                                # === POST: ===
-      if params[:id] || params[:swimmer][:swimmer_id] # Save the association both ways:
-        swimmer_id = ( params[:id] || params[:swimmer][:swimmer_id] ).to_i
+      if params[:id] || params[:swimmer][:id]       # Save the association both ways:
+        swimmer_id = ( params[:id] || params[:swimmer][:id] ).to_i
         if current_user.set_associated_swimmer( Swimmer.find_by_id(swimmer_id) )
           flash[:info] = I18n.t('user_association.association_successful')
         else
-          flash[:error] = I18n.t('user_association.something_went_wrong_try_later')
+          flash[:error] = I18n.t('user_association.association_unsuccessful')
         end
       end
       redirect_to( root_path ) and return
@@ -57,7 +62,7 @@ class SocialsController < ApplicationController
       if current_user.set_associated_swimmer()
         flash[:info] = I18n.t('user_association.dissociation_successful')
       else
-        flash[:error] = I18n.t('user_association.something_went_wrong_try_later')
+        flash[:error] = I18n.t('user_association.dissociation_unsuccessful')
       end
     end
     redirect_back( fallback_location: root_path ) and return

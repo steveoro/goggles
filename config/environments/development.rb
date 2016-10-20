@@ -54,7 +54,7 @@ Goggles::Application.configure do
   # config.action_mailer.asset_host = "http://localhost:3000"
 
   # [Steve, 20130716] mailer options used by Devise
-  config.action_mailer.default_url_options = { host: 'localhost' }
+  config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log

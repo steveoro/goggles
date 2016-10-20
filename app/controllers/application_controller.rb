@@ -18,6 +18,7 @@ class ApplicationController < ActionController::Base
               with: -> { render(controller: :exceptions, action: :error_page_path, error: 404) }
 
   before_action :set_locale, :check_maintenance_mode
+  before_action :configure_permitted_parameters, if: :devise_controller?
 
   # Security note: controllers with no-CSRF protection must disable the Devise fallback,
   # see #49 for details.
@@ -55,6 +56,13 @@ class ApplicationController < ActionController::Base
     # `nil` is still a falsy value, but I want a strictly boolean field here
 #    tokenized_user.try(:token_authenticable?) || false
 #  end
+
+
+  # Devise 4+ "lazy" parameter sanitizer
+  def configure_permitted_parameters
+    devise_parameter_sanitizer.permit(:sign_up, keys: [:name, :first_name, :last_name, :description, :year_of_birth])
+    devise_parameter_sanitizer.permit(:account_update, keys: [:name, :first_name, :last_name, :description, :year_of_birth])
+  end
 
 
 

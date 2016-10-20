@@ -2,7 +2,7 @@
   %hr/
 .col-xs-12
   %ul
-    - if controller_name != 'sessions'
+    - unless current_user
       %li
         %p= link_to I18n.t("devise.shared_links.log_in"), new_session_path(resource_name)
     - if devise_mapping.registerable? && controller_name != 'registrations'

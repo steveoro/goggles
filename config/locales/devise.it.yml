@@ -3,17 +3,17 @@ it:
     resend_confirm_email_title: "Istruzioni di conferma Account"
     resend_confirm_email_submit: "Rispedisci le istruzioni di conferma"
 
-    confirm_email_greetings: "Heila' <EMAIL>! Benvenuto in Goggles!"
+    confirm_email_greetings: "Heila' %{email}! Benvenuto in Goggles!"
     confirm_email_text: "Puoi confermare il tuo account di e-mail cliccando sul link qui sotto:"
     confirm_email_submit: "Conferma il mio account"
 
-    reset_password_greetings: "Ciao <EMAIL>!"
+    reset_password_greetings: "Ciao %{email}!"
     reset_password_text: "Qualcuno ha richiesto un link per resettare la tua password. Puoi fare questo cliccando sul link qui sotto."
     reset_password_submit: "Cambia la mia password"
     reset_password_footnote1: "Se non l'hai richiesto tu, per favore ignora questa email."
     reset_password_footnote2: "Tieni presente che la tua password non cambiera' sintanto che tu non cliccherai sul link qui sopra e ne creerai una nuova."
 
-    unlock_password_greetings: "Ciao <EMAIL>!"
+    unlock_password_greetings: "Ciao %{email}!"
     unlock_password_info: "Il tuo account e' stato bloccato a causa di un numero eccessivo di accessi sbagliati."
     unlock_password_text: "Clicca sul link qui sotto per sbloccare il tuo account:"
     unlock_password_submit: "Sblocca il mio account"
@@ -131,5 +131,5 @@ it:
       not_found: "non trovato"
       not_locked: "non era bloccato"
       not_saved:
-        one: "Un errore ha impedito di salvare questo %{resource}:"
-        other: "%{count} errori hanno impedito di salvare questo %{resource}:"
+        one: "Un errore ha impedito di completare l'operazione:"
+        other: "%{count} errori hanno impedito di completare l'operazione:"

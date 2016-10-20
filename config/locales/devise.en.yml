@@ -5,17 +5,17 @@ en:
     resend_confirm_email_title: "Confirmation instructions"
     resend_confirm_email_submit: "Resend the confirmation instructions"
 
-    confirm_email_greetings: "Hi there, <EMAIL>! Welcome to Goggles!"
+    confirm_email_greetings: "Hi there, %{email}! Welcome to Goggles!"
     confirm_email_text: "You can confirm your e-mail account by cliccking on the following link:"
     confirm_email_submit: "Confirm my account"
 
-    reset_password_greetings: "Hi there, <EMAIL>!"
+    reset_password_greetings: "Hi there, %{email}!"
     reset_password_text: "Somebody has requested a password-reset link for your account. You can do this by clicking on the following link:"
     reset_password_submit: "Change my password"
     reset_password_footnote1: "If you haven't request this, please ignore this e-mail."
     reset_password_footnote2: "Keep in mind that your password won't change as long as you will not click the above link."
 
-    unlock_password_greetings: "Hi there, <EMAIL>!"
+    unlock_password_greetings: "Hi there, %{email}!"
     unlock_password_info: "Your account has been locked due to an excessive amount of wrong password guesses. Maybe you've forgot your password. ...Or maybe someone else is trying to sneak in."
     unlock_password_text: "Click on the link here below to unlock your account:"
     unlock_password_submit: "Unlock my account"
@@ -136,5 +136,5 @@ en:
       not_found: "not found"
       not_locked: "was not locked"
       not_saved:
-        one: "1 error prohibited this %{resource} from being saved:"
-        other: "%{count} errors prohibited this %{resource} from being saved:"
+        one: "1 error prohibited this operation from being successful:"
+        other: "%{count} errors prohibited this operation from being successful:"

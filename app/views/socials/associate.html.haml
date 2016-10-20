@@ -1,8 +1,8 @@
 .row
-  .col-xs-8
+  &nbsp;
+.row
+  .col-xs-12
     %h3= I18n.t('user_association.link_yourself_to_an_existing_swimmer')
-  .col-xs-4
-    = link_to( I18n.t('user_association.not_now_temporary_skip'), social_skip_associate_path(), { method: :post, confirm: I18n.t('netzke.basepack.grid_panel.are_you_sure'), disable_with: I18n.t(:please_wait), class: 'disabled' } )
 
 .row
   %b= I18n.t('user_association.possible_swimmers')
@@ -22,16 +22,29 @@
 .row
   %hr
 .row
-  %i= link_to( t('social.chose_manually_your_identity'), '#', onclick: "$('#manualOverride').toggle(); return false",  class: "nav_link" )
+  %i
+    = link_to( t('social.chose_manually_your_identity'), '#', onclick: "$('#manualOverride').toggle(); return false",  class: "btn btn-default" )
 .row
   %p
 .row#manualOverride(hidden='true')
   = form_tag( socials_associate_path(), class: 'form-horizontal', :onsubmit => "$('#loadingIndicator').show();") do
-    .row
-      = select( :swimmer, :swimmer_id, Swimmer.to_dropdown(), { prompt: I18n.t(:please_select) }, { class: 'input-lg' } )
-      = submit_tag( I18n.t(:submit), data: {disable_with: I18n.t(:please_wait), class: 'btn'} )
-      %span(id='loadingIndicator' hidden='true')
-        = image_tag( 'indicator.gif' )
+    .row.col-xs-12.form-group
+      .col-xs-3
+        = label_tag( :swimmer, I18n.t('activerecord.models.swimmer'), for: :swimmer, class: 'control-label' )
+      .col-xs-8
+        = hidden_field( :swimmer, :id )
+        = text_field_tag( :swimmer_name, nil, {autocomplete: 'off', class: "input-lg typeahead",  |
+            "data-provide"=>"typeahead", placeholder: I18n.t('combobox_3char_tooltip')} )             |
+    .row.col-xs-12.form-group
+      .col-xs-5
+        = submit_tag( I18n.t(:submit), data: { disable_with: I18n.t(:please_wait), class: 'btn disabled' }, class: 'btn btn-primary' )
+        %span(id='loadingIndicator' hidden='true')
+          = image_tag( 'indicator.gif' )
+    -#.row
+    -#  = select( :swimmer, :swimmer_id, Swimmer.to_dropdown(), { prompt: I18n.t(:please_select) }, { class: 'input-lg' } )
+    -#  = submit_tag( I18n.t(:submit), data: {disable_with: I18n.t(:please_wait), class: 'btn'} )
+    -#  %span(id='loadingIndicator' hidden='true')
+    -#    = image_tag( 'indicator.gif' )
 
 .row
   %hr
@@ -39,3 +52,118 @@
   %i
     = t('social.totally_missing_swimmer')
     = mail_to( "leegaweb@gmail.com" , "Leega" , subject: "[#{GogglesCore::AppConstants::WEB_APP_NAME}] #{t('social.totally_missing_swimmer_subject')}", body: "#{t('social.totally_missing_swimmer_body')}\r\n\r\n#{t('user_association.i_am')} #{current_user.get_verbose_name}.\r\n(User ID: #{current_user.id})", encode: "javascript" )
+.row
+  %hr
+.row
+  = link_to( I18n.t('user_association.not_now_temporary_skip'), social_skip_associate_path(), { method: :post, class: 'btn btn-default', data: {confirm: I18n.t('netzke.basepack.grid_panel.are_you_sure'), disable_with: I18n.t(:please_wait), class: 'disabled'} } )
+
+:javascript
+  /**
+   * AJAX response buffer.
+   * Stores the actual array of objects returned by the AJAX request.
+   */
+  var responseSwimmerNamesBuffer = [];
+
+  /**
+   * Datum tokenizer for the Bloodhound suggestion engine.
+   * Returns the datum tokenized into a comparable string.
+   */
+  function tokenizeSwimmerName( datum ) {
+    // Extract just the name part:
+    // DEBUG
+    //console.log( "tokenizeSwimmerName datum splitted: ", detokenizeSwimmerName(datum) );
+    return Bloodhound.tokenizers.obj.whitespace( detokenizeSwimmerName(datum)[0] );
+  }
+
+  /**
+   * De-tokenizer for composed results.
+   * Splits a specified datum using '|' as separator.
+   * Returns an array of string tokens, in which, allegedly, the order should be:
+   * 1. Swimmer#complete_name
+   * 2. Swimmer#year_of_birth (as a string number)
+   * 3. remote Swimmer ID (as a string number)
+   */
+  function detokenizeSwimmerName( datum ) {
+    return datum.split("|");
+  }
+
+  /**
+   * Remote response adapter for the Bloodhound suggestion engine.
+   * It is expected to return a list of tokenized names, ready to be compared/matched.
+   */
+  function transformSwimmerNamesResponse( data ) {
+    // DEBUG
+    console.log( "transformSwimmerNamesResponse response: ", data );
+    // Clear & rebuild the result list and the list of searchable names:
+    responseSwimmerNamesBuffer = [];
+
+    // Since we're bound to return a list of tokenized & comparable strings,
+    // we'll store the additional data to display into the same result row,
+    // concatenated with a pipe (which is surely not used for a name).
+    for ( idx = 0; idx < data.length; idx++ ) {
+      var composedName = data[idx].complete_name + "|" +
+                         data[idx].year_of_birth + "|" + data[idx].id;
+      responseSwimmerNamesBuffer.push( composedName );
+    };
+    // DEBUG
+    //console.log( "responseSwimmerNamesBuffer:", responseSwimmerNamesBuffer );
+    return responseSwimmerNamesBuffer;
+  }
+
+  /**
+   * Bloodhound suggestion engine setup.
+   */
+  var suggestedSwimmerNames = new Bloodhound({
+    datumTokenizer: tokenizeSwimmerName,
+    queryTokenizer: Bloodhound.tokenizers.whitespace,
+    // Assuming datum is a JSON-ified instance of swimmer, this should return its ID:
+    //identify: function( datum ){ return datum.id; },
+    remote: {
+      url:       "#{ api_v1_swimmers_path( q: 'QUERY') }",
+      wildcard:  'QUERY',
+      transform: transformSwimmerNamesResponse
+    }
+  });
+
+  // (Wait for the page to be ready)
+  $( function() {
+    // Define the typeahead callback handlers:
+    $( "#swimmer_name" ).typeahead(
+      {
+        minLength: 3,
+        highlight: true
+      },
+      {
+        name:   'swimmer-names',
+        // This is just for the displaying limit for the menu, not the actual returned results:
+        limit:  10,
+        asynch: true,
+        source: suggestedSwimmerNames,
+        // Displayable value for selections:
+        display: function( datum ) {
+          // Combine the individual tokens into a displayable value:
+          var tokens = detokenizeSwimmerName( datum );
+          var namePart = tokens[0];
+          var yearPart = tokens[1];
+          return namePart + ' (' + yearPart + ')';
+        },
+        templates: {
+          suggestion: function( datum ) {
+            var tokens = detokenizeSwimmerName( datum );
+            // DEBUG
+            //console.log('tokens: ', tokens);
+            return '<div>' + tokens[0] + '&nbsp;<i>(' + tokens[1] + ')</i></div>'
+          }
+        }
+      }
+    ).bind('typeahead:select', function( ev, suggestion ) {
+        // DEBUG
+        //console.log('Selection: ', suggestion);
+        // Extract the ID part from the combined string:
+        var remote_id = detokenizeSwimmerName( suggestion )[2];
+        // DEBUG
+        //console.log( "remote_id: ", remote_id );
+        $("#swimmer_id").val( remote_id );
+      }
+    );
+  });
