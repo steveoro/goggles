@@ -4,9 +4,11 @@
       .modal-body
         .col-xs-12
           %h2.text-center.text-uppercase
-            = I18n.t("devise.passwords.forgot_password")
+            = t('devise.unlock_user_title')
         .col-xs-12
-          = simple_form_for( resource, as: resource_name, url: password_path(resource_name), html: { method: :post, class: 'form-horizontal' }, defaults: {input_html: { class: 'form-control' }} ) do |f|
+          = simple_form_for( resource, as: resource_name, url: unlock_path(resource_name),  |
+                             html: { method: :post, class: 'form-horizontal' },             |
+                             defaults: {input_html: { class: 'form-control' }} ) do |f|     |
             - unless f.error_notification.nil?
               .form-group
                 .col-xs-12
@@ -16,5 +18,5 @@
             .form-group.col-xs-8
               = f.input( :email, required: true, autofocus: true, placeholder: I18n.t("devise.email_placeholder"), label: I18n.t("devise.email_label") )
             .form-group.col-xs-12
-              = f.button( :submit, t('devise.new_password_submit'), class: "btn btn-primary" )
+              = f.button( :submit, t('devise.unlock_user_submit'), class: "btn btn-primary" )
         = render( "users/shared/links" )
