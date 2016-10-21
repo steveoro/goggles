@@ -90,6 +90,11 @@ ul.navpill_side>li>a {
 	height: 28px;
 	line-height: 1.2em;
 }
+
+.input-mini {
+    width:80px;
+}
+
 .input-micro {
     width:25px;
 }

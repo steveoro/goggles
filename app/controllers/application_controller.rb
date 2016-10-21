@@ -14,8 +14,11 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
   # Use a custom page for routing errors:
-  rescue_from ActionController::RoutingError,
-              with: -> { render(controller: :exceptions, action: :error_page_path, error: 404) }
+#  unless Rails.application.config.consider_all_requests_local
+#    rescue_from ActionController::RoutingError,       with: -> { render_404  }
+#    rescue_from ActionController::UnknownController,  with: -> { render_404  }
+#    rescue_from ActiveRecord::RecordNotFound,         with: -> { render_404  }
+#  end
 
   before_action :set_locale, :check_maintenance_mode
   before_action :configure_permitted_parameters, if: :devise_controller?
@@ -24,7 +27,6 @@ class ApplicationController < ActionController::Base
   # see #49 for details.
 #  acts_as_token_authentication_handler_for User
 
-#  acts_as_token_authentication_handler_for User,
 #    fallback: :none,
 #    if: ->(controller) { controller.user_token_authenticable? }
 
@@ -63,7 +65,17 @@ class ApplicationController < ActionController::Base
     devise_parameter_sanitizer.permit(:sign_up, keys: [:name, :first_name, :last_name, :description, :year_of_birth])
     devise_parameter_sanitizer.permit(:account_update, keys: [:name, :first_name, :last_name, :description, :year_of_birth])
   end
+  #-- -------------------------------------------------------------------------
+  #++
 
+
+  # Render custom 404-error page
+#  def render_404
+#    respond_to do |format|
+#      format.html { render template: 'exceptions/error_page', status: 404 }
+#      format.all { render nothing: true, status: 404 }
+#    end
+#  end
 
 
   # Just logs the specified output message using either WARN or ERROR level logging,

@@ -17,7 +17,7 @@ class ExceptionsController < ApplicationController
   def error_page
     @status_code = params[:error]
     log_error( @status_code, true ) if @status_code
-    render :error_page, status: @status_code, layout: true
+    render 'error_page', status: @status_code, layout: true
   end
   #-- -------------------------------------------------------------------------
   #++

@@ -239,8 +239,8 @@ Goggles::Application.routes.draw do
 #  match "*path", to: "exceptions#render_error"
 
   # TODO TEST THESE 2 and customize the error pages:
-  match "/404",  to: "exceptions#error_page", via: :all
-  match "/500",  to: "exceptions#error_page", via: :all
+#  match "/404",  to: "exceptions#error_page", via: :all
+#  match "/500",  to: "exceptions#error_page", via: :all
 #  match "*path", to: "exceptions#error_page", via: :all
 
   # Sample of regular route:
@@ -262,5 +262,7 @@ Goggles::Application.routes.draw do
   # Any other routes are handled here (since in Rails 3 ActionDispatch prevents
   # RoutingError from hitting ApplicationController::rescue_action).
   # In other words, this wildcard route will catch all the other cases:
-#  match "*path", to: "application#routing_error", via: [:get, :post, :put, :delete, :patch]
+#  unless Rails.application.config.consider_all_requests_local
+#    match "*path", to: "exceptions#error_page" #, via: :all #[:get, :post, :put, :delete, :patch]
+#  end
 end

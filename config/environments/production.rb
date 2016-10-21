@@ -16,9 +16,11 @@ Goggles::Application.configure do
   # Full error reports are disabled and caching is turned on
   config.consider_all_requests_local       = false
   config.action_controller.perform_caching = true
+  config.cache_store = :memory_store
+#  config.cache_store = :file_store, 'tmp/cache'
 
-  # false = Disable Rails's static asset server (false for Apache or nginx that will already do this)
-  #config.serve_static_assets = false                # [Steve, 20131125] Run demo production on Apache2 server (Webrick for development only)
+  # false = Disable Rails's static (precompiled) asset server (false for Apache or nginx that will already do this)
+  config.serve_static_assets = true
 
   # Compress JavaScripts and CSS
   config.assets.compress = true

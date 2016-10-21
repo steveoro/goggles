@@ -27,7 +27,7 @@
 .row
   %p
 .row#manualOverride(hidden='true')
-  = form_tag( socials_associate_path(), class: 'form-horizontal', :onsubmit => "$('#loadingIndicator').show();") do
+  = form_tag( socials_associate_path(), class: 'form-horizontal', onsubmit: "$('#loadingIndicator').show();" ) do
     .row.col-xs-12.form-group
       .col-xs-3
         = label_tag( :swimmer, I18n.t('activerecord.models.swimmer'), for: :swimmer, class: 'control-label' )
