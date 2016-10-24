@@ -15,7 +15,8 @@ gem 'puma', '~> 3.0'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 # [Steve, 20161005] Font Awesome is used by WiceGrid instead of the old icons:
-#gem 'font-awesome-sass' #, '~> 4.6.2'
+#gem 'font-awesome-sass'
+gem 'font-awesome-rails'
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
 # Use CoffeeScript for .coffee assets and views

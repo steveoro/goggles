@@ -202,6 +202,8 @@ GEM
     fastercsv (1.5.5)
     ffaker (2.2.0)
     ffi (1.9.14)
+    font-awesome-rails (4.6.3.1)
+      railties (>= 3.2, < 5.1)
     formatador (0.2.5)
     fuzzy-string-match_pure (0.9.5)
     generator (0.0.1)
@@ -483,6 +485,7 @@ DEPENDENCIES
   execjs
   factory_girl_rails
   ffaker
+  font-awesome-rails
   generator
   goggles_core!
   guard
