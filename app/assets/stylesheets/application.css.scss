@@ -15,6 +15,9 @@
  *= require_tree .
  *= require_self
  */
+@import "wice_grid";
+@import "font-awesome";
+
 /* ----- Navbar & Titlebar ----- */
 #goggles-inner-navbar {
     min-height: 26px;

@@ -24,6 +24,8 @@
 /tmp/*
 !/log/.keep
 !/tmp/.keep
+**/*.kate-swp
+**/.directory
 
 # Ignore Byebug command history file.
 .byebug_history
