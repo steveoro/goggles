@@ -13,7 +13,7 @@ module ApplicationHelper
   # No path is needed if stored under "public/images".
   #
   def show_tag( bool_value, image_name = "tick.png", false_text = '--' )
-    bool_value ? image_tag(image_name, {:alt => "X"}) : false_text.html_safe
+    bool_value ? image_tag(image_name, {alt: "X"}) : false_text.html_safe
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -64,7 +64,7 @@ module ApplicationHelper
   # Format the specified score with 2 precision decimals and highlights it with an
   # image if it exceeds the specified bias.
   def format_score( score, bias = 800 )
-    ( (score>bias ? "#{image_tag("asterisk_orange.png")} " : '') + sprintf("%02.2f", score) ).html_safe
+    ( (score.to_f > bias.to_f ? "#{image_tag("asterisk_orange.png")} " : '') + sprintf("%02.2f", score.to_f) ).html_safe
   end
   #-- -------------------------------------------------------------------------
   #++

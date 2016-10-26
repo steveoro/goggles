@@ -666,7 +666,6 @@ describe SwimmersController, type: :controller do
         end
         it "assigns required variables" do
           expect( assigns( :season_type ) ).to eq( season_type )
-          expect( assigns( :header_year ) ).to eq( header_year )
           expect( assigns( :badge ) ).to be_a( Badge )
           expect( assigns( :season ) ).to eq( season )
           expect( assigns( :team ) ).to eq( team )

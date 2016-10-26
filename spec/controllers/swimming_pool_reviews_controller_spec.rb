@@ -76,10 +76,7 @@ describe SwimmingPoolReviewsController, type: :controller do
       end
       it "redirects to #index" do
         get :show, params: { id: 0 }
-        expect( response ).to redirect_to( controller: :swimming_pool_reviews, action: :index )
-        # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
-        # and we have just set defaul locale to :it
-#        expect( response ).to redirect_to( swimming_pool_reviews_path())
+        expect( response ).to redirect_to( swimming_pool_reviews_path )
       end
     end
     context "with an HTML request and an existing id," do
@@ -241,11 +238,11 @@ describe SwimmingPoolReviewsController, type: :controller do
       end
       it "redirects to root path after an HTML request" do
         post :report_abuse, params: { id: @review.id }
-        expect( response ).to redirect_to( controller: :home, action: :index )
+        expect( response ).to redirect_to( root_path )
       end
       it "redirects to root path after a JSON request" do
         post :report_abuse, format: :json, params: { id: @review.id }
-        expect( response ).to redirect_to( controller: :home, action: :index )
+        expect( response ).to redirect_to( root_path )
       end
     end
   end
@@ -313,11 +310,11 @@ describe SwimmingPoolReviewsController, type: :controller do
       end
       it "redirects to root path after an HTML request" do
         post :vote, params: { id: @review.id, vote: 1 }
-        expect( response ).to redirect_to( controller: :home, action: :index )
+        expect( response ).to redirect_to( root_path )
       end
       it "redirects to root path after a JSON request" do
         post :vote, format: :json,params: {  id: @review.id, vote: 1 }
-        expect( response ).to redirect_to( controller: :home, action: :index )
+        expect( response ).to redirect_to( root_path )
       end
     end
   end
@@ -347,7 +344,7 @@ describe SwimmingPoolReviewsController, type: :controller do
       context "with an HTML request," do
         it "refuses the request and redirects to app root" do
           get :new
-          expect( response ).to redirect_to( controller: :home, action: :index )
+          expect( response ).to redirect_to( root_path )
         end
       end
 
@@ -357,7 +354,7 @@ describe SwimmingPoolReviewsController, type: :controller do
           get :new, params: { swimming_pool_id: @pool.id }
         end
         it "refuses the request and redirects to app root" do
-          expect( response ).to redirect_to( controller: :home, action: :index )
+          expect( response ).to redirect_to( root_path )
         end
       end
     end
@@ -392,7 +389,7 @@ describe SwimmingPoolReviewsController, type: :controller do
         end
         it "renders the template" do
           get :new
-          expect(response).to render_template(:new)
+          expect(response).to render_template(:edit)
         end
       end
 
@@ -411,7 +408,7 @@ describe SwimmingPoolReviewsController, type: :controller do
           expect( assigns(:review).swimming_pool_id ).to eq( @pool.id )
         end
         it "renders the template" do
-          expect(response).to render_template(:new)
+          expect(response).to render_template(:edit)
         end
       end
     end
@@ -460,7 +457,7 @@ describe SwimmingPoolReviewsController, type: :controller do
       end
       it "refuses the request and redirects to app root after an HTML request" do
         post :create, params: { swimming_pool_review: @review.attributes }
-        expect( response ).to redirect_to( controller: :home, action: :index )
+        expect( response ).to redirect_to( root_path )
       end
     end
     #-- -----------------------------------------------------------------------
@@ -546,10 +543,7 @@ describe SwimmingPoolReviewsController, type: :controller do
       context "with an HTML request and a non-existing id," do
         it "redirects to #index" do
           get :edit, params: { id: 0 }
-          expect( response ).to redirect_to( controller: :swimming_pool_reviews, action: :index )
-          # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
-          # and we have just set defaul locale to :it
-#          expect(response).to redirect_to( swimming_pool_reviews_path() )
+          expect( response ).to redirect_to( swimming_pool_reviews_path )
         end
       end
     end
@@ -605,10 +599,7 @@ describe SwimmingPoolReviewsController, type: :controller do
 
       it "redirects to #show after saving" do
         put :update, params: { id: @review.id, swimming_pool_review: @review.attributes }
-        expect( response ).to redirect_to( controller: :swimming_pool_reviews, action: :show, id: @review.id )
-        # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
-        # and we have just set defaul locale to :it
-#        expect( response ).to redirect_to( swimming_pool_review_path( @review.id ))
+        expect( response ).to redirect_to( swimming_pool_review_path( id: @review.id ) )
       end
       it "assigns the required variables" do
         put :update, params: { id: @review.id, swimming_pool_review: @review.attributes }
@@ -662,10 +653,7 @@ describe SwimmingPoolReviewsController, type: :controller do
 
       it "redirects to #index after creation" do
         delete :destroy, params: { id: @review.id }
-        expect( response ).to redirect_to( controller: :swimming_pool_reviews, action: :index )
-        # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
-        # and we have just set defaul locale to :it
-#        expect( response ).to redirect_to( swimming_pool_reviews_path())
+        expect( response ).to redirect_to(swimming_pool_reviews_path )
       end
     end
   end
