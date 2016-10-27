@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head name="viewport" content="width=device-width, initial-scale=1">
-  <title><%= GogglesCore::AppConstants::WEB_APP_NAME %></title>
-  <%= stylesheet_link_tag    "application", media: "all" %>
-  <%= javascript_include_tag "application" %>
-  <%= csrf_meta_tags %>
+    <title><%= GogglesCore::AppConstants::WEB_APP_NAME %></title>
+    <%= csrf_meta_tags %>
+    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
 </head>
 
 <body>

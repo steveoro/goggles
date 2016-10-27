@@ -14,22 +14,22 @@ gem 'activerecord-session_store' # Needed to include a DB-based session store in
 gem 'puma', '~> 3.0'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
-# [Steve, 20161005] Font Awesome is used by WiceGrid instead of the old icons:
-#gem 'font-awesome-sass'
-gem 'font-awesome-rails'
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
 # Use CoffeeScript for .coffee assets and views
 gem 'coffee-rails', '~> 4.2'
 # See https://github.com/rails/execjs#readme for more supported runtimes
 gem 'execjs'
-gem 'therubyracer'
+gem 'therubyracer', platforms: :ruby
 # gem 'therubyrhino', platforms: :ruby
+
+# [Steve, 20161005] Font Awesome is used by WiceGrid instead of the old icons:
+gem 'font-awesome-rails'
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
 gem 'jquery-ui-rails'
-# gem 'jquery_datepicker' # FIXME THIS SEEMS TO BE INCOMPATIBLE W/ RAILS 5
+
 # Turbolinks makes navigating your web application faster. Read more: https://github.com/turbolinks/turbolinks
 gem 'turbolinks', '~> 5'
 gem 'jquery-turbolinks'
@@ -48,14 +48,8 @@ gem "haml"
 #gem "goggles_core", git: "git@github.com:steveoro/goggles_core", branch: "rails5"
 gem "goggles_core", git: "https://github.com/steveoro/goggles_core", branch: "rails5"
 
-# XXX [Steve, 20160920] Too many issues w/ SafeYAML, regarding ActiveRecord,
+# XXX [Steve, 20160920] DO NOT USE SafeYAML. Too many issues w/ ActiveRecord,
 # Guard & DelayedJob (See https://github.com/dtao/safe_yaml#known-issues).
-# gem "syck"                              # old-skool YAML interpreter used by some of our gems
-# gem 'safe_yaml'
-# XXX When using safe_yaml, these 2 must be set
-# (but a warning persist anyway on the command line, since load_file is called internally by system requires)
-# SafeYAML::OPTIONS[:default_mode] = :safe # or :unsafe
-# SafeYAML::OPTIONS[:deserialize_symbols] = true
 
                                         # [Steve, 20130801] Navigation gems for rendering menus & breadcrumbs:
 gem "simple-navigation"

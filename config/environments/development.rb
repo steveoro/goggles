@@ -1,4 +1,4 @@
-Goggles::Application.configure do
+Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb
 
   # In the development environment your application's code is reloaded on
@@ -33,7 +33,6 @@ Goggles::Application.configure do
     config.cache_store = :null_store
   end
 
-  # Don't care if the mailer can't send.
   config.action_mailer.perform_deliveries = true
   # Use this to disable delivery errors, and bad email addresses will be ignored:
   config.action_mailer.raise_delivery_errors = false

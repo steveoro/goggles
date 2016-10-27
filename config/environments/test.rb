@@ -1,4 +1,4 @@
-Goggles::Application.configure do
+Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb
 
   # Do not eager load code on boot. This avoids loading your whole application
@@ -33,7 +33,7 @@ Goggles::Application.configure do
   # Letter opener still unused yet here:
 #  config.action_mailer.delivery_method = :letter_opener
 #  config.action_mailer.asset_host = "http://127.0.0.1:3000"
-  config.action_mailer.default_url_options = { host: 'localhost' }
+  config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
 
   # Print deprecation notices to the stderr.
   config.active_support.deprecation = :stderr
