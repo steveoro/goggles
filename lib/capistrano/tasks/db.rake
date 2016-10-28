@@ -185,7 +185,7 @@ EOF
         # [Steve, 20160203] This is the same as invoking "cap remote:tmp_clear"
         within release_path do
           with rails_env: :production do
-            bundle "exec rake tmp:clear"
+            rake "tmp:clear"
           end
         end
 
@@ -220,10 +220,14 @@ EOF
       retrieving the dump directly from the 'goggles_admin' repo instead of a local
       directory.
     DESC
-    desc "Executes remotely an sql:dump backup, storing DB backups in the <release_num>.docs directory."
     task :retrieve_and_rebuild_db do
       on roles(:app) do
         as( user: :root ) do
+          info "Clearing existing dumps (otherwise WGET may create additional copies)..."
+          within File.join(release_path, "db", "dump") do
+            execute :rm, 'production*'
+          end
+
           info "Retrieving the dump from the repo..."
           within File.join(release_path, "db", "dump") do
             execute :wget, "-q https://raw.githubusercontent.com/steveoro/goggles_admin/master/db/dump/production.sql.bz2"
@@ -236,14 +240,14 @@ EOF
           # [Steve, 20160203] This is the same as invoking "cap remote:tmp_clear"
           within release_path do
             with rails_env: :production do
-              bundle "exec rake tmp:clear"
+              rake "tmp:clear"
             end
           end
 
           info "Running rebuild from dump..."
           within release_path do
             with rails_env: :production do
-              bundle "exec rake db:rebuild_from_dump from=production to=production"
+              rake "db:rebuild_from_dump from=production to=production"
             end
           end
 

@@ -155,7 +155,7 @@ namespace :remote do
     on roles(:app) do
       within release_path do
         with rails_env: :production do
-          bundle "exec rake assets:precompile"
+          rake "assets:precompile"
         end
       end
     end
