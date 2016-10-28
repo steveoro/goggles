@@ -37,6 +37,8 @@ class MeetingsController < ApplicationController
   # - team_id:    a Team id to be highlighted among the results.
   #
   def current
+    # [Steve, 20161001] We need to whitelist all parameters for the search query:
+    params.permit!()
     @title = if params[:text].to_s.size > 0
       I18n.t('meeting.current_title') + " ('#{ params[:text] }')"
     else
