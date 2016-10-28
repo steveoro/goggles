@@ -7,3 +7,5 @@
     = I18n.t('maintenance_title')
     = image_tag('wrench.png', alt: "Work In Progress")
   %p= I18n.t('maintenance_info').gsub( '{DATETIME}', @presumed_downtime_end )
+
+= render( partial: 'goggles/twitter_timeline' )
