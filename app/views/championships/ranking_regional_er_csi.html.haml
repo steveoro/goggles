@@ -1,6 +1,7 @@
 .row#regional_er_csi
   .goggles-category-gap#pageTop
     = render( partial: 'regional_er_csi_tabs' )
+  .goggles-category-gap
     = render( partial: 'title' )
     - cache( cache_key_for_meeting( 'team_ranking', @season.id, @ranking_updated_at, @team ? @team.id : 0 ) ) do
       - col_x_meeting = @championship_ranking.columns.count + 1

@@ -1,6 +1,7 @@
 .row#history_regional_er_csi
   .goggles-category-gap#pageTop
     = render( partial: 'regional_er_csi_tabs' )
+  .goggles-category-gap
     = render( partial: 'title' )
     - cache( cache_key_for_meeting( 'history', @season.season_type_id, @history_updated_at, @team ? @team.id : 0 ) ) do
 
