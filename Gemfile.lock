@@ -128,13 +128,13 @@ GEM
       i18n
       rake (>= 10.0.0)
       sshkit (>= 1.9.0)
-    capistrano-bundler (1.1.4)
+    capistrano-bundler (1.2.0)
       capistrano (~> 3.1)
       sshkit (~> 1.2)
     capistrano-harrow (0.5.3)
     capistrano-passenger (0.2.0)
       capistrano (~> 3.0)
-    capistrano-rails (1.1.8)
+    capistrano-rails (1.2.0)
       capistrano (~> 3.1)
       capistrano-bundler (~> 1.1)
     capistrano-rvm (0.1.2)
@@ -483,7 +483,7 @@ DEPENDENCIES
   better_errors
   binding_of_caller
   byebug
-  capistrano (~> 3.4)
+  capistrano (~> 3.6)
   capistrano-bundler
   capistrano-passenger
   capistrano-rails

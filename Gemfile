@@ -96,7 +96,7 @@ group :development do
   # including them into the test environment also allows Semaphore CI to
   # perform automated deployment from a test build without changing the current
   # Rails environment.
-  gem 'capistrano',  '~> 3.4'                       # Deploy with Capistrano
+  gem 'capistrano',  '~> 3.6'
   gem 'capistrano-rvm'
   gem 'capistrano-bundler'
   gem 'capistrano-rails'

@@ -2,8 +2,7 @@ require 'capistrano/setup'                          # Load DSL and Setup Up Stag
 require 'capistrano/deploy'                         # Includes default deployment tasks
 require 'capistrano/rvm'
 require 'capistrano/bundler'
-require 'capistrano/rails/assets'
-require 'capistrano/rails/migrations'
+require 'capistrano/rails'
 require 'capistrano/console'
 
 # [Steve, 20150325] Custom formatter for Capistrano output: CURRENTLY BROKEN
