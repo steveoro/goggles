@@ -214,34 +214,5 @@ before 'deploy:restart', 'remote:tmp_clear'
 #
 # before 'deploy:restart', 'remote:db_sessions_clear'
 
-
-# [Steve, 20150521] ALL-IN-ONE DEPLOY SOLUTION (valid for DigitalOcean hosting):
-# This will rebuild each time the production DB using the current dump stored
-# in the specified online repo.
-# (Remember to clear the sessions in the production backup dump before deploying.)
-#
-# >>>   THE FOLLOWING HOOK CAN WORK ONLY IF THE BACKUP DB DUMP  <<<
-# >>>                  IS HOSTED ON THE SPECIFIED URL!          <<<
-#
-# before 'deploy:restart', :retrieve_db_dump do
-  # on roles(:app) do
-    # within File.join(release_path, "db", "dump") do
-      # as( user: :root ) do
-        # execute :wget, "-q https://raw.githubusercontent.com/steveoro/goggles_admin/master/db/dump/production.sql.bz2"
-        # puts "DB dump retrieved."
-      # end
-    # end
-  # end
-# end
-#
-# after :retrieve_db_dump, :rebuild_db_from_dump do
-  # on roles(:app) do
-    # within release_path do
-      # with rails_env: :production do
-        # rake "db:rebuild_from_dump from=production to=production"
-      # end
-    # end
-  # end
-# end
 #-- ---------------------------------------------------------------------------
 #++

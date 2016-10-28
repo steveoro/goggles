@@ -166,9 +166,9 @@ EOF
       been updated locally but a new release of the app has not been scheduled for
       a while.
 
-      (The alternative method to upload a recovery dump is to commit it in the repo
-       and issue a cap deploy command + a separate remote db:rebuild_from_dump task
-       afterwards.)
+      (The alternative method to upload a recovery dump is to use the other
+       similar task 'db:remote:retrieve_and_rebuild_db', which WGETs the dump
+       directly from its copy pushed on the 'goggles_admin' repo.)
     DESC
     task :dump_upload do
       source_file = File.join( Dir.pwd, 'db', 'dump', 'production.sql.bz2' )
@@ -176,7 +176,6 @@ EOF
       use_pem_certificate = (ssh_keys.first =~ /\.pem$/)
 
       on roles(:app) do
-        # This may not work for binary files as it is:
         info "Uploading file..."
         upload! source_file, '/tmp/production.sql.bz2'
 
@@ -186,7 +185,7 @@ EOF
         # [Steve, 20160203] This is the same as invoking "cap remote:tmp_clear"
         within release_path do
           with rails_env: :production do
-            rake "tmp:clear"
+            bundle "exec rake tmp:clear"
           end
         end
 
@@ -207,6 +206,50 @@ EOF
 
         info "Restarting Apache..."
         execute '/etc/init.d/apache2 start'
+      end
+      puts "\r\nDone."
+    end
+    #-- -----------------------------------------------------------------------
+    #++
+
+
+    # Remote DB dump uloader & executor.
+    #
+    desc <<-DESC
+      Similarly to 'db:remote:sql_dump', this will execute a 'db:rebuild_from_dump'
+      retrieving the dump directly from the 'goggles_admin' repo instead of a local
+      directory.
+    DESC
+    desc "Executes remotely an sql:dump backup, storing DB backups in the <release_num>.docs directory."
+    task :retrieve_and_rebuild_db do
+      on roles(:app) do
+        as( user: :root ) do
+          info "Retrieving the dump from the repo..."
+          within File.join(release_path, "db", "dump") do
+            execute :wget, "-q https://raw.githubusercontent.com/steveoro/goggles_admin/master/db/dump/production.sql.bz2"
+            info "DB dump retrieved."
+          end
+          info "Shutting down Apache during the rebuild..."
+          execute '/etc/init.d/apache2 stop'
+
+          info "Clearing tmp dir with cache..."
+          # [Steve, 20160203] This is the same as invoking "cap remote:tmp_clear"
+          within release_path do
+            with rails_env: :production do
+              bundle "exec rake tmp:clear"
+            end
+          end
+
+          info "Running rebuild from dump..."
+          within release_path do
+            with rails_env: :production do
+              bundle "exec rake db:rebuild_from_dump from=production to=production"
+            end
+          end
+
+          info "Restarting Apache..."
+          execute '/etc/init.d/apache2 start'
+        end
       end
       puts "\r\nDone."
     end

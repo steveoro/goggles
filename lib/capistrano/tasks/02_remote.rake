@@ -162,24 +162,4 @@ namespace :remote do
   end
   #-- -------------------------------------------------------------------------
   #++
-
-
-  desc "Executes remotely an sql:dump backup, storing DB backups in the <release_num>.docs directory."
-  task :retrieve_and_rebuild_db_from_dump do
-    on roles(:app) do
-      as( user: :root ) do
-        within File.join(release_path, "db", "dump") do
-          execute :wget, "-q https://raw.githubusercontent.com/steveoro/goggles_admin/master/db/dump/production.sql.bz2"
-          puts "DB dump retrieved."
-        end
-        within release_path do
-          with rails_env: :production do
-            bundle "exec rake db:rebuild_from_dump from=production to=production"
-          end
-        end
-      end
-    end
-  end
-  #-- -------------------------------------------------------------------------
-  #++
 end
