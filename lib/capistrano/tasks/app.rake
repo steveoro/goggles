@@ -27,6 +27,7 @@ namespace :app do
       puts "      > Setup remote config/environments/production.rb..."
       on roles(:app) do |host|
         use_sendfile_header_for_apache = true
+        secret_key_base      = fetch( :secret_key_base )
         serve_static_assets  = false
         debug_assets         = false
         mail_delivery_method = fetch(:mail_delivery_method)
@@ -35,6 +36,7 @@ namespace :app do
         mailer_default_host  = fetch(:mailer_default_host)
         web_server_port      = fetch(:web_server_port)
         agex_development_email = fetch( :agex_development_email )
+
         if ( mail_delivery_method == 'smtp' )
           smtp_setting_tls       = fetch( :smtp_setting_tls )
           smtp_setting_address   = fetch( :smtp_setting_address )
@@ -75,14 +77,12 @@ namespace :app do
               file.puts config.result(binding)
             end
           end
-
           within shared_path do
             as( user: :root ) do
               execute :mkdir, "-p config; mkdir -p config/environments"
             end
           end
           upload! '/tmp/production.rb', "#{shared_path}/config/environments/production.rb"
-
           run_locally do                            # Remove the local temp file:
             puts "      > Removing local temp file..."
             execute :rm, "/tmp/production.rb"
@@ -90,12 +90,23 @@ namespace :app do
         else
           info "Environment template file not found locally: skipping 'production.rb' rebuild."
         end
-                                                    # *** secrets.yml copy ***
-        location = 'config/secrets.yml'
-        if ( File.file?(location) )
-          upload! location, "#{ shared_path }/#{ location }"
+                                                    # *** secrets.yml "rebuild" ***
+        location = 'config/deploy/secrets.yml.erb'
+        if ( File.file?(location) )                 # Do nothing unless the template file is found
+          template = File.read(location)
+          config = ERB.new(template)
+          run_locally do                            # Render the template to a temp file:
+            File.open('/tmp/secrets.yml', 'w') do |file|
+              file.puts config.result(binding)
+            end
+          end
+          upload! '/tmp/secrets.yml', "#{shared_path}/config/secrets.yml"
+          run_locally do                            # Remove the local temp file:
+            puts "      > Removing local temp file..."
+            execute :rm, "/tmp/secrets.yml"
+          end
         else
-          info "Local secrets file not found: skipping 'secrets.yml' copy."
+          info "Secret key base template file not found locally: skipping 'secrets.yml' rebuild."
         end
       end
     end
