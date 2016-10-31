@@ -149,7 +149,7 @@ EOF
     #
     desc <<-DESC
       Uploads the local production recovery dump to the server and executes it.
-      (The dump is assumed to be stored as 'db/dump/production.sql.bz2')
+      (By default, the dump is assumed to be stored as 'db/dump/production.sql.bz2')
 
       This will in turn:
       - upload the local, compressed production dump;
@@ -169,14 +169,19 @@ EOF
       (The alternative method to upload a recovery dump is to use the other
        similar task 'db:remote:retrieve_and_rebuild_db', which WGETs the dump
        directly from its copy pushed on the 'goggles_admin' repo.)
+
+Options:
+      [from=any_full_path_to_sql_bz2_file|<'(Rails.root)/db/dump/production.sql.bz2'>]
+
     DESC
     task :dump_upload do
-      source_file = File.join( Dir.pwd, 'db', 'dump', 'production.sql.bz2' )
-      ssh_keys = fetch(:ssh_keys)
-      use_pem_certificate = (ssh_keys.first =~ /\.pem$/)
+      source_file = ENV.include?("from") ? ENV["from"] : File.join( Dir.pwd, 'db', 'dump', 'production.sql.bz2' )
+      # [Steve, 20161031] Not needed anymore:
+#      ssh_keys = fetch(:ssh_keys)
+#      use_pem_certificate = (ssh_keys.first =~ /\.pem$/)
 
       on roles(:app) do
-        info "Uploading file..."
+        info "Uploading file '#{ source_file }'..."
         upload! source_file, '/tmp/production.sql.bz2'
 
         info "Shutting down Apache during the rebuild..."
