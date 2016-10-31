@@ -237,7 +237,7 @@ class ApplicationController < ActionController::Base
       respond_to do |format|
         format.html do
           # Do just a redirect (avoid an infinite loop of redirections):
-          redirect_to( maintenance_url() ) unless (params[:controller] == 'home') && (params[:action] == 'maintenance')
+          redirect_to( controller: 'home', action: 'maintenance' ) unless (params[:controller] == 'home') && (params[:action] == 'maintenance')
         end
         format.json { render json: {maintenance: true} and return }
       end
