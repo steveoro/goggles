@@ -1,96 +1,41 @@
-.span3
+.col-xs-8
   %table.table.table-striped.table-bordered.table-hover.table-condensed
     %tbody
       %tr{'class'=>'success'}
         %td.goggles-centeralign{'colspan'=>2}
           %b= I18n.t('meeting_stats.numbers')
       %tr
-        %td.span2
-          %a(href="#meeting_stats_teams")= I18n.t('meeting_stats.tot_teams')
-        %td.span1.goggles-rightalign
+        %td.col-xs-2
+          = link_to("#meeting_stats_teams", {'data-turbolinks'=>'false'}) do
+            = I18n.t('meeting_stats.tot_teams')
+        %td.col-xs-1.goggles-rightalign
           = @meeting_stats.get_teams_count
       %tr
-        %td.span2
-          %a(href="#meeting_stats_categories")= I18n.t('meeting_stats.tot_swimmers')
-        %td.span1.goggles-rightalign
+        %td.col-xs-2
+          = link_to("#meeting_stats_categories", {'data-turbolinks'=>'false'}) do
+            = I18n.t('meeting_stats.tot_swimmers')
+        %td.col-xs-1.goggles-rightalign
           = @meeting_stats.get_swimmers_count
       %tr
-        %td.span2
-          %a(href="#meeting_stats_events")= I18n.t('meeting_stats.tot_athletes_by_event')
-        %td.span1.goggles-rightalign
+        %td.col-xs-2
+          = link_to("#meeting_stats_categories", {'data-turbolinks'=>'false'}) do
+            = I18n.t('meeting_stats.tot_athletes_by_event')
+        %td.col-xs-1.goggles-rightalign
           = @meeting_stats.get_results_count
       - if @meeting_stat_calculator.has_relays?
         %tr
-          %td.span2
-            %a(href="#meeting_stats_events")= I18n.t('meeting_stats.tot_relays')
-          %td.span1.goggles-rightalign
+          %td.col-xs-2
+            = link_to("#meeting_stats_categories", {'data-turbolinks'=>'false'}) do
+              = I18n.t('meeting_stats.tot_relays')
+          %td.col-xs-1.goggles-rightalign
             = @meeting_stats.get_results_relay_count
       %tr
-        %td.span2
+        %td.col-xs-2
           = I18n.t('meeting_stats.tot_disqualified')
-        %td.span1.goggles-rightalign
+        %td.col-xs-1.goggles-rightalign
           = @meeting_stats.get_disqualifieds_count + @meeting_stats.dsqs_relay_count
 
-- if @meeting_stats.average_total_score > 0
-  .span3
-    %table.table.table-striped.table-bordered.table-hover.table-condensed
-      %tbody
-        %tr{'class'=>'success'}
-          %td.goggles-centeralign{'colspan'=>2}
-            %b= I18n.t('meeting_stats.scores')
-        %tr
-          %td.span2
-            = I18n.t('meeting_stats.tot_average')
-          %td.span1.goggles-rightalign
-            = @meeting_stats.average_total_score.to_s
-        %tr
-          %td.span2
-            - if @meeting_stats.over_1000_count > 0
-              %a(href="#meeting_stats_specials")= I18n.t('meeting_stats.over_1000')
-            - else
-              = I18n.t('meeting_stats.over_1000')
-          %td.span1.goggles-rightalign
-            = @meeting_stats.over_1000_count
-        %tr
-          %td.span2
-            - if @meeting_stats.over_950_count > 0
-              %a(href="#meeting_stats_specials")= I18n.t('meeting_stats.over_950')
-            - else
-              = I18n.t('meeting_stats.over_950')
-          %td.span1.goggles-rightalign
-            = @meeting_stats.over_950_count
-        %tr
-          %td.span2
-            - if @meeting_stats.over_900_count > 0
-              %a(href="#meeting_stats_specials")= I18n.t('meeting_stats.over_900')
-            - else
-              = I18n.t('meeting_stats.over_900')
-          %td.span1.goggles-rightalign
-            = @meeting_stats.over_900_count
-
-  .span2
-    %table.table.table-striped.table-bordered.table-hover.table-condensed
-      %tbody
-        %tr{'class'=>'success'}
-          %td.goggles-centeralign{'colspan'=>2}
-            %b= I18n.t('meeting_stats.average')
-        %tr
-          %td.span2
-            = I18n.t('meeting_stats.females')
-          %td.span1.goggles-rightalign
-            = sprintf( "%02.2f", @meeting_stats.average_female_score)
-        %tr
-          %td.span2
-            = I18n.t('meeting_stats.males')
-          %td.span1.goggles-rightalign
-            = sprintf( "%02.2f", @meeting_stats.average_male_score)
-        %tr
-          %td.span2
-            = I18n.t('meeting_stats.relays')
-          %td.span1.goggles-rightalign
-            = sprintf( "%02.2f", @meeting_stats.average_relay_score)
-
-.span2
+.col-xs-4
   %table.table.table-striped.table-bordered.table-hover.table-condensed
     %tbody
       %tr{'class'=>'success'}
@@ -104,7 +49,7 @@
       %tr
         %td
           = I18n.t('meeting_stats.males')
-        %td.span1.goggles-rightalign
+        %td.col-xs-1.goggles-rightalign
           = @meeting_stats.dsqs_male_count
       %tr
         %td
@@ -116,3 +61,67 @@
           %i= I18n.t('meeting_stats.total')
         %td.goggles-rightalign
           %i= @meeting_stats.get_disqualifieds_count + @meeting_stats.dsqs_relay_count
+
+.col-xs-12
+  &nbsp;
+
+- if @meeting_stats.average_total_score > 0
+  .col-xs-6
+    %table.table.table-striped.table-bordered.table-hover.table-condensed
+      %tbody
+        %tr{'class'=>'success'}
+          %td.goggles-centeralign{'colspan'=>2}
+            %b= I18n.t('meeting_stats.scores')
+        %tr
+          %td.col-xs-2
+            = I18n.t('meeting_stats.tot_average')
+          %td.col-xs-1.goggles-rightalign
+            = @meeting_stats.average_total_score.to_s
+        %tr
+          %td.col-xs-2
+            - if @meeting_stats.over_1000_count > 0
+              = link_to("#meeting_stats_specials", {'data-turbolinks'=>'false'}) do
+                = I18n.t('meeting_stats.over_1000')
+            - else
+              = I18n.t('meeting_stats.over_1000')
+          %td.col-xs-1.goggles-rightalign
+            = @meeting_stats.over_1000_count
+        %tr
+          %td.col-xs-2
+            - if @meeting_stats.over_950_count > 0
+              = link_to("#meeting_stats_specials", {'data-turbolinks'=>'false'}) do
+                = I18n.t('meeting_stats.over_950')
+            - else
+              = I18n.t('meeting_stats.over_950')
+          %td.col-xs-1.goggles-rightalign
+            = @meeting_stats.over_950_count
+        %tr
+          %td.col-xs-2
+            - if @meeting_stats.over_900_count > 0
+              = link_to("#meeting_stats_specials", {'data-turbolinks'=>'false'}) do
+                = I18n.t('meeting_stats.over_900')
+            - else
+              = I18n.t('meeting_stats.over_900')
+          %td.col-xs-1.goggles-rightalign
+            = @meeting_stats.over_900_count
+  .col-xs-4
+    %table.table.table-striped.table-bordered.table-hover.table-condensed
+      %tbody
+        %tr{'class'=>'success'}
+          %td.goggles-centeralign{'colspan'=>2}
+            %b= I18n.t('meeting_stats.average')
+        %tr
+          %td.col-xs-2
+            = I18n.t('meeting_stats.females')
+          %td.col-xs-1.goggles-rightalign
+            = sprintf( "%02.2f", @meeting_stats.average_female_score)
+        %tr
+          %td.col-xs-2
+            = I18n.t('meeting_stats.males')
+          %td.col-xs-1.goggles-rightalign
+            = sprintf( "%02.2f", @meeting_stats.average_male_score)
+        %tr
+          %td.col-xs-2
+            = I18n.t('meeting_stats.relays')
+          %td.col-xs-1.goggles-rightalign
+            = sprintf( "%02.2f", @meeting_stats.average_relay_score)

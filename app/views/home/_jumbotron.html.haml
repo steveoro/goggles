@@ -1,43 +1,48 @@
-.carousel.slide#jumboTron
-  %ol.carousel-indicators
-    %li.active{'data-target'=>'#jumboTron', 'data-slide-to'=>'0'}
-    %li{'data-target'=>'#jumboTron', 'data-slide-to'=>'1'}
-    %li{'data-target'=>'#jumboTron', 'data-slide-to'=>'2'}
-    %li{'data-target'=>'#jumboTron', 'data-slide-to'=>'3'}
+.row
+  #jumboTron.carousel.slide{"data-ride" => "carousel"}
+    / Indicators
+    %ol.carousel-indicators
+      %li.active{'data-target'=>'#jumboTron', 'data-slide-to'=>'0'}
+      %li{'data-target'=>'#jumboTron', 'data-slide-to'=>'1'}
+      %li{'data-target'=>'#jumboTron', 'data-slide-to'=>'2'}
+      %li{'data-target'=>'#jumboTron', 'data-slide-to'=>'3'}
+      %li{'data-target'=>'#jumboTron', 'data-slide-to'=>'4'}
 
-  - # JumboTron items:
-  .carousel-inner
-    .item.thumbnail.active
-      = image_tag( "jumbotron/breastroke.png", size: '800x440', class: 'img-rounded' )
-      .carousel-caption
-        %h4= I18n.t('jumbotron.title_breast')
-        %p= I18n.t('jumbotron.text_breast')
-    .item.thumbnail
-      = image_tag( "jumbotron/empty-lanes.png", size: '800x440', class: 'img-rounded' )
-      .carousel-caption
-        %h4= I18n.t('jumbotron.title_emptylanes')
-        %p= I18n.t('jumbotron.text_emptylanes')
-    .item.thumbnail
-      = image_tag( "jumbotron/freestyle.png", size: '800x440', class: 'img-rounded' )
-      .carousel-caption
-        %h4= I18n.t('jumbotron.title_freestyle')
-        %p= I18n.t('jumbotron.text_freestyle')
-    .item.thumbnail
-      = image_tag( "jumbotron/timertable.png", size: '800x440', class: 'img-rounded' )
-      .carousel-caption
-        %h4= I18n.t('jumbotron.title_timertable')
-        %p= I18n.t('jumbotron.text_timertable')
-    .item.thumbnail
-      = image_tag( "jumbotron/happy-BaMo.png", size: '800x440', class: 'img-rounded' )
-      .carousel-caption
-        %h4= I18n.t('jumbotron.title_happy')
-        %p= I18n.t('jumbotron.text_happy')
+    / Carousel slides:
+    .carousel-inner{role: "listbox"}
+      .item.active
+        = image_tag( "jumbotron/breastroke.png", class: 'img-rounded' )
+        .carousel-caption
+          %b= I18n.t('jumbotron.title_breast')
+          %p= I18n.t('jumbotron.text_breast')
+      .item
+        = image_tag( "jumbotron/empty-lanes.png", class: 'img-rounded' )
+        .carousel-caption
+          %b= I18n.t('jumbotron.title_emptylanes')
+          %p= I18n.t('jumbotron.text_emptylanes')
+      .item
+        = image_tag( "jumbotron/freestyle.png", class: 'img-rounded' )
+        .carousel-caption
+          %b= I18n.t('jumbotron.title_freestyle')
+          %p= I18n.t('jumbotron.text_freestyle')
+      .item
+        = image_tag( "jumbotron/timertable.png", class: 'img-rounded' )
+        .carousel-caption
+          %b= I18n.t('jumbotron.title_timertable')
+          %p= I18n.t('jumbotron.text_timertable')
+      .item
+        = image_tag( "jumbotron/happy-BaMo.png", class: 'img-rounded' )
+        .carousel-caption
+          %b= I18n.t('jumbotron.title_happy')
+          %p= I18n.t('jumbotron.text_happy')
 
-  - # JumboTron nav:
-  %a.carousel-control.left{:href=>'#jumboTron', 'data-slide'=>'prev'}
-    &lsaquo;
-  %a.carousel-control.right{:href=>'#jumboTron', 'data-slide'=>'next'}
-    &rsaquo;
+    / Controls
+    %a.carousel-control.left{href: '#jumboTron', 'data-slide'=>'prev', 'data-turbolinks'=>'false'}
+      %span.icon-prev
+      %span.sr-only Previous
+    %a.carousel-control.right{href: '#jumboTron', 'data-slide'=>'next', 'data-turbolinks'=>'false'}
+      %span.icon-next
+      %span.sr-only Next
 
 %script
   $('.carousel').carousel({ interval: 10000 });

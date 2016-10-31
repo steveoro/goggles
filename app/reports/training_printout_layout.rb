@@ -4,7 +4,7 @@
 
 == TrainingPrintoutLayout
 
-- version:  4.00.457
+- version:  6.003
 - author:   Steve A.
 
 =end
@@ -12,7 +12,7 @@ class TrainingPrintoutLayout
   require "prawn"
   require 'common/format'
 
-  AUTHOR_STRING = '--=[  Goggles  -o^o-  ]=-- / (p) 2013-2014'
+  AUTHOR_STRING = '--=[  Goggles  -o^o-  ]=-- / (p) 2013-2016' unless defined?(AUTHOR_STRING)
 
   # Prepares rendering options, default values and starts the rendering
   # process.

@@ -1,6 +1,6 @@
-.span10
+.col-xs-10
   - @meeting_events_list.each do |meeting_event|
-    .row-fluid.goggles-category-gap{'id'=>meeting_event.event_type.code}
+    .row.goggles-category-gap{'id'=>meeting_event.event_type.code}
 
     - GenderType.individual_only.sort_by_courtesy.each do |gender_type|
       - if meeting_event.meeting_entries.for_gender(gender_type.id).count > 0
@@ -15,4 +15,4 @@
               - is_highlighted = (@team && @team.id == entry.team_id) || (@swimmer && @swimmer.id == entry.swimmer_id)
               = render( partial: 'show_entry', locals: { entry: entry, is_highlighted: is_highlighted } )
 
-  .row-fluid.goggles-category-gap
+  .row.goggles-category-gap

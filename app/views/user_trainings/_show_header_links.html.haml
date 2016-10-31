@@ -1,9 +1,12 @@
-.row-fluid
-  .span3
+.row
+  .col-xs-4
     = link_to_user_trainings()
-  .span2
+  .col-xs-2
     = link_to_user_training_printout( @user_training )
-  .span2
+  .col-xs-2
     = link_to_user_training_edit( @user_training )
-  .span2
+  .col-xs-2
     = link_to_user_training_duplicate( @user_training )
+
+.row.col-xs-12
+  &nbsp;

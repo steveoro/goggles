@@ -1,0 +1,79 @@
+%script
+  var sm_score = Number.parseFloat( "#{supermaster_score.score}" );
+  var sm_label = "#{t('supermaster.supermaster')}: #{supermaster_score.score}";
+  var im_score = Number.parseFloat( "#{ironmaster_score.score}" );
+  var im_label = "#{t('supermaster.ironmaster')}: #{ironmaster_score.score}";
+  var tr_score = Number.parseFloat( "#{team_ranking_score.score}" );
+  var tr_label = "#{t('supermaster.team_ranking')}: #{team_ranking_score.score}";
+
+.row.goggles-category-gap
+  .col-xs-5
+    = render( partial: 'swimmer_badge', locals: { season: @season, swimmer: @swimmer, badge: @badge, team: @team, team_affiliation: @team_affiliation } )
+
+  .col-xs-7
+    .col-xs-4#sm_chart
+    .col-xs-4#im_chart
+    .col-xs-4#tr_chart
+
+:javascript
+  readyFunct = function(){
+    $.jqplot( 'sm_chart',
+      [[ sm_score ]],
+      {
+        seriesDefaults: {
+            renderer: $.jqplot.MeterGaugeRenderer,
+            rendererOptions: {
+                label: sm_label,
+                labelPosition: 'bottom',
+                labelHeightAdjust: -5,
+                min: 2500,
+                max: 5000,
+                intervalOuterRadius: 40,
+                ticks: [2500, 3000, 3500, 4000, 4500, 5000],
+                intervals:[3000, 4000, 4500, 5000],
+                intervalColors:['#efefef', '#66cc66', '#E7E658', '#cc6666']
+            }
+        }
+      }
+    );
+    $.jqplot( 'im_chart',
+      [[ im_score ]],
+      {
+        seriesDefaults: {
+             renderer: $.jqplot.MeterGaugeRenderer,
+             rendererOptions: {
+                label: im_label,
+                labelPosition: 'bottom',
+                labelHeightAdjust: -5,
+                min: 9000,
+                max: 18000,
+                intervalOuterRadius: 40,
+                ticks: [9000, 12000, 15000, 18000],
+                intervals:[10800,14400, 16200, 18000],
+                intervalColors:['#efefef', '#66cc66', '#E7E658', '#cc6666']
+            }
+        }
+      }
+    );
+    $.jqplot('tr_chart',
+      [[ tr_score ]],
+      {
+        seriesDefaults: {
+             renderer: $.jqplot.MeterGaugeRenderer,
+             rendererOptions: {
+                label: tr_label,
+                labelPosition: 'bottom',
+                labelHeightAdjust: -5,
+                min: 1500,
+                max: 3000,
+                intervalOuterRadius: 40,
+                intervals:[1800, 2400, 2700, 3000],
+                intervalColors:['#efefef', '#66cc66', '#E7E658', '#cc6666']
+            }
+        }
+      }
+    );
+  };
+  // Bind the on-ready function to the "page-load" Turbolinks5 event:
+  // $(document).ready( readyFunct ); // Standard "ready" event; w/ TL5 we need just the one below:
+  $(document).on('turbolinks:load', readyFunct );

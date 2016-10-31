@@ -1,6 +1,6 @@
 %h3= @title
 
-.row-fluid
+.row
 
 = form_for( :invite, class: 'form-horizontal', onsubmit: "$('#loadingIndicator').show();" ) do |form|
   = render partial: 'form_fields', locals: {f: form, message_body: I18n.t('social.default_message').gsub("{SWIMMER_NAME}", @swimming_buddy.name)}

@@ -8,7 +8,7 @@ require 'json'
 
 = ExercisesController
 
-  - version:  4.00.317.20140616
+  - version:  6.002
   - author:   Steve A., Leega
 
 =end
@@ -19,8 +19,7 @@ class ExercisesController < ApplicationController
   QUERY_WILDCHAR = '%'
 
   # Require authorization before invoking any of this controller's actions:
-  before_filter :authenticate_user_from_token!
-  before_filter :authenticate_user!                   # Devise "standard" HTTP log-in strategy
+  before_action :authenticate_user!                   # Devise "standard" HTTP log-in strategy
   #-- -------------------------------------------------------------------------
   #++
 

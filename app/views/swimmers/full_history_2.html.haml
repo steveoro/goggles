@@ -2,8 +2,9 @@
 - cache( cache_key_for_swimmer( 'full_history_2', @swimmer.id, @max_updated_at ) ) do
   - pool_type_25 = PoolType.find_by_code('25').i18n_verbose
   - pool_type_50 = PoolType.find_by_code('50').i18n_verbose
-  .row-fluid#full_history_by_date_grid
+  .col-xs-12#full_history_2
     .goggles-category-gap#pageTop
+  .col-xs-12.table-responsive
     %table.table.table-striped.table-bordered.table-hover.table-condensed
       %tbody
         %tr{'class'=>'info'}
@@ -20,11 +21,13 @@
             %td
               - if index_row[pool_type_25].respond_to?(:each)
                 - index_row[pool_type_25].each do |event_type|
-                  %a(href="##{event_type}#{index_row[:stroke_code]}-25")= event_type
+                  = link_to("##{event_type}#{index_row[:stroke_code]}-25", {'data-turbolinks'=>'false'}) do
+                    = event_type
             %td
               - if index_row[pool_type_50].respond_to?(:each)
                 - index_row[pool_type_50].each do |event_type|
-                  %a(href="##{event_type}#{index_row[:stroke_code]}-50")= event_type
+                  = link_to("##{event_type}#{index_row[:stroke_code]}-50", {'data-turbolinks'=>'false'}) do
+                    = event_type
     - event_key = nil
     %script
       var dataSeries = {};
@@ -38,11 +41,13 @@
           - event_name = full_history_element[3].split(" - ")[0]
           -# Get the data for the graph:
           - event_data = full_history_element[4].map{ |mir| [mir.get_scheduled_date.to_datetime.to_i * 1000, mir.get_timing_instance.to_hundreds] }
-          .row-fluid.goggles-category-gap
-          .row-fluid.offset5
+          .col-xs-12.goggles-category-gap
+            &nbsp;
+          .col-xs-12.text-center
             %b= event_name
-            %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
-          .row-fluid.graph-container-full
+            = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+              = image_tag('bullet_arrow_up.png')
+          .col-xs-12.graph-container-full
             .graph-placeholder-full{ 'id' => "graph#{event_key}" }
           -# Store data for the graph in a brand new series list:
           %script
@@ -58,17 +63,17 @@
             // console.log( dataSeries[ "#{ event_key }" ] );
           - event_key = nil
 
-        .row-fluid
-          .goggles-category-gap{ 'id' => "#{full_history_key}" }
+        .col-xs-12.table-responsive.goggles-category-gap{ 'id' => "#{full_history_key}" }
           %table.table.table-striped.table-bordered.table-hover.table-condensed
             %tbody
               %tr{'class'=>'info'}
                 %td
                   %b= full_history_element[3]
                   = ' ('
-                  = full_history_element[1].count if full_history_element[1].respond_to?(:count)
+                  = full_history_element[1].size if full_history_element[1].respond_to?(:size)
                   = I18n.t('results') + ')'
-                  %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
+                  = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+                    = image_tag('bullet_arrow_up.png')
                 %td.goggles-rightalign
                   %b= I18n.t('meeting.reaction_time')
                 - passage_list = full_history_element[0]
@@ -89,7 +94,8 @@
                   - passages = full_history_element[2].where(meeting_individual_result: meeting_individual_result) if full_history_element[2].respond_to?(:where)
                   = render( partial: 'full_history_by_time_meeting_row', locals: { meeting_individual_result: meeting_individual_result, passage_list: passage_list, meeting: meeting, passages: passages } )
 
-  .row-fluid.goggles-category-gap
+  .col-xs-12.goggles-category-gap
+    &nbsp;
 
   :javascript
     // Custom label formatter:
@@ -112,63 +118,73 @@
       return label;
     }
 
-    $( function() {
-        var eventKeys = Object.keys( dataSeries );
-        var options = {
-            xaxis: {
-              mode: "time",
-              timeformat: "#{ Date::DATE_FORMATS[I18n.locale] }"
-            },
-            yaxis: {
-              transform: function (v) { return -v; },
-              inverseTransform: function (v) { return -v; },
-              tickFormatter: tickFormatter
-            },
-            series: {
-              lines: {
+    /**
+     * Defines and plots the line graphs for #full_history_2
+     *
+     * [Steve, 20161014] Keep always functions names unique to avoid clash.
+     */
+    function plotFullHistory2Charts() {
+      var eventKeys = Object.keys( dataSeries );
+      var options = {
+          xaxis: {
+            mode: "time",
+            timeformat: "#{ Date::DATE_FORMATS[I18n.locale] }"
+          },
+          yaxis: {
+            transform: function (v) { return -v; },
+            inverseTransform: function (v) { return -v; },
+            tickFormatter: tickFormatter
+          },
+          series: {
+            lines: {
+              show: true,
+              label: {
                 show: true,
-                label: {
-                  show: true,
-                }
-              },
-              points: {
-                show: true
               }
             },
-            grid: {
-              hoverable: true
-            },
-            legend: {
-              show: true,
-              position: "sw"
+            points: {
+              show: true
             }
-        };
+          },
+          grid: {
+            hoverable: true
+          },
+          legend: {
+            show: true,
+            position: "sw"
+          }
+      };
 
-        $( "<div id='tooltip'></div>" ).css({
-          position: "absolute",
-          display: "none",
-          border: "1px solid #fdd",
-          padding: "2px",
-          "background-color": "#fee",
-          opacity: 0.80
-        }).appendTo( "body" );
+      $( "<div id='tooltip'></div>" ).css({
+        position: "absolute",
+        display: "none",
+        border: "1px solid #fdd",
+        padding: "2px",
+        "background-color": "#fee",
+        opacity: 0.80
+      }).appendTo( "body" );
 
-        // Plot each graph:
-        for ( index = 0; index < eventKeys.length; index++ ) {
-          var currKey = eventKeys[index];
-          $.plot( "#graph" + currKey, dataSeries[ currKey ], options );
+      // Plot each graph:
+      for ( index = 0; index < eventKeys.length; index++ ) {
+        var currKey = eventKeys[index];
+        $.plot( "#graph" + currKey, dataSeries[ currKey ], options );
 
-          $("#graph" + currKey).bind( "plothover", function (event, pos, item) {
-            if (item) {
-              // console.log( item );
-              var x = new Date( item.datapoint[0] ).toLocaleDateString();
-              var y = tickFormatter( item.datapoint[1].toFixed(2) );
-              $("#tooltip").html(
-                y + ", " + x
-              ).css( { top: item.pageY+5, left: item.pageX+5 } )
-               .fadeIn(200);
-            }
-          } );
-        }
+        $("#graph" + currKey).bind( "plothover", function (event, pos, item) {
+          if (item) {
+            // console.log( item );
+            var x = new Date( item.datapoint[0] ).toLocaleDateString();
+            var y = tickFormatter( item.datapoint[1].toFixed(2) );
+            $("#tooltip").html(
+              y + ", " + x
+            ).css( { top: item.pageY+5, left: item.pageX+5 } )
+             .fadeIn(200);
+          }
+        } );
       }
-    );
+    }
+
+    $( function() {
+      if ( $('#full_history_2')['length'] == 1 ) {
+        plotFullHistory2Charts();
+      }
+    });

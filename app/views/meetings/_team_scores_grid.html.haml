@@ -1,4 +1,4 @@
-.offset1.span10
+.col-xs-12
   %table.table.table-striped.table-bordered.table-hover.table-condensed
     %tbody
       %tr{'class'=>'success'}
@@ -10,7 +10,7 @@
           = I18n.t('meeting_team_score.meeting_individual_points')
         %td.goggles-centeralign
           = I18n.t('meeting_team_score.meeting_relay_points')
-        - if @total_team_bonus > 0
+        - if @existing_team_bonus_sum > 0
           %td.goggles-centeralign
             = I18n.t('meeting_team_score.meeting_team_points')
         %td.goggles-centeralign
@@ -31,7 +31,7 @@
             = sprintf( "%02.2f", team_score.meeting_individual_points )
           %td.goggles-rightalign
             = sprintf( "%02.2f", team_score.meeting_relay_points )
-          - if @total_team_bonus > 0
+          - if @existing_team_bonus_sum > 0
             %td.goggles-rightalign
               = sprintf( "%02.2f", team_score.meeting_team_points )
           %td.goggles-rightalign
@@ -44,5 +44,5 @@
           %i= tot_swimmers
         %td{'colspan'=>'4'}
 
-.row-fluid
-  .span12
+.col-xs-12
+  &nbsp;

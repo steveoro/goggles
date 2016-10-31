@@ -1,7 +1,7 @@
 = render( partial: 'tabs_and_radio_title' )
 
-.row-fluid#goggle_cup_presentation
-  .offset1.span10
+.col-xs-12#goggle_cup_presentation
+  .col-xs-offset-1.col-xs-10
     %p
       %b= @goggle_cup_name
       = I18n.t('goggle_cup.presentation.part1')
@@ -10,59 +10,59 @@
       = I18n.t('goggle_cup.presentation.part4')
 
 - if @goggle_cup
-  .row-fluid#goggle_cup_grid
-    .offset1.span10
-      %table.table.table-striped.table-bordered.table-hover.table-condensed
-        %tbody
-          %tr{'class'=>'info'}
+  .col-xs-12.table-responsive#goggle_cup_grid
+    %table.table.table-striped.table-bordered.table-hover.table-condensed
+      %tbody
+        %tr{'class'=>'info'}
+          %td.text-center
+            %b= I18n.t('rank')
+          %td.text-center
+            %b= I18n.t('activerecord.models.swimmer')
+          %td.text-center
+            %b= I18n.t('total')
+          %td.text-center
+            %b= I18n.t('goggle_cup.count')
+          %td.text-center
+            %b= I18n.t('average')
+          %td.text-center
+            %b= I18n.t('max')
+          %td.text-center
+            %b= I18n.t('min')
+        - @goggle_cup_rank.each_with_index do |rank_element,index|
+          %tr
             %td.goggles-rightalign
-              %b= I18n.t('rank')
+              = show_tag( index==0, "medal_gold_3.png", '' )
+              = show_tag( index==1, "medal_silver_3.png", '' )
+              = show_tag( index==2, "medal_bronze_3.png", '' )
+              = index + 1
             %td
-              %b= I18n.t('activerecord.models.swimmer')
+              = rank_element[:swimmer].decorate.get_linked_swimmer_name_to_goggle_cup
             %td.goggles-rightalign
-              %b= I18n.t('total')
+              %b= sprintf( "%02.2f", rank_element[:total] )
             %td.goggles-centeralign
-              %b= I18n.t('goggle_cup.count')
+              = rank_element[:count]
             %td.goggles-rightalign
-              %b= I18n.t('average')
+              = sprintf( "%02.2f", rank_element[:average] )
             %td.goggles-rightalign
-              %b= I18n.t('max')
+              = sprintf( "%02.2f", rank_element[:max] )
             %td.goggles-rightalign
-              %b= I18n.t('min')
-          - @goggle_cup_rank.each_with_index do |rank_element,index|
-            %tr
-              %td.goggles-rightalign
-                = show_tag( index==0, "medal_gold_3.png", '' )
-                = show_tag( index==1, "medal_silver_3.png", '' )
-                = show_tag( index==2, "medal_bronze_3.png", '' )
-                = index + 1
-              %td
-                = rank_element[:swimmer].decorate.get_linked_swimmer_name_to_goggle_cup
-              %td.goggles-rightalign
-                %b= sprintf( "%02.2f", rank_element[:total] )
-              %td.goggles-centeralign
-                = rank_element[:count]
-              %td.goggles-rightalign
-                = sprintf( "%02.2f", rank_element[:average] )
-              %td.goggles-rightalign
-                = sprintf( "%02.2f", rank_element[:max] )
-              %td.goggles-rightalign
-                = sprintf( "%02.2f", rank_element[:min] )
+              = sprintf( "%02.2f", rank_element[:min] )
 - else
-  .row-fluid
-    .offset1.span10
-      %p= I18n.t('goggle_cup.send_us_your_goggle_cups')
+  = render( partial: 'goggles/no_goggle_cup_found' )
 
-.row-fluid
-  .offset1.span10
-.row-fluid#goggle_cup_rules
-  .offset1.span10
-    %h3= I18n.t('goggle_cup.rules_title')
-    %p
-      = I18n.t( 'goggle_cup.rules.part1', gogglecup_name: @goggle_cup_name, team_name: @team.get_full_name )
-      = I18n.t( 'goggle_cup.rules.part2', gogglecup_name: @goggle_cup_name, max_performance: @goggle_cup_max_performance )
-      = I18n.t( 'goggle_cup.rules.part3' )
-      = I18n.t( 'goggle_cup.rules.part4' )
-      = I18n.t( 'goggle_cup.rules.part5', max_points: @goggle_cup_max_points )
-      = I18n.t( 'goggle_cup.rules.part6', max_points: @goggle_cup_max_points )
-      = I18n.t( 'goggle_cup.rules.part7', max_points: @goggle_cup_max_points )
+.col-xs-12
+  &nbsp;
+
+.col-xs-12#goggle_cup_rules
+  %h3= I18n.t('goggle_cup.rules_title')
+  %p
+    = I18n.t( 'goggle_cup.rules.part1', gogglecup_name: @goggle_cup_name, team_name: @team.get_full_name )
+    = I18n.t( 'goggle_cup.rules.part2', gogglecup_name: @goggle_cup_name, max_performance: @goggle_cup_max_performance )
+    = I18n.t( 'goggle_cup.rules.part3' )
+    = I18n.t( 'goggle_cup.rules.part4' )
+    = I18n.t( 'goggle_cup.rules.part5', max_points: @goggle_cup_max_points )
+    = I18n.t( 'goggle_cup.rules.part6', max_points: @goggle_cup_max_points )
+    = I18n.t( 'goggle_cup.rules.part7', max_points: @goggle_cup_max_points )
+
+.col-xs-12
+  &nbsp;

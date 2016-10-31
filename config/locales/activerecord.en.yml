@@ -68,22 +68,6 @@ en:
       goggle_cup: "Goggle cup"
 
     attributes:
-      user:
-        created_on: Created on
-        updated_on: Updated on
-        email: "e-mail"
-        name: "User name"
-        hashed_pwd: Hashed password
-        password_confirmation: Confirm Password
-        description: "Description/Full name"
-        first_name: "First name"
-        last_name: "Last name"
-        year_of_birth: "Year of birth"
-        enable_blog: "Blogger?"
-        enable_edit: "Can edit?"
-        enable_delete: "Can delete?"
-        enable_setup: Enable set-up
-        authorization_level: "Author.lev."
       article:
         user: User
         title: "Title"
@@ -208,6 +192,9 @@ en:
         has_restaurant_service: "With restaurant?"
         has_gym_area: "With gym?"
         has_children_area: "With children area?"
+      swimming_pool_review:
+        title: "Title"
+        entry_text: "Review"
       training:
         title: "Title"
         description: "Description"
@@ -228,6 +215,7 @@ en:
         updated_on: Updated on
         name: User name
         hashed_pwd: Hashed Password
+        description: "Description/Full name"
         first_name: "Name"
         last_name: "Last name"
         year_of_birth: "Year of birth"
@@ -236,6 +224,7 @@ en:
         enable_delete: "Can delete?"
         enable_setup: Enable set-up
         authorization_level: Auth. Lev.
+        password_confirmation: "Password confirmation"
         use_email_data_updates_notify: "Meeting data update e-mail notify"
         use_email_achievements_notify: "Achievements update e-mail notify"
         use_email_newsletter_notify: "Site update newsletter"
@@ -292,6 +281,19 @@ en:
               blank: "can't be blank"
         user:
           attributes:
+            email:
+              blank: "can't be blank"
+              too_short: "is too short"
+            name:
+              blank: "can't be blank"
+              too_short: "is too short"
             password:
+              blank: "can't be blank"
+              too_short: "is too short"
+            password_confirmation:
+              confirmation: "needs to be equal to the password"
+              blank: "can't be blank"
+              too_short: "is too short"
+            current_password:
               blank: "can't be blank"
               too_short: "is too short"

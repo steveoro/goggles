@@ -1,61 +1,65 @@
-.row-fluid
-  .span3
+.row
+  .col-xs-3
     = link_to_user_training_stories()
-  .span2
+  .col-xs-2
     = link_to_user_training_story_edit( @user_training_story )
+
+.row.col-xs-12
+  &nbsp;
+
 - # From down here to below we just need the decorated instance:
 - @user_training_story = UserTrainingStoryDecorator.decorate( @user_training_story )
 
 .accordion
   .accordion-group
     .accordion-heading.goggles-accordion-heading
-      .row-fluid
-        .span12
+      .row
+        .col-xs-12
           %h3= @title
     .accordion-body
       .accordion-inner
-        .row-fluid
-          .span2
+        .row
+          .col-xs-2
             = I18n.t('notes') + ':'
-          .span10
+          .col-xs-10
             = @user_training_story.notes
-        .row-fluid
-          .span2
+        .row
+          .col-xs-2
             = I18n.t('activerecord.attributes.training.user') + ':'
-          .span10
+          .col-xs-10
             = @user_training_story.get_user_name
-        .row-fluid
-          .span2
+        .row
+          .col-xs-2
             = I18n.t('activerecord.models.swimmer_level_type') + ':'
-          .span10
+          .col-xs-10
             = @user_training_story.get_swimmer_level_type( :i18n_description )
-        .row-fluid
-          .span2
+        .row
+          .col-xs-2
             %i= I18n.t(:updated_at) + ':'
-          .span10
+          .col-xs-10
             %i= Format.a_short_datetime( @user_training_story.updated_at )
-        .row-fluid
-          .span2
+        .row
+          .col-xs-2
             %i= I18n.t('user_training_stories.swam_date') + ':'
-          .span10
+          .col-xs-10
             = Format.a_short_datetime( @user_training_story.swam_date )
-        .row-fluid
-          .span2
+        .row
+          .col-xs-2
             %i= I18n.t('user_training_stories.user_training') + ':'
-          .span10
+          .col-xs-10
             = @user_training_story.get_user_training_name()
-        .row-fluid
-          .span2
+        .row
+          .col-xs-2
             = I18n.t('trainings.total_meters') + ':'
-          .span10
+          .col-xs-10
             = @user_training_story.get_user_training_total_distance()
-        .row-fluid
-          .span2
+        .row
+          .col-xs-2
             = I18n.t('trainings.esteemed_timing') + ':'
-          .span10
+          .col-xs-10
             = Timing.to_hour_string( @user_training_story.get_user_training_esteemed_total_seconds() )
-        .row-fluid
-          .span2
+        .row
+          .col-xs-2
             = I18n.t('user_training_stories.total_training_time') + ':'
-          .span10
+          .col-xs-10
             = Timing.to_hour_string( @user_training_story.total_training_time() )

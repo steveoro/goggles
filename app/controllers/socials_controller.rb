@@ -3,17 +3,16 @@
 
 = SocialsController
 
-  - version:  4.00.765
+  - version:  6.002
   - author:   Steve A.
 
 =end
 class SocialsController < ApplicationController
 
   # Require authorization before invoking any of this controller's actions:
-  before_filter :authenticate_user_from_token!
-  before_filter :authenticate_user!                # Devise "standard" HTTP log-in strategy
+  before_action :authenticate_user!                # Devise "standard" HTTP log-in strategy
   # Parse parameters:
-  before_filter :verify_parameter, except: [:associate, :dissociate, :show_all, :skip_associate]
+  before_action :verify_parameter, except: [:associate, :dissociate, :show_all, :skip_associate]
   #-- -------------------------------------------------------------------------
   #++
 
@@ -22,13 +21,18 @@ class SocialsController < ApplicationController
   # === Params:
   # :id || :swimmer[:swimmer_id] => both are interpreted as the swimmer id for the association
   def associate
+# DEBUG
+#    logger.debug "\r\n\r\n!! ------ #{self.class.name} -----"
+#    logger.debug "> #{params.inspect}"
+#    logger.debug "> #{request.inspect}"
+#    logger.debug "\r\n=====================================================\r\n\r\n"
     if request.post?                                # === POST: ===
-      if params[:id] || params[:swimmer][:swimmer_id] # Save the association both ways:
-        swimmer_id = ( params[:id] || params[:swimmer][:swimmer_id] ).to_i
+      if params[:id] || params[:swimmer][:id]       # Save the association both ways:
+        swimmer_id = ( params[:id] || params[:swimmer][:id] ).to_i
         if current_user.set_associated_swimmer( Swimmer.find_by_id(swimmer_id) )
           flash[:info] = I18n.t('user_association.association_successful')
         else
-          flash[:error] = I18n.t('user_association.something_went_wrong_try_later')
+          flash[:error] = I18n.t('user_association.association_unsuccessful')
         end
       end
       redirect_to( root_path ) and return
@@ -42,7 +46,7 @@ class SocialsController < ApplicationController
         second_list.where( year_of_birth: current_user.year_of_birth )
       end
                                                     # Choose a list with results:
-      @possible_swimmers = second_list.size > 0 ? second_list : first_list
+      @possible_swimmers = second_list.size > 0 ? second_list.to_a : first_list.to_a
       @possible_swimmers.delete_if { |swimmer_row|  # Filter out the worst results:
         (swimmer_row.complete_name =~ Regexp.new(first_name.upcase)).nil? ||
         (swimmer_row.complete_name =~ Regexp.new(last_name.upcase)).nil?
@@ -58,10 +62,10 @@ class SocialsController < ApplicationController
       if current_user.set_associated_swimmer()
         flash[:info] = I18n.t('user_association.dissociation_successful')
       else
-        flash[:error] = I18n.t('user_association.something_went_wrong_try_later')
+        flash[:error] = I18n.t('user_association.dissociation_unsuccessful')
       end
     end
-    redirect_to( :back ) and return
+    redirect_back( fallback_location: root_path ) and return
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -87,8 +91,7 @@ class SocialsController < ApplicationController
   #
   def association_confirm
     toggle_confirmation( true )
-    redirect_to( :back ) and return
-#    redirect_to( request.env["HTTP_REFERER"] ) and return
+    redirect_back( fallback_location: root_path ) and return
   end
 
   # Remove endorsement/unconfirm user association with a goggler (POST only, see routes).
@@ -97,8 +100,7 @@ class SocialsController < ApplicationController
   #
   def association_unconfirm
     toggle_confirmation( false )
-    redirect_to( :back ) and return
-#    redirect_to( request.env["HTTP_REFERER"] ) and return
+    redirect_back( fallback_location: root_path ) and return
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -158,7 +160,7 @@ class SocialsController < ApplicationController
         # If friendship exists:
         flash[:warning] = I18n.t( 'social.warning_friendship_invite_already_sent_edit_options' )
           .gsub( "{SWIMMER_NAME}", @swimming_buddy.name )
-        redirect_to( :back ) and return
+        redirect_back( fallback_location: root_path ) and return
       end
     end
   end
@@ -208,7 +210,7 @@ class SocialsController < ApplicationController
       else
         flash[:warning] = I18n.t( 'social.warning_could_not_find_valid_or_pending_friendship' )
           .gsub( "{SWIMMER_NAME}", @swimming_buddy.name )
-        redirect_to( :back ) and return
+        redirect_back( fallback_location: root_path ) and return
       end
     end
   end
@@ -246,7 +248,7 @@ class SocialsController < ApplicationController
       else
         flash[:warning] = I18n.t( 'social.warning_generic_not_a_valid_friendship' )
           .gsub( "{SWIMMER_NAME}", @swimming_buddy.name )
-        redirect_to( :back ) and return
+        redirect_back( fallback_location: root_path ) and return
       end
       render :ask_confirmation
     end
@@ -285,7 +287,7 @@ class SocialsController < ApplicationController
       else
         flash[:warning] = I18n.t( 'social.warning_generic_not_a_valid_friendship' )
           .gsub( "{SWIMMER_NAME}", @swimming_buddy.name )
-        redirect_to( :back ) and return
+        redirect_back( fallback_location: root_path ) and return
       end
       render :ask_confirmation
     end
@@ -324,7 +326,7 @@ class SocialsController < ApplicationController
       else
         flash[:warning] = I18n.t( 'social.warning_generic_not_a_valid_friendship' )
           .gsub( "{SWIMMER_NAME}", @swimming_buddy.name )
-        redirect_to( :back ) and return
+        redirect_back( fallback_location: root_path ) and return
       end
       render :ask_confirmation
     end
@@ -406,9 +408,7 @@ class SocialsController < ApplicationController
     @swimming_buddy = ( user_id > 0 ) ? User.find_by_id( user_id ) : nil
     unless ( @swimming_buddy )                      # Check swimming buddy existance
       flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to( :back ) and return
-#      redirect_to( request.env["HTTP_REFERER"] ) and return
-#      redirect_to( socials_show_all_path() ) and return
+      redirect_back( fallback_location: root_path ) and return
     end
   end
   #-- -------------------------------------------------------------------------

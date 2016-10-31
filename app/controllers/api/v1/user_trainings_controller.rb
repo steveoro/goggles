@@ -1,14 +1,13 @@
 #
 # RESTful API controller
 #
-class Api::V1::UserTrainingsController < ApplicationController
+class Api::V1::UserTrainingsController < Api::BaseController
 
   respond_to :json
 
   # Require authorization before invoking any of this controller's actions:
-  before_filter :authenticate_user_from_token!
-  before_filter :authenticate_user!                # Devise "standard" HTTP log-in strategy
-  before_filter :ensure_format
+  before_action :authenticate_user_from_token!
+  before_action :ensure_format
   #-- -------------------------------------------------------------------------
   #++
 
@@ -22,11 +21,12 @@ class Api::V1::UserTrainingsController < ApplicationController
   def index
     # (This uses Squeel DSL syntax for where clauses)
     if params[:user_id]
-      @user_trainings = UserTraining.where( user_id: params[:user_id] ).order('updated_at DESC')
+      @user_trainings = UserTraining.where( user_id: params[:user_id] )
+          .order('updated_at DESC')
     else
       @user_trainings = UserTraining.order('updated_at DESC').all
     end
-    respond_with( @user_trainings )
+    render status: 200, json: @user_trainings
   end
 
 
@@ -37,7 +37,7 @@ class Api::V1::UserTrainingsController < ApplicationController
   # - id: the UserTraining.id
   #
   def show
-    respond_with( @user_training = UserTraining.find(params[:id]) )
+    render status: 200, json: UserTraining.find(params[:id])
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -49,7 +49,13 @@ class Api::V1::UserTrainingsController < ApplicationController
   # - :user_training => the attributes for the row to be created.
   #
   def create
-    respond_with( @user_training = UserTraining.create(params[:user_training]) )
+    is_ok = true
+    begin
+      @user_training = UserTraining.create!( user_training_params )
+    rescue
+      is_ok = false
+    end
+    render( status: (is_ok ? 201 : 422), json: @user_training )
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -61,7 +67,7 @@ class Api::V1::UserTrainingsController < ApplicationController
   # - id: the UserTraining.id
   #
   def edit
-    respond_with( @user_training = UserTraining.find(params[:id]) )
+    render json: UserTraining.find(params[:id])
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -74,7 +80,7 @@ class Api::V1::UserTrainingsController < ApplicationController
   #
   def update
     row = UserTraining.find_by_id( params[:id] )
-    is_ok = row && row.update_attributes( params[:user_training] )
+    is_ok = row && row.update_attributes( user_training_params )
     render( status: (is_ok ? :ok : 400), json: { success: is_ok } )
   end
   #-- -------------------------------------------------------------------------
@@ -101,10 +107,38 @@ class Api::V1::UserTrainingsController < ApplicationController
 
   # Makes sure that the format for the request is an accepted one.
   def ensure_format
-    unless request.xhr? || request.format.json?
+    unless request.format.json?
       render( status: 406, json: { success: false, message: I18n.t(:api_request_must_be_json) } )
       return
     end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  private
+
+
+  # Strong parameters checking for mass-assignment of a UserTraining instance.
+  # Returns the whitelisted, filtered params Hash.
+  def user_training_params
+    params
+      .require( :user_training )
+      .permit(
+        :description,
+        :user_id,
+        user_training_rows_attributes: [
+          :part_order,
+          :group_id, :group_times, :group_start_and_rest, :group_pause,
+          :times, :distance, :start_and_rest, :pause,
+          :user_training_id, :exercise_id, :training_step_type_id,
+          :arm_aux_type_id, :kick_aux_type_id, :body_aux_type_id, :breath_aux_type_id
+        ],
+        user_training_story_attributes: [
+          :swam_date, :total_training_time, :notes,
+          :user_training_id, :swimming_pool_id, :swimmer_level_type_id
+        ]
+      )
   end
   #-- -------------------------------------------------------------------------
   #++

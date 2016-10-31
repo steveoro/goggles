@@ -1,11 +1,11 @@
 #
 # R/O RESTful API controller
 #
-class Api::V1::RecordsController < ApplicationController
+class Api::V1::RecordsController < Api::BaseController
 
   respond_to :json
 
-  before_filter :ensure_format
+  before_action :ensure_format
   #-- -------------------------------------------------------------------------
   #++
 
@@ -23,7 +23,7 @@ class Api::V1::RecordsController < ApplicationController
   #
   def for_season_type
     @records = IndividualRecord.for_season_type( params[:id] ) if params[:id]
-    respond_with( @records )
+    render status: 200, json: @records
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -41,7 +41,7 @@ class Api::V1::RecordsController < ApplicationController
   #
   def for_federation
     @records = IndividualRecord.for_federation( params[:id] ) if params[:id]
-    respond_with( @records )
+    render status: 200, json: @records
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -58,7 +58,7 @@ class Api::V1::RecordsController < ApplicationController
   #
   def for_team
     @records = IndividualRecord.for_team( params[:id] ) if params[:id]
-    respond_with( @records )
+    render status: 200, json: @records
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -84,7 +84,7 @@ class Api::V1::RecordsController < ApplicationController
       # Return just the list of rows:
       @records = collection.map{ |key, row| row }
     end
-    respond_with( @records ? @records : [] )
+    render status: 200, json: ( @records ? @records : [] )
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -110,13 +110,13 @@ class Api::V1::RecordsController < ApplicationController
   #
   def count_records_for_swimmer
     @total = 0
-    result_array = SeasonType.uniq.map(&:id).map do |id|
+    result_array = SeasonType.all.distinct.map(&:id).map do |id|
       {
         season_type_id: id,
         total: IndividualRecord.for_season_type(id).where( swimmer_id: params[:id] ).count
       }
     end
-    respond_with( result_array )
+    render status: 200, json: result_array
   end
   #-- -------------------------------------------------------------------------
   #++

@@ -1,49 +1,50 @@
 = render( partial: 'tabs_and_radio_title' )
 
-.row-fluid
-  .span9
-    .row-fluid
-      .span3
+.row.col-xs-12
+  .col-xs-9
+    .row
+      .col-xs-3
         = "#{ I18n.t(:name) }:"
-      .span9
+      .col-xs-9
         %b= @team.get_full_name
-    .row-fluid
-      .span3
+    .row
+      .col-xs-3
         = "#{ I18n.t('address') }:"
-      .span9
+      .col-xs-9
         = @team.get_complete_address
-    .row-fluid
-      .span3
+    .row
+      .col-xs-3
         = "#{ I18n.t('contacts') }:"
-      .span9
+      .col-xs-9
         = @team.get_contacts.html_safe
-    .row-fluid
-      .span3
+    .row
+      .col-xs-3
         = "#{ I18n.t('home_site') }:"
-      .span9
+      .col-xs-9
         = @team.get_home_site.html_safe
-    .row-fluid
-      .span3
+    .row
+      .col-xs-3
         = "#{ I18n.t('team.affiliations') }:"
-      .span9
+      .col-xs-9
         = @team.get_season_type_list
-    .row-fluid
-      .span3
+    .row
+      .col-xs-3
         = "#{ I18n.t('radiography.first_meeting') }:"
-      .span9
+      .col-xs-9
         = @team.get_first_meeting_name.html_safe
-    .row-fluid
-      .span3
+    .row
+      .col-xs-3
         = "#{ I18n.t('radiography.last_meeting') }:"
-      .span9
+      .col-xs-9
         = @team.get_last_meeting_name.html_safe
 
-  .span3
-    = image_tag( 'img_radiography.jpg', class: "img-polaroid" )
-    .row-fluid
-      %br
-    .row-fluid
-      = link_to( t('team.all_races'), meetings_custom_search_path( text: @team.get_full_name, team_id: @team.id ), {class: "btn"} )
+  .col-xs-3
+    .text-center
+      = image_tag( 'img_radiography.jpg', class: "img-thumbnail" )
+    .row
+      &nbsp;
+    .row.text-center
+      = link_to( t('team.all_races'), meetings_custom_search_path( text: @team.get_full_name, team_id: @team.id ), {class: "btn btn-default"} )
 
-.row-fluid
-  %p
+.col-xs-12
+  &nbsp;

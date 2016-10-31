@@ -1,82 +1,83 @@
 .accordion#accordionTeam
   .accordion-group
     .accordion-heading
-      %a.accordion-toggle{'data-toggle' => 'collapse', 'data-parent' => '#accordionTeam', :href => '#collapseTeam'}
+      %a.accordion-toggle{'data-toggle' => 'collapse', 'data-parent' => '#accordionTeam', :href => '#collapseTeam', 'data-turbolinks'=>'false'}
         %h3.alert.alert-success#headerTeam{'data-toggle' => 'tooltip', 'title' => I18n.t(:detail_show_tooltip)}= @team.get_full_name
     .accordion-body.collapse.in#collapseTeam
       .accordion-inner
-        .row-fluid
-          .span2
+        .row
+          .col-xs-2
             = I18n.t(:team_total_events, { scope: [:meeting] }) +':'
-          .span2.goggles-div-rightalign
+          .col-xs-2.goggles-div-rightalign
             = "#{@team_tot_events} / #{@meeting.meeting_events.count} #{I18n.t(:tot_events)}"
           - if @team_outstanding_scores > 0
-            .offset1.span2
+            .col-xs-offset-1.col-xs-2
               = I18n.t(:team_total_outstanding_scores, { scope: [:meeting] }) +" (> #{ 800 }):"
-            .span1.goggles-div-rightalign
+            .col-xs-1.goggles-div-rightalign
               = @team_outstanding_scores
-        .row-fluid
-          .span3
+        .row
+          .col-xs-3
             = I18n.t(:team_total_gold_medals, { scope: [:meeting] }) +':'
-          .span1.goggles-div-rightalign
+          .col-xs-1.goggles-div-rightalign
             = @team_ranks_1
-          .span1
+          .col-xs-1
             = show_tag( @team_ranks_1>0, "medal_gold_3.png" )
           - if @top_scores['F-standard_points']
-            .span2
+            .col-xs-2
               = I18n.t( 'meeting_stats.best_female_score' )
-            .span2
+            .col-xs-2
               = @top_scores['F-standard_points'].swimmer.get_full_name
-            .span1
+            .col-xs-1
               = @top_scores['F-standard_points'].get_event_type
-            .span1
+            .col-xs-1
               = @top_scores['F-standard_points'].get_timing
-            .span1
+            .col-xs-1
               = @top_scores['F-standard_points'].standard_points.to_s
-        .row-fluid
-          .span3
+        .row
+          .col-xs-3
             = I18n.t(:team_total_silver_medals, { scope: [:meeting] }) +':'
-          .span1.goggles-div-rightalign
+          .col-xs-1.goggles-div-rightalign
             = @team_ranks_2
-          .span1
+          .col-xs-1
             = show_tag( @team_ranks_2>0, "medal_silver_3.png" )
           - if @top_scores['M-standard_points']
-            .span2
+            .col-xs-2
               = I18n.t( 'meeting_stats.best_male_score' )
-            .span2
+            .col-xs-2
               = @top_scores['M-standard_points'].swimmer.get_full_name
-            .span1
+            .col-xs-1
               = @top_scores['M-standard_points'].get_event_type
-            .span1
+            .col-xs-1
               = @top_scores['M-standard_points'].get_timing
-            .span1
+            .col-xs-1
               = @top_scores['M-standard_points'].standard_points.to_s
-        .row-fluid
-          .span3
+        .row
+          .col-xs-3
             = I18n.t(:team_total_bronze_medals, { scope: [:meeting] }) +':'
-          .span1.goggles-div-rightalign
+          .col-xs-1.goggles-div-rightalign
             = @team_ranks_3
-          .span1
+          .col-xs-1
             = show_tag( @team_ranks_3>0, "medal_bronze_3.png" )
           - if @top_scores['goggle_cup_points']
-            .span2
+            .col-xs-2
               = I18n.t( 'meeting_stats.best_score' ) + ' ' + @team.get_current_goggle_cup_name_at( @meeting.header_date)
-            .span2
+            .col-xs-2
               = @top_scores['goggle_cup_points'].swimmer.get_full_name
-            .span1
+            .col-xs-1
               = @top_scores['goggle_cup_points'].get_event_type
-            .span1
+            .col-xs-1
               = @top_scores['goggle_cup_points'].get_timing
-            .span1
+            .col-xs-1
               = @top_scores['goggle_cup_points'].goggle_cup_points.to_s
-        .row-fluid
-          .span3.right-align
+        .row
+          .col-xs-3.right-align
             = I18n.t(:team_total_wooden_medals, { scope: [:meeting] }) +':'
-          .span1.goggles-div-rightalign
+          .col-xs-1.goggles-div-rightalign
             = @team_ranks_4
 
-      .accordion-inner
-        %div.span10
+        .goggles-category-gap.col-xs-12
+
+        .col-xs-12
           %table.table.table-striped.table-bordered.table-hover.table-condensed.goggles-meeting-team-results-table
             %tbody
               %tr
@@ -94,7 +95,7 @@
                     %td.goggles-noborder.goggles-rightalign
                       - event_type = mir.meeting_event.event_type
                       %a(href="\##{event_type.code}")= event_type.i18n_short
-                    %td.goggles-noborder.goggles-rightalign.span1
+                    %td.goggles-noborder.goggles-rightalign.col-xs-1
                       = mir.get_timing
                     %td.goggles-noborder.goggles-rightalign
                       = mir.show_any_rank_medal

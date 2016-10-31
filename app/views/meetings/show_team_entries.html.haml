@@ -3,20 +3,25 @@
   - swimmers = []
   - @meeting.meeting_entries.for_team(@team).sort_by_swimmer.each do |meeting_entry|
     - swimmers << meeting_entry.swimmer if !swimmers.include?( meeting_entry.swimmer )
-  .row.fluid.goggles-category-gap
+  .goggles-category-gap.col-xs-12
+    %p
+      %h3.alert.alert-success= @team.get_full_name
+
+  .goggles-category-gap.col-xs-12
+    %h4=  I18n.t('meeting.team_entries')
     %table.table.table-striped.table-bordered.table-hover.table-condensed
       %tbody
-        %tr{'class'=>'info'}
+        %tr.info
           %td{'rowspan'=>'2'}
             %b= "#{t('swimmers.swimmers')} (#{swimmers.count})"
           - @meeting.meeting_sessions.each do |meeting_session|
             - event_num = meeting_session.meeting_events.count
             %td{'colspan'=>event_num}
               = meeting_session.get_order_with_date
-              = meeting_session.get_pool_attributes
-              = "#{meeting_session.get_begin_time} (#{meeting_session.get_warm_up_time})" 
-              
-        %tr{'class'=>'info'}
+              = meeting_session.swimming_pool.decorate.get_pool_attributes
+              = "#{meeting_session.get_begin_time} (#{meeting_session.get_warm_up_time})"
+
+        %tr.info
           - @meeting.meeting_sessions.each do |meeting_session|
             - meeting_session.meeting_events.each do |meeting_event|
               %td.goggles-centeralign
@@ -30,5 +35,5 @@
                 %td.goggles-rightalign
                   = @meeting.meeting_entries.joins(:meeting_program, :meeting_event).where(['meeting_entries.swimmer_id = ? and meeting_events.event_type_id = ?', swimmer.id, meeting_event.event_type_id]).first.get_timing if @meeting.meeting_entries.joins(:meeting_program, :meeting_event).where(['meeting_entries.swimmer_id = ? and meeting_events.event_type_id = ?', swimmer.id, meeting_event.event_type_id]).count > 0
 
-  .row.fluid.goggles-category-gap
-
+  .goggles-category-gap.col-xs-12
+    &nbsp;

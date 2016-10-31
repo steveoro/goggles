@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 
-describe SeasonDecorator do
+describe SeasonDecorator, type: :model do
   include Rails.application.routes.url_helpers
 
   before :each do
@@ -21,7 +21,7 @@ describe SeasonDecorator do
       expect( subject.get_linked_header_year ).to include( 'href' )
     end
     it "returns an HTML link to the season path" do
-      expect( subject.get_linked_header_year ).to include( championships_ranking_regional_er_csi_path(id: subject.id) ).or include( championships_ranking_supermaster_fin_path(id: subject.id) ) 
+      expect( subject.get_linked_header_year ).to include( championships_ranking_regional_er_csi_path(id: subject.id) ).or include( championships_ranking_supermaster_fin_path(id: subject.id) )
     end
     it "returns a string containing the season header year" do
       expect( subject.get_linked_header_year ).to include( ERB::Util.html_escape(subject.header_year) )
@@ -38,7 +38,7 @@ describe SeasonDecorator do
       expect( subject.get_linked_full_name ).to include( 'href' )
     end
     it "returns an HTML link to the season path" do
-      expect( subject.get_linked_full_name ).to include( championships_ranking_regional_er_csi_path(id: subject.id) ).or include( championships_ranking_supermaster_fin_path(id: subject.id) ) 
+      expect( subject.get_linked_full_name ).to include( championships_ranking_regional_er_csi_path(id: subject.id) ).or include( championships_ranking_supermaster_fin_path(id: subject.id) )
     end
     it "returns a string containing the season full name" do
       expect( subject.get_linked_full_name ).to include( ERB::Util.html_escape(subject.get_full_name) )

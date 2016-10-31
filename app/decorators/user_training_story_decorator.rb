@@ -2,7 +2,7 @@
 
 = UserTrainingStoryDecorator
 
-  - version:  4.00.321.20140618
+  - version:  6.002
   - author:   Steve A.
 
   Decorator for the UserTrainingStory model.

@@ -2,7 +2,7 @@
 
 = TrainingDecorator
 
-  - version:  4.00.317.20140616
+  - version:  6.002
   - author:   Steve A.
 
   Decorator usable for both Training & UserTraining models.
@@ -101,7 +101,7 @@ class TrainingDecorator < Draper::Decorator
     else
       row_with_groups = []
     end
-    
+
     group_list = {}                                 # Collect a custom hash and a list of data rows for each group of rows:
     row_with_groups.each{ |row|                     # If the group id is missing from the hash keys, add it:
       unless group_list.has_key?( row.group_id )
@@ -117,14 +117,14 @@ class TrainingDecorator < Draper::Decorator
         group_list[ row.group_id ][ :datarows ] << row
       end
     }
-    
+
     # Compute totals
     group_list.each do |key, element|
       tot_group_secs   = TrainingRow.compute_total_seconds( element[:datarows] )
       tot_group_timing = Timing.to_minute_string( tot_group_secs )
       element[:tot_group_timing] = tot_group_timing
-    end 
-    
+    end
+
     group_list
   end
   #-- -------------------------------------------------------------------------

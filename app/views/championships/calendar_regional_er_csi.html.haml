@@ -1,11 +1,12 @@
-.row-fluid#history_regional_er_csi
+.row#history_regional_er_csi
   .goggles-category-gap#pageTop
     = render( partial: 'regional_er_csi_tabs' )
+  .goggles-category-gap
     = render( partial: 'title' )
 
     - if @season.id != @current_season_id
       .navbar
-        %ul.nav
+        %ul.nav.nav-pills
           %li
             = link_to( t('championships.back_to_current'), championships_calendar_regional_er_csi_path( id: @current_season_id ), {class: "goggles-nav-compact"})
         .ghost-divider-vertical
@@ -64,8 +65,8 @@
                   %td{ rowspan: session_number }
                     = meeting_session.swimming_pool.decorate.get_linked_name( :get_city_and_attributes )
 
-.row-fluid.goggles-category-gap#Remark
+.row.goggles-category-gap#Remark
   %p
     %b= t('calendars.remark')
 
-.row-fluid.goggles-category-gap
+.row.goggles-category-gap

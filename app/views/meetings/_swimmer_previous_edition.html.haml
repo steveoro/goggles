@@ -1,5 +1,5 @@
 - if @swimmer.meetings.for_code( @meeting.code ).uniq.count > 1
-  .row-fluid.span8
+  .row.col-xs-8
     %table.table.table-striped.table-bordered.table-hover.table-condensed
       %tbody
         %tr
@@ -25,4 +25,4 @@
                     = mir.get_event_type
                   %td.goggles-rightalign
                     = mir.get_timing
-  .row-fluid.span8
+  .row.col-xs-8

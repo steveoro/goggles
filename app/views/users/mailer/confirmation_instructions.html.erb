@@ -1,9 +1,11 @@
 <h2>--=[  Goggles  -o^o-  ]=--</h2>
 
-<p><%= t('devise.resend_confirm_email_title') %></p>
+<p><%= I18n.t('devise.resend_confirm_email_title') %></p>
 
-<p><%= t('devise.confirm_email_greetings').gsub('<EMAIL>', @email) %></p>
+<p><%= I18n.t('devise.confirm_email_greetings', email: @resource.name.present? ? @resource.name : @resource.email) %></p>
 
-<p><%= t('devise.confirm_email_text') %></p>
+<p><%= I18n.t('devise.confirm_email_text') %></p>
 
-<p><%= link_to( t('devise.confirm_email_submit'), confirmation_url(@resource, confirmation_token: @token) ) %></p>
+<p><%= link_to( I18n.t('devise.confirm_email_submit'), confirmation_url(@resource, confirmation_token: @token) ) %></p>
+<hr/>
+<p><i><%= I18n.t('follow_us') %>:</i>&nbsp;<%= link_to( "@master_goggles", "https://twitter.com/master_goggles" ) %></p>

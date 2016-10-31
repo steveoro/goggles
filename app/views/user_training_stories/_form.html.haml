@@ -1,21 +1,25 @@
-.row-fluid.span12
-
 = simple_form_for @user_training_story, :html => { class: 'form-horizontal' } do |f|
-  .row-fluid.span11
-    = f.input :swam_date, as: :string, label: I18n.t('user_training_stories.swam_date'), input_html: { class: 'swam_date input-small' }, placeholder: Date.today, hint: I18n.t('user_training_stories.swam_date_hint')
-  .row-fluid.span11
-    = f.input :total_training_time, label: I18n.t('user_training_stories.total_training_time'), input_html: { class: 'span1' }, hint: I18n.t('user_training_stories.total_training_time_hint')
-  .row-fluid.span11
-    = f.association :swimming_pool, label: I18n.t('activerecord.models.swimming_pool'), collection: SwimmingPool.all, prompt: I18n.t('please_select')
-  .row-fluid.span11
-    = f.association :swimmer_level_type, label: I18n.t('activerecord.models.swimmer_level_type'), collection: SwimmerLevelType.to_dropdown(), prompt: I18n.t('please_select')
-  .row-fluid.span11
-    = f.input :notes, label: I18n.t('notes'), input_html: { rows: 3, class: 'span11' }, hint: I18n.t('user_training_stories.notes_hint')
-  .row-fluid.span11
-    = f.association :user_training, label: I18n.t('activerecord.models.user_training'), collection: UserTraining.sort_by_description.all, label_method: 'description', value_method: 'id', prompt: I18n.t('please_select')
-
-  .row-fluid.span11
+  .form-group
+    .col-xs-2
+      = f.input :swam_date, as: :string, label: I18n.t('user_training_stories.swam_date'), input_html: { class: 'swam_date input-sm' }, placeholder: Date.today, hint: I18n.t('user_training_stories.swam_date_hint')
+    .col-xs-offset-1.col-xs-4
+      = f.input :total_training_time, label: I18n.t('user_training_stories.total_training_time'), input_html: { class: 'col-xs-1' }, hint: I18n.t('user_training_stories.total_training_time_hint')
+    .col-xs-offset-1.col-xs-4
+      = f.association :swimmer_level_type, label: I18n.t('activerecord.models.swimmer_level_type'), collection: SwimmerLevelType.to_dropdown(), prompt: I18n.t('please_select')
+  .form-group
+    .col-xs-6
+      = f.association :swimming_pool, label: I18n.t('activerecord.models.swimming_pool'), collection: SwimmingPool.to_dropdown( nil, :id, :get_verbose_name ), prompt: I18n.t('please_select')
+  .form-group
+    .col-xs-12
+      = f.input :notes, label: I18n.t('notes'), input_html: { rows: 3, class: 'col-xs-11' }, hint: I18n.t('user_training_stories.notes_hint')
+  .form-group
+    .col-xs-12
+      = f.association :user_training, label: I18n.t('activerecord.models.user_training'), collection: UserTraining.sort_by_description.all, label_method: 'description', value_method: 'id', prompt: I18n.t('please_select')
+  .form-group
     = f.button :submit, I18n.t(:save)
+
+.row.col-xs-12
+  &nbsp;
 
 %script
   $('.swam_date').datepicker({changeMonth: true, changeYear: true});

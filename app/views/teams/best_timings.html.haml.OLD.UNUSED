@@ -1,0 +1,14 @@
+= render( partial: 'tabs_and_radio_title' )
+
+.row
+  #records_4x_grid
+    #loadingIndicator.col-xs-offset-6
+      = I18n.t('please_wait')
+      = image_tag( 'indicator.gif' )
+
+%script
+  $.ajax({                                                                      |
+    url: "#{ records_for_team_path() }",                                        |
+    data: { team: { id: "#{@team.id}" } },                                   |
+    dataType: 'script'                                                          |
+  });                                                                           |

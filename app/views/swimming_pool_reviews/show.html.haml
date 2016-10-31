@@ -1,3 +1,14 @@
-%h3= @title
+.row.col-xs-12
+  = link_to( I18n.t(:back_to_index_view), swimming_pool_reviews_path() )
+.row
+  &nbsp;
+.row
+  &nbsp;
+
+.row
+  %h3= @title
 
 = render( partial: 'review_detail', locals: {review: @review} )
+
+%script
+  $(function () { $('[data-toggle="tooltip"]').tooltip(); });

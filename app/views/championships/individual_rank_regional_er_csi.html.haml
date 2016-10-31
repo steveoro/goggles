@@ -1,34 +1,37 @@
-.row-fluid#individual_rank_regional_er_csi
+.row#individual_rank_regional_er_csi
   .goggles-category-gap#pageTop
     = render( partial: 'regional_er_csi_tabs' )
+  .goggles-category-gap
     = render( partial: 'title' )
     - cache( cache_key_for_meeting( 'individual_ranking', @season.id, @ranking_updated_at, @team ? @team.id : 0 ) ) do
-    - meeting_columns = @individual_ranking.meetings_with_results.count
-      
+
+      - meeting_columns = @individual_ranking.meetings_with_results.count
       - if @season.id == 141 && @individual_ranking.meetings_with_results.count < 6
-        %p= I18n.t('meeting_stats.rank_disclaimer') 
-        
+        %p= I18n.t('meeting_stats.rank_disclaimer')
+
       %p= @individual_ranking.get_html_ranking_description
-  
-      %ul.offset10.span2.nav.nav-tab.nav-stacked.navbar-fixed-bottom.goggles-divlist-odd
+      %ul.col-xs-offset-10.col-xs-2.col-sm-offset-11.col-sm-1.col-md-offset-11.col-md-1.nav.nav-pills.nav-stacked.navbar-fixed-bottom.goggles-divlist-odd.navpill_side
         %li
-          %a(href="#topOfPage")= I18n.t(:top_of_page)
+          = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+            = image_tag('bullet_arrow_up.png')
         - GenderType.individual_only.sort_by_courtesy.each do |gender_type|
           %li
-            %a(href="\##{gender_type.code}")= gender_type.i18n_description 
+            = link_to("\##{gender_type.code}", {'data-turbolinks'=>'false'}) do
+              = "- #{ gender_type.i18n_short } -"
           - @category_types.each do |category_type|
             %li
-              %a(href="\##{gender_type.code}-#{category_type.code}")= "- #{category_type.get_full_name}"
-  
-      .span10
+              = link_to("\##{gender_type.code}-#{category_type.code}", {'data-turbolinks'=>'false'}) do
+                = category_type.get_short_name
+      .col-xs-10
         - GenderType.individual_only.sort_by_courtesy.each do |gender_type|
-          .row-fluid.goggles-category-gap{'id'=>"#{gender_type.code}"}
+          .row.goggles-category-gap{'id'=>"#{gender_type.code}"}
             .h3
               = gender_type.i18n_description
-              %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
+              = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+                = image_tag('bullet_arrow_up.png')
           - @category_types.each do |category_type|
             - rank_array = @individual_ranking.calculate_ranking( gender_type, category_type )
-            .row-fluid.goggles-category-gap{'id'=>"#{gender_type.code}-#{category_type.code}"}
+            .row.goggles-category-gap{'id'=>"#{gender_type.code}-#{category_type.code}"}
               %table.table.table-striped.table-bordered.table-hover.table-condensed
                 %tbody
                   %tr{'class'=>'info'}
@@ -36,8 +39,9 @@
                       %b= category_type.get_full_name
                       = ' '
                       %b= gender_type.i18n_description
-                      %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
-  
+                      = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+                        = image_tag('bullet_arrow_up.png')
+
                   - rank_array.swimmers.each_with_index do |ranked_swimmer,index|
                     - curr_swimmer = ranked_swimmer.swimmer.decorate
                     - curr_team = curr_swimmer.get_current_team( @season ).decorate
@@ -51,22 +55,19 @@
                         = curr_swimmer.year_of_birth
                       %td
                         = curr_team.get_linked_name
-                        
                       - @individual_ranking.meetings_with_results.each do |meeting|
                         - meeting_score = ranked_swimmer.get_meeting_scores( meeting )
                         - if meeting_score
-                          %td.goggles-rightalign{ 'data-toggle'=>'tooltip', 'title'=>"#{meeting_score.get_meeting_scores_detail}" }  
+                          %td.goggles-rightalign{ 'data-toggle'=>'tooltip', 'title'=>"#{meeting_score.get_meeting_scores_detail}" }
                             = meeting_score.get_total_points
                         - else
                           %td
-                        
                       %td.goggles-rightalign{ 'data-toggle'=>'tooltip', 'title'=>"#{@individual_ranking.meetings_with_results.count}" }
                         %b= ranked_swimmer.total_best_5_on_6
-                  
                   %tr{'class'=>'info'}
                     %td{ colspan: 5 + meeting_columns }
                       %b= I18n.t('meeting_stats.tot_swimmers')
                       %b= ': '
                       %b= rank_array.swimmers.size
-                    
-.row-fluid.goggles-category-gap
+
+.row.goggles-category-gap

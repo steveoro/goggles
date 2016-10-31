@@ -5,14 +5,13 @@ require 'meeting_finder'
 #
 # R/O RESTful API controller
 #
-class Api::V1::MeetingsController < ApplicationController
+class Api::V1::MeetingsController < Api::BaseController
 
   respond_to :json
 
   # Require authorization before invoking any of this controller's actions:
-  before_filter :authenticate_user_from_token!
-  before_filter :authenticate_user!                # Devise "standard" HTTP log-in strategy
-  before_filter :ensure_format
+  before_action :authenticate_user_from_token!
+  before_action :ensure_format
   # ---------------------------------------------------------------------------
 
 
@@ -36,7 +35,7 @@ class Api::V1::MeetingsController < ApplicationController
       filter = params[:header_year].to_i
       @meetings = @teams.where( header_year: filter ).order( :header_date )
     end
-    respond_with( @meetings )
+    render json: @meetings
   end
 
 
@@ -166,7 +165,7 @@ class Api::V1::MeetingsController < ApplicationController
         results:    prepare_result_list( mevs_list )
     }
 
-    respond_with( @result_hash )
+    render json: @result_hash
   end
   #-- -------------------------------------------------------------------------
   #++

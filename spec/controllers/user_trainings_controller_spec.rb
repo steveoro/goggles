@@ -4,18 +4,19 @@ require 'date'
 require 'common/format'
 
 
-describe UserTrainingsController, :type => :controller do
+describe UserTrainingsController, type: :controller do
 
   it_behaves_like( "(generic CRUD controller actions)", "user_trainings", "TrainingDecorator" )
 
   describe '[AJAX #json_list]' do
     context "unlogged user" do
       it "displays always the Login page" do
-        xhr :get, :json_list
+        get( :json_list, xhr: true )
         expect(response.status).to eq( 401 )            # invalid request / not found
       end
     end
-    # -------------------------------------------------------------------------
+    #-- -----------------------------------------------------------------------
+    #++
 
     context "logged-in user" do
 
@@ -26,7 +27,7 @@ describe UserTrainingsController, :type => :controller do
       end
 
       describe "(requesting a list of rows)" do
-        before(:each) { xhr :get, :json_list }
+        before(:each) { get( :json_list, xhr: true ) }
         it_behaves_like( "(Ap1-V1-Controllers, success returning an Array of Hash)" )
 
         it "retrieves a list of rows with the required fields" do
@@ -39,7 +40,7 @@ describe UserTrainingsController, :type => :controller do
       end
 
       describe "(requesting a single row)" do
-        before(:each) { xhr :get, :json_list, id: @user_training_1.id }
+        before(:each) { get( :json_list, xhr: true, params: { id: @user_training_1.id } ) }
         it_behaves_like( "(Ap1-V1-Controllers, success returning an Hash)" )
 
         it "returns always the required key fields" do
@@ -64,11 +65,11 @@ describe UserTrainingsController, :type => :controller do
           @user.approve( @user_training_3.user, true, true, true )  # the current user approves
         end
         it "successfully retrieves a shared training" do
-          xhr :get, :json_list, id: @user_training_3.id
+          get( :json_list, xhr: true, params: { id: @user_training_3.id } )
           expect(response.status).to eq(200)
         end
         it "refuses the request for a non-visible training" do
-          xhr :get, :json_list, id: create( :user_training ).id
+          get( :json_list, xhr: true, params: { id: create( :user_training ).id } )
           expect(response.status).to eq(406)
         end
       end
@@ -84,7 +85,7 @@ describe UserTrainingsController, :type => :controller do
 
       it "assigns a decorator for the details to be shown" do
         fixture = create( :user_training_with_rows, user: @user )
-        get :show, id: fixture.id
+        get :show, params: { id: fixture.id }
         expect(response.status).to eq(200)
         expect( assigns( :user_training_rows ).first ).to be_an_instance_of( TrainingRowDecorator )
       end
@@ -93,12 +94,12 @@ describe UserTrainingsController, :type => :controller do
         fixture = create( :user_training )
         fixture.user.invite( @user, true, true, true )   # he wants to share everything
         @user.approve( fixture.user, true, true, true )  # the current user approves
-        get :show, id: fixture.id
+        get :show, params: { id: fixture.id }
         expect(response.status).to eq(200)
       end
       it "refuses the request for an unshared training" do
         fixture = create( :user_training )
-        get :show, id: fixture.id
+        get :show, params: { id: fixture.id }
         expect( response ).to redirect_to( controller: :user_trainings, action: :index )
         # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
         # and we have just set defaul locale to :it
@@ -119,7 +120,7 @@ describe UserTrainingsController, :type => :controller do
         fixture = create( :user_training )
         fixture.user.invite( @user, true, true, true )   # he wants to share everything
         @user.approve( fixture.user, true, true, true )  # the current user approves
-        get :edit, id: fixture.id
+        get :edit, params: { id: fixture.id }
         expect( response ).to redirect_to( controller: :user_trainings, action: :index )
         # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
         # and we have just set defaul locale to :it
@@ -127,7 +128,7 @@ describe UserTrainingsController, :type => :controller do
       end
       it "refuses the request for an unshared training" do
         fixture = create( :user_training )
-        get :edit, id: fixture.id
+        get :edit, params: { id: fixture.id }
         expect( response ).to redirect_to( controller: :user_trainings, action: :index )
         # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
         # and we have just set defaul locale to :it
@@ -137,7 +138,7 @@ describe UserTrainingsController, :type => :controller do
       context "with some existing rows," do
         before(:each) do
           fixture = create( :user_training_with_rows, user: @user )
-          get :edit, id: fixture.id
+          get :edit, params: { id: fixture.id }
           expect( response.status ).to eq(200)
         end
 
@@ -172,7 +173,7 @@ describe UserTrainingsController, :type => :controller do
         fixture = create( :user_training )
         fixture.user.invite( @user, true, true, true )   # he wants to share everything
         @user.approve( fixture.user, true, true, true )  # the current user approves
-        put :update, id: fixture.id, training: attributes_for( :user_training )
+        put :update, params: { id: fixture.id, training: attributes_for( :user_training ) }
         expect( response ).to redirect_to( controller: :user_trainings, action: :index )
         # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
         # and we have just set defaul locale to :it
@@ -180,7 +181,7 @@ describe UserTrainingsController, :type => :controller do
       end
       it "refuses the request for an unshared training" do
         fixture = create( :user_training )
-        put :update, id: fixture.id, training: attributes_for( :user_training )
+        put :update, params: { id: fixture.id, training: attributes_for( :user_training ) }
         expect( response ).to redirect_to( controller: :user_trainings, action: :index )
         # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
         # and we have just set defaul locale to :it
@@ -201,7 +202,7 @@ describe UserTrainingsController, :type => :controller do
         fixture = create( :user_training )
         fixture.user.invite( @user, true, true, true )   # he wants to share everything
         @user.approve( fixture.user, true, true, true )  # the current user approves
-        delete :destroy, id: fixture.id
+        delete :destroy, params: { id: fixture.id }
         expect( response ).to redirect_to( controller: :user_trainings, action: :index )
         # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
         # and we have just set defaul locale to :it
@@ -209,7 +210,7 @@ describe UserTrainingsController, :type => :controller do
       end
       it "refuses the request for an unshared training" do
         fixture = create( :user_training )
-        delete :destroy, id: fixture.id
+        delete :destroy, params: { id: fixture.id }
         expect( response ).to redirect_to( controller: :user_trainings, action: :index )
         # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
         # and we have just set defaul locale to :it
@@ -234,7 +235,7 @@ describe UserTrainingsController, :type => :controller do
       before(:each) { login_user() }
 
       it "refuses the request with invalid parameters" do
-        get :printout, id: 0
+        get :printout, params: { id: 0 }
         expect( response ).to redirect_to( controller: :user_trainings, action: :index )
         # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
         # and we have just set defaul locale to :it
@@ -242,17 +243,17 @@ describe UserTrainingsController, :type => :controller do
       end
       it "handles the request with valid parameters" do
         fixture = create( :user_training_with_rows, user: @user )
-        get :printout, id: fixture.id
+        get :printout, params: { id: fixture.id }
         expect(response.status).to eq(200)     # 302 (redirect) means the user is not logged in
       end
       it "receives a PDF file" do
         fixture = create( :user_training_with_rows, user: @user )
-        get :printout, id: fixture.id
+        get :printout, params: { id: fixture.id }
         expect( response.body).to include("%PDF")
       end
       it "refuses the request for a training with no rows" do
         fixture = create( :user_training, user: @user )
-        get :printout, id: fixture.id
+        get :printout, params: { id: fixture.id }
         expect( response ).to redirect_to( controller: :user_trainings, action: :index )
         # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
         # and we have just set defaul locale to :it
@@ -263,12 +264,12 @@ describe UserTrainingsController, :type => :controller do
         fixture = create( :user_training_with_rows )
         fixture.user.invite( @user, true, true, true )   # he wants to share everything
         @user.approve( fixture.user, true, true, true )  # the current user approves
-        get :printout, id: fixture.id
+        get :printout, params: { id: fixture.id }
         expect(response.status).to eq(200)
       end
       it "refuses the request for an unshared training" do
         fixture = create( :user_training )
-        get :printout, id: fixture.id
+        get :printout, params: { id: fixture.id }
         expect( response ).to redirect_to( controller: :user_trainings, action: :index )
         # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
         # and we have just set defaul locale to :it
@@ -284,18 +285,19 @@ describe UserTrainingsController, :type => :controller do
     context "unlogged user" do
       it "displays always the Login page" do
         fixture = create( :user_training_with_rows )
-        post :duplicate, id: fixture.id
+        post :duplicate, params: { id: fixture.id }
         expect(response).to redirect_to '/users/sign_in' # new_user_session_path() => '/users/sign_in?locale=XX'
         expect(response.status).to eq( 302 )        # must redirect to the login page
       end
     end
-    # -------------------------------------------------------------------------
+    #-- -----------------------------------------------------------------------
+    #++
 
     context "logged-in user" do
       before(:each) { login_user() }
 
       it "refuses the request with invalid parameters" do
-        post :duplicate, id: 0
+        post :duplicate, params: { id: 0 }
         expect( response ).to redirect_to( controller: :user_trainings, action: :index )
         # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
         # and we have just set defaul locale to :it
@@ -306,7 +308,7 @@ describe UserTrainingsController, :type => :controller do
         fixture = create( :user_training )
         fixture.user.invite( @user, true, true, true )   # he wants to share everything
         @user.approve( fixture.user, true, true, true )  # the current user approves
-        post :duplicate, id: fixture.id
+        post :duplicate, params: { id: fixture.id }
         expect( response ).to redirect_to( controller: :user_trainings, action: :edit, id: UserTraining.last )
         # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
         # and we have just set defaul locale to :it
@@ -314,7 +316,7 @@ describe UserTrainingsController, :type => :controller do
       end
       it "refuses the request for an unshared training" do
         fixture = create( :user_training )
-        post :duplicate, id: fixture.id
+        post :duplicate, params: { id: fixture.id }
         expect( response ).to redirect_to( controller: :user_trainings, action: :index )
         # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
         # and we have just set defaul locale to :it
@@ -332,35 +334,39 @@ describe UserTrainingsController, :type => :controller do
         end
 
         it "handles the request with valid parameters, redirecting to #edit" do
-          post :duplicate, id: @fixture.id
+          post :duplicate, params: { id: @fixture.id }
         expect( response ).to redirect_to( controller: :user_trainings, action: :edit, id: UserTraining.last )
         # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
         # and we have just set defaul locale to :it
 #          expect(response).to redirect_to( edit_user_training_path(UserTraining.last) )
         end
         it "adds another header row" do
-          expect { post :duplicate, id: @fixture.id }.to change( UserTraining, :count ).by(1)
+          expect {
+            post( :duplicate, params: { id: @fixture.id } )
+          }.to change( UserTraining, :count ).by(1)
         end
         it "adds as many detail rows as the source has" do
           detail_rows_count = @fixture.user_training_rows.count
-          expect { post :duplicate, id: @fixture.id }.to change( UserTrainingRow, :count ).by(detail_rows_count)
+          expect {
+            post( :duplicate, params: { id: @fixture.id } )
+          }.to change( UserTrainingRow, :count ).by(detail_rows_count)
         end
 
         it "creates a copy of the header row" do
-          post :duplicate, id: @fixture.id
+          post :duplicate, params: { id: @fixture.id }
           duplicated_row = UserTraining.last
           expect( duplicated_row.description ).to include( @fixture.description )
           expect( duplicated_row.user_id ).to eq( @fixture.user_id )
         end
         it "links all the copied detail rows to the copied header row" do
-          post :duplicate, id: @fixture.id
+          post :duplicate, params: { id: @fixture.id }
           duplicated_row = UserTraining.last
           duplicated_row.user_training_rows.each do |duplicated_detail_row|
             expect( duplicated_detail_row.user_training_id ).to eq( duplicated_row.id )
           end
         end
         it "creates a copy of all the detail rows" do
-          post :duplicate, id: @fixture.id
+          post :duplicate, params: { id: @fixture.id }
           duplicated_row = UserTraining.last
           # For all duplicated detail rows:
           duplicated_row.user_training_rows.each do |duplicated_detail_row|
@@ -391,18 +397,19 @@ describe UserTrainingsController, :type => :controller do
     context "unlogged user" do
       it "displays always the Login page" do
         fixture = create( :user_training_with_rows )
-        post :create_user_story, id: fixture.id
+        post :create_user_story, params: { id: fixture.id }
         expect(response).to redirect_to '/users/sign_in' # new_user_session_path() => '/users/sign_in?locale=XX'
         expect(response.status).to eq( 302 )        # must redirect to the login page
       end
     end
-    # -------------------------------------------------------------------------
+    #-- -----------------------------------------------------------------------
+    #++
 
     context "logged-in user" do
       before(:each) { login_user() }
 
       it "refuses the request with invalid parameters" do
-        post :create_user_story, id: 0
+        post :create_user_story, params: { id: 0 }
         expect( response ).to redirect_to( controller: :user_trainings, action: :index )
       end
 
@@ -410,7 +417,7 @@ describe UserTrainingsController, :type => :controller do
         fixture = create( :user_training )
         fixture.user.invite( @user, true, true, true )   # he wants to share everything
         @user.approve( fixture.user, true, true, true )  # the current user approves
-        post :create_user_story, id: fixture.id
+        post :create_user_story, params: { id: fixture.id }
         expect( response ).to redirect_to( controller: :user_training_stories, action: :edit, id: UserTrainingStory.last )
         # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
         # and we have just set defaul locale to :it
@@ -418,7 +425,7 @@ describe UserTrainingsController, :type => :controller do
       end
       it "refuses the request for an unshared training" do
         fixture = create( :user_training )
-        post :create_user_story, id: fixture.id
+        post :create_user_story, params: { id: fixture.id }
         expect( response ).to redirect_to( controller: :user_trainings, action: :index )
         # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
         # and we have just set defaul locale to :it
@@ -436,23 +443,25 @@ describe UserTrainingsController, :type => :controller do
         end
 
         it "handles the request with valid parameters, redirecting to #edit" do
-          post :create_user_story, id: @fixture.id
+          post :create_user_story, params: { id: @fixture.id }
         expect( response ).to redirect_to( controller: :user_training_stories, action: :edit, id: UserTrainingStory.last )
         # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
         # and we have just set defaul locale to :it
 #          expect(response).to redirect_to( edit_user_training_story_path(UserTrainingStory.last) )
         end
         it "adds another UserTrainingStory row" do
-          expect { post :create_user_story, id: @fixture.id }.to change( UserTrainingStory, :count ).by(1)
+          expect {
+            post( :create_user_story, params: { id: @fixture.id } )
+          }.to change( UserTrainingStory, :count ).by(1)
         end
 
         it "links the user training story to the source row" do
-          post :create_user_story, id: @fixture.id
+          post :create_user_story, params: { id: @fixture.id }
           created_row = UserTrainingStory.last
           expect( created_row.user_training_id ).to eq( @fixture.id )
         end
         it "fills the new UserTrainingStory with the correct values" do
-          post :create_user_story, id: @fixture.id
+          post :create_user_story, params: { id: @fixture.id }
           created_row = UserTrainingStory.last
           expect( created_row.user_id ).to eq( @fixture.user_id )
           expect( created_row.total_training_time ).to eq( @fixture.esteemed_total_seconds )

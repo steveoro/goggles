@@ -1,22 +1,28 @@
-%h2= t('devise.new_session_title')
-
-.row-fluid
-  = form_for( resource, as: resource_name, url: session_path(resource_name), html: {class: 'form-horizontal'} ) do |f|
-    .row-fluid.control-group
-      = f.label( :email, for: :user_email, class: 'control-label' )
-      .controls
-        = f.email_field( :email, autofocus: true )
-    .row-fluid.control-group
-      = f.label( :password, for: :user_password, class: 'control-label' )
-      .controls
-        = f.password_field( :password )
-    .row-fluid.control-group
-      - if devise_mapping.rememberable?
-        = f.label( t(:remember_me), for: :user_remember_me, class: 'control-label' )
-        .controls
-          = f.check_box( :remember_me )
-    .row-fluid.control-group
-      .controls
-        = f.submit( t('devise.new_session_submit') )
-
-= render( "users/shared/links" )
+%section
+  .modal-dialog{role: "document"}
+    .row.modal-content
+      .modal-body
+        .col-xs-12
+          %h2= t('devise.new_session_title')
+        .col-xs-offset-2.col-xs-10
+          = simple_form_for( resource, as: resource_name, url: session_path(resource_name), html: { class: 'form-horizontal' }, defaults: {input_html: { class: 'form-control' }} ) do |f|
+            - unless f.error_notification.nil?
+              .form-group
+                .col-xs-12
+                  .alert.alert-danger
+                    %i= devise_error_messages!
+                -#= f.error_notification
+            .form-group
+              .col-xs-8
+                = f.input( :email, required: true, autofocus: true, placeholder: I18n.t("devise.email_placeholder"), label: I18n.t("devise.email_label") )
+              .col-xs-8
+                = f.input( :password, required: true )
+            .form-group
+              .col-xs-12
+                - if devise_mapping.rememberable?
+                  = f.label( t(:remember_me), for: :user_remember_me )
+                  = f.check_box( :remember_me )
+            .form-group
+              .col-xs-12
+                = f.button( :submit, t('devise.new_session_submit'), class: "btn btn-primary" )
+        = render( "users/shared/links" )

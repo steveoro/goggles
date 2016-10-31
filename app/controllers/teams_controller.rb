@@ -6,17 +6,16 @@ require 'common/format'
 
 = TeamsController
 
-  - version:  4.00.475
+  - version:  6.002
   - author:   Steve A.
 
 =end
 class TeamsController < ApplicationController
 
   # Require authorization before invoking any of this controller's actions:
-  before_filter :authenticate_user_from_token!, except: [:index, :radio]
-  before_filter :authenticate_user!, except: [:index, :radio] # Devise HTTP log-in strategy
+  before_action :authenticate_user!, except: [:index, :radio] # Devise HTTP log-in strategy
   # Parse parameters:
-  before_filter :verify_parameter, except: [:index, :closed_goggle_cup]
+  before_action :verify_parameter, except: [:index, :closed_goggle_cup]
   #-- -------------------------------------------------------------------------
   #++
 
@@ -24,6 +23,8 @@ class TeamsController < ApplicationController
   # Index/Search action
   #
   def index
+    # [Steve, 20161001] We need to whitelist all parameters for the search query:
+    params.permit!()
     # Leega
     # TODO Verify order by name:
     # Team CITTA' DEI RAGAZZI (alias NUOTO AZZURRO) doesn't result correctly ordered
@@ -54,9 +55,18 @@ class TeamsController < ApplicationController
   # == Params:
   # id: the team id to be processed
   #
+  # header_year: typically nil, it's a current date override for when checking
+  #      for @swimmer badges in current season (mainly used only inside specs
+  #      to test a couple of edge conditions)
+  #
   def current_swimmers
+    params.permit! # (No unsafe params can be passed)
     @tab_title = I18n.t('radiography.team_current_swimmers_tab')
-    @last_seasons = Season.is_not_ended.map{ |season| season.id }
+    @last_seasons = if params['header_year'].present?
+      Season.where( "header_year LIKE '%#{ params['header_year'] }%'" ).to_a
+    else
+      Season.is_not_ended.map{ |season| season.id }
+    end
     @affiliations = @team.team_affiliations.where( ['season_id in (?)', @last_seasons] )
     current_badges = @team.badges.where( ['season_id in (?)', @last_seasons] ) if @last_seasons && @team.badges
     @swimmers = if current_badges.nil?
@@ -167,11 +177,11 @@ class TeamsController < ApplicationController
   # == Params:
   # id: the team id to be processed
   #
-  # TODO Verify if better using the same view for current and closed
+  # TODO Verify if is better using the same view for current and closed
   def closed_goggle_cup
     unless ( params[:id] ) && GoggleCup.exists?( params[:id].to_i )
       flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to(:back) and return
+      redirect_back( fallback_location: root_path ) and return
     end
 
     # Gets closed goggle cup
@@ -272,7 +282,7 @@ class TeamsController < ApplicationController
     set_team
     unless ( @team )
       flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to(:back) and return
+      redirect_back( fallback_location: root_path ) and return
     end
   end
 
@@ -286,8 +296,6 @@ class TeamsController < ApplicationController
     @team = Team.find_by_id( params[:id].to_i )
     @team = @team.decorate if @team
   end
-  #-- -------------------------------------------------------------------------
-  #++
   #-- -------------------------------------------------------------------------
   #++
 end

@@ -1,0 +1,5 @@
+en:
+  achievement:
+    generic_title: "Achievement unlocked!"
+    approve_body: "Establish friendship with #{N} Swimming Buddy(/ies)."
+    confirm_body: "Receive confirm from #{N} Swimming Buddy(/ies)."

@@ -1,15 +1,8 @@
-%script
-  new WOW().init();
-
-- # Preloader mask:
-#preloader
-  #load
-
 = render( partial: 'meeting_header' )
 = render( partial: 'tabs_and_radio_title' )
 
-.goggles-category-gap
-  = form_tag( meeting_update_passages_path(@meeting.id) )
+.col-xs-12.goggles-category-gap
+  = form_tag( meeting_update_passages_path(@meeting.id), onsubmit: "$('#loadingIndicator').show();" )
   %table.table.table-striped.table-bordered.table-hover.table-condensed
     %tbody
       - previous_event = nil
@@ -21,10 +14,12 @@
         - passage_types = mir.team.team_passage_templates.for_event_type( mir.event_type ).for_pool_type( mir.pool_type ).count == 0 ? TeamPassageTemplate.get_default_passage_types_for( mir.event_type.length_in_meters, mir.pool_type.length_in_meters ) : TeamPassageTemplate.get_template_passage_types_for( mir.team, mir.event_type, mir.pool_type )
         - if previous_event != mir.meeting_event
           - previous_event = mir.meeting_event
+          %th.info
+            %td.info{ colspan: passage_types.size+1 }
+              %br/
+              %h4= mir.meeting_event.get_verbose_name
           %tr.info
             %td
-              %a(href="##{mir.meeting_event.event_type.code}")
-                %b= mir.meeting_event.get_verbose_name
             - passage_types.each do |passage_type|
               %td.goggles-rightalign
                 %i= "#{ passage_type.length_in_meters } mt."
@@ -37,7 +32,7 @@
           - if has_passages
             - passages.order(:passage_type_id).each_with_index do |passage, index|
               %td.goggles-rightalign{'colspan'=>'1'}
-                - if passage.get_passage_distance != passage_types[index].length_in_meters 
+                - if passage.get_passage_distance != passage_types[index].length_in_meters
                   %i= "#{ passage.get_passage_distance } mt."
                   %br
                 = text_field_tag(                                             |
@@ -64,8 +59,8 @@
               - else
                 %td.goggles-rightalign{'colspan'=>'1'}
                   = text_field_tag(                                             |
-                    "auto_#{mir.id}_#{passage_type.id}",                         |
-                    mir.get_timing,                                                        |
+                    "auto_#{mir.id}_#{passage_type.id}",                        |
+                    mir.get_timing,                                             |
                     'class' => "input-mini text-right timing",                  |
                     'data-mir' => mir.id,                                       |
                     'data-passage-type' => passage_type.id                      |
@@ -73,11 +68,15 @@
           %td.goggles-rightalign
             %b= mir.get_timing
 
-.row-fluid.goggles-category-gap
-  .offset1.span2
-    = submit_tag( I18n.t(:save), confirm: I18n.t('netzke.basepack.grid_panel.are_you_sure'), class: "btn btn-primary" )
-.row-fluid.goggles-category-gap
-  %br
+.col-xs-12.goggles-category-gap
+  .col-xs-2
+    = submit_tag( I18n.t(:save), data: {confirm: I18n.t('netzke.basepack.grid_panel.are_you_sure'), |
+        disable_with: I18n.t(:please_wait), class: 'disabled' }, class: "btn btn-primary" )         |
+    %span(id='loadingIndicator' hidden='true')
+      = image_tag( 'indicator.gif' )
+
+.col-xs-12.goggles-category-gap
+  &nbsp;
 
 :javascript
   /**

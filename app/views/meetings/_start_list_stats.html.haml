@@ -1,17 +1,17 @@
 %div{'class'=>"goggles-category-gap", 'id'=>'start_list_stats'}
-  .row-fluid
-    .span10
+  .row
+    .col-xs-10
       %table.table.table-striped.table-bordered.table-hover.table-condensed
         %tbody
           %tr{'class'=>'success'}
-            %td.span3.goggles-centeralign
+            %td.col-xs-3.goggles-centeralign
               %b
                 %i= I18n.t('Stats')
-            %td.span1.goggles-centeralign
+            %td.col-xs-1.goggles-centeralign
               %i= I18n.t('meeting_stats.females')
-            %td.span1.goggles-centeralign
+            %td.col-xs-1.goggles-centeralign
               %i= I18n.t('meeting_stats.males')
-            %td.span1.goggles-centeralign
+            %td.col-xs-1.goggles-centeralign
               %i= I18n.t('meeting_stats.total')
           - gtot_name = gtot_fem = gtot_mal = gtot = 0
           - @start_list_stats.each do |team_array|
@@ -26,21 +26,21 @@
             - gtot_mal  += tot_mal
             - gtot      += sub_tot
             %tr{'class' => is_highlighted ? 'warning' : ''}
-              %td.span3
-                %a{'id'=>"team#{team_id}", 'href'=>"#{ meeting_show_team_results_path(:id=>@meeting.id, :team_id=>team_id) }", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_team_results_tooltip')}
+              %td.col-xs-3
+                = link_to( meeting_show_team_results_path(id: @meeting.id, team_id: team_id), {'id'=>"team#{team_id}", 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_team_results_tooltip')} ) do
                   = name
-              %td.span1.goggles-rightalign
+              %td.col-xs-1.goggles-rightalign
                 = tot_fem
-              %td.span1.goggles-rightalign
+              %td.col-xs-1.goggles-rightalign
                 = tot_mal
-              %td.span1.goggles-rightalign
+              %td.col-xs-1.goggles-rightalign
                 = sub_tot
           %tr
-            %td.span3.goggles-rightalign
+            %td.col-xs-3.goggles-rightalign
               %i= gtot_name
-            %td.span1.goggles-rightalign
+            %td.col-xs-1.goggles-rightalign
               %i= gtot_fem
-            %td.span1.goggles-rightalign
+            %td.col-xs-1.goggles-rightalign
               %i= gtot_mal
-            %td.span1.goggles-rightalign
+            %td.col-xs-1.goggles-rightalign
               %i= gtot

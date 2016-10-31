@@ -1,9 +1,11 @@
 <h2>--=[  Goggles  -o^o-  ]=--</h2>
 
-<p><%= t('devise.unlock_password_greetings').gsub('<EMAIL>', @resource.email) %></p>
+<p><%= I18n.t('devise.unlock_password_greetings', email: @resource.name.present? ? @resource.name : @resource.email) %></p>
 
-<p><%= t('devise.unlock_password_info') %></p>
+<p><%= I18n.t('devise.unlock_password_info') %></p>
 
-<p><%= t('devise.unlock_password_text') %></p>
+<p><%= I18n.t('devise.unlock_password_text') %></p>
 
-<p><%= link_to( t('devise.unlock_password_submit'), unlock_url(@resource, unlock_token: @resource.unlock_token) ) %></p>
+<p><%= link_to( I18n.t('devise.unlock_password_submit'), unlock_url(@resource, unlock_token: @token) ) %></p>
+<hr/>
+<p><i><%= I18n.t('follow_us') %>:</i>&nbsp;<%= link_to( "@master_goggles", "https://twitter.com/master_goggles" ) %></p>

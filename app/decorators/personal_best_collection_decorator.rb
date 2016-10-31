@@ -2,7 +2,7 @@
 
 = PersonalBestCollectionDecorator
 
-  - version:  4.00.432
+  - version:  6.002
   - author:   Leega
 
   Decorator for the RecordCollection model.
@@ -12,7 +12,7 @@
 
 # Leega.
 # TODO:
-# Refactor thi decorator, because is the same of RecordCollectionDecorator
+# Refactor this decorator, because is the same of RecordCollectionDecorator
 
 class PersonalBestCollectionDecorator < Draper::Decorator
   delegate_all
@@ -31,7 +31,7 @@ class PersonalBestCollectionDecorator < Draper::Decorator
   #
   def to_short_html_list
     key, record = first
-    record ? "#{record.get_timing}".html_safe : "".html_safe 
+    record ? "#{record.get_timing}".html_safe : "".html_safe
   end
   #-- -------------------------------------------------------------------------
   #++

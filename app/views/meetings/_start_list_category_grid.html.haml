@@ -1,11 +1,11 @@
-.span10
+.col-xs-10
   - @meeting_events_list.each do |meeting_event|
     -# --- Header with unique ID for each starting event_type "group":
     %div{'class'=>"goggles-category-gap", 'id'=>"#{meeting_event.event_type.code}"}
     -# --- Sub-legend for each category + gender
     = render( partial: 'show_full_sub_legend', locals: { meeting_event: meeting_event } )
 
-    - meeting_event.meeting_programs.includes(:category_type, :gender_type).order('gender_types.code, category_types.id').each do |meeting_program|
+    - meeting_event.meeting_programs.joins(:category_type, :gender_type).includes(:category_type, :gender_type).order('gender_types.code, category_types.id').each do |meeting_program|
       - if meeting_program.meeting_entries.count > 0
         %div{'class'=>"goggles-category-gap", 'id'=>"mprg#{meeting_program.id}"}
           %table.table.table-striped.table-bordered.table-hover.table-condensed
@@ -17,4 +17,4 @@
                 - is_highlighted = (@team && @team.id.to_i == entry.team_id) || (@swimmer && @swimmer.id.to_i == entry.swimmer_id)
                 = render( partial: 'show_entry', locals: { entry: entry, is_highlighted: is_highlighted } )
 
-  .row-fluid.goggles-category-gap
+  .row.goggles-category-gap

@@ -12,6 +12,11 @@ en:
     summary: "Classified {USED_RESULTS} of {TOTAL_RESULTS} total results"
     standard_times: "Standard times"
     ranked: "Ranked"
+    rank: "Rank"
+    total: "Tot."
+    average: "Aver."
+    max: "Max"
+    min: "Min"
 
     presentation:
       part1: " is the master internal championship, consisting in an unique ranking without gender or age distintions."

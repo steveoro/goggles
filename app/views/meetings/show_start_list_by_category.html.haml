@@ -2,10 +2,14 @@
 = render( partial: 'tabs_and_radio_title' )
 - cache( cache_key_for_meeting( 'show_start_list_by_category', @meeting.id, @max_entry_updated_at, @team ? @team.id : 0 ) ) do
   .row
-    %ul.offset10.span2.nav.nav-tab.nav-stacked.navbar-fixed-bottom.goggles-divlist-odd
+    %ul.col-xs-offset-10.col-xs-2.col-sm-offset-11.col-sm-1.col-md-offset-11.col-md-1.nav.nav-pills.nav-stacked.navbar-fixed-bottom.goggles-divlist-odd.navpill_side
       %li
-        %a(href="#topOfPage")= I18n.t(:top_of_page)
+        = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+          = image_tag('bullet_arrow_up.png')
       - @meeting_events_list.each do |me|
         %li
-          %a(href="\##{me.event_type.code}")= me.event_type.i18n_description
-  = render( partial: 'start_list_category_grid' )
+          = link_to("##{me.event_type.code}", {'data-turbolinks'=>'false'}) do
+            = me.event_type.i18n_short
+  .row
+    .col-xs-12
+      = render( partial: 'start_list_category_grid' )

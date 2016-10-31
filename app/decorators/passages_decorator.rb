@@ -1,3 +1,14 @@
+=begin
+
+= PassagesDecorator
+
+  - version:  6.002
+  - author:   Steve A.
+
+  Decorator for the Passage model.
+  Contains all presentation-logic centered methods.
+
+=end
 class PassagesDecorator < Draper::Decorator
   delegate_all
 

@@ -1,7 +1,7 @@
 = render( partial: 'meeting_header' )
 = render( partial: 'tabs_and_radio_title' )
 - cache( cache_key_for_meeting( 'show_team_results', @meeting.id, @max_mir_updated_at, @team.id) ) do
-  = render( partial: 'team_header' )
-  .row-fluid
-    .span12
-      = render( partial: 'full_results_team_grid' )
+  .goggles-category-gap.col-xs-12
+    = render( partial: 'team_header' )
+  .goggles-category-gap.col-xs-12
+    = render( partial: 'full_results_team_grid' )

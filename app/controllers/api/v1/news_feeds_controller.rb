@@ -1,14 +1,13 @@
 require 'json'
 
 
-class Api::V1::NewsFeedsController < ApplicationController
+class Api::V1::NewsFeedsController < Api::BaseController
 
   respond_to :json
 
   # Require authorization before invoking any of this controller's actions:
-  before_filter :authenticate_user_from_token!
-  before_filter :authenticate_user!                # Devise "standard" HTTP log-in strategy
-  before_filter :ensure_format
+  before_action :authenticate_user_from_token!
+  before_action :ensure_format
   #-- -------------------------------------------------------------------------
   #++
 

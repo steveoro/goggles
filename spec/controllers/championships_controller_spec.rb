@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 
-describe ChampionshipsController, :type => :controller do
+describe ChampionshipsController, type: :controller do
 
   shared_examples_for "(GET http action with or without parameters)" do |action_sym, fixture_id|
 
@@ -9,7 +9,7 @@ describe ChampionshipsController, :type => :controller do
       # We need to set this to make the redirect_to(:back) pass the tests:
       request.env["HTTP_REFERER"] = root_path()
     end
-    
+
     context "with an HTML request for a valid id," do
       before(:each) { get action_sym }
 
@@ -25,8 +25,8 @@ describe ChampionshipsController, :type => :controller do
     end
 
     context "with an HTML request for a invalid id," do
-      before(:each) { get action_sym, id: 0}
-      
+      before(:each) { get action_sym, params: { id: 0 } }
+
       it "handles the request with a redirect" do
         expect(response.status).to eq( 302 )
       end
@@ -36,7 +36,7 @@ describe ChampionshipsController, :type => :controller do
     end
 
     context "with an HTML request for a valid id," do
-      before(:each) { get action_sym, id: @fixture_id }
+      before(:each) { get action_sym, params: { id: @fixture_id } }
 
       it "handles successfully the request" do
         expect(response.status).to eq( 200 )
@@ -86,7 +86,7 @@ describe ChampionshipsController, :type => :controller do
       expect( assigns(:season_meetings_calendar) ).to all(be_an_instance_of( CalendarDAO ))
     end
     it "assigns the required variables when invoked with valid id" do
-      get :calendar_regional_er_csi, id: 131
+      get :calendar_regional_er_csi, params: { id: 131 }
       expect( assigns(:season_meetings_calendar) ).to be_an_instance_of( Array )
       expect( assigns(:season_meetings_calendar) ).to all(be_an_instance_of( CalendarDAO ))
     end
@@ -102,7 +102,7 @@ describe ChampionshipsController, :type => :controller do
       expect( assigns(:championship_ranking) ).to be_an_instance_of( ChampionshipDAO )
     end
     it "assigns the required variables when invoked with valid id" do
-      get :ranking_regional_er_csi, id: 131
+      get :ranking_regional_er_csi, params: { id: 131 }
       expect( assigns(:championship_ranking) ).to be_an_instance_of( ChampionshipDAO )
     end
   end
@@ -125,7 +125,7 @@ describe ChampionshipsController, :type => :controller do
       expect( assigns(:history_updated_at) ).to be_a_kind_of( Numeric )
     end
     it "assigns the required variables when invoked with valid id" do
-      get :history_regional_er_csi, id: 131
+      get :history_regional_er_csi, params: { id: 131 }
       expect( assigns(:championship_history_manager) ).to be_an_instance_of( Array )
       expect( assigns(:seasons_hall_of_fame) ).to be_an_instance_of( Array )
       expect( assigns(:history_updated_at) ).to be_a_kind_of( Numeric )
@@ -145,7 +145,7 @@ describe ChampionshipsController, :type => :controller do
       expect( assigns(:season_ranking) ).to be_a_kind_of( Array )
     end
     it "assigns the required variables when invoked with valid id" do
-      get :event_ranking_regional_er_csi, id: 131
+      get :event_ranking_regional_er_csi, params: { id: 131 }
       expect( assigns(:category_types) ).to all(be_an_instance_of( CategoryType ))
       expect( assigns(:event_types) ).to all(be_an_instance_of( EventType ))
       expect( assigns(:ranking_updated_at) ).to be_a_kind_of( Numeric )
@@ -159,7 +159,7 @@ describe ChampionshipsController, :type => :controller do
     it_behaves_like( "(GET http action with or without parameters)", :individual_rank_regional_er_csi, 141 )
 
     it "assigns the required variables when invoked with valid id" do
-      get :individual_rank_regional_er_csi, id: 141
+      get :individual_rank_regional_er_csi, params: { id: 141 }
       expect( assigns(:category_types) ).to all(be_an_instance_of( CategoryType ))
       expect( assigns(:ranking_updated_at) ).to be_a_kind_of( Numeric )
       expect( assigns(:individual_ranking) ).to be_an_instance_of( BalancedIndividualRankingDAO )

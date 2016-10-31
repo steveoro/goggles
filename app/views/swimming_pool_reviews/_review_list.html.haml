@@ -1,10 +1,19 @@
+.row
+  &nbsp;
 - @reviews.each do |review|
   = render( partial: 'review_detail', locals: {review: review} )
 
 - if @reviews.size == 0
-  .row-fluid.span12
+  .row.col-xs-12
+    &nbsp;
+  .row.col-xs-12
     %i= I18n.t('swimming_pool_review.no_reviews')
 
-- if current_user && current_user.has_swimmer_confirmations?
-  %p
-    %a.btn.btn-primary(href="#{new_swimming_pool_review_path(swimming_pool_id: @swimming_pool_id)}")= t('swimming_pool_review.add_new_review')
+- if current_user && current_user.has_swimmer_confirmations? && @swimming_pool_id
+  .row.col-xs-12
+    &nbsp;
+  .row.col-xs-12
+    %a.btn.btn-primary(href="#{ new_swimming_pool_review_path(swimming_pool_id: @swimming_pool_id) }")= t('swimming_pool_review.add_new_review')
+
+%script
+  $(function () { $('[data-toggle="tooltip"]').tooltip(); });

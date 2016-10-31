@@ -1,0 +1,15 @@
+en:
+  newsfeed:
+    invite_title: "You have a 'Swimming Buddy' request!"
+    invite_body: "{SWIMMER_NAME} would like to become a 'Swimming Buddy' of yours."
+    approve_title: "You have a new 'Swimming Buddy'!"
+    approve_body: "You & {SWIMMER_NAME} are now friends."
+    remove_title: "'Swimming Buddy' removed."
+    remove_body: "You & {SWIMMER_NAME} are no longer friends."
+    confirm_title: "You have been confirmed by a friend of yours!"
+    confirm_body: "{SWIMMER_NAME} has confirmed that you are indeed the athlete that you said you are."
+    unconfirm_title: "You have been tagged as 'unconfirmed' by somebody else!"
+    unconfirm_body: "Unfortunately, your user association with {SWIMMER_NAME} is no longer 'certified'. You should ask somebody else to confirm your identity."
+    done_confirm_title: "You have confirmed someone else's identity."
+    done_confirm_body: "You have given your endorsement to '{BUDDY_NAME}' as {SWIMMER_NAME}."
+    go_to_friend: "You can check out this buddy ID-card here:"

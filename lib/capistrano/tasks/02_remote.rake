@@ -132,6 +132,8 @@ namespace :remote do
       end
     end
   end
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   desc "Executes remotely an sql:dump backup, storing DB backups in the <release_num>.docs directory."
@@ -153,7 +155,7 @@ namespace :remote do
     on roles(:app) do
       within release_path do
         with rails_env: :production do
-          bundle "exec rake assets:precompile"
+          rake "assets:precompile"
         end
       end
     end

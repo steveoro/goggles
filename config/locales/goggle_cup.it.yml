@@ -12,6 +12,11 @@ it:
     summary: "Classificati {USED_RESULTS} su {TOTAL_RESULTS} risultati totali"
     standard_times: "Tempi base"
     ranked: "Class."
+    rank: "Class."
+    total: "Tot."
+    average: "Media"
+    max: "Max"
+    min: "Min"
 
     presentation:
       part1: " è il campionato interno del gruppo master ed è costituito da una unica classifica generale senza distinzione di sesso o età."

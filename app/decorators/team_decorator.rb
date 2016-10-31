@@ -2,7 +2,7 @@
 
 = TeamDecorator
 
-  - version:  4.00.420
+  - version:  6.002
   - author:   Leega
 
   Decorator for the Team model.

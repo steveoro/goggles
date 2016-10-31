@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 
-describe Api::V1::TeamsController, :type => :controller do
+describe Api::V1::TeamsController, type: :controller, api: true do
   before :each do
     @request.env["devise.mapping"] = Devise.mappings[:user]
     @user = create( :user )
@@ -11,7 +11,7 @@ describe Api::V1::TeamsController, :type => :controller do
   describe '[GET api/v1/team/count_meetings]' do
     context "with a non-JSON request" do
       before :each do
-        get :count_meetings, id: 1, user_email: @user.email, user_token: @user.authentication_token
+        get :count_meetings, params: { id: 1, user_email: @user.email, user_token: @user.authentication_token }
       end
       it "refuses the request" do
         expect(response.status).to eq( 406 )
@@ -20,7 +20,7 @@ describe Api::V1::TeamsController, :type => :controller do
 
     context "with valid parameters and credentials" do
       before :each do
-        get :count_meetings, format: :json, id: 1, user_email: @user.email, user_token: @user.authentication_token
+        get :count_meetings, format: :json, params: { id: 1, user_email: @user.email, user_token: @user.authentication_token }
       end
       it "handles successfully the request" do
         expect(response.status).to eq( 200 )
@@ -38,7 +38,7 @@ describe Api::V1::TeamsController, :type => :controller do
   describe '[GET api/v1/team/count_results]' do
     context "with a non-JSON request" do
       before :each do
-        get :count_results, id: 1, user_email: @user.email, user_token: @user.authentication_token
+        get :count_results, params: { id: 1, user_email: @user.email, user_token: @user.authentication_token }
       end
       it "refuses the request" do
         expect(response.status).to eq( 406 )
@@ -47,7 +47,7 @@ describe Api::V1::TeamsController, :type => :controller do
 
     context "with valid parameters and credentials" do
       before :each do
-        get :count_results, format: :json, id: 1, user_email: @user.email, user_token: @user.authentication_token
+        get :count_results, format: :json, params: { id: 1, user_email: @user.email, user_token: @user.authentication_token }
       end
       it "handles successfully the request" do
         expect(response.status).to eq( 200 )
@@ -63,7 +63,7 @@ describe Api::V1::TeamsController, :type => :controller do
   describe '[GET api/v1/team/count_details]' do
     context "with a non-JSON request" do
       before :each do
-        get :count_details, id: 1, user_email: @user.email, user_token: @user.authentication_token
+        get :count_details, params: { id: 1, user_email: @user.email, user_token: @user.authentication_token }
       end
       it "refuses the request" do
         expect(response.status).to eq( 406 )
@@ -72,7 +72,7 @@ describe Api::V1::TeamsController, :type => :controller do
 
     context "with valid parameters and credentials" do
       before :each do
-        get :count_details, format: :json, id: 1, user_email: @user.email, user_token: @user.authentication_token
+        get :count_details, format: :json, params: { id: 1, user_email: @user.email, user_token: @user.authentication_token }
       end
       it "handles successfully the request" do
         expect(response.status).to eq( 200 )
@@ -90,7 +90,7 @@ describe Api::V1::TeamsController, :type => :controller do
   describe '[GET api/v1/team/current_swimmers]' do
     context "with a non-JSON request" do
       before :each do
-        get :current_swimmers, id: 1
+        get :current_swimmers, params: { id: 1 }
       end
       it "refuses the request" do
         expect(response.status).to eq( 406 )
@@ -100,7 +100,7 @@ describe Api::V1::TeamsController, :type => :controller do
     context "with valid parameters and credentials" do
       before :each do
         login_user()
-        get :current_swimmers, format: :json, id: 1
+        get :current_swimmers, format: :json, params: { id: 1 }
       end
       it "handles successfully the request" do
         expect(response.status).to eq( 200 )
@@ -125,7 +125,7 @@ describe Api::V1::TeamsController, :type => :controller do
     context "with :q filtering parameter" do
       before :each do
         # Assert: we rely on the pre-loaded seeds here
-        get :index, q: 'OBER', format: :json, user_email: @user.email, user_token: @user.authentication_token
+        get :index, format: :json, params: { q: 'OBER', user_email: @user.email, user_token: @user.authentication_token }
       end
 
       it_behaves_like( "(Ap1-V1-Controllers, success returning an Array of Hash)" )
@@ -143,7 +143,7 @@ describe Api::V1::TeamsController, :type => :controller do
     context "with valid & custom parameters and credentials" do
       before :each do
         @team = create(:team)
-        get :show, id: @team.id, format: :json, user_email: @user.email, user_token: @user.authentication_token
+        get :show, format: :json, params: { id: @team.id, user_email: @user.email, user_token: @user.authentication_token }
       end
       it "handles successfully the request" do
         expect(response.status).to eq( 200 )

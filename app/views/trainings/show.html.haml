@@ -1,100 +1,106 @@
-.row-fluid
-  .span3
+.row
+  .col-xs-3
     = link_to_trainings()
-  .span2
+  .col-xs-2
     = link_to_training_printout( @training )
-  .span2
+  .col-xs-2
     = link_to_training_edit( @training )
-  .span2
+  .col-xs-2
     = link_to_training_duplicate( @training )
+
+.row.col-xs-12
+  &nbsp;
+
 - # From down here to below we just need the decorated instance:
 - @training = TrainingDecorator.decorate( @training )
 
 .accordion
   .accordion-group
     .accordion-heading.goggles-accordion-heading
-      .row-fluid
-        .span12
+      .row
+        .col-xs-12
           %h3= @title
     .accordion-body
       .accordion-inner
-        .row-fluid
-          .span2
+        .row
+          .col-xs-3.col-sm-3.col-md-2
             = I18n.t('activerecord.attributes.training.title') + ':'
-          .span10
+          .col-xs-9.col-sm-6.col-md-6
             = @training.title
-        .row-fluid
-          .span2
+        .row
+          .col-xs-3.col-sm-3.col-md-2
             = I18n.t('activerecord.attributes.training.description') + ':'
-          .span10
+          .col-xs-9.col-sm-6.col-md-6
             = @training.description
-        .row-fluid
-          .span2
+        .row
+          .col-xs-3.col-sm-3.col-md-2
             = I18n.t('activerecord.attributes.training.user') + ':'
-          .span10
+          .col-xs-9.col-sm-6.col-md-6
             = @training.get_user_name
-        .row-fluid
-          .span2
+        .row
+          .col-xs-3.col-sm-3.col-md-2
             = I18n.t('activerecord.models.swimmer_level_type') + ':'
-          .span10
+          .col-xs-9.col-sm-6.col-md-6
             = @training.get_swimmer_level_type(:i18n_description)
-        .row-fluid
-          .span2
+        .row
+          .col-xs-3.col-sm-3.col-md-2
             %i= I18n.t(:updated_at) + ':'
-          .span10
+          .col-xs-9.col-sm-6.col-md-6
             %i= Format.a_short_datetime( @training.updated_at )
-        .row-fluid
-          .span2
+        .row
+          .col-xs-3.col-sm-3.col-md-2
             = I18n.t('trainings.total_meters') + ':'
-          .span10
+          .col-xs-9.col-sm-6.col-md-6
             = @training.compute_total_distance
-        .row-fluid
-          .span2
+        .row
+          .col-xs-3.col-sm-3.col-md-2
             = I18n.t('trainings.esteemed_timing') + ':'
-          .span10
+          .col-xs-9.col-sm-6.col-md-6
             = Timing.to_hour_string( @training.compute_total_seconds() )
 
-.row-fluid
-  .span12
-    - curr_group_id = old_group_id = 0
-    - group_list_hash = @training.build_group_list_hash()
-    - @training_rows.each do |training_row|
-      - fields = training_row.to_array()
-      - if (training_row.group_id > 0) && group_list_hash.has_key?( training_row.group_id )
-        - curr_group_id = training_row.group_id
-        - if old_group_id != curr_group_id          # Start of new group?
-          - old_group_id     = curr_group_id
-          - group_hash       = group_list_hash[ training_row.group_id ]
-          - tot_group_secs   = TrainingRow.compute_total_seconds( group_hash[:datarows] )
-          - tot_group_timing = Timing.to_minute_string( tot_group_secs )
-          .row-fluid
-            .span2.goggles-training
-              %pre= "#{fields[0] } #{fields[1] } (#{ tot_group_timing })"
-            .span1.goggles-training
-              %pre= "#{group_hash[:times] }x"
-            - group_pause = group_hash[:pause].to_i
-            - group_s_r   = group_hash[:start_and_rest].to_i
-            - if ( group_pause > 0 || group_s_r > 0 )
-              .span2.goggles-training
-                %pre= "#{ Timing.to_formatted_start_and_rest( group_s_r ) } #{ Timing.to_formatted_pause( group_pause ) }"
-          .row-fluid
-            .offset2.span1.goggles-div-rightalign.goggles-training
-              %pre= "(+)#{ fields[3] }"
-            .span9.goggles-training
-              %pre= fields[4]
-        - else                                      # Same old group?
-          .row-fluid
-            .offset2.span1.goggles-div-rightalign.goggles-training
-              %pre= "(+)#{ fields[3] }"
-            .span9.goggles-training
-              %pre= fields[4]
-      - else                                        # Not in a group?
-        - curr_group_id = 0
-        .row-fluid
-          .span2.goggles-training
-            %pre
-              = "#{fields[0] } #{fields[1] } (#{ Timing.to_minute_string(fields[2]) })"
-          .span1.goggles-div-rightalign.goggles-training
-            %pre= fields[3]
-          .span9.goggles-training
+.row.col-xs-12
+  &nbsp;
+
+.row.col-xs-12
+  - curr_group_id = old_group_id = 0
+  - group_list_hash = @training.build_group_list_hash()
+  - @training_rows.each do |training_row|
+    - fields = training_row.to_array()
+    - if (training_row.group_id > 0) && group_list_hash.has_key?( training_row.group_id )
+      - curr_group_id = training_row.group_id
+      - if old_group_id != curr_group_id          # Start of new group?
+        - old_group_id     = curr_group_id
+        - group_hash       = group_list_hash[ training_row.group_id ]
+        - tot_group_secs   = TrainingRow.compute_total_seconds( group_hash[:datarows] )
+        - tot_group_timing = Timing.to_minute_string( tot_group_secs )
+        .row
+          .col-xs-2.goggles-training
+            %pre= "#{fields[0] } #{fields[1] }#{ tot_group_secs.to_i > 0 ? ' ('+tot_group_timing+')' : '' }"
+          .col-xs-1.goggles-training
+            %pre= "#{group_hash[:times] }x"
+          - group_pause = group_hash[:pause].to_i
+          - group_s_r   = group_hash[:start_and_rest].to_i
+          - if ( group_pause > 0 || group_s_r > 0 )
+            .col-xs-2.goggles-training
+              %pre= "#{ Timing.to_formatted_start_and_rest( group_s_r ) } #{ Timing.to_formatted_pause( group_pause ) }"
+        .row
+          .col-xs-offset-2.col-xs-1.goggles-div-rightalign.goggles-training
+            %pre= "(+)#{ fields[3] }"
+          .col-xs-9.goggles-training
             %pre= fields[4]
+      - else                                      # Same old group?
+        .row
+          .col-xs-offset-2.col-xs-1.goggles-div-rightalign.goggles-training
+            %pre= "(+)#{ fields[3] }"
+          .col-xs-9.goggles-training
+            %pre= fields[4]
+    - else                                        # Not in a group?
+      - curr_group_id = 0
+      .row
+        .col-xs-3.col-sm-2.col-md-2.goggles-training
+          %pre
+            = "#{fields[0] } #{fields[1] }#{ Timing.to_minute_string(fields[2]).empty? ? '' : ' ('+Timing.to_minute_string(fields[2])+')' }"
+        .col-xs-2.col-sm-2.col-md-1.goggles-div-rightalign.goggles-training
+          %pre= fields[3]
+        .col-xs-7.col-sm-8.col-md-9.goggles-training
+          %pre= fields[4]

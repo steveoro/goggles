@@ -3,23 +3,20 @@
 %table.table.table-hover.table-condensed
   %tbody
     %tr{'class'=>'info'}
-      %td.goggles-centeralign
+      %td.text-center{'colspan' => 3}
         %b= season.get_full_name
     %tr{'class'=>'success'}
-      %td.goggles-centeralign
+      %td.text-center
         %b= swimmer.get_full_name
-    %tr{'class'=>'success'}
-      %td.goggles-centeralign
+      %td.text-center
         = "#{badge.category_type.code} (#{swimmer.year_of_birth})"
-    %tr{'class'=>'success'}
-      %td.goggles-centeralign
+      %td.text-center
         = badge ? badge.number : ''
     %tr{'class'=>'success'}
-      %td.goggles-centeralign
+      %td.text-center
         %b= team.decorate.get_linked_name
-    %tr{'class'=>'success'}
-      %td.goggles-centeralign
-        %b= team.city ? team.city.get_full_name : ''
-    %tr{'class'=>'success'}
-      %td.goggles-centeralign
+      %td.text-center{'colspan' => 2}
         = team_affiliation ? team_affiliation.number : ''
+    %tr{'class'=>'success'}
+      %td.text-center{'colspan' => 3}
+        %b= team.city ? team.city.get_full_name : ''

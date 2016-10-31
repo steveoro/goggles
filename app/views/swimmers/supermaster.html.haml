@@ -3,82 +3,84 @@
   - supermaster_score = @sssc.calculate_supermaster_score
   - ironmaster_score = @sssc.calculate_ironmaster_score
   - team_ranking_score = @sssc.calculate_team_ranking_score
-  .row-fluid#pageTop
+  .col-xs-12
+    = render( partial: 'supermaster_google_gauge', locals: { supermaster_score: supermaster_score, ironmaster_score: ironmaster_score, team_ranking_score: team_ranking_score } )
+    -#= render( partial: 'supermaster_jqplot_gauge', locals: { supermaster_score: supermaster_score, ironmaster_score: ironmaster_score, team_ranking_score: team_ranking_score } )
+    -#= render( partial: 'supermaster_plain_charts', locals: { supermaster_score: supermaster_score, ironmaster_score: ironmaster_score, team_ranking_score: team_ranking_score } )
 
-  = render( partial: 'supermaster_google_gauge', locals: { supermaster_score: supermaster_score, ironmaster_score: ironmaster_score, team_ranking_score: team_ranking_score } )
-  -#= render( partial: 'supermaster_jqpilot_gauge', locals: { supermaster_score: supermaster_score, ironmaster_score: ironmaster_score, team_ranking_score: team_ranking_score } )
-  -#= render( partial: 'supermaster_plain_charts', locals: { supermaster_score: supermaster_score, ironmaster_score: ironmaster_score, team_ranking_score: team_ranking_score } )
-
-  .row-fluid.goggles-category-gap#rankings
-    .span8
-      %table.table.table-bordered.table-hover.table-condensed
-        %tbody
-          %tr{'class'=>'info'}
+  .col-xs-12.goggles-category-gap#rankings
+    %table.table.table-bordered.table-hover.table-condensed
+      %tbody
+        %tr{'class'=>'info'}
+          %td
+            %b= I18n.t('rankings')
+            = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+              = image_tag('bullet_arrow_up.png')
+          %td.goggles-rightalign
+            %b= I18n.t('number_short')
+          %td.goggles-rightalign
+            %b= I18n.t('score')
+          %td.goggles-rightalign
+            %b= I18n.t('average')
+          %td.goggles-rightalign
+            %b= I18n.t('best')
+          %td.goggles-rightalign
+            %b= I18n.t('worst')
+        - if supermaster_score.score > 0
+          %tr
             %td
-              %b= I18n.t('rankings')
-              %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
+              %b= "#{I18n.t('supermaster.supermaster_short')} - #{I18n.t('supermaster.supermaster')} "
+              = show_tag( supermaster_score.number >= 5 )
+            %td.goggles-rightalign{ 'class' => supermaster_score.number >= 5 ? 'success' : supermaster_score.number > 2 ? 'warning' : 'error' }
+              = supermaster_score.number
             %td.goggles-rightalign
-              %b= I18n.t('number_short')
+              %b= supermaster_score.score
             %td.goggles-rightalign
-              %b= I18n.t('score')
+              = supermaster_score.average.round(2)
             %td.goggles-rightalign
-              %b= I18n.t('average')
+              = supermaster_score.max
             %td.goggles-rightalign
-              %b= I18n.t('best')
+              = supermaster_score.min
+        - if ironmaster_score.score > 0
+          %tr
+            %td
+              %b= "#{I18n.t('supermaster.ironmaster_short')} - #{I18n.t('supermaster.ironmaster')}"
+              = show_tag( ironmaster_score.number >= 18 )
+            %td.goggles-rightalign{ 'class' => ironmaster_score.number >= 18 ? 'success' : ironmaster_score.number > 9 ? 'warning' : 'error' }
+              = ironmaster_score.number
             %td.goggles-rightalign
-              %b= I18n.t('worst')
-          - if supermaster_score.score > 0
-            %tr
-              %td
-                %b= "#{I18n.t('supermaster.supermaster_short')} - #{I18n.t('supermaster.supermaster')} "
-                = show_tag( supermaster_score.number >= 5 )
-              %td.goggles-rightalign{ 'class' => supermaster_score.number >= 5 ? 'success' : supermaster_score.number > 2 ? 'warning' : 'error' }
-                = supermaster_score.number
-              %td.goggles-rightalign
-                %b= supermaster_score.score
-              %td.goggles-rightalign
-                = supermaster_score.average.round(2)
-              %td.goggles-rightalign
-                = supermaster_score.max
-              %td.goggles-rightalign
-                = supermaster_score.min
-          - if ironmaster_score.score > 0
-            %tr
-              %td
-                %b= "#{I18n.t('supermaster.ironmaster_short')} - #{I18n.t('supermaster.ironmaster')}"
-                = show_tag( ironmaster_score.number >= 18 )
-              %td.goggles-rightalign{ 'class' => ironmaster_score.number >= 18 ? 'success' : ironmaster_score.number > 9 ? 'warning' : 'error' }
-                = ironmaster_score.number
-              %td.goggles-rightalign
-                %b= ironmaster_score.score
-              %td.goggles-rightalign
-                = ironmaster_score.average.round(2)
-              %td.goggles-rightalign
-                = ironmaster_score.max
-              %td.goggles-rightalign
-                = ironmaster_score.min
-          - if team_ranking_score.score > 0
-            %tr
-              %td
-                %b= "#{I18n.t('supermaster.team_ranking_short')} - #{I18n.t('supermaster.team_ranking')}"
-                = show_tag( team_ranking_score.number >= 3 )
-              %td.goggles-rightalign{ 'class' => team_ranking_score.number >= 3 ? 'success' : team_ranking_score.number > 2 ? 'warning' : 'error' }
-                = team_ranking_score.number
-              %td.goggles-rightalign
-                %b= team_ranking_score.score
-              %td.goggles-rightalign
-                = team_ranking_score.average.round(2)
-              %td.goggles-rightalign
-                = team_ranking_score.max
-              %td.goggles-rightalign
-                = team_ranking_score.min
-    .span2
+              %b= ironmaster_score.score
+            %td.goggles-rightalign
+              = ironmaster_score.average.round(2)
+            %td.goggles-rightalign
+              = ironmaster_score.max
+            %td.goggles-rightalign
+              = ironmaster_score.min
+        - if team_ranking_score.score > 0
+          %tr
+            %td
+              %b= "#{I18n.t('supermaster.team_ranking_short')} - #{I18n.t('supermaster.team_ranking')}"
+              = show_tag( team_ranking_score.number >= 3 )
+            %td.goggles-rightalign{ 'class' => team_ranking_score.number >= 3 ? 'success' : team_ranking_score.number > 2 ? 'warning' : 'error' }
+              = team_ranking_score.number
+            %td.goggles-rightalign
+              %b= team_ranking_score.score
+            %td.goggles-rightalign
+              = team_ranking_score.average.round(2)
+            %td.goggles-rightalign
+              = team_ranking_score.max
+            %td.goggles-rightalign
+              = team_ranking_score.min
+
+  .col-xs-12.goggles-category-gap
+    .col-xs-4
       %table.table.table-bordered.table-hover.table-condensed
         %tbody
           %tr{'class'=>'info'}
             %td{'colspan'=>2}
               %b= I18n.t('supermaster.medals_summary')
-              %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
+              = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+                = image_tag('bullet_arrow_up.png')
           - MedalType.are_not_jokes.sort_by_rank.each do |medal_type|
             %tr
               %td
@@ -86,13 +88,14 @@
                 %b= medal_type.i18n_description
               %td.goggles-rightalign
                 %b= @meeting_individual_results.has_rank(medal_type.rank).count
-    .span2
+    .col-xs-offset-1.col-xs-4
       %table.table.table-bordered.table-hover.table-condensed
         %tbody
           %tr{'class'=>'info'}
             %td{'colspan'=>2}
               %b= I18n.t('supermaster.scores_summary')
-              %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
+              = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+                = image_tag('bullet_arrow_up.png')
           %tr
             %td
               %b= I18n.t('best')
@@ -109,16 +112,17 @@
             %td.goggles-rightalign
               %b= (@meeting_individual_results.collect{ |row| row.standard_points }.sum / @meeting_individual_results.count).round(2)
 
-  .row-fluid.goggles-category-gap#meetings
+  .col-xs-12.goggles-category-gap#meetings
     -# Shows all meetings attended
-    .span5
+    .col-xs-12.col-md-6.table-responsive
       %table.table.table-striped.table-bordered.table-hover.table-condensed
         %tbody
           %tr{'class'=>'info'}
             %td{'colspan'=>4}
               %b= I18n.t('meetings')
               %b= " (#{@meetings.count})"
-              %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
+              = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+                = image_tag('bullet_arrow_up.png')
           - @meetings.each do |meeting|
             %tr
               %td
@@ -129,15 +133,16 @@
                 = meeting.get_swimming_pool.pool_type.code
               %td
                 = meeting.get_city
-  
+
     -# Shows all supermaster results
-    .span7
+    .col-xs-12.col-md-6.table-responsive
       %table.table.table-striped.table-bordered.table-hover.table-condensed
         %tbody
           %tr{'class'=>'info'}
             %td
               %b= I18n.t('supermaster.results_detail')
-              %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
+              = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+                = image_tag('bullet_arrow_up.png')
             %td
               %b= I18n.t('event')
             %td.goggles-rightalign
@@ -172,22 +177,23 @@
               %td.goggles-centeralign{'data-toggle'=>'tooltip', 'title'=>"#{I18n.t('supermaster.ranked_for')} #{I18n.t('supermaster.team_ranking')}"}
                 = show_tag( team_ranking_score.results.include?( mir ) )
 
-  .row-fluid.goggles-category-gap#Rules
+  .col-xs-12.goggles-category-gap#Rules
     %h3= I18n.t('supermaster.ranking_rules')
-    .row-fluid
-      .span2
+    .row
+      .col-xs-2
         %b= "#{I18n.t('supermaster.supermaster_short')} - #{I18n.t('supermaster.supermaster')}:"
-      .span10
+      .col-xs-10
         = I18n.t('supermaster.how_to_supermaster')
-    .row-fluid.goggles-category-gap
-      .span2
+    .row.goggles-category-gap
+      .col-xs-2
         %b= "#{I18n.t('supermaster.ironmaster_short')} - #{I18n.t('supermaster.ironmaster')}:"
-      .span10
+      .col-xs-10
         = I18n.t('supermaster.how_to_ironmaster')
-    .row-fluid.goggles-category-gap
-      .span2
+    .row.goggles-category-gap
+      .col-xs-2
         %b= "#{I18n.t('supermaster.team_ranking_short')} - #{I18n.t('supermaster.team_ranking')}:"
-      .span10
+      .col-xs-10
         = I18n.t('supermaster.how_to_team_ranking')
-    
-  .row-fluid.goggles-category-gap#bottom_of_page
+
+  .col-xs-12.goggles-category-gap#bottom_of_page
+    &nbsp;

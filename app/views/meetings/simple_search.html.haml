@@ -1,23 +1,25 @@
-.accordion#accordionFlt
-  .accordion-group
-    .accordion-inner
-      .accordion-heading
-        %h3= @title
-        - if params[:swimmer_id] || params[:team_id] || session[:text].to_s.size > 0 || params[:text].to_s.size > 0
-          = link_to( t('meeting.clear_prefiltering'), meetings_simple_search_path(text:'*'), {class: "btn"} )
-    .accordion-body
-      .accordion-inner
-        = form_tag( :meetings_simple_search, method: :get, class: 'form-horizontal', onsubmit: "$('#loadingIndicator').show();") do
-          .row-fluid
-            .control-group
-              .control-label#tooltipLabel
-                = label_tag( :text, I18n.t('meeting.text_to_be_searched'), for: :text, 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.simple_search_tooltip') )
-              .controls
-                = text_field_tag( :text, nil, { class: 'input-xxlarge' } )
-                = submit_tag( I18n.t(:submit), data: { disable_with: I18n.t(:please_wait), class: 'btn disabled' }, class: 'btn' )
-                %span(id='loadingIndicator' hidden='true')
-                  = image_tag( 'indicator.gif' )
-              %script
-                $('#tooltipLabel').tooltip();
-#meetingGrid
-  =render(partial: 'simple_search_grid')
+= render(partial: 'simple_search_grid')
+
+%h3= @title
+- if params[:swimmer_id] || params[:team_id] || session[:text].to_s.size > 0 || params[:text].to_s.size > 0
+  = link_to( t('meeting.clear_prefiltering'), meetings_simple_search_path(text:'*'), {class: "btn btn-default"} )
+  .row.col-xs-12
+    &nbsp;
+= form_tag( :meetings_simple_search, method: :get, class: 'form-horizontal', onsubmit: "$('#loadingIndicator').show();") do
+  .form-group
+    #tooltipLabel.row.col-xs-12{ 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.simple_search_tooltip') }
+      .col-xs-3
+        = I18n.t('meeting.text_to_be_searched')
+      .col-xs-9
+        = text_field_tag( :text, nil, { class: 'input-xxlarge' } )
+        = submit_tag( I18n.t(:submit), data: { disable_with: I18n.t(:please_wait), class: 'btn disabled' }, class: 'btn btn-primary' )
+        %span(id='loadingIndicator' hidden='true')
+          = image_tag( 'indicator.gif' )
+
+.container
+  .row
+    = render_grid( @meetings_grid )
+
+%script
+  $('#tooltipLabel').tooltip();
+  $('.wice-grid-container').addClass('row');

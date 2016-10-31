@@ -1,10 +1,7 @@
-.row-fluid
-  .offset3
-    %h2
+.media.alert.alert-danger
+  .media-left
+    = image_tag("404.jpg", size: '200x200')
+  .media-body
+    .media-heading
       @*?#!%GrBlzkmnH!@*!
-.row-fluid
-  .offset3.span6.item.thumbnail.active
-    = image_tag("404.jpg", class: 'img-thumbnail img-responsive')
-%br
-.row-fluid
-  %p= @exception
+      %p= @status_code

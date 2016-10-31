@@ -6,37 +6,41 @@
         %h3= @title
     .accordion-body
       .accordion-inner
-        .row-fluid
-          .span2
+        .row.col-xs-12
+          .col-xs-2
             = I18n.t('meeting_calendar.meeting')
-          .span10
+          .col-xs-10
             = grid_filter @meetings_grid, :flt_description
-        .row-fluid
-          .span2
+        .row.col-xs-12
+          .col-xs-2
             = I18n.t('meeting_calendar.federation')
-          .span10
+          .col-xs-10
             = grid_filter @meetings_grid, :flt_season_id
-        .row-fluid
-          .span2
+        .row.col-xs-12
+          .col-xs-2
             = I18n.t('meeting_calendar.pool_type')
-          .span10
+          .col-xs-10
             = grid_filter @meetings_grid, :flt_pool_type
-        - if 1 == 2
-          .row-fluid
-            .span2
-              = I18n.t('meeting_calendar.meeting_program')
-            .span10
-              .ui-widget
-                = grid_filter @meetings_grid, :flt_events_list
-        .row-fluid
-          .span12
-            .external-buttons
-              %button.btn.btn-primary.wg-external-submit-button{'data-grid-name' => 'grid'}
-                = I18n.t(:submit)
-              %button.btn.wg-external-reset-button{'data-grid-name' => 'grid'}
-                = I18n.t(:reset)
-.row-fluid
-  .span12
-    = render_grid( @meetings_grid )
+        -# Currently we disable the following filtering feature (it messes up too much the UI):
+        -#.row.col-xs-12
+        -#  .col-xs-2
+        -#    = I18n.t('meeting_calendar.meeting_program')
+        -#  .col-xs-10
+        -#    .ui-widget
+        -#      = grid_filter @meetings_grid, :flt_events_list
+        .row.col-xs-12
+          &nbsp;
+        .row.col-xs-12
+          .external-buttons
+            %button.btn.btn-primary.wg-external-submit-button{'data-grid-name' => 'grid'}
+              = I18n.t(:submit)
+            %button.btn.btn-default.wg-external-reset-button{'data-grid-name' => 'grid'}
+              = I18n.t(:reset)
+        .row.col-xs-12
+          &nbsp;
+
+.row.col-xs-12
+  = render_grid( @meetings_grid )
+
 %script
   $('#grid_f_id').combobox();

@@ -8,18 +8,17 @@ require 'training_printout_layout'
 
 = UserTrainingStoriesController
 
-  - version:  4.00.483
+  - version:  6.002
   - author:   Steve A.
 
 =end
 class UserTrainingStoriesController < ApplicationController
 
   # Require authorization before invoking any of this controller's actions:
-  before_filter :authenticate_user_from_token!
-  before_filter :authenticate_user!                # Devise "standard" HTTP log-in strategy
+  before_action :authenticate_user!                # Devise "standard" HTTP log-in strategy
   # Parse parameters:
-  before_filter :verify_ownership, only: [:edit, :destroy, :update]
-  before_filter :verify_visibility, except: [:index, :edit, :new, :create]
+  before_action :verify_ownership, only: [:edit, :destroy, :update]
+  before_action :verify_visibility, except: [:index, :edit, :new, :create]
   #-- -------------------------------------------------------------------------
   #++
 
@@ -27,6 +26,8 @@ class UserTrainingStoriesController < ApplicationController
   # Index/Search action.
   #
   def index
+    # [Steve, 20161001] We need to whitelist all parameters for the search query:
+    params.permit!()
     @title = I18n.t('user_training_stories.index_title')
     @user_training_stories_grid = initialize_grid(
       UserTrainingStory.visible_to_user( current_user ),
@@ -35,7 +36,6 @@ class UserTrainingStoriesController < ApplicationController
       order_direction: 'asc',
       per_page: 20
     )
-    flash[:warning] = I18n.t('feature_wip_disclaimer')
   end
 
 
@@ -52,7 +52,6 @@ class UserTrainingStoriesController < ApplicationController
   #
   def new
     @user_training_story = UserTrainingStory.new
-    flash[:warning] = I18n.t('feature_wip_disclaimer')
     render :edit
   end
 
@@ -61,7 +60,7 @@ class UserTrainingStoriesController < ApplicationController
   #
   def create
     if request.post?
-      @user_training_story = UserTrainingStory.new( params[:user_training_story] )
+      @user_training_story = UserTrainingStory.new( user_training_story_params )
       @user_training_story.user_id = current_user.id # Set the owner for all the records
 
       if @user_training_story.save
@@ -88,14 +87,13 @@ class UserTrainingStoriesController < ApplicationController
         "{TRAINING_TITLE}",
         UserTrainingStoryDecorator.decorate(@user_training_story).get_user_training_name
       )
-    flash[:warning] = I18n.t('feature_wip_disclaimer')
   end
 
 
   # Update action.
   #
   def update
-    if @user_training_story.update_attributes( params[:user_training_story] )
+    if @user_training_story.update_attributes( user_training_story_params )
       flash[:info] = I18n.t('user_training_stories.story_updated')
       redirect_to( user_training_story_path(@user_training_story) )
     else
@@ -117,6 +115,20 @@ class UserTrainingStoriesController < ApplicationController
 
 
   private
+
+
+  # Strong parameters checking for mass-assignment of a UserTrainingStory instance.
+  # Returns the whitelisted, filtered params Hash.
+  def user_training_story_params
+    params
+      .require( :user_training_story )
+      .permit(
+        :swam_date, :total_training_time, :notes,
+        :user_training_id, :swimming_pool_id, :swimmer_level_type_id
+      )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Verifies that the user_training_story id is provided as a parameter

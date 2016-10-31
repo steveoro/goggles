@@ -5,63 +5,65 @@
         %h3#headerShw{'data-toggle' => 'tooltip', 'title' => I18n.t(:detail_show_tooltip)}= @meeting.get_verbose_name
     .accordion-body.collapse#collapseShw
       .accordion-inner
-        .row-fluid
-          .span2
+        .row
+          .col-xs-4.col-md-2
             = I18n.t(:season, { scope: [:activerecord, :models] }) +':'
-          .span10
+          .col-xs-8.col-md-10
             = @meeting.season.decorate.get_linked_full_name
-        .row-fluid
-          .span2
+        .row
+          .col-xs-4.col-md-2
             = I18n.t(:any_date) +':'
-          .span10
+          .col-xs-8.col-md-10
             = @meeting.header_date.strftime('%d/%m/%Y')
         - if @meeting.edition && @meeting.edition > 0
-          .row-fluid
-            .span2
+          .row
+            .col-xs-4.col-md-2
               = I18n.t(:edition, { scope: [:activerecord, :attributes, :meeting] }) +':'
-            .span10
+            .col-xs-8.col-md-10
               = @meeting.edition
-        .row-fluid
-          .span2
+        .row
+          .col-xs-4.col-md-2
             = I18n.t('meeting_calendar.pool') +':'
-          .span10
+          .col-xs-8.col-md-10
             - @meeting.swimming_pools.uniq.each do |pool|
               = link_to( pool.get_verbose_name, swimming_pool_path(pool) )
-        .row-fluid
-          .span2
+        .row
+          .col-xs-4.col-md-2
             = I18n.t(:has_warm_up_pool, { scope: [:activerecord, :attributes, :meeting] }) +':'
-          .span10
+          .col-xs-8.col-md-10
             = show_tag( @meeting.has_warm_up_pool )
-        .row-fluid
-          .span2
+        .row
+          .col-xs-4.col-md-2
             = I18n.t(:is_under_25_admitted, { scope: [:activerecord, :attributes, :meeting] }) +':'
-          .span10
+          .col-xs-8.col-md-10
             = show_tag( @meeting.is_under_25_admitted )
-        .row-fluid
-          .span2
+        .row
+          .col-xs-4.col-md-2
             = I18n.t(:max_individual_events, { scope: [:activerecord, :attributes, :meeting] }) +':'
-          .span10
+          .col-xs-8.col-md-10
             = @meeting.max_individual_events
-        .row-fluid
-          .span2
+        .row
+          .col-xs-4.col-md-2
             = I18n.t(:reference_phone, { scope: [:activerecord, :attributes, :meeting] }) +':'
-          .span10
+          .col-xs-8.col-md-10
             = @meeting.reference_phone
-        .row-fluid
-          .span2
+        .row
+          .col-xs-4.col-md-2
             = I18n.t(:reference_e_mail, { scope: [:activerecord, :attributes, :meeting] }) +':'
-          .span10
+          .col-xs-8.col-md-10
             = @meeting.reference_e_mail
-        .row-fluid
-          .span2
+        .row
+          .col-xs-4.col-md-2
             = I18n.t(:reference_name, { scope: [:activerecord, :attributes, :meeting] }) +':'
-          .span10
+          .col-xs-8.col-md-10
             = @meeting.reference_name
-        .row-fluid
-          .span2
+        .row
+          .col-xs-4.col-md-2
             = I18n.t(:notes) +':'
-          .span10
+          .col-xs-8.col-md-10
             = @meeting.notes
+        .row
+          &nbsp;
 
 %script
   $('#headerShw').tooltip({placement:'bottom'});

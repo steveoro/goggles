@@ -1,22 +1,15 @@
-%ul.nav.nav-tabs#topOfPage
-  - is_active = ( params[:action] == 'calendar_regional_er_csi' )
-  %li{ class: is_active ? 'active' : '' }
-    = link_to( t('championships.calendar'), is_active ? '#' : championships_calendar_regional_er_csi_path( id: @season.id ))
+%ul.nav.nav-tabs#pageTop{role: "tablist"}
+  = show_tab_link( params, 'calendar_regional_er_csi', t('championships.calendar'), championships_calendar_regional_er_csi_path( id: @season.id ) )
+
   - if @season.meeting_individual_results.count > 0
-    - is_active = ( params[:action] == 'ranking_regional_er_csi' )
-    %li{ class: is_active ? 'active' : '' }
-      = link_to( t('championships.team_ranking'), is_active ? '#' : championships_ranking_regional_er_csi_path( id: @season.id ))
+    = show_tab_link( params, 'ranking_regional_er_csi', t('championships.team_ranking'), championships_ranking_regional_er_csi_path( id: @season.id ) )
+
     - if @season.id == 141 || @season.id == 151
-      - is_active = ( params[:action] == 'individual_rank_regional_er_csi' )
-      %li{ class: is_active ? 'active' : '' }
-        = link_to( t('championships.individual_rank'), is_active ? '#' : championships_individual_rank_regional_er_csi_path( id: @season.id ))
-    - is_active = ( params[:action] == 'event_ranking_regional_er_csi' )
-    %li{ class: is_active ? 'active' : '' }
-      = link_to( t('championships.event_ranking'), is_active ? '#' : championships_event_ranking_regional_er_csi_path( id: @season.id ))
+      = show_tab_link( params, 'individual_rank_regional_er_csi', t('championships.individual_rank'), championships_individual_rank_regional_er_csi_path( id: @season.id ) )
+
+    = show_tab_link( params, 'event_ranking_regional_er_csi', t('championships.event_ranking'), championships_event_ranking_regional_er_csi_path( id: @season.id ) )
+
   - if @season.rules
-    - is_active = ( params[:action] == 'rules_regional_er_csi' )
-    %li{ class: is_active ? 'active' : '' }
-      = link_to( t('championships.rules'), is_active ? '#' : championships_rules_regional_er_csi_path( id: @season.id ))
-  - is_active = ( params[:action] == 'history_regional_er_csi' )
-  %li{ class: is_active ? 'active' : '' }
-    = link_to( t('championships.history'), is_active ? '#' : championships_history_regional_er_csi_path( id: @season.id ))
+    = show_tab_link( params, 'rules_regional_er_csi', t('championships.rules'), championships_rules_regional_er_csi_path( id: @season.id ) )
+
+  = show_tab_link( params, 'history_regional_er_csi', t('championships.history'), championships_history_regional_er_csi_path( id: @season.id ) )

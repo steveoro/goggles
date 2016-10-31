@@ -5,49 +5,50 @@
       .accordion-heading
         %h3= @title
         - if params[:swimmer_id] || params[:team_id] || params[:text].to_s.size > 0
-          = link_to( t('meeting.clear_prefiltering'), meetings_custom_search_path(text:''), {class: "btn"} )
+          = link_to( t('meeting.clear_prefiltering'), meetings_custom_search_path(text:''), {class: "btn btn-default"} )
+          .row.col-xs-12
+            &nbsp;
     .accordion-body
       .accordion-inner
-        .row-fluid
-          .span2
+        .row.col-xs-12
+          .col-xs-2
             = I18n.t('meeting_calendar.federation')
-          .span10
+          .col-xs-6
             = grid_filter @meetings_grid, :flt_season_type_id
-        .row-fluid
-          .span2
+        .row.col-xs-12
+          .col-xs-2
             = I18n.t('meeting_calendar.season')
-          .span10
-            .ui-widget
-              = grid_filter @meetings_grid, :flt_season_id
-        .row-fluid
-          .span2
+          .col-xs-8
+            = grid_filter @meetings_grid, :flt_season_id
+        .row.col-xs-12
+          .col-xs-2
             = I18n.t('meeting_calendar.meeting')
-          .span10
+          .col-xs-8
             = grid_filter @meetings_grid, :flt_description
-        .row-fluid
-          .span2
+        .row.col-xs-12
+          %br/
+        .row.col-xs-12
+          .col-xs-2
             = I18n.t('meeting_calendar.pool_type')
-          .span10
+          .col-xs-4
             = grid_filter @meetings_grid, :flt_pool_type
-        .row-fluid
-          .span2
-            = I18n.t(:date_from_to)
-          .span10
+        .row.col-xs-12
+          .col-xs-2
+            = I18n.t('meeting_calendar.scheduled_date')
+          .col-xs-8
             = grid_filter @meetings_grid, :flt_entry_header_date
-        .row-fluid
-          %br
-        .row-fluid
-          .span2
-            .external-buttons
-              %button.btn.btn-primary.wg-external-submit-button{'data-grid-name' => 'grid'}
-                = I18n.t(:submit)
-              %button.btn.wg-external-reset-button{'data-grid-name' => 'grid'}
-                = I18n.t(:reset)
-          .span10
-            = link_to( t('meeting.search_by_swimmer'), meetings_search_swimmer_path(), {class: "btn"} )
-            = link_to( t('meeting.search_by_team'), meetings_search_team_path(), {class: "btn"} )
-.row-fluid
-  .span12
-    = render_grid( @meetings_grid )
-%script
-  $('#grid_f_season_id').combobox();
+        .row.col-xs-12
+          &nbsp;
+        .row.col-xs-12
+          .external-buttons
+            %button.btn.btn-primary.wg-external-submit-button{'data-grid-name' => 'grid'}
+              = I18n.t(:submit)
+            %button.btn.btn-default.wg-external-reset-button{'data-grid-name' => 'grid'}
+              = I18n.t(:reset)
+            = link_to( t('meeting.search_by_swimmer'), meetings_search_swimmer_path(), {class: "btn btn-default"} )
+            = link_to( t('meeting.search_by_team'), meetings_search_team_path(), {class: "btn btn-default"} )
+        .row.col-xs-12
+          &nbsp;
+
+.row.col-xs-12
+  = render_grid( @meetings_grid )

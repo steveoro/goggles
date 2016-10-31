@@ -1,10 +1,11 @@
-.row-fluid
+.row
   .goggles-category-gap{ 'id' => "#{pool_type.code}" }
     %h3
       = "#{pool_type.i18n_description}"
-      %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
-.row-fluid
-  .span9
+      = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+        = image_tag('bullet_arrow_up.png')
+.row
+  .col-xs-9
     %table.table.table-striped.table-bordered.table-hover.table-condensed
       %tbody
         %tr{'class'=>'info'}

@@ -1,16 +1,17 @@
-.span5
+.col-xs-5
   %table.table.table-striped.table-bordered.table-hover.table-condensed
     %tbody
       %tr{'class'=>'success'}
-        %td.span2.goggles-centeralign
+        %td.col-xs-2.goggles-centeralign
           %b
             %i= I18n.t('meeting_stats.event_athletes')
-            %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
-        %td.span1.goggles-centeralign
+          = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+            = image_tag('bullet_arrow_up.png')
+        %td.col-xs-1.goggles-centeralign
           %i= I18n.t('meeting_stats.females')
-        %td.span1.goggles-centeralign
+        %td.col-xs-1.goggles-centeralign
           %i= I18n.t('meeting_stats.males')
-        %td.span1.goggles-centeralign
+        %td.col-xs-1.goggles-centeralign
           %i= I18n.t('meeting_stats.total')
       - gtot_fem = gtot_mal = gtot = 0
       - @meeting_stats.events.each do |event_stat|
@@ -18,21 +19,21 @@
         - gtot_mal  += event_stat.male_entries
         - gtot      += event_stat.get_entries_count
         %tr
-          %td.span2
+          %td.col-xs-2
             = event_stat.event_type.code
-          %td.span1.goggles-rightalign
+          %td.col-xs-1.goggles-rightalign
             = event_stat.female_entries
-          %td.span1.goggles-rightalign
+          %td.col-xs-1.goggles-rightalign
             = event_stat.male_entries
-          %td.span1.goggles-rightalign
+          %td.col-xs-1.goggles-rightalign
             = event_stat.get_entries_count
       -# Totals
       %tr{'class'=>'success'}
-        %td.span2.goggles-rightalign
+        %td.col-xs-2.goggles-rightalign
           %i= @meeting_stats.events.count
-        %td.span1.goggles-rightalign
+        %td.col-xs-1.goggles-rightalign
           %i= gtot_fem
-        %td.span1.goggles-rightalign
+        %td.col-xs-1.goggles-rightalign
           %i= gtot_mal
-        %td.span1.goggles-rightalign
+        %td.col-xs-1.goggles-rightalign
           %i= gtot

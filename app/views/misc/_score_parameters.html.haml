@@ -1,6 +1,7 @@
 - default_score = @standard_points ? @standard_points : 0.00
 
-.control-group
-  = label_tag( :standard_points, t('misc.fin_standard_points'), :for => :standard_points, class: 'control-label' )
-  .controls
-    = text_field_tag( :standard_points, default_score, class: 'input-small' )
+.form-group
+  = label_tag( :standard_points, t('misc.fin_standard_points'), for: :standard_points, class: 'control-label' )
+  .row
+    .col-xs-2
+      = text_field_tag( :standard_points, default_score, class: 'form-control' )

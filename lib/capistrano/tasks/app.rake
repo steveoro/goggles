@@ -3,9 +3,9 @@
 # == Capistrano helper tasks ==
 #
 # - author: Steve A.
-# - vers. : 4.00.809
+# - vers. : 6.005
 #
-# This requires Capistrano v. >= 3.4
+# This requires Capistrano v. >= 3.6
 require "erb"
 
 
@@ -65,7 +65,7 @@ namespace :app do
           puts "- smtp_setting_starttls          = #{smtp_setting_starttls}"
         end
         puts ""
-
+                                                    # *** production.rb "rebuild" ***
         location = 'config/deploy/production.rb.erb'
         if ( File.file?(location) )                 # Do nothing unless the template file is found
           template = File.read(location)
@@ -88,64 +88,73 @@ namespace :app do
             execute :rm, "/tmp/production.rb"
           end
         else
-          info "Environment template file not found locally: skipping ':setup_prod_env'."
+          info "Environment template file not found locally: skipping 'production.rb' rebuild."
+        end
+                                                    # *** secrets.yml copy ***
+        location = 'config/secrets.yml'
+        if ( File.file?(location) )
+          upload! location, "#{ shared_path }/#{ location }"
+        else
+          info "Local secrets file not found: skipping 'secrets.yml' copy."
         end
       end
     end
     # --------------------------------------------------------------------------
 
 
-    desc "Checks if the directory shared/public/extjs exists on the app server."
-    task :check_extjs do
-      on roles(:app) do |host|
-        lib_dir = File.join(shared_path, "public/extjs")
-        puts "      > Checking existance of #{lib_dir}..."
-        if test("[ ! -z \"$(ls #{lib_dir})\" ]")
-          info "Directory #{lib_dir} found with files."
-        else
-          warn "Directory #{lib_dir} NOT found or found empty."
-        end
-      end
-    end
+# XXX [Steve] NOT USED ANYMORE:
+    # desc "Checks if the directory shared/public/extjs exists on the app server."
+    # task :check_extjs do
+      # on roles(:app) do |host|
+        # lib_dir = File.join(shared_path, "public/extjs")
+        # puts "      > Checking existance of #{lib_dir}..."
+        # if test("[ ! -z \"$(ls #{lib_dir})\" ]")
+          # info "Directory #{lib_dir} found with files."
+        # else
+          # warn "Directory #{lib_dir} NOT found or found empty."
+        # end
+      # end
+    # end
     # --------------------------------------------------------------------------
 
 
-    desc <<-DESC
-      Checks and adds shared ExtJS lib files to the deployment tree
-      (only when these are not found).
-
-      It is safe to run this task on servers that have already been set up; it
-      will not destroy any deployed revisions or data.
-    DESC
-    task :shared_extjs do
-      on roles(:app) do |host|
-        lib_dir = File.join(shared_path, "public/extjs")
-        puts "      > Checking '#{lib_dir}' existance..."
-
-        if test("[ ! -z \"$(ls #{lib_dir})\" ]")
-          info "Directory #{lib_dir} found with files."
-        else
-          warn "Directory #{lib_dir} NOT found or found empty on #{host}."
-          info "Safely (re)creating directory before adding missing contents..."
-          as( user: :root ) do
-            execute :mkdir, "-p #{lib_dir}"
-          end
-          info "Uploading directory contents..."
-          ssh_keys = fetch(:ssh_keys)
-          use_pem_certificate = (ssh_keys.first =~ /\.pem$/)
-
-          run_locally do
-            puts "      > Copying local extjs dir..."
-            if use_pem_certificate
-              execute :scp, "-i #{ssh_keys.first} -Cpr public/extjs/* #{fetch(:ssh_user)}@#{host}:#{lib_dir}"
-            else
-              execute :scp, "-Cpr public/extjs/* #{fetch(:ssh_user)}@#{host}:#{lib_dir}"
-            end
-          end
-        end
-        puts "      app:setup:shared_extjs done."
-      end
-    end
+# XXX [Steve] NOT USED ANYMORE:
+    # desc <<-DESC
+      # Checks and adds shared ExtJS lib files to the deployment tree
+      # (only when these are not found).
+#
+      # It is safe to run this task on servers that have already been set up; it
+      # will not destroy any deployed revisions or data.
+    # DESC
+    # task :shared_extjs do
+      # on roles(:app) do |host|
+        # lib_dir = File.join(shared_path, "public/extjs")
+        # puts "      > Checking '#{lib_dir}' existance..."
+#
+        # if test("[ ! -z \"$(ls #{lib_dir})\" ]")
+          # info "Directory #{lib_dir} found with files."
+        # else
+          # warn "Directory #{lib_dir} NOT found or found empty on #{host}."
+          # info "Safely (re)creating directory before adding missing contents..."
+          # as( user: :root ) do
+            # execute :mkdir, "-p #{lib_dir}"
+          # end
+          # info "Uploading directory contents..."
+          # ssh_keys = fetch(:ssh_keys)
+          # use_pem_certificate = (ssh_keys.first =~ /\.pem$/)
+#
+          # run_locally do
+            # puts "      > Copying local extjs dir..."
+            # if use_pem_certificate
+              # execute :scp, "-i #{ssh_keys.first} -Cpr public/extjs/* #{fetch(:ssh_user)}@#{host}:#{lib_dir}"
+            # else
+              # execute :scp, "-Cpr public/extjs/* #{fetch(:ssh_user)}@#{host}:#{lib_dir}"
+            # end
+          # end
+        # end
+        # puts "      app:setup:shared_extjs done."
+      # end
+    # end
     # --------------------------------------------------------------------------
 
 
@@ -198,6 +207,7 @@ end
 before 'deploy:check:linked_files', 'app:setup:prod_env'
 # [Steve, 20160810] This is no more required for Goggles version5:
 # before 'deploy:check:linked_files', 'app:setup:shared_extjs'
+
 before 'deploy:check:linked_files', 'app:setup:common_output'
 
 # Clear the cache before restart:
@@ -211,34 +221,5 @@ before 'deploy:restart', 'remote:tmp_clear'
 #
 # before 'deploy:restart', 'remote:db_sessions_clear'
 
-
-# [Steve, 20150521] ALL-IN-ONE DEPLOY SOLUTION (valid for DigitalOcean hosting):
-# This will rebuild each time the production DB using the current dump stored
-# in the specified online repo.
-# (Remember to clear the sessions in the production backup dump before deploying.)
-#
-# >>>   THE FOLLOWING HOOK CAN WORK ONLY IF THE BACKUP DB DUMP  <<<
-# >>>                  IS HOSTED ON THE SPECIFIED URL!          <<<
-#
-before 'deploy:restart', :retrieve_db_dump do
-  on roles(:app) do
-    within File.join(release_path, "db", "dump") do
-      as( user: :root ) do
-        execute :wget, "-q https://raw.githubusercontent.com/steveoro/goggles_admin/master/db/dump/production.sql.bz2"
-        puts "DB dump retrieved."
-      end
-    end
-  end
-end
-
-after :retrieve_db_dump, :rebuild_db_from_dump do
-  on roles(:app) do
-    within release_path do
-      with rails_env: :production do
-        rake "db:rebuild_from_dump from=production to=production"
-      end
-    end
-  end
-end
 #-- ---------------------------------------------------------------------------
 #++

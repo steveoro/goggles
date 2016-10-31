@@ -1,10 +1,10 @@
-.row-fluid.goggles-category-gap#swimmer_records
-  .span9
-    .row-fluid
-      .span3
+.row.goggles-category-gap#swimmer_records
+  .col-xs-9
+    .row
+      .col-xs-3
         = I18n.t('swimmers.total_team_records') +':'
-      .span9
-        %a#totalCount{ href: "#", onclick: "$('#loadingIndicator').show(); loadAJAXRecordCount();", 'data-toggle' => 'tooltip', title: I18n.t('records.total_count_disclaimer_tooltip') }
+      .col-xs-9
+        %a#totalCount{ href: "#", onclick: "$('#loadingIndicator').show(); loadAJAXRecordCount();", 'data-turbolinks'=>'false', 'data-toggle' => 'tooltip', title: I18n.t('records.total_count_disclaimer_tooltip') }
           = I18n.t('records.compute_label')
         - SeasonType.uniq.each do |season_type|
           %span{ id: "labelSeasonType#{season_type.id}", hidden: true }
@@ -16,16 +16,16 @@
         %span(id='loadingIndicator' hidden='true')
           = image_tag( 'indicator.gif' )
 
-    .row-fluid
-      .span3
+    .row
+      .col-xs-3
         = I18n.t('swimmers.records_by_team') +':'
-      .span9
+      .col-xs-9
         %ul
           - @swimmer.teams.uniq.each do |team|
             %li
               %a{ href: "#", onclick: "$('#loadingIndicator').show(); $('#records_4x_grid').hide(); loadAJAXTeamRecord(#{team.id}, #{@swimmer.id});", 'data-toggle' => 'tooltip', title: I18n.t('records.team_load_records_tooltip') }
                 = team.get_full_name
-.row-fluid
+.row
   #records_4x_grid
 
 %script

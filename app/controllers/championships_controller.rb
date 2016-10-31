@@ -6,16 +6,30 @@ require 'common/format'
 
 = ChampionshipsController
 
-  - version:  4.00.532
-  - author:   Leega
+  - version:  6.003
+  - author:   Leega, Steve A.
 
 =end
 class ChampionshipsController < ApplicationController
-  # Parse parameters:
-  before_filter :verify_parameter_regional_er_csi,  only: [:ranking_regional_er_csi, :calendar_regional_er_csi, :event_ranking_regional_er_csi, :individual_rank_regional_er_csi, :rules_regional_er_csi, :history_regional_er_csi]
-  before_filter :verify_parameter_regional_er_uisp, only: [:ranking_regional_er_uisp, :calendar_regional_er_uisp, :rules_regional_er_uisp, :history_regional_er_uisp]
-  before_filter :verify_parameter_supermaster_fin,  only: [:ranking_supermaster_fin, :calendar_supermaster_fin, :rules_supermaster_fin, :history_supermaster_fin]
-  before_filter :set_team,                          only: [:ranking_regional_er_csi, :event_ranking_regional_er_csi, :individual_rank_regional_er_csi]
+  # Parse parameters according to current user *BEFORE* everything else:
+  before_action :verify_parameter_regional_er_csi, only: [
+      :ranking_regional_er_csi, :calendar_regional_er_csi, :event_ranking_regional_er_csi,
+      :individual_rank_regional_er_csi, :rules_regional_er_csi, :history_regional_er_csi
+  ]
+  before_action :verify_parameter_regional_er_uisp, only: [
+      :ranking_regional_er_uisp, :calendar_regional_er_uisp, :rules_regional_er_uisp,
+      :history_regional_er_uisp
+  ]
+  before_action :verify_parameter_supermaster_fin, only: [
+      :ranking_supermaster_fin, :calendar_supermaster_fin, :rules_supermaster_fin,
+      :history_supermaster_fin
+  ]
+  # At this point, we assume the basic parameter are set and we can impose the
+  # setting of the Team ID also:
+  before_action :set_team, only: [
+      :ranking_regional_er_csi, :event_ranking_regional_er_csi,
+      :individual_rank_regional_er_csi
+  ]
   #-- -------------------------------------------------------------------------
   #++
 
@@ -47,9 +61,11 @@ class ChampionshipsController < ApplicationController
 
     championship_calculator = ChampionshipRankingCalculator.new( @season )
     @championship_ranking = championship_calculator.get_season_ranking
-    @ranking_updated_at = @season.meeting_individual_results.count > 0 ?
-      @season.meeting_individual_results.select( "meeting_individual_results.updated_at" ).max.updated_at.to_i :
+    @ranking_updated_at = if @season.meeting_individual_results.count > 0
+      @season.meeting_individual_results.select( "meeting_individual_results.updated_at" ).max.updated_at.to_i
+    else
       0
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -81,7 +97,7 @@ class ChampionshipsController < ApplicationController
     @title = I18n.t('championships.event_ranking') + ' ' + @season_type.get_full_name
 
     # Check for different event types and categories for the season and manage updates for the cache
-    @event_types = @season.event_types.are_not_relays.uniq.sort_by_style
+    @event_types = @season.event_types.are_not_relays.distinct.sort_by_style
     @category_types = @season.category_types.are_not_relays.sort_by_age
     @ranking_updated_at = @season.meeting_individual_results.count > 0 ?
       @season.meeting_individual_results.select( "meeting_individual_results.updated_at" ).max.updated_at.to_i :
@@ -254,23 +270,7 @@ class ChampionshipsController < ApplicationController
   # id: the season id to be processed by most of the methods (see before filter above)
   #
   def verify_parameter_supermaster_fin
-    set_season_type( 'MASFIN' )
-    unless ( @season_type )
-      flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to(:back) and return
-    end
-
-    # TODO Find current FIN season
-    @current_season_id = Season.get_last_season_by_type( @season_type.code ).id
-
-    # Use given season or, in no selection, current one
-    season_id = ( params[:id] ? params[:id].to_i : @current_season_id )
-
-    set_season( season_id )
-    unless ( @season )
-      flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to(:back) and return
-    end
+    prepare_parameters( 'MASFIN' )
   end
 
   # Verifies that a season id is provided as parameter; otherwise
@@ -282,23 +282,7 @@ class ChampionshipsController < ApplicationController
   # id: the season id to be processed by most of the methods (see before filter above)
   #
   def verify_parameter_regional_er_csi
-    set_season_type( 'MASCSI' )
-    unless ( @season_type )
-      flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to(:back) and return
-    end
-
-    # Find current CSI season
-    @current_season_id = Season.get_last_season_by_type( @season_type.code ).id
-
-    # Use given season or, in no selection, current one
-    season_id = ( params[:id] ? params[:id].to_i : @current_season_id )
-
-    set_season( season_id )
-    unless ( @season )
-      flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to(:back) and return
-    end
+    prepare_parameters( 'MASCSI' )
   end
 
   # Verifies that a season id is provided as parameter; otherwise
@@ -310,22 +294,40 @@ class ChampionshipsController < ApplicationController
   # id: the season id to be processed by most of the methods (see before filter above)
   #
   def verify_parameter_regional_er_uisp
-    set_season_type( 'MASUISP' )
+    prepare_parameters( 'MASUISP' )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  # Verifies that a season id is provided as parameter; otherwise
+  # use the current season according to chosen season type
+  # Assigns the @season instance.
+  # Use for CSI regional er
+  #
+  # == Params:
+  # id: the season id to be processed by most of the methods (see before filter above)
+  #
+  def prepare_parameters( season_type_code )
+    set_season_type( season_type_code )
     unless ( @season_type )
+# DEBUG
+#      puts "\r\n- prepare_parameters(#{season_type_code}): NO @season_type"
       flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to(:back) and return
+      redirect_back( fallback_location: root_path ) and return
     end
 
-    # TODO Find current UISP season
+    # Find current CSI season
     @current_season_id = Season.get_last_season_by_type( @season_type.code ).id
 
-    # Use given season or, in no selection, current one
-    season_id = ( params[:id] ? params[:id].to_i : @current_season_id )
+    # Use the specified season :id or default to the current one:
+    season_id = ( params[:id].present? ? params[:id].to_i : @current_season_id )
 
     set_season( season_id )
     unless ( @season )
+# DEBUG
+#      puts "\r\n- prepare_parameters(#{season_type_code}): NO @season; params[:id]: '#{params[:id]}', season_id: #{ season_id }, @current_season_id: #{ @current_season_id }"
       flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to(:back) and return
+      redirect_back( fallback_location: root_path ) and return
     end
   end
 

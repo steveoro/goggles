@@ -11,8 +11,8 @@ module UserTrainingStoriesHelper
   # Returns the HTML for the UserTrainingStoryController#index() action.
   #
   def link_to_user_training_stories()
-    link_to( user_training_stories_path() ) do
-      image_tag('page_find.png') << I18n.t(:back_to_index_view)
+    link_to( user_training_stories_path(), class: 'btn btn-default' ) do
+      image_tag('page_find.png') << "&nbsp; #{ I18n.t(:back_to_index_view) }".html_safe
     end
   end
 
@@ -61,8 +61,8 @@ module UserTrainingStoriesHelper
   # Assumes user_training_story is a valid UserTrainingStory instance.
   #
   def link_to_user_training_story_show( user_training_story )
-    link_to( user_training_story_path(id: user_training_story.id) ) do
-      image_tag('page_go.png') << " #{I18n.t(:show)}"
+    link_to( user_training_story_path(id: user_training_story.id), class: 'btn btn-default' ) do
+      image_tag('page_go.png') << "&nbsp; #{I18n.t(:show)}".html_safe
     end if check_story_visibility_for( user_training_story )
   end
 
@@ -74,8 +74,8 @@ module UserTrainingStoriesHelper
   # Assumes user_training_story is a valid UserTrainingStory instance.
   #
   def link_to_user_training_story_edit( user_training_story )
-    link_to( edit_user_training_story_path(id: user_training_story.id) ) do
-        image_tag('page_edit.png') << " #{I18n.t(:edit)}"
+    link_to( edit_user_training_story_path(id: user_training_story.id), class: 'btn btn-default' ) do
+        image_tag('page_edit.png') << "&nbsp; #{I18n.t(:edit)}".html_safe
     end if check_story_ownership_for( user_training_story )
   end
 
@@ -91,7 +91,8 @@ module UserTrainingStoriesHelper
       I18n.t(:delete),
       user_training_story_path(id: user_training_story.id),
       method: :delete,
-      confirm: I18n.t('netzke.basepack.grid_panel.are_you_sure')
+      confirm: I18n.t('netzke.basepack.grid_panel.are_you_sure'),
+      class: 'btn btn-default'
     ) if check_story_ownership_for( user_training_story )
   end
   #-- -------------------------------------------------------------------------

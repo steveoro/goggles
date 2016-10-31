@@ -1,8 +1,8 @@
 /*
  * === Custom Training Row Form client-side methods ===
- * 
+ *
  * - app. ver.: 4.00.175
- * 
+ *
  * Handles autocomplete combos, sortable list, drag'n'drop + other utility
  * stuff for the edit/create form of Training / TrainingRow.
  */
@@ -50,7 +50,7 @@ function initGroupHeadersVisibility() {
   group_ids.each( function( index, group_node ) {
 // DEBUG
 //    console.log('processing row: ' + index);
-    var groupId = Number( group_node.value );       // Get curr group ID 
+    var groupId = Number( group_node.value );       // Get curr group ID
     if ( groupId > 0 ) {                            // Does this node belong to a group?
       var data_row_obj = data_rows.eq( index );     // Get the current data row object
       var full_row_obj = data_row_obj.closest('.group_detail').parent();
@@ -81,7 +81,7 @@ function initGroupHeadersVisibility() {
 //        console.log('processed group id: ' + groupId);
       }
     }
-  });                                               // -- GROUP SETUP END -- 
+  });                                               // -- GROUP SETUP END --
 };
 
 
@@ -295,7 +295,7 @@ function promoteToDroppable( $item ) {
 
 
 
-/* 
+/*
  * Launched when the user clicks on the "delete group" button.
    Clears the group header from all the data_row(s) children of
    the clicked full row.
@@ -309,7 +309,7 @@ function clickBreakGrouping( $item ) {
 
                                                     // Retrieve all field marked for clearing:
     $item.find('.group_clear').each( function(index, element) {
-      $(element).val( 0 );                          // Clear each group header field to 0     
+      $(element).val( 0 );                          // Clear each group header field to 0
     });
                                                     // Retrieve all child group details
     var grp_details = $item.find('.group_detail');
@@ -320,7 +320,7 @@ function clickBreakGrouping( $item ) {
     var sub_full_rows = $item.find('.full_row');    // Retrieve all contained full rows
     sub_full_rows.each( function(index, element) {  // Move each full row outside of the current full row $item:
       promoteToDroppable( $(element) );
-      $(element).insertAfter( $item ); 
+      $(element).insertAfter( $item );
     });
 }
 // ----------------------------------------------------------------------------
@@ -389,9 +389,9 @@ function getSingleExerciseDescByAjax( exerciseId, textInputHTMLElem ) {
 
 
 /*
- * Document OnReady: one-time initialization
+ * Document OnReady, one-time initialization
  */
-$(document).ready( function(obj) {
+var readyFunct = function(obj) {
   setupWidgets();
 
 // [Steve, 20140828] W.I.P. Temp. disable:
@@ -411,6 +411,10 @@ $(document).ready( function(obj) {
   ).on( "cocoon:after-remove", function() {
       updateAutoSeq();
   });
-} );
+};
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
+
+// Bind the on-ready function to the "page-load" Turbolinks5 event:
+// $(document).ready( readyFunct ); // Standard "ready" event; w/ TL5 we need just the one below:
+$(document).on('turbolinks:load', readyFunct );

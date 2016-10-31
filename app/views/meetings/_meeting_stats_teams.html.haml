@@ -1,36 +1,37 @@
-.span10
+.col-xs-12
   %table.table.table-striped.table-bordered.table-hover.table-condensed
     %tbody
       %tr{'class'=>'success'}
-        %td.span3.goggles-centeralign
+        %td.col-xs-3.goggles-centeralign
           %b
             %i= I18n.t('meeting_stats.team_athletes')
-            %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
-        %td.span1.goggles-centeralign
+          = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+            = image_tag('bullet_arrow_up.png')
+        %td.col-xs-1.goggles-centeralign
           %i= I18n.t('meeting_stats.females')
-        %td.span1.goggles-centeralign
+        %td.col-xs-1.goggles-centeralign
           %i= I18n.t('meeting_stats.males')
-        %td.span1.goggles-centeralign
+        %td.col-xs-1.goggles-centeralign
           %i= I18n.t('meeting_stats.total')
         - if @meeting_stat_calculator.has_relays?
-          %td.span1.goggles-centeralign
+          %td.col-xs-1.goggles-centeralign
             %i= I18n.t('meeting_stats.relays')
-        %td.span1.goggles-centeralign
+        %td.col-xs-1.goggles-centeralign
           = image_tag( "medal_gold_3.png" )
-        %td.span1.goggles-centeralign
+        %td.col-xs-1.goggles-centeralign
           = image_tag( "medal_silver_3.png" )
-        %td.span1.goggles-centeralign
+        %td.col-xs-1.goggles-centeralign
           = image_tag( "medal_bronze_3.png" )
-        %td.span1.goggles-centeralign
+        %td.col-xs-1.goggles-centeralign
           %i= I18n.t('meeting_stats.total')
 
       - gtot_fem = gtot_mal = gtot_rel = gtot = 0
       - tot_gold = tot_silver = tot_bronze = tot_medals = 0
-      - @meeting_stats.teams.each do |team_stat|  
+      - @meeting_stats.teams.each do |team_stat|
         - is_highlighted = ( team_stat.team.id == @preselected_team_id )
         - gtot_fem   += team_stat.female_swimmers
         - gtot_mal   += team_stat.male_swimmers
-        - gtot_rel   += team_stat.relay_results if @meeting_stat_calculator.has_relays? 
+        - gtot_rel   += team_stat.relay_results if @meeting_stat_calculator.has_relays?
         - gtot       += team_stat.get_swimmers_count
         - tot_gold   += team_stat.get_golds_count
         - tot_silver += team_stat.get_silvers_count
@@ -38,42 +39,42 @@
         - tot_medals += team_stat.get_medals_count
 
         %tr{'class' => is_highlighted ? 'warning' : ''}
-          %td.span3
+          %td.col-xs-3
             = team_stat.team.decorate.get_linked_to_results_name(@meeting)
-          %td.span1.goggles-rightalign
+          %td.col-xs-1.goggles-rightalign
             = team_stat.female_swimmers
-          %td.span1.goggles-rightalign
+          %td.col-xs-1.goggles-rightalign
             = team_stat.male_swimmers
-          %td.span1.goggles-rightalign
+          %td.col-xs-1.goggles-rightalign
             = team_stat.get_swimmers_count
           - if @meeting_stat_calculator.has_relays?
-            %td.span1.goggles-rightalign
+            %td.col-xs-1.goggles-rightalign
               = team_stat.relay_results
-          %td.span1.goggles-rightalign
+          %td.col-xs-1.goggles-rightalign
             = team_stat.get_golds_count
-          %td.span1.goggles-rightalign
+          %td.col-xs-1.goggles-rightalign
             = team_stat.get_silvers_count
-          %td.span1.goggles-rightalign
+          %td.col-xs-1.goggles-rightalign
             = team_stat.get_bronzes_count
-          %td.span1.goggles-rightalign
+          %td.col-xs-1.goggles-rightalign
             = team_stat.get_medals_count
       %tr{'class'=>'success'}
-        %td.span3.goggles-rightalign
+        %td.col-xs-3.goggles-rightalign
           %i= @meeting_stats.teams.count
-        %td.span1.goggles-rightalign
+        %td.col-xs-1.goggles-rightalign
           %i= gtot_fem
-        %td.span1.goggles-rightalign
+        %td.col-xs-1.goggles-rightalign
           %i= gtot_mal
-        %td.span1.goggles-rightalign
+        %td.col-xs-1.goggles-rightalign
           %i= gtot
         - if @meeting_stat_calculator.has_relays?
-          %td.span1.goggles-rightalign
+          %td.col-xs-1.goggles-rightalign
             %i= gtot_rel
-        %td.span1.goggles-rightalign
+        %td.col-xs-1.goggles-rightalign
           %i= tot_gold
-        %td.span1.goggles-rightalign
+        %td.col-xs-1.goggles-rightalign
           %i= tot_silver
-        %td.span1.goggles-rightalign
+        %td.col-xs-1.goggles-rightalign
           %i= tot_bronze
-        %td.span1.goggles-rightalign
+        %td.col-xs-1.goggles-rightalign
           %i= tot_medals

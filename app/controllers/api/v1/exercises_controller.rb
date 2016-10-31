@@ -1,11 +1,11 @@
 #
 # R/O RESTful API controller
 #
-class Api::V1::ExercisesController < ApplicationController
+class Api::V1::ExercisesController < Api::BaseController
 
   respond_to :json
 
-  before_filter :ensure_format
+  before_action :ensure_format
   # ---------------------------------------------------------------------------
 
 

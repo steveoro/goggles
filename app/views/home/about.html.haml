@@ -1,87 +1,78 @@
-.row-fluid
+.col-xs-12
   - # What's Goggles?!?
   = render( partial: 'what_is_goggles' )
-%hr
 
-.accordion#accordionShw
+.col-xs-12
+  %hr
+
+.accordion
   .accordion-group
     .accordion-heading
-      %a.accordion-toggle{'data-toggle' => 'collapse', 'data-parent' => '#accordionshw', :href => '#collapseShw'}
-        %h3#headerShw{'data-toggle' => 'tooltip', 'title' => I18n.t(:detail_show_tooltip)}= I18n.t( :tech_deployment_details )
-    .accordion-body.collapse#collapseShw
+      %h3= I18n.t( :tech_deployment_details )
+    .accordion-body
       .accordion-inner
-        .row-fluid
-          .span6
-            .row-fluid
-              %h3
-                Versioning:
-            .row-fluid
-              .span6
-                %h4
-                  Internal Framework version:
-              .span6
-                %b= h( GogglesCore::AppConstants::WEB_FRAMEWORK_VERSION ) if defined? GogglesCore::AppConstants::WEB_FRAMEWORK_VERSION
-            .row-fluid
-              .span6
-                = "#{ GogglesCore::AppConstants::WEB_APP_NAME } application, version:"
-              .span6
-                %b= h( @versioning.send(AppParameter::PARAM_APP_NAME_FIELD) )
-                = show_tag( @versioning.a_bool, "time.png" )
-            .row-fluid
-              .span6
-                = "#{ GogglesCore::AppConstants::WEB_APP_NAME } database framework, vers.:"
-              .span6
-                %b= h( @versioning.send(AppParameter::PARAM_DB_VERSION_FIELD) )
-            .row-fluid
-              .span6
-                Build date:
-              .span6
-                = h Format.a_datetime( @versioning.send( @versioning.respond_to?('updated_on') ? 'updated_on' : 'updated_at' ) )
-            .row-fluid
-              .span6
-                Running environment:
-              .span6
-                %i
-                  %b= h( "Rack: #{ENV['RACK_ENV'] }" ) if defined? ENV
-            .row-fluid
-              .offset6.span6
-                %i
-                  %b= h( "Rails: #{ENV['RAILS_ENV'] }" ) if defined? ENV
-            .row-fluid
-              .offset6.span6
-                %i
-                  %b= h( "#{ENV['HOSTNAME'] } (#{ENV['CPU'] }, #{ENV['MACHTYPE'] })" ) if defined? ENV
-            %br
-            .row-fluid
-              .span2
+        .col-xs-12
+          %h3
+            Versioning:
+        .col-xs-12
+          .row
+            .col-xs-6
+              %h4
+                Internal Framework version:
+            .col-xs-6
+              %b= h( GogglesCore::AppConstants::WEB_FRAMEWORK_VERSION ) if defined? GogglesCore::AppConstants::WEB_FRAMEWORK_VERSION
+          .row
+            .col-xs-6
+              = "#{ GogglesCore::AppConstants::WEB_APP_NAME } application, version:"
+            .col-xs-6
+              %b= h( @versioning.send(AppParameter::PARAM_APP_NAME_FIELD) )
+              = show_tag( @versioning.a_bool, "time.png" )
+          .row
+            .col-xs-6
+              = "#{ GogglesCore::AppConstants::WEB_APP_NAME } database framework, vers.:"
+            .col-xs-6
+              %b= h( @versioning.send(AppParameter::PARAM_DB_VERSION_FIELD) )
+          .row
+            .col-xs-6
+              Build date:
+            .col-xs-6
+              = h Format.a_datetime( @versioning.send( @versioning.respond_to?('updated_on') ? 'updated_on' : 'updated_at' ) )
+          .row
+            .col-xs-6
+              Running environment:
+            .col-xs-6
+              %i
+                %b= h( "Rack: #{ENV['RACK_ENV'] }" ) if defined? ENV
+          .row
+            .col-xs-offset-6.col-xs-6
+              %i
+                %b= h( "Rails: #{ENV['RAILS_ENV'] }" ) if defined? ENV
+          .row
+            .col-xs-offset-6.col-xs-6
+              %i
+                %b= h( "#{ENV['HOSTNAME'] } (#{ENV['CPU'] }, #{ENV['MACHTYPE'] })" ) if defined? ENV
+          %br
+          .row
+            .col-xs-2
+              %a{ href: "http://www.rubyonrails.org/" }
+                = image_tag( 'rails.png', height: '32', alt: 'Rails Logo' )
+            .col-xs-10
+              %p
+                Developed by Stefano Alloro, using
                 %a{ href: "http://www.rubyonrails.org/" }
-                  = image_tag( 'rails.png', height: '32', alt: 'Rails Logo' )
-              .span10
-                %p
-                  Developed by Stefano Alloro, using
-                  %a{ href: "http://www.rubyonrails.org/" }
-                    Ruby On Rails
-                  = '(vers. ' + h( RAILS_GEM_VERSION ) + ')' if defined? RAILS_GEM_VERSION
-                %p
-                  AgeX Framework structure (p) 2006-2013,
-                  = image_tag( 'fasar_logo_1.png', size: '256x32', alt: 'FASAR Software' )
-            %br
-            .row-fluid
-              %h3
-                Core extensions:
-            .row-fluid
-              .span2
-                %a{ href: "http://rubyreports.org/" }
-                  = image_tag( 'ruport.png', size: '96x48', alt: 'Ruport' )
-              .span10
-                %p
-                  RubyReports, a ruby gem library for easy(er) reporting.
-            %br
-          .offset6
-            .row-fluid.offset6.span6
-              %h3
-                Installed Gems:
-            .row-fluid.offset6.span6
-              %ul
-                - @gem_info.each do |row|
-                  %li= row
+                  Ruby On Rails
+                = '(vers. ' + h( RAILS_GEM_VERSION ) + ')' if defined? RAILS_GEM_VERSION
+              %p
+                AgeX Framework structure (p) 2006-2013,
+                = image_tag( 'fasar_logo_1.png', size: '256x32', alt: 'FASAR Software' )
+          %br
+
+        -# The following is left here just for debugging purposes:
+        -#.col-xs-offset-6
+        -#  .row.col-xs-offset-6.col-xs-6
+        -#    %h3
+        -#      Installed Gems:
+        -#  .row.col-xs-offset-6.col-xs-6
+        -#    %ul
+        -#      - @gem_info.each do |row|
+        -#        %li= row

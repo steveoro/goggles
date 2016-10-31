@@ -1,9 +1,11 @@
-.row-fluid
-  .span3
+.row
+  .col-xs-4
     = link_to_user_training_stories()
-  .span2
+  .col-xs-2
     = link_to_user_training_story_show( @user_training_story )
 
-%h3= @title
+.row.col-xs-12
+  &nbsp;
 
+%h3= @title
 = render partial: 'form'

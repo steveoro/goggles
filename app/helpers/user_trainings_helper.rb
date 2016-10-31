@@ -4,15 +4,15 @@
 # Assorted helpers for clickable links rendering.
 #
 # @author   Steve A.
-# @version  4.00.451
+# @version  6.003
 #
 module UserTrainingsHelper
 
   # Returns the HTML for the UserTrainingController#index() action.
   #
   def link_to_user_trainings()
-    link_to( user_trainings_path() ) do
-      image_tag('page_find.png') << I18n.t(:back_to_index_view)
+    link_to( user_trainings_path(), class: 'btn btn-default' ) do
+      image_tag('page_find.png') << "&nbsp; #{ I18n.t(:back_to_index_view) }".html_safe
     end
   end
 
@@ -24,8 +24,8 @@ module UserTrainingsHelper
   # Does not return anything if the user_training is nil.
   #
   def link_to_user_training_show( user_training )
-    link_to( user_training_path(id: user_training.id) ) do
-      image_tag('page_go.png') << " #{I18n.t(:show)}"
+    link_to( user_training_path(id: user_training.id), class: 'btn btn-default' ) do
+      image_tag('page_go.png') << "&nbsp; #{I18n.t(:show)}".html_safe
     end if user_training && check_user_training_visibility_for( user_training )
   end
 
@@ -53,8 +53,8 @@ module UserTrainingsHelper
   # Assumes user_training is a valid UserTraining instance.
   #
   def link_to_user_training_printout( user_training )
-    link_to( user_training_printout_path(id: user_training.id) ) do
-      image_tag('page_white_acrobat.png') << " PDF" # Too long for grid: I18n.t('agex_action.download_pdf')
+    link_to( user_training_printout_path(id: user_training.id), class: 'btn btn-default' ) do
+      image_tag('page_white_acrobat.png') << "&nbsp; PDF".html_safe # Too long for grid: I18n.t('agex_action.download_pdf')
     end if check_user_training_visibility_for( user_training )
   end
 
@@ -68,7 +68,8 @@ module UserTrainingsHelper
     link_to(
       user_training_duplicate_path(id: user_training.id),
       method: :post,
-      confirm: I18n.t('netzke.basepack.grid_panel.are_you_sure')
+      confirm: I18n.t('netzke.basepack.grid_panel.are_you_sure'),
+      class: 'btn btn-default'
     ) do
       I18n.t(:duplicate)
     end if check_user_training_visibility_for( user_training )
@@ -85,7 +86,8 @@ module UserTrainingsHelper
       I18n.t('user_trainings.create_user_story'),
       user_training_create_user_story_path(id: user_training.id),
       method: :post,
-      confirm: I18n.t('user_trainings.create_user_story_ask_confirm')
+      confirm: I18n.t('user_trainings.create_user_story_ask_confirm'),
+      class: 'btn btn-default'
     ) if check_user_training_visibility_for( user_training )
   end
 
@@ -97,8 +99,8 @@ module UserTrainingsHelper
   # Assumes user_training is a valid UserTraining instance.
   #
   def link_to_user_training_edit( user_training )
-    link_to( edit_user_training_path(id: user_training.id) ) do
-      image_tag('page_edit.png') << " #{I18n.t(:edit)}"
+    link_to( edit_user_training_path(id: user_training.id), class: 'btn btn-default' ) do
+      image_tag('page_edit.png') << "&nbsp; #{I18n.t(:edit)}".html_safe
     end if check_user_training_ownership_for( user_training )
   end
 
@@ -114,7 +116,8 @@ module UserTrainingsHelper
       I18n.t(:delete),
       user_training_path(id: user_training.id),
       method: :delete,
-      confirm: I18n.t('netzke.basepack.grid_panel.are_you_sure')
+      confirm: I18n.t('netzke.basepack.grid_panel.are_you_sure'),
+      class: 'btn btn-default'
     ) if check_user_training_ownership_for( user_training )
   end
   #-- -------------------------------------------------------------------------

@@ -1,11 +1,11 @@
-.row-fluid
-  .span2.goggles-training
+.row
+  .col-xs-2.goggles-training
     - if previous_step != fields[1] 
       %pre
         = "#{fields[1] } "
         - if fields[2].to_i > 0
           = "(#{ Timing.to_minute_string(fields[2]) })" 
-  .span1.goggles-div-rightalign.goggles-training
+  .col-xs-1.goggles-div-rightalign.goggles-training
     %pre= fields[3]
-  .span7.goggles-training
+  .col-xs-7.goggles-training
     %pre= fields[4]

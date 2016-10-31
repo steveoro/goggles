@@ -1,80 +1,132 @@
-.accordion#accordionFlt
-  .accordion-group
-    .accordion-inner
-      .accordion-heading
-        %h3= @title
-    .accordion-body
-      .accordion-inner
-        = form_tag( :records_for_swimmer, remote: true, method: :get, class: 'form-horizontal', onsubmit: "$('#loadingIndicator').show();") do
-          .row-fluid
-            .control-group
-              = label_tag( :swimmer, I18n.t('activerecord.models.swimmer'), for: :swimmer, class: 'control-label' )
-              .controls
-                .ui-widget
-                  = hidden_field( :swimmer, :id )
-                  = text_field_tag( :swimmer_name, nil, {autocomplete: 'off', class: "input-xlarge typeahead",  |
-                      "data-provide"=>"typeahead", placeholder: I18n.t('combobox_3char_tooltip')} )        |
-          .row-fluid
-            .controls
-              = submit_tag( I18n.t(:submit), data: { disable_with: I18n.t(:please_wait), class: 'btn disabled' }, class: 'btn' )
-              %span(id='loadingIndicator' hidden='true')
-                = image_tag( 'indicator.gif' )
+.container
+  .row.col-xs-12
+    .goggles-div-centeralign
+      %h3= @title
+  .row.col-xs-12
+    = form_tag( :records_for_swimmer, remote: true, method: :get, class: 'form-horizontal', onsubmit: "$('#loadingIndicator').show();") do
+      .row.col-xs-12.form-group
+        .col-xs-3
+          = label_tag( :swimmer, I18n.t('activerecord.models.swimmer'), for: :swimmer, class: 'control-label' )
+        .col-xs-8
+          = hidden_field( :swimmer, :id )
+          = text_field_tag( :swimmer_name, nil, {autocomplete: 'off', class: "input-lg typeahead",  |
+              "data-provide"=>"typeahead", placeholder: I18n.t('combobox_3char_tooltip')} )             |
+      .row.col-xs-12.form-group
+        .col-xs-5
+          = submit_tag( I18n.t(:submit), data: { disable_with: I18n.t(:please_wait), class: 'btn disabled' }, class: 'btn btn-primary' )
+          %span(id='loadingIndicator' hidden='true')
+            = image_tag( 'indicator.gif' )
 
 #records_4x_grid
+%p/
 
 :javascript
-  /* Lopk-up function for IDs stored in the list of result objects */
-  function lookupIdInResultListByName( name, resultList ) {
-    for ( var j = 0; j < resultList.length; j++ ) {
-      if ( resultList[j].complete_name.match( name ) )
-        return resultList[j].id;
-    }
-    return -1;
+  /**
+   * AJAX response buffer.
+   * Stores the actual array of objects returned by the AJAX request.
+   */
+  var responseSwimmerNamesBuffer = [];
+
+  /**
+   * Datum tokenizer for the Bloodhound suggestion engine.
+   * Returns the datum tokenized into a comparable string.
+   */
+  function tokenizeSwimmerName( datum ) {
+    // Extract just the name part:
+    // DEBUG
+    //console.log( "tokenizeSwimmerName datum splitted: ", detokenizeSwimmerName(datum) );
+    return Bloodhound.tokenizers.obj.whitespace( detokenizeSwimmerName(datum)[0] );
   }
 
+  /**
+   * De-tokenizer for composed results.
+   * Splits a specified datum using '|' as separator.
+   * Returns an array of string tokens, in which, allegedly, the order should be:
+   * 1. Swimmer#complete_name
+   * 2. Swimmer#year_of_birth (as a string number)
+   * 3. remote Swimmer ID (as a string number)
+   */
+  function detokenizeSwimmerName( datum ) {
+    return datum.split("|");
+  }
+
+  /**
+   * Remote response adapter for the Bloodhound suggestion engine.
+   * It is expected to return a list of tokenized names, ready to be compared/matched.
+   */
+  function transformSwimmerNamesResponse( data ) {
+    // DEBUG
+    console.log( "transformSwimmerNamesResponse response: ", data );
+    // Clear & rebuild the result list and the list of searchable names:
+    responseSwimmerNamesBuffer = [];
+
+    // Since we're bound to return a list of tokenized & comparable strings,
+    // we'll store the additional data to display into the same result row,
+    // concatenated with a pipe (which is surely not used for a name).
+    for ( idx = 0; idx < data.length; idx++ ) {
+      var composedName = data[idx].complete_name + "|" +
+                         data[idx].year_of_birth + "|" + data[idx].id;
+      responseSwimmerNamesBuffer.push( composedName );
+    };
+    // DEBUG
+    //console.log( "responseSwimmerNamesBuffer:", responseSwimmerNamesBuffer );
+    return responseSwimmerNamesBuffer;
+  }
+
+  /**
+   * Bloodhound suggestion engine setup.
+   */
+  var suggestedSwimmerNames = new Bloodhound({
+    datumTokenizer: tokenizeSwimmerName,
+    queryTokenizer: Bloodhound.tokenizers.whitespace,
+    // Assuming datum is a JSON-ified instance of swimmer, this should return its ID:
+    //identify: function( datum ){ return datum.id; },
+    remote: {
+      url:       "#{ api_v1_swimmers_path( q: 'QUERY') }",
+      wildcard:  'QUERY',
+      transform: transformSwimmerNamesResponse
+    }
+  });
+
   // (Wait for the page to be ready)
-  $(function() {
-    var resultList = [];
-
+  $( function() {
     // Define the typeahead callback handlers:
-    $( ".typeahead" ).typeahead({
-      items:     20,
-      minLength: 3,
-
-      source: function( queryText, processResults ) {
-        // DEBUG
-        //console.log( "get Ajax swimmers queryText: ", queryText );
-        return $.get(
-          "#{ api_v1_swimmers_path() }",
-          { q: queryText },
-          function (data) {
-            // DEBUG
-          	//console.log( "returning data:", data );
-            // Clear & rebuild the result list and the list of searchable names:
-            resultList = [];
-            var searchables = [];
-            for ( idx = 0; idx < data.length; idx++ ) {
-              var verboseName = data[idx].complete_name + " (" + data[idx].year_of_birth + ")";
-              resultList.push({ id: data[idx].id, complete_name: verboseName });
-              searchables.push( verboseName );
-            };
-            // DEBUG
-            //console.log( "resultList:", resultList );
-            //console.log( "searchables:", searchables );
-            return processResults( searchables );
-        });
+    $( "#swimmer_name" ).typeahead(
+      {
+        minLength: 3,
+        highlight: true
       },
-
-      updater: function( matchedText ) {
+      {
+        name:   'swimmer-names',
+        // This is just for the displaying limit for the menu, not the actual returned results:
+        limit:  10,
+        asynch: true,
+        source: suggestedSwimmerNames,
+        // Displayable value for selections:
+        display: function( datum ) {
+          // Combine the individual tokens into a displayable value:
+          var tokens = detokenizeSwimmerName( datum );
+          var namePart = tokens[0];
+          var yearPart = tokens[1];
+          return namePart + ' (' + yearPart + ')';
+        },
+        templates: {
+          suggestion: function( datum ) {
+            var tokens = detokenizeSwimmerName( datum );
+            // DEBUG
+            //console.log('tokens: ', tokens);
+            return '<div>' + tokens[0] + '&nbsp;<i>(' + tokens[1] + ')</i></div>'
+          }
+        }
+      }
+    ).bind('typeahead:select', function( ev, suggestion ) {
         // DEBUG
-        //console.log( "getChosenSwimmer matchedText: ", matchedText );
-        //console.log( this.$element.context.id );
-        // Extract just the name part (brakets will mess up with Regexp.match
-        var remote_id = lookupIdInResultListByName( matchedText.split("(")[0], resultList );
+        //console.log('Selection: ', suggestion);
+        // Extract the ID part from the combined string:
+        var remote_id = detokenizeSwimmerName( suggestion )[2];
+        // DEBUG
         //console.log( "remote_id: ", remote_id );
         $("#swimmer_id").val( remote_id );
-        return matchedText;
       }
-    });
-
+    );
   });

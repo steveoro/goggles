@@ -1,18 +1,18 @@
 = render( partial: 'tabs_and_radio_title' )
 
-.row-fluid#goggle_cup_all_of_fame_grid
+.col-xs-12.table-responsive#goggle_cup_all_of_fame_grid
   %table.table.table-striped.table-bordered.table-hover.table-condensed
     %tbody
       %tr{'class'=>'info'}
-        %td
+        %td.text-center
           %b= I18n.t('activerecord.models.goggle_cup')
-        %td{'colspan'=>'2'}
+        %td.text-center{'colspan'=>'2'}
           = image_tag('medal_gold_3.png')
-          %b= I18n.t('goggle_cup.winner')          
-        %td{'colspan'=>'2'}
+          %b= I18n.t('goggle_cup.winner')
+        %td.text-center{'colspan'=>'2'}
           = image_tag('medal_silver_3.png')
           %b= I18n.t('goggle_cup.second_placed')
-        %td{'colspan'=>'2'}
+        %td.text-center{'colspan'=>'2'}
           = image_tag('medal_bronze_3.png')
           %b= I18n.t('goggle_cup.third_placed')
       - @closed_goggle_cup.each do |goggle_cup_rank|
@@ -22,13 +22,15 @@
           %td
             %b= goggle_cup_rank[:first].decorate.get_linked_swimmer_name
           %td.goggles-rightalign
-            %b= sprintf( "%02.2f", goggle_cup_rank[:first_points] )             
+            %b= sprintf( "%02.2f", goggle_cup_rank[:first_points] )
           %td
             = goggle_cup_rank[:second].decorate.get_linked_swimmer_name
           %td.goggles-rightalign
-            = sprintf( "%02.2f", goggle_cup_rank[:second_points] )             
+            = sprintf( "%02.2f", goggle_cup_rank[:second_points] )
           %td
             = goggle_cup_rank[:third].decorate.get_linked_swimmer_name
           %td.goggles-rightalign
-            = sprintf( "%02.2f", goggle_cup_rank[:third_points] )             
-    
+            = sprintf( "%02.2f", goggle_cup_rank[:third_points] )
+
+.col-xs-12
+  &nbsp;

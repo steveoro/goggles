@@ -8,24 +8,26 @@ require 'wrappers/timing'
 
 = SwimmersController
 
-  - version:  4.00.535
+  - version:  6.002
   - author:   Steve A., Leega
 
 =end
 class SwimmersController < ApplicationController
 
   # Require authorization before invoking any of this controller's actions:
-  before_filter :authenticate_user_from_token!, except: [:index, :radio]
-  before_filter :authenticate_user!, except: [:index, :radio] # Devise HTTP log-in strategy
+#  before_action :authenticate_user_from_token!, except: [:index, :radio]
+  before_action :authenticate_user!, except: [:index, :radio] # Devise HTTP log-in strategy
   # Parse parameters:
-  before_filter :verify_parameter, except: [:index]
-  before_filter :find_last_updated_mir, except: [:index, :trainings]
+  before_action :verify_parameter, except: [:index]
+  before_action :find_last_updated_mir, except: [:index, :trainings]
   #-- -------------------------------------------------------------------------
   #++
 
   # Index/Search action
   #
   def index
+    # [Steve, 20161001] We need to whitelist all parameters for the search query:
+    params.permit!()
     @title = I18n.t('swimmers.search_swimmers')
     @swimmers_grid = initialize_grid(
       Swimmer,
@@ -127,6 +129,8 @@ class SwimmersController < ApplicationController
   #++
 
 
+# FIXME / TODO REMOVE THIS, SINCE IT'S NOT USED ANYMORE (route has been commented-out too)
+
   # Radiography for a specified swimmer id: "Records" tab rendering
   #
   # == Params:
@@ -134,45 +138,45 @@ class SwimmersController < ApplicationController
   #
   # TODO Show the record held by swimmer summary
   #
-  def records
-    # --- "Medals" tab: ---
-    @tab_title = I18n.t('radiography.records_tab')
-    @tot_season_records_for_this_swimmer = 0
-    @seasonal_record_collection = []
-
-    # TODO Until we'll have finished FIN import this scan will be used
-    # for CSI only.
-    # FIXME this has not been tested yet:
-    #all_championships_records = MeetingIndividualResult.includes(
-    #  :season, :event_type, :category_type, :gender_type, :pool_type
-    #).is_valid.select(
-    #  'seasons.id, meeting_program_id, swimmer_id, min(minutes*6000 + seconds*100 + hundreds) as timing, event_types.code, category_types.code, gender_types.code, pool_types.code'
-    #).group(
-    #  'seasons.id, event_types.code, category_types.code, gender_types.code, pool_types.code'
-    #)
-                                                    # Filter all_championships_records and find out how many records this swimmer still holds (if any)
-    # FIXME this has not been tested yet:
-    #all_championships_records.each{ | mir |
-    #  @tot_season_records_for_this_swimmer += 1 if (mir.swimmer_id == @swimmer.id)
-    #}
-
-    @swimmer.season_types.uniq.each do |season_type|
-      # Creates an hash for seasonal medals
-      seasonal_records = Hash.new
-      seasonal_records[:season_type] = season_type.get_full_name
-      seasonal_records[:tot_season_records] = 0
-
-      # FIXME this has not been tested yet:
-      #all_championships_records.each{ | mir |
-      #  if mir.season_type && (mir.swimmer_id == @swimmer.id) && (mir.season_type.id == season_type.id)
-      #    seasonal_medals[:tot_season_records] += 1
-      #  end
-      #}
-      @seasonal_record_collection << seasonal_records
-    end
-  end
-  #-- -------------------------------------------------------------------------
-  #++
+  # def records
+    # # --- "Medals" tab: ---
+    # @tab_title = I18n.t('radiography.records_tab')
+    # @tot_season_records_for_this_swimmer = 0
+    # @seasonal_record_collection = []
+#
+    # # TODO Until we'll have finished FIN import this scan will be used
+    # # for CSI only.
+    # # FIXME this has not been tested yet:
+    # #all_championships_records = MeetingIndividualResult.includes(
+    # #  :season, :event_type, :category_type, :gender_type, :pool_type
+    # #).is_valid.select(
+    # #  'seasons.id, meeting_program_id, swimmer_id, min(minutes*6000 + seconds*100 + hundreds) as timing, event_types.code, category_types.code, gender_types.code, pool_types.code'
+    # #).group(
+    # #  'seasons.id, event_types.code, category_types.code, gender_types.code, pool_types.code'
+    # #)
+                                                    # # Filter all_championships_records and find out how many records this swimmer still holds (if any)
+    # # FIXME this has not been tested yet:
+    # #all_championships_records.each{ | mir |
+    # #  @tot_season_records_for_this_swimmer += 1 if (mir.swimmer_id == @swimmer.id)
+    # #}
+#
+    # @swimmer.season_types.uniq.each do |season_type|
+      # # Creates an hash for seasonal medals
+      # seasonal_records = Hash.new
+      # seasonal_records[:season_type] = season_type.get_full_name
+      # seasonal_records[:tot_season_records] = 0
+#
+      # # FIXME this has not been tested yet:
+      # #all_championships_records.each{ | mir |
+      # #  if mir.season_type && (mir.swimmer_id == @swimmer.id) && (mir.season_type.id == season_type.id)
+      # #    seasonal_medals[:tot_season_records] += 1
+      # #  end
+      # #}
+      # @seasonal_record_collection << seasonal_records
+    # end
+  # end
+  # #-- -------------------------------------------------------------------------
+  # #++
 
 
   # Radiography for a specified swimmer id: "Best timings" tab rendering
@@ -339,37 +343,38 @@ class SwimmersController < ApplicationController
       results_by_time = @swimmer.meeting_individual_results
         .for_event_by_pool_type( events_by_pool_type )
         .sort_by_timing( 'ASC' )
-        .select([
+        .select(
             'meeting_individual_results.id', 'minutes', 'seconds', 'hundreds', 'rank',
             'standard_points', 'reaction_time', 'meeting_program_id',
             'is_personal_best'
-        ])
+        )
       # This is used only for the graphs:
       results_by_date = @swimmer.meeting_individual_results
-        .is_valid
-        .sort_by_date( 'ASC' )
+        .is_valid.sort_by_date( 'ASC' )
         .for_event_by_pool_type( events_by_pool_type )
-        .select([
+        .select(
             'meeting_individual_results.id', 'minutes', 'seconds', 'hundreds', 'rank',
             'standard_points', 'reaction_time', 'meeting_program_id',
             'is_personal_best'
-        ])
+        )
 
       # If has results collect passages and prepares hash for index table
-      if results_by_time.count > 0
+      # [Steve, 20160929] If we use #count here below, instead of #size, ActiveRecord will try
+      # to convert results_by_time.count into a query and this will yield an error. Stick with #size here:
+      if results_by_time.size > 0
         # Collect all passages
         passages = Passage.joins( :event_type, :pool_type, :passage_type )
           .where( swimmer_id: @swimmer.id )
           .where( ['event_types.id = ? AND pool_types.id = ?', events_by_pool_type.event_type_id, events_by_pool_type.pool_type_id] )
-          .select([
+          .select(
             'meeting_individual_result_id', 'passage_type_id',
-            'minutes', 'seconds', 'hundreds'
-          ])
-          .select( 'passage_types.length_in_meters' )
+            'minutes', 'seconds', 'hundreds',
+            'passage_types.length_in_meters'
+          )
 
         # Collects the passage list
         passages_list = passages.select( 'passage_types.length_in_meters' )
-          .map{ |pt| pt.length_in_meters }.uniq.sort
+            .map{ |pt| pt.length_in_meters }.uniq.sort
 
         # Adds the event type in the hash index table
         stroke_type_code = events_by_pool_type.stroke_type_code
@@ -437,24 +442,32 @@ class SwimmersController < ApplicationController
   # == Params:
   # id: the swimmer id to be processed
   #
+  # header_year: typically nil, it's a current date override for when checking
+  #      for @swimmer badges in current season (mainly used only inside specs
+  #      to test a couple of edge conditions)
+  #
   def supermaster
-    unless ( @swimmer.has_badge_for_season_and_year? )
-      flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to(:back) and return
+    params.permit! # (No unsafe params can be passed)
+    unless ( @swimmer.has_badge_for_season_and_year?( params['header_year'].to_i ) )
+      flash[:error] = I18n.t('swimmers.no_associated_badge_found')
+      redirect_back( fallback_location: swimmers_path ) and return
     end
 
     # --- "Supermaster" tab: ---
     @tab_title        = I18n.t('supermaster.supermaster')
     @season_type      = SeasonType.find_by_code('MASFIN')
-    @header_year      = Season.build_header_year_from_date
+    @header_year      = params['header_year'].to_i || Season.build_header_year_from_date
     @badge            = @swimmer.badges.for_season_type( @season_type ).for_year( @header_year ).first
     @season           = @badge.season
     @team             = @badge.team
-    @team_affiliation = @team.get_current_affiliation( @season_type )
-    @meetings         = @badge.meetings.sort_by_date.uniq
-
+    # Check for overrides
+    @team_affiliation = if params['header_year'].present?
+      @team.team_affiliations.for_season_type( @season_type ).for_year( @header_year ).first
+    else
+      @team.get_current_affiliation( @season_type )
+    end
+    @meetings = @badge.meetings.sort_by_date.distinct
     @sssc = SwimmerSeasonalScoreCalculator.new( @swimmer, @season )
-
     @meeting_individual_results = @sssc.get_results
   end
 
@@ -468,12 +481,12 @@ class SwimmersController < ApplicationController
   # id: the swimmer id to be processed
   # goggle_cup_id: the goggle_cup id to be processed
   #
-  # TODO Verify if better using the same view for current and closed
+  # TODO Verify if it's better using the same view for current and closed
   def closed_goggle_cup
     # --- "Closed Goggle cup" tab (not shown): ---
     unless ( params[:goggle_cup_id] ) && GoggleCup.exists?( params[:goggle_cup_id].to_i )
       flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to(:back) and return
+      redirect_back( fallback_location: swimmers_path ) and return
     end
 
     @tab_title = I18n.t('radiography.goggle_cup_closed')
@@ -567,8 +580,8 @@ class SwimmersController < ApplicationController
       @last_week[:avg_100_meters]       = @last_week[:avg_duration] / ( @last_week[:avg_distance] / 100 ) if @last_week[:avg_distance].to_i > 0
       @last_training[:avg_100_meters]   = @last_training[:duration] / ( @last_training[:distance] / 100 ) if @last_training[:distance].to_i > 0
     else
-      flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to(:back) and return
+      flash[:error] = I18n.t('swimmers.no_associated_goggler_found')
+      redirect_back( fallback_location: swimmers_path ) and return
     end
   end
   #-- -------------------------------------------------------------------------
@@ -589,7 +602,7 @@ class SwimmersController < ApplicationController
     set_swimmer
     unless ( @swimmer )
       flash[:error] = I18n.t(:invalid_action_request)
-      redirect_to(:back) and return
+      redirect_back( fallback_location: root_path ) and return
     end
     set_goggle_cups
   end
@@ -623,4 +636,30 @@ class SwimmersController < ApplicationController
     end
     @goggle_cups_tab_title = @goggle_cups.size == 1 ? @goggle_cups.first.description : I18n.t('radiography.goggle_cup_current')
   end
+
+
+  # Strong parameters checking.
+  # Returns the whitelisted, filtered params Hash.
+  def passage_params
+    params
+      .permit(
+        :user_id,
+        :passage_type_id,
+        :swimmer_id,
+        :team_id,
+        :meeting_program_id,
+        :meeting_entry_id,
+        :meeting_individual_result_id,
+        :minutes_from_start, :seconds_from_start, :hundreds_from_start,
+        :is_native_from_start,
+        :reaction_time, :position,
+        :minutes, :seconds, :hundreds,
+        :breath_number, :stroke_cycles,
+        :not_swam_part_seconds,
+        :not_swam_part_hundreds,
+        :not_swam_kick_number
+      )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 end

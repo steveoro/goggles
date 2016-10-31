@@ -9,18 +9,18 @@
     - if ( group_pause == 0 && group_s_r > 0 )
       - group_p_sr = Timing.to_formatted_start_and_rest( group_s_r )
 
-.row-fluid
+.row
   - fields = TrainingRowDecorator.decorate(group_hash[:datarows][0]).to_array()
-  .span2.goggles-training
+  .col-xs-2.goggles-training
     - if previous_step != fields[1] 
       %pre= "#{fields[1] }"
-  .span1.goggles-div-rightalign.goggles-training
+  .col-xs-1.goggles-div-rightalign.goggles-training
     %pre= "#{group_hash[:times] }x("
-  .span1.goggles-div-rightalign.goggles-training
+  .col-xs-1.goggles-div-rightalign.goggles-training
     %pre= fields[3]
-  .span6.goggles-training
+  .col-xs-6.goggles-training
     %pre= fields[4]  
-  .span2.goggles-training
+  .col-xs-2.goggles-training
     - if (group_hash[:datarows].count > 1)
       %pre= '+'  
     - else
@@ -29,14 +29,14 @@
 - group_hash[:datarows].each_with_index do |row,index|
   - if index > 0
     - fields = TrainingRowDecorator.decorate(row).to_array()
-    .row-fluid
-      .span2.goggles-training
-      .span1.goggles-training
-      .span1.goggles-div-rightalign.goggles-training
+    .row
+      .col-xs-2.goggles-training
+      .col-xs-1.goggles-training
+      .col-xs-1.goggles-div-rightalign.goggles-training
         %pre= fields[3]
-      .span6.goggles-training
+      .col-xs-6.goggles-training
         %pre= fields[4]  
-      .span2.goggles-training
+      .col-xs-2.goggles-training
         - if index < (group_hash[:datarows].count - 1)
           %pre= '+'  
         - else

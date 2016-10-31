@@ -3,30 +3,80 @@
  * Add here all the required style overrides.
  */
 
+/* ----- Offcanvas/Jasny menu style/overrides ----- */
+html, body {
+    height: 100%;
+}
+
+body {
+    padding: 50px 0 0 0;
+}
+
+.navmenu {
+    width: 250px;
+}
+
+.navbar-toggle {
+    float: left;
+    margin-left: 15px;
+}
+
+@media (min-width: 0) {
+    .navbar-toggle {
+        display: block; /* force showing the toggle */
+    }
+}
+
+@media (min-width: 992px) {
+    body {
+        padding: 0;
+    }
+    .navbar {
+        right: auto;
+        background: none;
+        border: none;
+  }
+}
+
+
+
 /* ----- Bootstrap overrides ----- */
 select, textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
     border-radius: 4px;
     color: #555555;
     display: inline-block;
+/* [Steve, 20161006] These values are not mobile-friendly:
     font-size: 12px;
     height: 16px;
     line-height: 16px;
+ */
     margin-left: 8px;
     margin-top: 0px;
     margin-bottom: 0px;
     padding: 2px;
     vertical-align: middle;
 }
+
 select, input[type="file"] {
+/* [Steve, 20161006] These values are not mobile-friendly:
     height: 22px;
+*/
     line-height: 20px;
 }
 
-.hero-unit {
-    height: 100px;
-    padding: 20px 30px;
-    margin-bottom: 15px;
+
+/* Bottom-side nav legend (#show_full & other very long views) */
+ul.navpill_side {
+    line-height: 1em;
+    font-size: 14px;
+    padding: 2px;
 }
+ul.navpill_side>li>a {
+    padding: 5px;
+    text-decoration: none;
+    text-align: center;
+}
+
 
 .ui-autocomplete {
 	max-height: 218px;
@@ -40,6 +90,11 @@ select, input[type="file"] {
 	height: 28px;
 	line-height: 1.2em;
 }
+
+.input-mini {
+    width:80px;
+}
+
 .input-micro {
     width:25px;
 }

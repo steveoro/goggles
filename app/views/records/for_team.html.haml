@@ -1,29 +1,134 @@
-.accordion#accordionFlt
-  .accordion-group
-    .accordion-inner
-      .accordion-heading
-        %h3= @title
-    .accordion-body
-      .accordion-inner
-        = form_tag( :records_for_team, remote: true, method: :get, class: 'form-horizontal', onsubmit: "$('#loadingIndicator').show();") do
-          .row-fluid
-            .control-group
-              #tooltipLabel= label_tag( :team, I18n.t('activerecord.models.team'), for: :team, class: 'control-label' )
-              .controls
-                .ui-widget
-                  = hidden_field( :team, :id )
-                  = text_field_tag( :team_name, nil, {autocomplete: 'off', class: "input-xlarge typeahead",  |
-                      "data-provide"=>"typeahead", placeholder: I18n.t('combobox_3char_tooltip')} )          |
-          .row-fluid
-            .controls
-              = submit_tag( I18n.t(:submit), data: { disable_with: I18n.t(:please_wait), class: 'btn disabled' }, class: 'btn' )
-              %span(id='loadingIndicator' hidden='true')
-                = image_tag( 'indicator.gif' )
+.container
+  .row.col-xs-12
+    .goggles-div-centeralign
+      %h3= @title
+  .row.col-xs-12
+    = form_tag( :records_for_team, remote: true, method: :get, class: 'form-horizontal', onsubmit: "$('#loadingIndicator').show();") do
+      .row.col-xs-12.form-group
+        .col-xs-3
+          = label_tag( :team, I18n.t('activerecord.models.team'), for: :team, class: 'control-label' )
+        .col-xs-8
+          = hidden_field( :team, :id )
+          = text_field_tag( :team_name, nil, {autocomplete: 'off', class: "input-lg typeahead",  |
+              "data-provide"=>"typeahead", placeholder: I18n.t('combobox_3char_tooltip')} )      |
+      .row.col-xs-12.form-group
+        .col-xs-5
+          = submit_tag( I18n.t(:submit), data: { disable_with: I18n.t(:please_wait), class: 'btn disabled' }, class: 'btn btn-primary' )
+          %span(id='loadingIndicator' hidden='true')
+            = image_tag( 'indicator.gif' )
+
 #records_4x_grid
+%p/
 
 :javascript
+  /**
+   * AJAX response buffer.
+   * Stores the actual array of objects returned by the AJAX request.
+   */
+  var responseTeamNamesBuffer = [];
+
+  /**
+   * Datum tokenizer for the Bloodhound suggestion engine.
+   * Returns the datum tokenized into a comparable string.
+   */
+  function tokenizeTeamName( datum ) {
+    // Extract just the name part:
+    // DEBUG
+    //console.log( "tokenizeTeamName datum splitted: ", detokenizeTeamName(datum) );
+    return Bloodhound.tokenizers.obj.whitespace( detokenizeTeamName(datum)[0] );
+  }
+
+  /**
+   * De-tokenizer for composed results.
+   * Splits a specified datum using '|' as separator.
+   * Returns an array of string tokens, in which, allegedly, the order should be:
+   * 1. Team#name
+   * 2. remote Team ID (as a string number)
+   */
+  function detokenizeTeamName( datum ) {
+    return datum.split("|");
+  }
+
+  /**
+   * Remote response adapter for the Bloodhound suggestion engine.
+   * It is expected to return a list of tokenized names, ready to be compared/matched.
+   */
+  function transformTeamNamesResponse( data ) {
+    // DEBUG
+    console.log( "transformTeamNamesResponse response: ", data );
+    // Clear & rebuild the result list and the list of searchable names:
+    responseTeamNamesBuffer = [];
+
+    // Since we're bound to return a list of tokenized & comparable strings,
+    // we'll store the additional data to display into the same result row,
+    // concatenated with a pipe (which is surely not used for a name).
+    for ( idx = 0; idx < data.length; idx++ ) {
+      var composedName = data[idx].name + "|" + data[idx].id;
+      responseTeamNamesBuffer.push( composedName );
+    };
+    // DEBUG
+    //console.log( "responseTeamNamesBuffer:", responseTeamNamesBuffer );
+    return responseTeamNamesBuffer;
+  }
+
+  /**
+   * Bloodhound suggestion engine setup.
+   */
+  var suggestedTeamNames = new Bloodhound({
+    datumTokenizer: tokenizeTeamName,
+    queryTokenizer: Bloodhound.tokenizers.whitespace,
+    remote: {
+      url:       "#{ api_v1_teams_path( q: 'QUERY') }",
+      wildcard:  'QUERY',
+      transform: transformTeamNamesResponse
+    }
+  });
+
+  // (Wait for the page to be ready)
+  $( function() {
+    // Define the typeahead callback handlers:
+    $( "#team_name" ).typeahead(
+      {
+        minLength: 3,
+        highlight: true
+      },
+      {
+        name:   'team-names',
+        // This is just for the displaying limit for the menu, not the actual returned results:
+        limit:  10,
+        asynch: true,
+        source: suggestedTeamNames,
+        // Displayable value for selections:
+        display: function( datum ) {
+          // Extract the displayable value from the individual tokens:
+          var tokens = detokenizeTeamName( datum );
+          return tokens[0];
+        },
+        templates: {
+          suggestion: function( datum ) {
+            var tokens = detokenizeTeamName( datum );
+            // DEBUG
+            //console.log('tokens: ', tokens);
+            return '<div>' + tokens[0] + '</div>'
+          }
+        }
+      }
+    ).bind('typeahead:select', function( ev, suggestion ) {
+        // DEBUG
+        //console.log('Selection: ', suggestion);
+        // Extract the ID part from the combined string:
+        var remote_id = detokenizeTeamName( suggestion )[1];
+        // DEBUG
+        //console.log( "remote_id: ", remote_id );
+        $("#team_id").val( remote_id );
+      }
+    );
+  });
+
+
+
   /* Lopk-up function for IDs stored in the list of result objects */
-  function lookupIdInResultListByName( name, resultList ) {
+  function lookupIdInResultListByTeamName( name, resultList ) {
     for ( var j = 0; j < resultList.length; j++ ) {
       if ( resultList[j].name.match( name ) )
         return resultList[j].id;
@@ -32,17 +137,17 @@
   }
 
   // (Wait for the page to be ready)
-  $(function() {
+  document.addEventListener("turbolinks:load", function() {
     var resultList = [];
 
     // Define the typeahead callback handlers:
-    $( ".typeahead" ).typeahead({
+    $( "#team_name" ).typeahead({
       items:     20,
       minLength: 3,
 
       source: function( queryText, processResults ) {
         // DEBUG
-        //console.log( "get Ajax swimmers queryText: ", queryText );
+        //console.log( "get Ajax teams queryText: ", queryText );
         return $.get(
           "#{ api_v1_teams_path() }",
           { q: queryText },
@@ -65,8 +170,8 @@
 
       updater: function( matchedText ) {
         // DEBUG
-        //console.log( "getChosenSwimmer matchedText: ", matchedText );
-        var remote_id = lookupIdInResultListByName( matchedText, resultList );
+        //console.log( "getChosenTeam matchedText: ", matchedText );
+        var remote_id = lookupIdInResultListByTeamName( matchedText, resultList );
         //console.log( "remote_id: ", remote_id );
         $("#team_id").val( remote_id );
         return matchedText;

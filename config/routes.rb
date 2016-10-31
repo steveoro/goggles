@@ -1,36 +1,32 @@
-Goggles::Application.routes.draw do
+Rails.application.routes.draw do
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
-  mount GogglesCore::Engine => "/"
-# FIXME
-  devise_for :users
-#  devise_for :controllers => { :sessions => "Sessions" } # [Steve, 20140401] Custom controller for additional customization (OmniAuth, ...)
+  mount GogglesCore::Engine => "home#index"
 
   # [Steve, 20130716] Root's route required by Devise:
-  root :to => "home#index", locale: /en|it/
+  root to: "home#index", locale: /en|it/
+
+  get "/(:locale)", locale: /en|it/, to: "home#index"
 
   scope "/" do
     scope "(:locale)", locale: /en|it/ do
       # === Home ===
-      match "wip",                              to: "home#wip"
-      match "about",                            to: "home#about"
-      match "contact_us",                       to: "home#contact_us"
-      match "maintenance",                      to: "home#maintenance"
-      match "tutorials",                        to: "home#tutorials"
+      match "wip",                              to: "home#wip",           via: :get,    as: "home_wip"
+      match "about",                            to: "home#about",         via: :get,    as: "home_about"
+      match "contact_us",                       to: "home#contact_us",    via: :get,    as: "home_contact_us"
+      match "maintenance",                      to: "home#maintenance",   via: :get,    as: "home_maintenance"
+      match "tutorials",                        to: "home#tutorials",     via: :get,    as: "home_tutorials"
 
       # === Socials ===
       # A user associates himself/herself with a swimmer:
-      match "associate",                        to: "socials#associate",  via: [:get, :post]
-      match "dissociate",                       to: "socials#dissociate", via: :post
-
+      match "socials/associate",                to: "socials#associate",  via: [:get, :post]
+      post "socials/dissociate",                to: "socials#dissociate"
       # A user temporary skips the requested association with a swimmer:
       post "social/skip_associate",             to: "socials#skip_associate",           as: "social_skip_associate"
-
       # A user confirms or unconfirms another user's association with a swimmer:
       post "social/association_confirm/:id",    to: "socials#association_confirm",      as: "social_association_confirm"
       post "social/association_unconfirm/:id",  to: "socials#association_unconfirm",    as: "social_association_unconfirm"
-
       # Any user can manage his/her swimming buddies:
       get  "socials/show_all",                  to: "socials#show_all"
       match "social/invite/:id",                to: "socials#invite",                   as: "social_invite", via: [:get, :post]
@@ -71,19 +67,22 @@ Goggles::Application.routes.draw do
       get  "records/for_season_type",           to: "records#for_season_type"
       get  "records/for_team",                  to: "records#for_team"
       get  "records/for_swimmer",               to: "records#for_swimmer"
-      # FIXME
-      get  "records/show_for_team",             to: "records#show_for_team"
-      get  "records/for_personal_best",         to: "records#for_personal_best"
+# FIXME this has not been used yet: (both view & action are removed or missing) -- check it out and then remove it, if everything is ok
+#      get  "records/show_for_team",             to: "records#show_for_team"
+# FIXME this has not been used yet: (view removed or missing) -- check it out and then remove it, if everything is ok
+#      get  "records/for_personal_best",         to: "records#for_personal_best"
 
       # === Swimmers ===
       get  "swimmers/index",                    as: "swimmers"
       get  "swimmer/radio/:id",                 to: "swimmers#radio",                   as: "swimmer_radio"
       get  "swimmer/medals/:id",                to: "swimmers#medals",                  as: "swimmer_medals"
+# FIXME this has not been used yet: (view removed or missing) -- check it out and then remove it, if everything is ok
+#      get  "swimmer/records/:id",               to: "swimmers#records",                 as: "swimmer_records"
       get  "swimmer/best_timings/:id",          to: "swimmers#best_timings",            as: "swimmer_best_timings"
       get  "swimmer/full_history_1/:id",        to: "swimmers#full_history_1",          as: "swimmer_full_history_1"
       get  "swimmer/full_history_2/:id",        to: "swimmers#full_history_2",          as: "swimmer_full_history_2"
       get  "swimmer/current_goggle_cup/:id",    to: "swimmers#current_goggle_cup",      as: "swimmer_current_goggle_cup"
-      get  "swimmer/sumpermaster/:id",          to: "swimmers#supermaster",             as: "swimmer_supermaster"
+      get  "swimmer/supermaster/:id",           to: "swimmers#supermaster",             as: "swimmer_supermaster"
       get  "swimmer/trainings/:id",             to: "swimmers#trainings",               as: "swimmer_trainings"
       get  "swimmer/closed_goggle_cup/:id",     to: "swimmers#closed_goggle_cup",       as: "swimmer_closed_goggle_cup"
 
@@ -94,7 +93,7 @@ Goggles::Application.routes.draw do
       get  "teams/best_timings/:id",            to: "teams#best_timings",               as: "team_best_timings"
       get  "teams/count_meetings/:id",          to: "teams#count_meetings",             as: "team_count_meetings"
       get  "teams/count_results/:id",           to: "teams#count_results",              as: "team_count_results"
-      get  "teams/count_details/:id",           to: "teams#count_details",              as: "team_count_results"
+      get  "teams/count_details/:id",           to: "teams#count_details",              as: "team_count_details"
       get  "teams/palmares/:id",                to: "teams#palmares",                   as: "team_palmares"
       get  "teams/goggle_cup/:id",              to: "teams#goggle_cup",                 as: "team_goggle_cup"
       get  "teams/goggle_cup_all_of_fame/:id",  to: "teams#goggle_cup_all_of_fame",     as: "team_goggle_cup_all_of_fame"
@@ -210,6 +209,10 @@ Goggles::Application.routes.draw do
       get    "swimmers/index",                to: "swimmers#index",         as: "swimmers"
       get    "swimmers/show/:id",             to: "swimmers#show",          as: "swimmer_show"
 
+      # === SwimmingPools ===
+      get    "swimming_pools/index",          to: "swimming_pools#index",   as: "swimming_pools"
+      get    "swimming_pools/show/:id",       to: "swimming_pools#show",    as: "swimming_pool_show"
+
       # === Teams ===
       get    "team/count_meetings/:id",       to: "teams#count_meetings",   as: "team_count_meetings"
       get    "team/count_results/:id",        to: "teams#count_results",    as: "team_count_results"
@@ -226,14 +229,19 @@ Goggles::Application.routes.draw do
       # TODO extract and enlist only the actual routes used:
       resources :user_trainings, except: [:new]
       resources :user_training_stories, except: [:new]
-#      resource :passages, except: [:new, :create]
+      resources :passages, except: [:new]
 #      match "passages/create", to: "passages#create", via: :post
     end
   end
 
-
+  # FIXME Wildcard route NOT working anymore w/ Rails 5:
   # Wildcard route to match all the remaining possibilities:
-  match "*path", to: "exceptions#render_error"
+#  match "*path", to: "exceptions#render_error"
+
+  # TODO TEST THESE 2 and customize the error pages:
+#  match "/404",  to: "exceptions#error_page", via: :all
+#  match "/500",  to: "exceptions#error_page", via: :all
+#  match "*path", to: "exceptions#error_page", via: :all
 
   # Sample of regular route:
   #   match 'products/:id' => 'catalog#view'
@@ -254,5 +262,7 @@ Goggles::Application.routes.draw do
   # Any other routes are handled here (since in Rails 3 ActionDispatch prevents
   # RoutingError from hitting ApplicationController::rescue_action).
   # In other words, this wildcard route will catch all the other cases:
-#  match "*path", to: "application#routing_error", via: [:get, :post, :put, :delete, :patch]
+#  unless Rails.application.config.consider_all_requests_local
+#    match "*path", to: "exceptions#error_page" #, via: :all #[:get, :post, :put, :delete, :patch]
+#  end
 end

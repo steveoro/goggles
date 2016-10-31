@@ -1,11 +1,13 @@
 #
 # RESTful API controller
 #
-class Api::V1::TrainingsController < ApplicationController
+class Api::V1::TrainingsController < Api::BaseController
 
   respond_to :json
 
-  before_filter :ensure_format
+  # Require authorization before invoking any of this controller's actions:
+  before_action :authenticate_user_from_token!
+  before_action :ensure_format
   #-- -------------------------------------------------------------------------
   #++
 
@@ -23,9 +25,9 @@ class Api::V1::TrainingsController < ApplicationController
       @trainings = Training.where( ["title LIKE ?", filter] )
           .order( 'updated_at DESC', 'title' )
     else
-      @trainings = Training.order( :title )
+      @trainings = Training.order( :title ).all
     end
-    respond_with( @trainings )
+    render status: 200, json: @trainings
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -37,7 +39,7 @@ class Api::V1::TrainingsController < ApplicationController
   # - id: the Training.id
   #
   def show
-    respond_with( @training = Training.find(params[:id]) )
+    render status: 200, json: Training.find(params[:id])
   end
   #-- -------------------------------------------------------------------------
   #++

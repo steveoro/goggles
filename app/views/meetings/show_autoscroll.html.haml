@@ -1,13 +1,10 @@
 %script
   new WOW().init();
 - # *** KEEP THIS PAGE UNCACHED! ***
-- # Preloader mask:
-#preloader
-  #load
 
 = render( partial: 'meeting_header' )
-.row-fluid
-  .span12
+.row
+  .col-xs-12
     = render( partial: 'full_results_grid' )
 
 :javascript
@@ -19,21 +16,28 @@
   var iBorderDelay = 4300;
 
   function loopingScroll() {
-      var speedChange = false;
-      yPos += iSpeed;
-      window.scroll(0, yPos);
-      // Bottom of the page reached?
-      if ( (window.innerHeight + window.scrollY) >= document.body.scrollHeight) {
-          speedChange = true;
-          setTimeout( function(){ window.scroll(0, 0); }, iDelay );
-          setTimeout( function(){ yPos = 0; }, iDelay );
-      }
-      if ( speedChange == true ) {
-          speedChange = false;
-          tTimer = setTimeout("loopingScroll()", iBorderDelay);
-      }
-      else {
-          tTimer = setTimeout("loopingScroll()", 10);
+      /* [Steve, 20161010] With TurboLinks 5, each JS snippet gets inserted into
+       * the main page, which does never change.
+       * This is to prevent autoscroll from being executed if the current
+         location does need autoscroll at all.
+       */
+      if ( document.location.pathname.match('autoscroll') != null ) {
+        var speedChange = false;
+        yPos += iSpeed;
+        window.scroll(0, yPos);
+        // Bottom of the page reached?
+        if ( (window.innerHeight + window.scrollY) >= document.body.scrollHeight) {
+            speedChange = true;
+            setTimeout( function(){ window.scroll(0, 0); }, iDelay );
+            setTimeout( function(){ yPos = 0; }, iDelay );
+        }
+        if ( speedChange == true ) {
+            speedChange = false;
+            tTimer = setTimeout("loopingScroll()", iBorderDelay);
+        }
+        else {
+            tTimer = setTimeout("loopingScroll()", 10);
+        }
       }
   }
 

@@ -5,7 +5,7 @@
 #    end
 
     g.blank_slate do
-        content_tag( :div, t(:no_data_found), class: 'well' )
+        content_tag( :div, t('meeting.no_records_matching_search_text'), class: 'well' )
     end
 
     g.column(
@@ -42,7 +42,7 @@
     g.column(
         name: I18n.t('meeting_calendar.pool_type'),
         attribute: 'pool_type_id',
-        assoc: :swimming_pool,
+        assoc: :swimming_pools,
         custom_filter: PoolType.only_for_meetings.to_dropdown,
         detach_with_id: :flt_pool_type
     ) do |meeting|
@@ -51,22 +51,27 @@
     end
 
     g.column(
-        name: I18n.t('meeting_calendar.scheduled_date'),
-        attribute: 'header_date',
+        name: I18n.t('date_from_to'),
+        attribute: 'scheduled_date',
+        assoc: :meeting_sessions,
+        filter_type: :jquery_datepicker,
         detach_with_id: :flt_entry_header_date
     ) do |meeting|
-    	session_date_list = []
-    	session_date = ''
-        meeting.get_session_dates.split("\r\n").each do |scheduled_date|
-          if session_date != scheduled_date
-          	session_date_list << scheduled_date
-            session_date = scheduled_date
-          else
-          	session_date_list << ''
-          end
-        end
-        session_date_list.join('<br><br>').html_safe
+        meeting.meeting_sessions.sort_by_order.first.scheduled_date.to_s(:db)
     end
+#    ) do |meeting|
+#    	session_date_list = []
+#    	session_date = ''
+#        meeting.get_session_dates.split("\r\n").each do |scheduled_date|
+#          if session_date != scheduled_date
+#          	session_date_list << scheduled_date
+#            session_date = scheduled_date
+#          else
+#          	session_date_list << ''
+#          end
+#        end
+#        session_date_list.join('<br><br>').html_safe
+#    end
 
     g.column(
         name: I18n.t('meeting_calendar.meeting_program'),

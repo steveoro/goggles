@@ -1,6 +1,28 @@
+# encoding: utf-8
+
+
+=begin
+
+= Api::V1::SessionsController
+
+  - version:  1.00.00
+  - author:   Steve A.
+
+  Override/upgrade for Devise::SessionsController
+
+  Allows session creation/destruction via API session tokens using the simple_token_authentication gem.
+
+=end
 class Api::V1::SessionsController < Devise::SessionsController
+  # define which model will act as token authenticatable
+  acts_as_token_authentication_handler_for User
+
+  # Prevent CSRF attacks by raising an exception.
+  # For APIs, you may want to use :null_session instead.
+  protect_from_forgery with: :null_session
 
   respond_to :json
+  skip_before_action :verify_authenticity_token, if: :json_request?
 
 
   # Log-in parameter retrieval & log-in for an API session.
@@ -59,7 +81,9 @@ class Api::V1::SessionsController < Devise::SessionsController
     # Authentication
     if user
       if user.valid_password?( password )
-        user.reset_authentication_token!
+        # FIXME was: user.reset_authentication_token!
+#        user.authentication_token = nil
+#        user.save!
         sign_in( user )
         render(
           status: :ok,    # 200 status code
@@ -116,6 +140,12 @@ class Api::V1::SessionsController < Devise::SessionsController
 
 
   private
+
+
+  # Returns true if the request format is JSON
+  def json_request?
+    request.format.json?
+  end
 
 
   # Override for Devise::SessionController#respond_to_on_destroy, since here we

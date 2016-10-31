@@ -4,85 +4,116 @@ if RUBY_VERSION =~ /1.9/
 end
 source 'https://rubygems.org'
 
-gem "rails", "3.2.22.2"
+# Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
+gem 'rails', '~> 5.0.0', '>= 5.0.0.1'
 
-gem "mysql2", "~> 0.3.11"
+gem 'mysql2'
+gem 'activerecord-session_store' # Needed to include a DB-based session store in Rails 4+
 
-
-# Gems used only for assets and not required
-# in production environments by default.
-group :assets do
-  gem 'sass-rails',   '~> 3.2.3'
-  gem 'coffee-rails', '~> 3.2.1'
-
-  # See https://github.com/sstephenson/execjs#readme for more supported runtimes
-  # gem 'therubyracer', :platforms => :ruby
-
-  gem 'uglifier', '>= 1.0.3'
-end
-
-gem 'jquery-rails'
-gem 'jquery-ui-rails'
-gem 'jquery_datepicker'
-
-gem "json"
-gem "haml", "~> 4.0.5"
-
-gem "goggles_core", git: "git://github.com/steveoro/goggles_core.git"
-
+# Use Puma as the app server
+gem 'puma', '~> 3.0'
+# Use SCSS for stylesheets
+gem 'sass-rails', '~> 5.0'
+# Use Uglifier as compressor for JavaScript assets
+gem 'uglifier', '>= 1.3.0'
+# Use CoffeeScript for .coffee assets and views
+gem 'coffee-rails', '~> 4.2'
+# See https://github.com/rails/execjs#readme for more supported runtimes
 gem 'execjs'
-gem 'therubyracer'
+gem 'therubyracer', platforms: :ruby
 # gem 'therubyrhino', platforms: :ruby
 
-gem "syck"                              # old-skool YAML interpreter used by some of our gems
-gem 'safe_yaml'
+# [Steve, 20161005] Font Awesome is used by WiceGrid instead of the old icons:
+gem 'font-awesome-rails'
+
+# Use jquery as the JavaScript library
+gem 'jquery-rails'
+gem 'jquery-ui-rails'
+
+# Turbolinks makes navigating your web application faster. Read more: https://github.com/turbolinks/turbolinks
+gem 'turbolinks', '~> 5'
+gem 'jquery-turbolinks'
+
+# Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
+gem 'jbuilder', '~> 2.5'
+# Use Redis adapter to run Action Cable in production
+# gem 'redis', '~> 3.0'
+# Use ActiveModel has_secure_password
+# gem 'bcrypt', '~> 3.1.7'
+
+gem "json"
+gem "haml-rails"
+
+# XXX When using ssh key use the protocol below:
+#gem "goggles_core", git: "git@github.com:steveoro/goggles_core", branch: "rails5"
+gem "goggles_core", git: "https://github.com/steveoro/goggles_core", branch: "rails5"
+
+# XXX [Steve, 20160920] DO NOT USE SafeYAML. Too many issues w/ ActiveRecord,
+# Guard & DelayedJob (See https://github.com/dtao/safe_yaml#known-issues).
+
                                         # [Steve, 20130801] Navigation gems for rendering menus & breadcrumbs:
 gem "simple-navigation"
 gem 'simple-navigation-bootstrap'
 
-gem "wice_grid"
+gem "wice_grid", git: "https://github.com/fasar-sw/wice_grid", branch: "rails5"
+# (original master is located at /leikind/wice_grid)
 
 # [Steve] Customized version. For Facebook-like friendship management
-gem "amistad", git: "git://github.com/fasar-sw/amistad.git", branch: "version5"
-gem "ruport",  git: "git://github.com/ruport/ruport.git", branch: "ruby19-compat"
+# XXX When using ssh key use the protocol below:
+#gem "amistad", git: "git@github.com:fasar-sw/amistad", branch: "rails5"
+gem "amistad", git: "https://github.com/fasar-sw/amistad", branch: "rails5"
 gem 'acts_as_reportable'
-gem 'prawn', '~> 0.15'
+gem 'prawn', '~> 2.1'
+gem 'prawn-table'
+
+# [Steve, 20130412] Custom Documatic version (used for Ooo exports):
+# XXX When using ssh key use the protocol below:
+#gem 'documatic', git: "git@github.com:fasar-sw/documatic"
+gem 'documatic', git: "https://github.com/fasar-sw/documatic"
 
 gem 'country_select'
 gem 'simple_form'
 gem "cocoon"
 gem "nokogiri"                                      # Used for HTML DOCModel easy tampering
-                                                    # [Steve, 20130412] Custom Documatic version (used for Ooo exports):
-gem 'documatic', git: "git://github.com/fasar-sw/documatic.git"
 gem 'generator'
 gem 'zip'
-gem 'rubyzip', :require => 'zip/zip'
+gem 'rubyzip', require: 'zip/zip'
 
 gem 'rubocop', require: false                       # [Steve] For style checking
 
 
 group :development do
-  gem "better_errors", '~> 1.1.0'
+  gem "better_errors" #, '~> 1.1.0'
   gem "binding_of_caller"
   gem 'rails_best_practices'
   gem 'guard'
   gem 'guard-rspec'
   gem 'guard-shell'
 #  gem 'rspec_api_blueprint', require: false
-#  gem "airbrussh", :require => false
+#  gem "airbrussh", require: false
 
   # Although Capistrano + seed_dump are strictly development-related gems,
   # including them into the test environment also allows Semaphore CI to
   # perform automated deployment from a test build without changing the current
   # Rails environment.
-  gem 'capistrano',  '~> 3.4'                       # Deploy with Capistrano
+  gem 'capistrano',  '~> 3.6'
   gem 'capistrano-rvm'
-  gem 'capistrano-bundler' #, '~> 1.1.2'
-  gem 'capistrano-rails' #, '~> 1.1'
+  gem 'capistrano-bundler'
+  gem 'capistrano-rails'
   gem 'capistrano-passenger'
-  gem 'seed_dump', '~> 0.5.3'                       # [Steve, 20130926] Version greater than this one are ment only for Rails 4!!
-end
+  # [Steve, 20160919] Do we still need the following one anymore? Really?
+#  gem 'seed_dump' #, '~> 0.5.3'                       # [Steve, 20130926] Version greater than this one are ment only for Rails 4!!
 
+  # Access an IRB console on exception pages or by using <%= console %> anywhere in the code.
+  gem 'web-console'
+  gem 'listen', '~> 3.0.5'
+
+  # [Steve, 20160919] Spring disabled, since we're already using Zeus:
+  # Spring speeds up development by keeping your application running in the background.
+  # Read more: https://github.com/rails/spring
+#  gem 'spring'
+#  gem 'spring-watcher-listen', '~> 2.0.0'
+end
 
 group :development, :test do
   gem "rspec"
@@ -95,6 +126,9 @@ group :development, :test do
   # FIXME not working on Leega workstation:
 #  gem 'capybara-webkit'                             # Headless browser simulation (faster) => Capybara.current_driver = :webkit
   gem "letter_opener"
+
+  # Call 'byebug' anywhere in the code to stop execution and get a debugger console
+  gem 'byebug', platform: :mri
 end
 
 
@@ -112,9 +146,14 @@ group :test do
   gem 'simplecov', require: false
   gem "codeclimate-test-reporter", require: false   # [Steve, 20140321] CI/Test coverage via local test run
   gem 'coveralls', require: false                   # [Steve, 20140312] Uses simplecov to obtain test-coverage badge
-
   gem 'pullreview-coverage', require: false         # [Steve, 20160801] Updated coverage by PullReview
+
+  # FIXME High-priority: remove usage of 'assigns' & 'render_template' in tests
+  gem 'rails-controller-testing'
 end
 
 # To use debugger
 # gem 'ruby-debug'
+
+# Windows does not include zoneinfo files, so bundle the tzinfo-data gem
+gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]

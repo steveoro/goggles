@@ -10,14 +10,13 @@ require 'swimming_pool_finder'
 #
 # R/O RESTful API controller
 #
-class Api::V1::SearchController < ApplicationController
+class Api::V1::SearchController < Api::BaseController
 
   respond_to :json
 
   # Require authorization before invoking any of this controller's actions:
-  before_filter :authenticate_user_from_token!
-  before_filter :authenticate_user!                # Devise "standard" HTTP log-in strategy
-  before_filter :ensure_format
+  before_action :authenticate_user_from_token!
+  before_action :ensure_format
   #-- -------------------------------------------------------------------------
   #++
 
@@ -59,7 +58,7 @@ class Api::V1::SearchController < ApplicationController
     # Get all meetings somehow related to the query text:
     get_possible_meetings( params[:query] )
 
-    respond_with( @result )
+    render status: 200, json: @result
   end
   #-- -------------------------------------------------------------------------
   #++

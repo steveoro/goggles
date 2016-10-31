@@ -1,56 +1,59 @@
 %section.home-section#what_can_i_do
-  .container-fluid
-    .fluid-row.span12
+  .container
+    .row.col-xs-12
       .section-heading.text-center
         .wow.bounceInDown( data-wow-delay="0.5s" )
           %h2= t('tutorial.what_can_i_do')
         %p.wow.bounceInUp( data-wow-delay="0.5s" )
           = t('tutorial.what_can_i_do_text.line0')
 
-  .container-fluid
-    .fluid-row.span12
-      .span6.wow.flipInX( data-wow-delay="1.5s" )
+  .container
+    .row.col-xs-12
+      .col-xs-12.wow.flipInX( data-wow-delay="1.5s" )
         %p= t('tutorial.what_can_i_do_text.line1')
         %p= t('tutorial.what_can_i_do_text.line2')
+      .col-xs-12.wow.lightSpeedIn( data-wow-delay="1s" )
+        %p= image_tag( "tutorial/show_full.png", class: "img-responsive img-rounded")
+      .col-xs-12.wow.flipInX( data-wow-delay="1.5s" )
         %p= t('tutorial.what_can_i_do_text.line3')
         %p= t('tutorial.what_can_i_do_text.line4')
-      .span6.wow.lightSpeedIn( data-wow-delay="1s" )
-        %p= image_tag( "tutorial/show_full.png")
 
-    .fluid-row.span12
-      .span6.wow.lightSpeedIn( data-wow-delay="1s" )
-        %p= image_tag( "tutorial/passages.jpg")
-      .span6.wow.flipInX( data-wow-delay="1.5s" )
+    .row.col-xs-12
+      .col-xs-12.wow.lightSpeedIn( data-wow-delay="1s" )
+        %p= image_tag( "tutorial/passages.jpg", class: "img-responsive img-rounded")
+      .col-xs-12.wow.flipInX( data-wow-delay="1.5s" )
         %p= t('tutorial.what_can_i_do_text.line5')
         %p= t('tutorial.what_can_i_do_text.line6')
 
-    .fluid-row.span12
-      .span6.wow.flipInX( data-wow-delay="1.5s" )
+    .row.col-xs-12
+      .col-xs-12.wow.flipInX( data-wow-delay="1.5s" )
         %p= t('tutorial.what_can_i_do_text.line7')
         %p= t('tutorial.what_can_i_do_text.line8')
+      .col-xs-12.wow.lightSpeedIn( data-wow-delay="1s" )
+        %p= image_tag( "tutorial/performances.png", class: "img-responsive img-rounded")
+      .col-xs-12.wow.flipInX( data-wow-delay="1.5s" )
         %p= t('tutorial.what_can_i_do_text.line9')
-      .span6.wow.lightSpeedIn( data-wow-delay="1s" )
-        %p= image_tag( "tutorial/performances.png")
 
-    .fluid-row.span12
-      .span6.wow.lightSpeedIn( data-wow-delay="1s" )
-        %p= image_tag( "tutorial/team_radio.png")
-      .span6.wow.flipInX( data-wow-delay="1.5s" )
+    .row.col-xs-12
+      .col-xs-12.wow.flipInX( data-wow-delay="1.5s" )
         %p= t('tutorial.what_can_i_do_text.line10')
+      .col-xs-12.wow.lightSpeedIn( data-wow-delay="1s" )
+        %p= image_tag( "tutorial/team_radio.png", class: "img-responsive img-rounded")
+      .col-xs-12.wow.flipInX( data-wow-delay="1.5s" )
         %p= t('tutorial.what_can_i_do_text.line11')
         %p= t('tutorial.what_can_i_do_text.line12')
-    .fluid-row.span12
-      .span6.wow.flipInX( data-wow-delay="1.5s" )
+    .row.col-xs-12
+      .col-xs-12.wow.flipInX( data-wow-delay="1.5s" )
         %p= t('tutorial.what_can_i_do_text.line13')
         %p= t('tutorial.what_can_i_do_text.line14')
-      .span6.wow.lightSpeedIn( data-wow-delay="1s" )
-        %p= image_tag( "tutorial/fin_score_calculation.png")
-    .fluid-row.span12
-      .span6.wow.lightSpeedIn( data-wow-delay="1s" )
-        %p= image_tag( "tutorial/trainings.png")
-      .span6.wow.flipInX( data-wow-delay="1.5s" )
+      .col-xs-12.wow.lightSpeedIn( data-wow-delay="1s" )
+        %p= image_tag( "tutorial/fin_score_calculation.png", class: "img-responsive img-rounded")
+    .row.col-xs-12
+      .col-xs-12.wow.flipInX( data-wow-delay="1.5s" )
         %p= t('tutorial.what_can_i_do_text.line15')
-    .fluid-row.span12
-      .wow.flipInX( data-wow-delay="1.5s" )
         %p= t('tutorial.what_can_i_do_text.line16')
+      .col-xs-12.wow.lightSpeedIn( data-wow-delay="1s" )
+        %p= image_tag( "tutorial/trainings.png", class: "img-responsive img-rounded")
+    .row.col-xs-12
+      .wow.flipInX( data-wow-delay="1.5s" )
         %p= t('tutorial.what_can_i_do_text.line17')

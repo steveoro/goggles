@@ -1,9 +1,10 @@
-.row-fluid
+.col-xs-12
   .goggles-category-gap{ 'id' => "#{gender_type.code}#{pool_type.code}" }
     %h3
       = "#{gender_type.i18n_short}, #{pool_type.i18n_short}"
-      %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
-.row-fluid
+      = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+        = image_tag('bullet_arrow_up.png')
+.col-xs-12.table-responsive
   %table.table.table-striped.table-bordered.table-hover.table-condensed
     %tbody
       %tr{'class'=>'info'}

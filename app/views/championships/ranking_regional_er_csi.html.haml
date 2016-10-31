@@ -1,68 +1,78 @@
-.row-fluid#regional_er_csi
+.row#regional_er_csi
   .goggles-category-gap#pageTop
     = render( partial: 'regional_er_csi_tabs' )
+  .goggles-category-gap
     = render( partial: 'title' )
     - cache( cache_key_for_meeting( 'team_ranking', @season.id, @ranking_updated_at, @team ? @team.id : 0 ) ) do
       - col_x_meeting = @championship_ranking.columns.count + 1
       - meeting_stats = []
-    
       -# --- Sub-legend for each argument
       .navbar
-        %ul.nav
+        %ul.nav.nav-pills
           - if @season.id != @current_season_id
             %li
-              = link_to( t('championships.back_to_current'), championships_ranking_regional_er_csi_path( id: @current_season_id ), {class: "goggles-nav-compact"})
+              = link_to( t('championships.back_to_current'), championships_ranking_regional_er_csi_path( id: @current_season_id ), {class: "btn"})
           %li
-            %a.goggles-nav-compact(href="#team_ranking")= t('championships.team_ranking')
+            &nbsp;
           %li
-            %a.goggles-nav-compact(href="#team_stats")= t('championships.team_stats')
-        .ghost-divider-vertical
-  
+            = link_to("#team_ranking", {class: 'btn', 'data-turbolinks'=>'false'}) do
+              = t('championships.team_ranking')
+          %li
+            &nbsp;
+          %li
+            = link_to("#team_stats", {class: 'btn', 'data-turbolinks'=>'false'}) do
+              = t('championships.team_stats')
+          .ghost-divider-vertical
+      .goggles-category-gap
+      %br/
       %h3
         = t('championships.team_ranking')
-        %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
-      %table.table.table-striped.table-bordered.table-hover.table-condensed#team_ranking
-        %tbody
-          %tr{'class'=>'info'}
-            %td.goggles-rightalign{ rowspan: 2 }
-              %b= t('championships.position')
-            %td{ rowspan: 2 }
-              %b= t('championships.team')
-            - @championship_ranking.meetings.each do |meeting|
-              %td.goggles-centeralign{ colspan: col_x_meeting }
-                = meeting.decorate.get_linked_city_with_date
-            %td.goggles-rightalign{ rowspan: 2 }
-              %b= t('championships.total_points')
-          %tr{'class'=>'info'}
-            - @championship_ranking.meetings.each do |meeting|
-              - @championship_ranking.columns.each do |column|
-                %td.goggles-rightalign
-                  = t('championships.' + column.to_s)
-              %td.goggles-rightalign
-                = t('championships.meeting_total')
-          - @championship_ranking.team_scores.each_with_index do |team_score,index|
-            %tr
-              %td.goggles-rightalign
-                %b= (index + 1).to_i
-              %td
-                = team_score.team.decorate.get_linked_name
-              - @championship_ranking.meetings.each_with_index do |meeting,index_meeting|
-                - meeting_total = 0
+        = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+          = image_tag('bullet_arrow_up.png')
+      .table-responsive
+        %table.table.table-striped.table-bordered.table-hover.table-condensed#team_ranking
+          %tbody
+            %tr{'class'=>'info'}
+              %td.goggles-rightalign{ rowspan: 2 }
+                %b= t('championships.position')
+              %td{ rowspan: 2 }
+                %b= t('championships.team')
+              - @championship_ranking.meetings.each do |meeting|
+                %td.goggles-centeralign{ colspan: col_x_meeting }
+                  = meeting.decorate.get_linked_city_with_date
+              %td.goggles-rightalign{ rowspan: 2 }
+                %b= t('championships.total_points')
+            %tr{'class'=>'info'}
+              - @championship_ranking.meetings.each do |meeting|
                 - @championship_ranking.columns.each do |column|
                   %td.goggles-rightalign
-                    - if team_score.meetings[index_meeting]
-                      = team_score.meetings[index_meeting][column].to_i
-                      - meeting_total += team_score.meetings[index_meeting][column].to_i
+                    = t('championships.' + column.to_s)
                 %td.goggles-rightalign
-                  %b= meeting_total.to_i
-              %td.goggles-rightalign
-                %b= team_score.total_points.to_i
-          
-      .row-fluid
+                  = t('championships.meeting_total')
+            - @championship_ranking.team_scores.each_with_index do |team_score,index|
+              %tr
+                %td.goggles-rightalign
+                  %b= (index + 1).to_i
+                %td
+                  = team_score.team.decorate.get_linked_name
+                - @championship_ranking.meetings.each_with_index do |meeting,index_meeting|
+                  - meeting_total = 0
+                  - @championship_ranking.columns.each do |column|
+                    %td.goggles-rightalign
+                      - if team_score.meetings[index_meeting]
+                        = team_score.meetings[index_meeting][column].to_i
+                        - meeting_total += team_score.meetings[index_meeting][column].to_i
+                  %td.goggles-rightalign
+                    %b= meeting_total.to_i
+                %td.goggles-rightalign
+                  %b= team_score.total_points.to_i
+      .row
         .goggles-category-gap
           %h3
             = t('championships.team_stats')
-            %a{ href: "#pageTop", 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page') }= image_tag('bullet_arrow_up.png')
+            = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+              = image_tag('bullet_arrow_up.png')
+        .table-responsive
           %table.table.table-striped.table-bordered.table-hover.table-condensed#team_stats
             %tbody
               %tr{'class'=>'info'}
@@ -87,7 +97,7 @@
                   %td
                     = team_score.team.decorate.get_linked_name
                   - meeting_stats.each do |meeting_stat|
-                    - team = meeting_stat.teams.rindex{ |team_stat| team_stat.team == team_score.team } 
+                    - team = meeting_stat.teams.rindex{ |team_stat| team_stat.team == team_score.team }
                     %td.goggles-rightalign
                       - if team
                         = meeting_stat.teams[team].female_swimmers
@@ -108,4 +118,5 @@
                   %td.goggles-rightalign
                     %b= meeting_stat.results_relay_count
 
-      .row-fluid.goggles-category-gap
+      .col-xs-12.goggles-category-gap
+        &nbsp;

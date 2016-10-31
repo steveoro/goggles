@@ -8,7 +8,7 @@ require 'training_printout_layout'
 
 = UserTrainingsController
 
-  - version:  4.00.483
+  - version:  6.002
   - author:   Steve A., Leega
 
 =end
@@ -19,11 +19,10 @@ class UserTrainingsController < ApplicationController
   QUERY_WILDCHAR = '%'
 
   # Require authorization before invoking any of this controller's actions:
-  before_filter :authenticate_user_from_token!
-  before_filter :authenticate_user!                # Devise "standard" HTTP log-in strategy
+  before_action :authenticate_user!                # Devise "standard" HTTP log-in strategy
   # Parse parameters:
-  before_filter :verify_ownership, only: [:edit, :destroy, :update]
-  before_filter :verify_visibility, except: [:index, :edit, :new, :create]
+  before_action :verify_ownership, only: [:edit, :destroy, :update]
+  before_action :verify_visibility, except: [:index, :edit, :new, :create]
   #-- -------------------------------------------------------------------------
   #++
 
@@ -86,6 +85,8 @@ class UserTrainingsController < ApplicationController
   # Index/Search action.
   #
   def index
+    # [Steve, 20161001] We need to whitelist all parameters for the search query:
+    params.permit!()
     @title = I18n.t('user_trainings.index_title')
     @user_trainings_grid = initialize_grid(
       UserTraining.visible_to_user( current_user ),
@@ -94,14 +95,15 @@ class UserTrainingsController < ApplicationController
       order_direction: 'asc',
       per_page: 20
     )
-    flash[:warning] = I18n.t('feature_wip_disclaimer')
   end
 
 
   # Show action.
   #
   def show
-    user_training_rows = @user_training.user_training_rows.includes(:exercise, :training_step_type).all
+    user_training_rows = @user_training.user_training_rows
+        .includes(:exercise, :training_step_type)
+        .all
     @user_training_rows = TrainingRowDecorator.decorate_collection( user_training_rows )
     @title = I18n.t('trainings.show_title').gsub( "{TRAINING_TITLE}", @user_training.description )
     @user_training = TrainingDecorator.decorate( @user_training )
@@ -116,7 +118,6 @@ class UserTrainingsController < ApplicationController
     @user_training = UserTraining.new
     @user_training_max_part_order = 0
     assign_all_options_array()
-    flash[:warning] = I18n.t('feature_wip_disclaimer')
     render :edit
   end
 
@@ -128,7 +129,7 @@ class UserTrainingsController < ApplicationController
     logger.debug "\r\n\r\n!! ------ #{self.class.name} -----"
     logger.debug "> #{params.inspect}\r\n"
     if request.post?
-      @user_training = UserTraining.new( params[:user_training] )
+      @user_training = UserTraining.new( user_training_params )
       @user_training.user_id = current_user.id      # Set the owner for all the records
 
       if @user_training.save
@@ -154,13 +155,12 @@ class UserTrainingsController < ApplicationController
     @training_max_part_order = @user_training.user_training_rows.maximum(:part_order)
     @title = I18n.t('trainings.show_title').gsub( "{TRAINING_TITLE}", @user_training.description )
     assign_all_options_array()
-    flash[:warning] = I18n.t('feature_wip_disclaimer')
   end
 
   # Update action.
   #
   def update
-    if @user_training.update_attributes( params[:user_training] )
+    if @user_training.update_attributes( user_training_params )
       flash[:info] = I18n.t('trainings.training_updated')
       redirect_to( user_training_path(@user_training) )
     else
@@ -191,7 +191,10 @@ class UserTrainingsController < ApplicationController
   #   The id of the Training header; all its details will be retrieved also.
   #
   def printout()
-    user_training_rows = @user_training.user_training_rows.includes(:exercise, :training_step_type).sort_by_part_order.all
+    user_training_rows = @user_training.user_training_rows
+        .includes(:exercise, :training_step_type)
+        .sort_by_part_order
+        .all
     if user_training_rows.size < 1
       flash[:error] = I18n.t(:no_detail_to_process)
       redirect_to( user_trainings_path() ) and return
@@ -202,16 +205,16 @@ class UserTrainingsController < ApplicationController
     base_filename = "#{I18n.t('trainings.training')}_#{@user_training.description}"
     filename = create_unique_filename( base_filename ) + '.pdf'
     options = {
-      :report_title         => title,
-      :meta_info_subject    => 'training model printout',
-      :meta_info_keywords   => "Goggles, #{base_filename}",
-      :header_row           => TrainingDecorator.decorate( @user_training ),
-      :detail_rows          => TrainingRowDecorator.decorate_collection( user_training_rows )
+      report_title:       title,
+      meta_info_subject:  'training model printout',
+      meta_info_keywords: "Goggles, #{base_filename}",
+      header_row:         TrainingDecorator.decorate( @user_training ),
+      detail_rows:        TrainingRowDecorator.decorate_collection( user_training_rows )
     }
     send_data(                                      # == Render layout & send data:
         TrainingPrintoutLayout.render( options ),
-        :type => 'application/pdf',
-        :filename => filename
+        type: 'application/pdf',
+        filename: filename
     )
   end
   #-- -------------------------------------------------------------------------
@@ -291,6 +294,31 @@ class UserTrainingsController < ApplicationController
 
 
   private
+
+
+  # Strong parameters checking for mass-assignment of a UserTraining instance.
+  # Returns the whitelisted, filtered params Hash.
+  def user_training_params
+    params
+      .require( :user_training )
+      .permit(
+        :description,
+        :user_id,
+        user_training_rows_attributes: [
+          :part_order,
+          :group_id, :group_times, :group_start_and_rest, :group_pause,
+          :times, :distance, :start_and_rest, :pause,
+          :user_training_id, :exercise_id, :training_step_type_id,
+          :arm_aux_type_id, :kick_aux_type_id, :body_aux_type_id, :breath_aux_type_id
+        ],
+        user_training_story_attributes: [
+          :swam_date, :total_training_time, :notes,
+          :user_training_id, :swimming_pool_id, :swimmer_level_type_id
+        ]
+      )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Verifies that the user_training id is provided as a parameter

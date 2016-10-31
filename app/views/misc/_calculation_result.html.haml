@@ -1,0 +1,19 @@
+.col-xs-12#calculation_result
+  .col-xs-offset-1.col-xs-10.text-center
+    - if @swimmer_gender && @swimmer_category && @current_event && @current_pool
+      %h3= "#{ @swimmer_gender.i18n_alternate }, #{ @swimmer_category.code }<br />#{ @current_event.i18n_description }, #{ @current_pool.i18n_description }".html_safe
+    - else
+      %h3 ??, ???<br />???, ???
+  .col-xs-offset-2.col-xs-4.text-center
+    %br
+    %h3= "#{ from_value } =>".html_safe
+  - if @current_time_standard # (If this is defined, we should have a result indeed)
+    .col-xs-4.alert-info.text-center
+      %br
+      %h3= result.html_safe
+  - else
+    .col-xs-4.text-center
+      %br
+      %h3.text-warning= t('not_computable')
+  .col-xs-12
+    &nbsp;

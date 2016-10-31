@@ -5,21 +5,36 @@
 
 = ApplicationController
 
-  - version:  4.00.839
+  - version:  6.003
   - author:   Steve A.
 
   Main Application controller.
 =end
 class ApplicationController < ActionController::Base
-  protect_from_forgery
+  protect_from_forgery with: :exception
 
-  before_filter :set_locale, :check_maintenance_mode
+  # Use a custom page for routing errors:
+#  unless Rails.application.config.consider_all_requests_local
+#    rescue_from ActionController::RoutingError,       with: -> { render_404  }
+#    rescue_from ActionController::UnknownController,  with: -> { render_404  }
+#    rescue_from ActiveRecord::RecordNotFound,         with: -> { render_404  }
+#  end
 
-  acts_as_token_authentication_handler_for User
+  before_action :set_locale, :check_maintenance_mode
+  before_action :configure_permitted_parameters, if: :devise_controller?
+
+  # Security note: controllers with no-CSRF protection must disable the Devise fallback,
+  # see #49 for details.
+#  acts_as_token_authentication_handler_for User
+
+#    fallback: :none,
+#    if: ->(controller) { controller.user_token_authenticable? }
+
+  # FIXME Rails5: :authenticate_user! NOT DEFINED YET AT THIS LEVEL
   # [Steve, 20140409] Disabling the auth filters by default will allow us to choose
   # with increased granularity which controllers must be protected:
-  skip_before_filter :authenticate_user_from_token!
-  skip_before_filter :authenticate_user!
+#  skip_before_action :authenticate_user_from_token!
+#  skip_before_action :authenticate_user!
 
 
   # Set the default URL options:
@@ -30,6 +45,37 @@ class ApplicationController < ActionController::Base
 
 
   protected
+
+
+  # Returns true if the current user is defined and the controller does:
+  # - respond to JSON
+  #
+#  def user_token_authenticable?
+#    # This ensure the token can be used only for JSON requests (you may want to enable it for XML too, for example)
+#    return false unless request.format.json?
+#    return false if tokenized_user_identifier.blank?
+
+    # `nil` is still a falsy value, but I want a strictly boolean field here
+#    tokenized_user.try(:token_authenticable?) || false
+#  end
+
+
+  # Devise 4+ "lazy" parameter sanitizer
+  def configure_permitted_parameters
+    devise_parameter_sanitizer.permit(:sign_up, keys: [:name, :first_name, :last_name, :description, :year_of_birth])
+    devise_parameter_sanitizer.permit(:account_update, keys: [:name, :first_name, :last_name, :description, :year_of_birth])
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Render custom 404-error page
+#  def render_404
+#    respond_to do |format|
+#      format.html { render template: 'exceptions/error_page', status: 404 }
+#      format.all { render nothing: true, status: 404 }
+#    end
+#  end
 
 
   # Just logs the specified output message using either WARN or ERROR level logging,
@@ -74,30 +120,6 @@ class ApplicationController < ActionController::Base
   #
   def create_unique_filename( text_value, suffix = DateTime.now.strftime("_%Y%m%d_%H%M") )
     text_value.gsub(/[òàèùçé\^\!\"\'£\$%&?\.\,;:§°<>]/,'').gsub(/[\s|]/,'_').gsub(/[\\\/=]/,'-') + suffix
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-
-
-  # Utility method to localize the column names of a <tt>Ruport::Data::Table</tt> instance,
-  # given the main Model symbol used to scope its localization labels,
-  # and an existing +label_hash+ of already localized text labels (if any).
-  #
-  # == Parameters:
-  # - <tt>ruport_table</tt> => the table with the column names that have to be localized
-  # - <tt>model_sym</tt> => symbol representing the scope of the localization labels (i.e.: <tt>ProjectRow</tt> #=> <tt>:project_row</tt>)
-  # - <tt>label_hash</tt> => the Hash of already localized labels
-  #
-  def localize_ruport_table_column_names( ruport_table, model_sym, label_hash = {} )
-    return unless ruport_table.kind_of?( Ruport::Data::Table ) && label_hash.kind_of?( Hash )
-                                                    # Localize each column name:
-    ruport_table.column_names().each { |col_name|
-      if label_hash.has_key?(col_name.to_sym)
-        ruport_table.rename_column( col_name, label_hash[col_name.to_sym] )
-      else
-        ruport_table.rename_column( col_name, I18n.t( col_name.to_sym, { scope: [model_sym.to_sym] } ) )
-      end
-    }
   end
   #-- -------------------------------------------------------------------------
   #++

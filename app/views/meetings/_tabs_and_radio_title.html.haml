@@ -1,42 +1,22 @@
-.goggles-category-gap#topOfPage
-  %ul.nav.nav-tabs
-    - if @meeting.invitation
-      - is_active = ( params[:action] == 'show_invitation' )
-      %li{ class: is_active ? 'active' : '' }
-        = link_to( t('meeting.invitation'), is_active ? '#' : meeting_show_invitation_path( id: @meeting.id ) )
-    - if @meeting.has_start_list && (!@meeting.are_results_acquired || Date.current() <= @meeting.header_date + 1)
-      - is_active = ( params[:action] == 'show_start_list' )
-      %li{ class: is_active ? 'active' : '' }
-        = link_to( t('meeting.start_list'), is_active ? '#' : meeting_show_start_list_path( id: @meeting.id ) )
-      - is_active = ( params[:action] == 'show_start_list_by_category' )
-      %li{ class: is_active ? 'active' : '' }
-        = link_to( t('meeting.start_list_by_category'), is_active ? '#' : meeting_show_start_list_by_category_path( id: @meeting.id ) )
-      - is_active = ( params[:action] == 'show_team_entries' )
-      - if @team
-        %li{ class: is_active ? 'active' : '' }
-          = link_to( t('meeting.team_entries'), is_active ? '#' : meeting_show_team_entries_path( id: @meeting.id, team_id: @team.id ) )
-      - else
-        %li{ :class => (is_active ? 'active' : 'disabled'), 'data-toggle' => 'tooltip', 'title' => I18n.t(:login_to_view_this_data) }
-          = link_to( t('meeting.team_entries'), '#' )
-    - if @meeting.are_results_acquired
-      - is_active = ( params[:action] == 'show_full' )
-      %li{ class: is_active ? 'active' : '' }
-        = link_to( t(:results), is_active ? '#' : meeting_show_full_path( id: @meeting.id ) )
-      - is_active = ( params[:action] == 'show_ranking' )
-      %li{ class: is_active ? 'active' : '' }
-        = link_to( t(:ranking), is_active ? '#' : meeting_show_ranking_path( id: @meeting.id ) )
-    - if @meeting.are_results_acquired || @meeting.has_start_list
-      - is_active = ( params[:action] == 'show_stats' )
-      %li{ class: is_active ? 'active' : '' }
-        = link_to( t(:stats), is_active ? '#' : meeting_show_stats_path( id: @meeting.id ) )
-    - if @meeting.are_results_acquired
-      - is_active = ( params[:action] == 'show_team_results' )
-      %li{ class: is_active ? 'active' : (@team ? '' : 'disabled') }
-        = link_to( t(:team_results), is_active ? '#' : @team ? meeting_show_team_results_path( id: @meeting.id, team_id: @team.id ) : '#' )
-      - is_active = ( params[:action] == 'show_swimmer_results' )
-      %li{ class: is_active ? 'active' : (@swimmer && @team ? '' : 'disabled') }
-        = link_to(t(:swimmer_results), @swimmer && @team ? meeting_show_swimmer_results_path( id: @meeting.id, team_id: @team.id, swimmer_id: @swimmer.id ) : '#' )
-      - if current_user && current_user.team_managers.count > 0
-        - is_active = ( params[:action] == 'edit_passages' )
-        %li{ class: is_active ? 'active' : '' }
-          = link_to( t('meeting.passages'), is_active ? '#' : meeting_edit_passages_path( id: @meeting.id ) )
+%ul.nav.nav-tabs#pageTop{role: "tablist"}
+  - if @meeting.invitation
+    = show_tab_link( params, 'show_invitation', t('meeting.invitation'), meeting_show_invitation_path( id: @meeting.id ) )
+
+  - if @meeting.has_start_list && (!@meeting.are_results_acquired || Date.current() <= @meeting.header_date + 1)
+    = show_tab_link( params, 'show_start_list', t('meeting.start_list'), meeting_show_start_list_path( id: @meeting.id ) )
+    = show_tab_link( params, 'show_start_list_by_category', t('meeting.start_list_by_category'), meeting_show_start_list_by_category_path( id: @meeting.id ) )
+    = show_tab_link( params, 'show_team_entries', t('meeting.team_entries'), (@team ? meeting_show_team_entries_path(id: @meeting.id, team_id: @team.id) : '#') )
+
+  - if @meeting.are_results_acquired
+    = show_tab_link( params, 'show_full', t('results'), meeting_show_full_path( id: @meeting.id ) )
+    = show_tab_link( params, 'show_ranking', t('ranking'), meeting_show_ranking_path( id: @meeting.id ) )
+
+  - if @meeting.are_results_acquired || @meeting.has_start_list
+    = show_tab_link( params, 'show_stats', t('stats'), meeting_show_stats_path( id: @meeting.id ) )
+
+  - if @meeting.are_results_acquired
+    = show_tab_link( params, 'show_team_results', t('team_results'), (@team ? meeting_show_team_results_path(id: @meeting.id, team_id: @team.id) : '#') )
+    = show_tab_link( params, 'show_swimmer_results', t('swimmer_results'), (@swimmer && @team ? meeting_show_swimmer_results_path(id: @meeting.id, team_id: @team.id, swimmer_id: @swimmer.id) : '#') )
+
+    - if current_user && current_user.team_managers.count > 0
+      = show_tab_link( params, 'edit_passages', t('meeting.passages'), meeting_edit_passages_path( id: @meeting.id ) )

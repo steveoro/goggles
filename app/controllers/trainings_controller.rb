@@ -8,18 +8,17 @@ require 'training_printout_layout'
 
 = TrainingsController
 
-  - version:  4.00.483
+  - version:  6.002
   - author:   Steve A., Leega
 
 =end
 class TrainingsController < ApplicationController
 
   # Require authorization before invoking any of this controller's actions:
-  before_filter :authenticate_user_from_token!
-  before_filter :authenticate_user!                # Devise "standard" HTTP log-in strategy
+  before_action :authenticate_user!                # Devise "standard" HTTP log-in strategy
   # Parse parameters:
-  before_filter :verify_ownership, only: [:edit, :destroy, :update]
-  before_filter :verify_visibility, except: [:index, :new, :create]
+  before_action :verify_ownership, only: [:edit, :destroy, :update]
+  before_action :verify_visibility, except: [:index, :new, :create]
   #-- -------------------------------------------------------------------------
   #++
 
@@ -27,6 +26,8 @@ class TrainingsController < ApplicationController
   # Index/Search action.
   #
   def index
+    # [Steve, 20161001] We need to whitelist all parameters for the search query:
+    params.permit!()
     @title = I18n.t('trainings.index_title')
     @trainings_grid = initialize_grid(
       Training,
@@ -35,7 +36,6 @@ class TrainingsController < ApplicationController
       order_direction: 'asc',
       per_page: 20
     )
-    flash[:warning] = I18n.t('feature_wip_disclaimer')
   end
 
 
@@ -56,7 +56,6 @@ class TrainingsController < ApplicationController
     @training = Training.new
     @training_max_part_order = 0
     assign_all_options_array()
-    flash[:warning] = I18n.t('feature_wip_disclaimer')
     render :edit
   end
 
@@ -65,7 +64,7 @@ class TrainingsController < ApplicationController
   #
   def create
     if request.post?
-      @training = Training.new( params[:training] )
+      @training = Training.new( training_params )
       @training.user_id = current_user.id           # Set the owner for all the records
 
       if @training.save
@@ -91,14 +90,13 @@ class TrainingsController < ApplicationController
     @training_max_part_order = @training.training_rows.maximum(:part_order)
     @title = I18n.t('trainings.show_title').gsub( "{TRAINING_TITLE}", @training.title )
     assign_all_options_array()
-    flash[:warning] = I18n.t('feature_wip_disclaimer')
   end
 
 
   # Update action.
   #
   def update
-    if @training.update_attributes( params[:training] )
+    if @training.update_attributes( training_params )
       flash[:info] = I18n.t('trainings.training_updated')
       redirect_to( training_path(@training) )
     else
@@ -236,6 +234,29 @@ class TrainingsController < ApplicationController
 
 
   private
+
+
+  # Strong parameters checking for mass-assignment of a Training instance.
+  # Returns the whitelisted, filtered params Hash.
+  def training_params
+    params
+      .require( :training )
+      .permit(
+        :title, :description,
+        :min_swimmer_level,
+        :max_swimmer_level,
+        :user_id,
+        training_rows_attributes: [
+          :part_order,
+          :group_id, :group_times, :group_start_and_rest, :group_pause,
+          :times, :distance, :start_and_rest, :pause,
+          :training_id, :exercise_id, :training_step_type_id,
+          :arm_aux_type_id, :kick_aux_type_id, :body_aux_type_id, :breath_aux_type_id
+        ]
+      )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Verifies that the training id is provided as a parameter

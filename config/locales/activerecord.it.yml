@@ -188,6 +188,7 @@ it:
         has_children_area: "Con area bimbi?"
       swimming_pool_review:
         title: "Titolo"
+        entry_text: "Recensione"
       team:
         name: Nome
         address: "Indirizzo"
@@ -218,7 +219,6 @@ it:
         updated_on: Ultima modifica
         name: Nome utente
         hashed_pwd: Password codificata
-        password_confirmation: Conferma password
         description: "Descrizione / nome completo"
         first_name: "Nome"
         last_name: "Cognome"
@@ -228,6 +228,7 @@ it:
         enable_delete: "Puo' eliminare?"
         enable_setup: Abilita set-up
         authorization_level: Liv. autorizz.
+        password_confirmation: "Conferma Password"
         use_email_data_updates_notify: "Notifica e-mail su dati gare aggiornati"
         use_email_achievements_notify: "Notifica e-mail per 'achievements' interni"
         use_email_newsletter_notify: "Newsletter su aggiornamenti sito"
@@ -296,6 +297,19 @@ it:
               blank: "non puo' essere vuota"
         user:
           attributes:
+            email:
+              blank: "non puo' essere vuota"
+              too_short: "e' troppo corta"
+            name:
+              blank: "non puo' essere vuoto"
+              too_short: "e' troppo corto"
+            password:
+              blank: "non puo' essere vuota"
+              too_short: "e' troppo corta"
+            password_confirmation:
+              confirmation: "deve essere uguale alla password scelta"
+              blank: "non puo' essere vuota"
+              too_short: "e' troppo corta"
             current_password:
               blank: "non puo' essere vuota"
               too_short: "e' troppo corta"
