@@ -65,7 +65,7 @@ namespace :app do
           puts "- smtp_setting_starttls          = #{smtp_setting_starttls}"
         end
         puts ""
-
+                                                    # *** production.rb "rebuild" ***
         location = 'config/deploy/production.rb.erb'
         if ( File.file?(location) )                 # Do nothing unless the template file is found
           template = File.read(location)
@@ -88,7 +88,14 @@ namespace :app do
             execute :rm, "/tmp/production.rb"
           end
         else
-          info "Environment template file not found locally: skipping ':setup_prod_env'."
+          info "Environment template file not found locally: skipping 'production.rb' rebuild."
+        end
+                                                    # *** secrets.yml copy ***
+        location = 'config/secrets.yml'
+        if ( File.file?(location) )
+          upload! location, "#{ shared_path }/#{ location }"
+        else
+          info "Local secrets file not found: skipping 'secrets.yml' copy."
         end
       end
     end
