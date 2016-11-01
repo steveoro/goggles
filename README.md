@@ -19,3 +19,6 @@ the underlying database with all the official and supported data sources.
 The official site is still in closed beta and reserved for a few selected Swimming Teams.
 The admin/data-import sub-app will be extracted and refactored from the main front-end app as
 soon as the site will be ready for open beta.
+
+
+Official framework Wiki, [here](https://github.com/steveoro/goggles_admin/wiki)

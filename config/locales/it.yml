@@ -257,8 +257,6 @@ it:
   upload_failed: "Upload fallito!"
   upload: "Upload"
   keep_offline: "Mantieni off-line"
-  warning_no_import_data_session_found: "Non e' stata trovata nessuna sessione di importazione dati."
-  uploaded_files_still_present: "Files caricati e ancora presenti"
 
   enable_blog: "Blogger?"
   enable_edit: "Puo'modif.?"

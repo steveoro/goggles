@@ -256,8 +256,6 @@ en:
   upload_failed: "Upload failed!"
   upload: "Upload"
   keep_offline: "Keep off-line"
-  warning_no_import_data_session_found: "No import data session was found."
-  uploaded_files_still_present: "Uploaded Files still present"
 
   enable_blog: "Blogger?"
   enable_edit: "Can modify?"
