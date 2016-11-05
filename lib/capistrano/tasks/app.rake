@@ -113,62 +113,6 @@ namespace :app do
     # --------------------------------------------------------------------------
 
 
-# XXX [Steve] NOT USED ANYMORE:
-    # desc "Checks if the directory shared/public/extjs exists on the app server."
-    # task :check_extjs do
-      # on roles(:app) do |host|
-        # lib_dir = File.join(shared_path, "public/extjs")
-        # puts "      > Checking existance of #{lib_dir}..."
-        # if test("[ ! -z \"$(ls #{lib_dir})\" ]")
-          # info "Directory #{lib_dir} found with files."
-        # else
-          # warn "Directory #{lib_dir} NOT found or found empty."
-        # end
-      # end
-    # end
-    # --------------------------------------------------------------------------
-
-
-# XXX [Steve] NOT USED ANYMORE:
-    # desc <<-DESC
-      # Checks and adds shared ExtJS lib files to the deployment tree
-      # (only when these are not found).
-#
-      # It is safe to run this task on servers that have already been set up; it
-      # will not destroy any deployed revisions or data.
-    # DESC
-    # task :shared_extjs do
-      # on roles(:app) do |host|
-        # lib_dir = File.join(shared_path, "public/extjs")
-        # puts "      > Checking '#{lib_dir}' existance..."
-#
-        # if test("[ ! -z \"$(ls #{lib_dir})\" ]")
-          # info "Directory #{lib_dir} found with files."
-        # else
-          # warn "Directory #{lib_dir} NOT found or found empty on #{host}."
-          # info "Safely (re)creating directory before adding missing contents..."
-          # as( user: :root ) do
-            # execute :mkdir, "-p #{lib_dir}"
-          # end
-          # info "Uploading directory contents..."
-          # ssh_keys = fetch(:ssh_keys)
-          # use_pem_certificate = (ssh_keys.first =~ /\.pem$/)
-#
-          # run_locally do
-            # puts "      > Copying local extjs dir..."
-            # if use_pem_certificate
-              # execute :scp, "-i #{ssh_keys.first} -Cpr public/extjs/* #{fetch(:ssh_user)}@#{host}:#{lib_dir}"
-            # else
-              # execute :scp, "-Cpr public/extjs/* #{fetch(:ssh_user)}@#{host}:#{lib_dir}"
-            # end
-          # end
-        # end
-        # puts "      app:setup:shared_extjs done."
-      # end
-    # end
-    # --------------------------------------------------------------------------
-
-
     desc <<-DESC
       Checks and adds other shared directories to the deployment tree
       (only when these are not found).
@@ -178,7 +122,6 @@ namespace :app do
     DESC
     task :common_output do
       on roles(:app) do |host|
-        puts "      > Updating output & cache dirs permissions..."
         # mkdir -p is making sure that the directories are there for some SCM's that don't
         # save empty folders:
         within File.join(shared_path, "public") do
@@ -191,9 +134,21 @@ namespace :app do
             execute :chown, "-R #{fetch(:runner_user)}:#{fetch(:runner_group)} uploads"
           end
         end
-        # [Steve, 20140928] Allow custom log file to be written by nobody:nobody.
+        # [Steve, 20140928] Allow custom log file to be written by nobody:nogroup.
         # (Inside the log dir, make sure to "chmod 0665" anything else).
         within shared_path do
+          # FIXME [Steve, 20161105] Correct permissions should be these:
+          #
+          # execute :chmod, "0755 log"
+          # execute :chmod, "0666 log/*.log" if test("[ -e \"log/*.log\" ]")
+          #
+          # Unfortunately, since currently there's a separate process for serializing
+          # each *U*ser *G*enerated *C*ontent in dedicated "ugc_XXX.log" files,
+          # we need the (excessively) relaxed 0777 permission to allow for creation
+          # and writing by "nobody:nogroup" in the same destination (log) directory.
+          #
+          # See also cap task app:setup:common_output.
+          #
           as( user: :root ) do
             execute :chown, "-R #{fetch(:runner_user)}:#{fetch(:runner_group)} log"
             execute :chmod, "777 log"

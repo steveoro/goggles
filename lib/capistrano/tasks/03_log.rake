@@ -34,7 +34,7 @@ namespace :log do
   task :rotate do
     on roles(:app) do |host|
       within release_path do
-        rake "RAILS_ENV=production build:log_rotate db:sessions:clear"
+        rake "RAILS_ENV=production log:log_rotate db:sessions:clear"
       end
     end
   end
