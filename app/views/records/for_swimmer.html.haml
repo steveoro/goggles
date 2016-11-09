@@ -5,12 +5,12 @@
   .row.col-xs-12
     = form_tag( :records_for_swimmer, remote: true, method: :get, class: 'form-horizontal', onsubmit: "$('#loadingIndicator').show();") do
       .row.col-xs-12.form-group
-        .col-xs-3
+        .col-xs-4.col-sm-2.col-md-1
           = label_tag( :swimmer, I18n.t('activerecord.models.swimmer'), for: :swimmer, class: 'control-label' )
-        .col-xs-8
+        .col-xs-8.col-sm-8
           = hidden_field( :swimmer, :id )
-          = text_field_tag( :swimmer_name, nil, {autocomplete: 'off', class: "input-lg typeahead",  |
-              "data-provide"=>"typeahead", placeholder: I18n.t('combobox_3char_tooltip')} )             |
+          = text_field_tag( :swimmer_name, nil, {autocomplete: 'off', class: "form-control input-sm typeahead",    |
+              "data-provide"=>"typeahead", placeholder: I18n.t('combobox_3char_tooltip')} )  |
       .row.col-xs-12.form-group
         .col-xs-5
           = submit_tag( I18n.t(:submit), data: { disable_with: I18n.t(:please_wait), class: 'btn disabled' }, class: 'btn btn-primary' )

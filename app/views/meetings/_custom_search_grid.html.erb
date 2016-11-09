@@ -9,7 +9,7 @@
     end
 
     g.column(
-        name: I18n.t('meeting_calendar.federation'),
+        #name: I18n.t('meeting_calendar.federation'),
         assoc: :season,
         attribute: 'season_type_id',
         custom_filter: SeasonType.is_master.to_dropdown,
@@ -19,16 +19,6 @@
             MeetingDecorator.decorate(meeting).get_logo_for_season_type,
             { class: 'goggles-centeralign' }
         ]
-    end
-
-    g.column(
-        name: I18n.t('meeting_calendar.season'),
-        attribute: 'season_id',
-        custom_filter: Season.to_dropdown(),
-        filter_type:    :text_regexped_filter_type,
-        detach_with_id: :flt_season_id
-    ) do |meeting|
-        meeting.season.get_full_name
     end
 
     g.column(
@@ -86,4 +76,15 @@
     ) do |meeting|
     	meeting.decorate.get_linked_swimming_pool( :get_city_and_attributes )
     end
+
+    g.column(
+        name: I18n.t('meeting_calendar.season'),
+        attribute: 'season_id',
+        custom_filter: Season.to_dropdown(),
+        filter_type:    :text_regexped_filter_type,
+        detach_with_id: :flt_season_id
+    ) do |meeting|
+        meeting.season.get_full_name
+    end
+
 end -%>

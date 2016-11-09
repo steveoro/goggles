@@ -1,17 +1,17 @@
-.jumbotron
-  .container
-    .col-xs-12
-      &nbsp;
-    .col-xs-7
-      %h3= t(:welcome)
-      %a.btn.btn-primary(href="#{ new_user_session_path() }")= t(:login)
-      = t(:or)
-      %a.btn.btn-primary(href="#{ new_user_registration_path() }")= t(:sign_up)
-    .col-xs-5
-      %p
-        %a.btn.btn-default(href="#{ home_about_path() }")= t(:more_info)
-      %p
-        %a.btn.btn-default(href="#{ home_tutorials_path() }")= t('tutorials_title')
-      %p
-        %a.btn.twitter-follow-button(href="https://twitter.com/master_goggles" data-size="large" data-show-count="false" data-show-screen-name="false")
-          = t('follow_us')
+.col-xs-12
+  .jumbotron
+    .container
+      .col-xs-12.col-sm-4
+        %h3= t(:welcome)
+      .col-xs-12.col-sm-8
+        %a.btn.btn-primary.goggles-margin-bottom(href="#{ new_user_session_path() }")= t(:login)
+        = t(:or)
+        %a.btn.btn-primary.goggles-margin-bottom(href="#{ new_user_registration_path() }")= t(:sign_up)
+.col-xs-12
+  &nbsp;
+.col-xs-12
+  %a.btn.btn-default.goggles-margin-bottom(href="#{ home_about_path() }")= t(:more_info)
+  %a.btn.btn-default.goggles-margin-bottom(href="#{ home_tutorials_path() }")= t('tutorials_title')
+.col-xs-12
+  %a.btn.twitter-follow-button(href="https://twitter.com/master_goggles" data-size="large" data-show-count="false" data-show-screen-name="false")
+    = t('follow_us')

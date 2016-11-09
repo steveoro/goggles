@@ -53,7 +53,7 @@
                 %b= @sme_dao.get_neutrals_count
 
     .col-xs-12.goggles-div-centeralign.goggles-category-gap
-      .col-xs-6#won_matches
+      .col-xs-12.col-sm-6#won_matches
         %table.table.table-striped.table-bordered.table-hover.table-condensed
           %tbody
             %tr{'class'=>'success'}
@@ -79,7 +79,7 @@
                 %td.goggles-rightalign
                   = match.get_visitor_timing
 
-      .col-xs-6#lost_matches
+      .col-xs-12.col-sm-6#lost_matches
         %table.table.table-striped.table-bordered.table-hover.table-condensed
           %tbody
             %tr{'class'=>'error'}
@@ -106,7 +106,7 @@
                   = match.get_visitor_timing
     - if @sme_dao.get_neutrals_count > 0
       .col-xs-12.goggles-div-centeralign.goggles-category-gap
-        .col-xs-6.col-xs-offset-3#neutral_matches
+        .col-xs-12.col-sm-6.col-sm-offset-3#neutral_matches
           %table.table.table-striped.table-bordered.table-hover.table-condensed
             %tbody
               %tr{'class'=>'info'}
@@ -133,10 +133,10 @@
                     = match.get_visitor_timing
   - elsif @sme_dao && @sme_dao.get_matches_count == 0
     .col-xs-12.goggles-div-centeralign
-      .col-xs-6.col-xs-offset-3
+      .col-xs-12.col-sm-6.col-sm-offset-3
         %h2= "#{@sme_dao.get_locale.get_full_name} - #{@sme_dao.get_visitor.get_full_name} : #{@sme_dao.get_wons_count} - #{@sme_dao.get_losses_count}"
         %p= t('misc.match_none').gsub( '{local_swimmer}', @sme_dao.get_locale.get_full_name ).gsub( '{VISITOR_SWIMMER}', @sme_dao.get_visitor.get_full_name )
   - else
     .col-xs-12.goggles-div-centeralign
-      .col-xs-6.col-xs-offset-3
+      .col-xs-12.col-sm-6.col-sm-offset-3
         %b= t('misc.not_matchable_swimmer')

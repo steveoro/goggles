@@ -5,7 +5,7 @@
   .row.col-xs-12
     = form_tag( :records_for_season_type, remote: true, method: :get, class: 'form-horizontal', onsubmit: "$('#loadingIndicator').show();") do
       .row.col-xs-12.form-group
-        .col-xs-3
+        .col-xs-5.col-sm-3.col-md-2
           #tooltipLabel= label_tag( :season_type, I18n.t('activerecord.models.season_type'), for: :season_type, class: 'control-label', 'data-toggle'=>'tooltip', 'title'=>I18n.t('combobox_generic_tooltip') )
         .col-xs-5
           .ui-widget

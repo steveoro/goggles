@@ -11,7 +11,7 @@
     g.column(
         #name: I18n.t('meeting_calendar.federation'),
         attribute: 'season_id',
-        custom_filter: Season.to_dropdown( "(end_date >= '#{@start_date}') AND (end_date <= '#{@end_date}')" ),
+        custom_filter: Season.to_dropdown( "(end_date >= '#{@start_date}')" ),
         detach_with_id: :flt_season_id
     ) do |meeting|
         [

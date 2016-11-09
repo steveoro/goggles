@@ -1,21 +1,21 @@
 = form_tag( :misc_show_swimmer_matches, class: 'form-horizontal', remote: true, onsubmit: "$('#loadingIndicator').show(); $('#swimmer_matches_result').hide()" ) do
   .row.col-xs-12
-    .col-xs-5
+    .col-xs-12.col-sm-5
       .form-group
         = label_tag( :local_swimmer, t('misc.local_swimmer'), for: :local_swimmer, class: 'control-label' )
         = hidden_field( :local_swimmer, :id, value: (@local_swimmer ? @local_swimmer.id : nil) )
         = text_field_tag( :local_swimmer_name, (@local_swimmer ? @local_swimmer.complete_name : nil), |
             {autocomplete: 'off', class: "input-lg typeahead",                                        |
             "data-provide"=>"typeahead", placeholder: I18n.t('combobox_3char_tooltip')} )             |
-    .col-xs-1
-    .col-xs-6
+    .col-sm-1
+    .col-xs-12.col-sm-6
       .form-group
         = label_tag( :visitor_swimmer, t('misc.visitor_swimmer'), for: :visitor_swimmer, class: 'control-label' )
         = hidden_field( :visitor_swimmer, :id )
         = text_field_tag( :visitor_swimmer_name, nil, {autocomplete: 'off', class: "input-lg typeahead",  |
             "data-provide"=>"typeahead", placeholder: I18n.t('combobox_3char_tooltip')} )                 |
   .row.col-xs-12
-    .col-xs-4
+    .col-xs-12.col-sm-4
       .form-group
         = submit_tag( I18n.t('misc.find_matches'), id: "btn_submit", data: {disable_with: I18n.t(:please_wait), class: 'btn disabled'}, class: 'btn btn-primary' )
         %span( id='loadingIndicator' hidden='true' )

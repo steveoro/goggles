@@ -15,7 +15,9 @@
       = render( partial: 'right_shortcuts' )
 - else
   -# Not-logged-in welcome part:
-  = render( partial: 'goggles/not_logged_in' )
   = render( partial: 'jumbotron' )
+  .col-xs-12
+    &nbsp;
+  = render( partial: 'goggles/not_logged_in' )
 
 = render( partial: 'goggles/twitter_timeline' )

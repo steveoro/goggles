@@ -7,19 +7,19 @@
     .accordion-body
       .accordion-inner
         .row.col-xs-12
-          .col-xs-2
+          .col-xs-4.col-sm-2
             = I18n.t('meeting_calendar.meeting')
-          .col-xs-10
+          .col-xs-8.col-sm-10.col-lg-6
             = grid_filter @meetings_grid, :flt_description
         .row.col-xs-12
-          .col-xs-2
-            = I18n.t('meeting_calendar.federation')
-          .col-xs-10
+          .col-xs-4.col-sm-2
+            = I18n.t('meeting_calendar.season')
+          .col-xs-8.col-sm-7.col-lg-5
             = grid_filter @meetings_grid, :flt_season_id
         .row.col-xs-12
-          .col-xs-2
+          .col-xs-4.col-sm-2
             = I18n.t('meeting_calendar.pool_type')
-          .col-xs-10
+          .col-xs-6.col-sm-2
             = grid_filter @meetings_grid, :flt_pool_type
         -# Currently we disable the following filtering feature (it messes up too much the UI):
         -#.row.col-xs-12
@@ -42,5 +42,5 @@
 .row.col-xs-12
   = render_grid( @meetings_grid )
 
-%script
-  $('#grid_f_id').combobox();
+.row.col-xs-12
+  &nbsp;

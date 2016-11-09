@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Goggles main application layout v6">
+    <meta name="author" content="Steve Alloro">
     <title><%= GogglesCore::AppConstants::WEB_APP_NAME %></title>
     <%= csrf_meta_tags %>
     <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
@@ -8,54 +12,24 @@
 </head>
 
 <body>
-    <script>
-    // Set to the same value as the web property used on the site
-    var gaProperty = 'UA-57175174-1';
-
-    // Disable tracking if the opt-out cookie exists.
-    var disableStr = 'ga-disable-' + gaProperty;
-    if (document.cookie.indexOf(disableStr + '=true') > -1) {
-      window[disableStr] = true;
-    }
-    if (document.cookie.indexOf(disableStr + '=false') > -1) {
-      window[disableStr] = false;
-    }
-
-    // Opt-out function
-    function gaOptOut() {
-      document.cookie = disableStr + '=true; expires=Thu, 31 Dec 2099 23:59:59 UTC; path=/';
-      window[disableStr] = true;
-    }
-    // Opt-in function
-    function gaOptIn() {
-      document.cookie = disableStr + '=false; expires=Thu, 31 Dec 2099 23:59:59 UTC; path=/';
-      window[disableStr] = false;
-    }
-
-    // Google Analytics
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-    ga('create', gaProperty, 'auto');
-    ga('require', 'displayfeatures');
-    ga('send', 'pageview');
-    </script>
+    <!-- Main menu section: -->
+    <%= render( partial: GogglesCore::AppConstants::WEB_APP + '/google_analytics' ) if Rails.env.production? %> %>
 
     <!-- Main menu section: -->
     <%= render( partial: GogglesCore::AppConstants::WEB_APP + '/main_menu' ) %>
 
     <!-- Body canvas: -->
-    <div id="intenal-canvas" class="canvas">
-        <!-- Clickable menu icon-bars: -->
-        <div class="navbar navbar-default navbar-fixed-top">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="offcanvas" data-target=".navmenu" data-canvas="body">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
+    <div id="internal-canvas" class="canvas">
+        <div class="navbar navbar-default navbar-fixed-top col-xs-12 goggles-background goggles-line-height">
+            <!-- Clickable menu toggle button: -->
+            <button type="button" id="nav-trigger" class="navbar-toggle" data-toggle="offcanvas" data-recalc="false" data-target=".navmenu" data-canvas=".canvas">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <div id="breadcrumbs" class="goggles-margin-top text-right">
+                <%= render_navigation( renderer: :breadcrumbs, join_with: " &gt; " ) %>
             </div>
         </div>
 
@@ -63,13 +37,7 @@
         <div class="container">
             <div class="col-xs-12">
                 <div class="col-xs-offset-1 col-xs-10">
-                    <%= render( partial: GogglesCore::AppConstants::WEB_APP + '/analytics_optout' ) %>
-                </div>
-            </div>
-
-            <div class="col-xs-12">
-                <div class="col-xs-offset-6 col-xs-6 text-center">
-                    <%= render_navigation( renderer: :breadcrumbs, prefix: I18n.t(:you_are_here) +'&nbsp;', join_with: " &gt; " ) %>
+                    <%= render( partial: GogglesCore::AppConstants::WEB_APP + '/analytics_optout' ) if Rails.env.production? %>
                 </div>
             </div>
 

@@ -120,7 +120,7 @@ en:
 
 
   combobox_generic_tooltip: "Write directly what you want to search or press the button to show all the items."
-  combobox_3char_tooltip: "Write at least the first 3 characters..."
+  combobox_3char_tooltip: "(3 characters min.)"
   something_went_wrong: "Something went wrong, check the log file."
   requested_entity_missing: "A requested entity has not been created yet"
   transaction_cancelled: "Transaction cancelled."

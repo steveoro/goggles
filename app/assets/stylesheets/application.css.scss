@@ -18,6 +18,27 @@
 @import "wice_grid";
 @import "font-awesome";
 
+/* ----- Misc helpers ----- */
+.goggles-margin-left {
+    margin-left: 4px;
+}
+.goggles-margin-right {
+    margin-right: 4px;
+}
+.goggles-margin-top {
+    margin-top: 4px;
+}
+.goggles-margin-bottom {
+    margin-bottom: 4px;
+}
+.goggles-background {
+    background-color: white;
+}
+.goggles-line-height {
+    line-height: 1em;
+    min-height: 26px;
+}
+
 /* ----- Navbar & Titlebar ----- */
 #goggles-inner-navbar {
     min-height: 26px;
@@ -51,21 +72,9 @@
 	line-height: 0px;
 }
 
-/*
- [Steve WIP styles]
-
-.navbar ul.nav > li > a {
-    padding: 3px 10px;
-}
-.navbar .nav > li > a.goggles-nav-compact {
-    padding: 2px 5px;
-	line-height: 0px;
-}
-*/
 .nav-pills>li>a.goggles-nav-compact {
     padding: 5px;
 }
-
 
 .navbar .ghost-divider-vertical {
     height: 20px;

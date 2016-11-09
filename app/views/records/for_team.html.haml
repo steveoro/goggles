@@ -5,11 +5,11 @@
   .row.col-xs-12
     = form_tag( :records_for_team, remote: true, method: :get, class: 'form-horizontal', onsubmit: "$('#loadingIndicator').show();") do
       .row.col-xs-12.form-group
-        .col-xs-3
+        .col-xs-4.col-sm-2.col-md-1
           = label_tag( :team, I18n.t('activerecord.models.team'), for: :team, class: 'control-label' )
-        .col-xs-8
+        .col-xs-8.col-sm-8
           = hidden_field( :team, :id )
-          = text_field_tag( :team_name, nil, {autocomplete: 'off', class: "input-lg typeahead",  |
+          = text_field_tag( :team_name, nil, {autocomplete: 'off', class: "form-control input-sm typeahead",  |
               "data-provide"=>"typeahead", placeholder: I18n.t('combobox_3char_tooltip')} )      |
       .row.col-xs-12.form-group
         .col-xs-5

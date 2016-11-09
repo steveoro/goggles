@@ -3,41 +3,60 @@
  * Add here all the required style overrides.
  */
 
-/* ----- Offcanvas/Jasny menu style/overrides ----- */
+/* ----- Offcanvas/Jasny reveal-effect menu: ----- */
 html, body {
-    height: 100%;
-}
-
-body {
-    padding: 50px 0 0 0;
+  height: 100%;
 }
 
 .navmenu {
-    width: 250px;
+  z-index: 1;
 }
 
-.navbar-toggle {
-    float: left;
-    margin-left: 15px;
+#nav-trigger {
+    position: fixed;
+    padding-left: 12px;
+    top: 250px;
+    left: -24px;
+    background-color: #F8F8F8;
+    height: 48px;
+    width: 48px;
+    border-radius: 32px;
+    z-index: 1;
+}
+
+span.icon-bar {
+    background-color: black;
+}
+
+.canvas {
+    position: relative;
+    padding-top: 36px;
+    left: 0;
+    z-index: 2;
+    min-height: 100%;
+    background: #fff;
 }
 
 @media (min-width: 0) {
-    .navbar-toggle {
-        display: block; /* force showing the toggle */
-    }
-}
-
-@media (min-width: 992px) {
-    body {
-        padding: 0;
-    }
-    .navbar {
-        right: auto;
-        background: none;
-        border: none;
+  .navbar-toggle {
+    display: block; /* force showing the toggle */
   }
 }
 
+/* When the viewport is at least this big, the menu will be shown by default: */
+@media (min-width: 992px) {
+  body {
+    padding: 0;
+  }
+  .navbar {
+    right: auto;
+    background: none;
+    border: none;
+  }
+  .canvas {
+    padding: 0;
+  }
+}
 
 
 /* ----- Bootstrap overrides ----- */

@@ -9,26 +9,6 @@
     end
 
     g.column(
-        name: I18n.t('meeting_calendar.federation'),
-        assoc: :season,
-        attribute: 'season_type_id',
-        custom_filter: SeasonType.is_master.to_dropdown,
-    ) do |meeting|
-        [
-            MeetingDecorator.decorate(meeting).get_logo_for_season_type,
-            { class: 'goggles-centeralign' }
-        ]
-    end
-
-    g.column(
-        name: I18n.t('meeting_calendar.season'),
-        attribute: 'season_id',
-        custom_filter: Season.to_dropdown(),
-    ) do |meeting|
-        meeting.season.get_full_name
-    end
-
-    g.column(
         name: I18n.t('meeting_calendar.meeting'),
         attribute: 'description',
     ) do |meeting|
@@ -66,6 +46,28 @@
         name: I18n.t('meeting_calendar.meeting_program'),
     ) do |meeting|
         meeting.decorate.get_complete_events
+    end
+
+    # [Steve, 20161109] Resulting grind is too large and is difficult to view,
+    # Moreover, the following column is redundant:
+    # g.column(
+        # name: I18n.t('meeting_calendar.federation'),
+        # assoc: :season,
+        # attribute: 'season_type_id',
+        # custom_filter: SeasonType.is_master.to_dropdown,
+    # ) do |meeting|
+        # [
+            # MeetingDecorator.decorate(meeting).get_logo_for_season_type,
+            # { class: 'goggles-centeralign' }
+        # ]
+    # end
+
+    g.column(
+        name: I18n.t('meeting_calendar.season'),
+        attribute: 'season_id',
+        custom_filter: Season.to_dropdown(),
+    ) do |meeting|
+        meeting.season.get_full_name
     end
 
     g.column(

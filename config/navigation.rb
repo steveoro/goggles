@@ -49,11 +49,43 @@ SimpleNavigation::Configuration.run do |navigation|
     #                            when the item should be highlighted, you can set a regexp which is matched
     #                            against the current URI.  You may also use a proc, or the symbol <tt>:subpath</tt>.
     #
-    primary.item( :key_main,         t('main'),        root_path() )
+
+    primary.item(
+      :key_user_who_is_it,
+      content_tag(:span, t('who_are_you') ), '#', class: 'disabled', 'data-turbolinks'=>'false',
+      :unless => Proc.new { user_signed_in? }
+    )
+    primary.item(
+      :key_user_login,
+      content_tag(:span, t(:login), class:"btn btn-default" ),
+      new_user_session_path(),
+      :unless => Proc.new { user_signed_in? }
+    )
+    primary.item(
+      :key_user_edit,
+      (current_user.nil? ? '' : current_user.name),
+      edit_user_registration_path(),
+      if: Proc.new { user_signed_in? }
+    )
+    primary.item(
+      :key_user_logout,
+      content_tag( :span, t('admin.misc.log_out'), class:"btn btn-default" ),
+      destroy_user_session_path(),
+      method: Devise.sign_out_via,
+      if: Proc.new { user_signed_in? }
+    )
+
+    primary.item( :key_locale, content_tag(:span, image_tag('it.png') +"/"+ image_tag('us.png') ), '#', 'data-turbolinks'=>'false' ) do |lev2_nav|
+      lev2_nav.item :key_locale_it,    image_tag('it.png'), url_for( request.filtered_parameters.dup.merge('locale'=>'it') )
+      lev2_nav.item :key_locale_en,    image_tag('us.png'), url_for( request.filtered_parameters.dup.merge('locale'=>'en') )
+    end
+
+    primary.item( :key_separator0_0, '<hr/>', '#', class: 'disabled', 'data-turbolinks'=>'false' )
+#    primary.item( :key_main,         t('main'),        root_path() )
     primary.item( :key_about,        t('about'),       home_about_path() )
     primary.item( :key_contact_us,   t('contact_us'),  home_contact_us_path() )
-    primary.item( :key_separator0_0, '<hr/>', '#', class: 'disabled', 'data-turbolinks'=>'false' )
 
+    primary.item( :key_separator0_5, '<hr/>', '#', class: 'disabled', 'data-turbolinks'=>'false' )
     primary.item(
       :key_user_radio_id,
       t('radiography.id_card'),
@@ -138,37 +170,6 @@ SimpleNavigation::Configuration.run do |navigation|
       lev2_nav.item :key_user_tr_stories,     t('misc_main_menu.user_training_stories'),  user_training_stories_path()
       lev2_nav.item :key_separator4_2,        content_tag(:span, ''), class: 'divider'
       lev2_nav.item :key_tutorial,            t('tutorials_title'),                       home_tutorials_path()
-    end
-
-    primary.item(
-      :key_user_who_is_it,
-      content_tag(:span, t('who_are_you') ), '#', class: 'disabled', 'data-turbolinks'=>'false',
-      :unless => Proc.new { user_signed_in? }
-    )
-    primary.item(
-      :key_user_login,
-      content_tag(:span, t(:login), class:"btn btn-default" ),
-      new_user_session_path(),
-      :unless => Proc.new { user_signed_in? }
-    )
-    primary.item(
-      :key_user_edit,
-      (current_user.nil? ? '' : current_user.name),
-      edit_user_registration_path(),
-      if: Proc.new { user_signed_in? }
-    )
-    primary.item(
-      :key_user_logout,
-      content_tag( :span, t('admin.misc.log_out'), class:"btn btn-default" ),
-      destroy_user_session_path(),
-      method: Devise.sign_out_via,
-      if: Proc.new { user_signed_in? }
-    )
-
-    primary.item( :key_separator0_5, '<hr/>', '#', class: 'disabled', 'data-turbolinks'=>'false' )
-    primary.item( :key_locale, content_tag(:span, image_tag('it.png') +"/"+ image_tag('us.png') ), '#', 'data-turbolinks'=>'false' ) do |lev2_nav|
-      lev2_nav.item :key_locale_it,    image_tag('it.png'), url_for( request.filtered_parameters.dup.merge('locale'=>'it') )
-      lev2_nav.item :key_locale_en,    image_tag('us.png'), url_for( request.filtered_parameters.dup.merge('locale'=>'en') )
     end
 
     # you can also specify a css id or class to attach to this particular level
