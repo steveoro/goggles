@@ -8,7 +8,7 @@ require 'wrappers/timing'
 
 = SwimmersController
 
-  - version:  6.002
+  - version:  6.011
   - author:   Steve A., Leega
 
 =end
@@ -448,7 +448,12 @@ class SwimmersController < ApplicationController
   #
   def supermaster
     params.permit! # (No unsafe params can be passed)
-    unless ( @swimmer.has_badge_for_season_and_year?( params['header_year'].to_i ) )
+    has_badge = if params['header_year'].nil?
+      @swimmer.has_badge_for_season_and_year?
+    else
+      @swimmer.has_badge_for_season_and_year?( params['header_year'].to_i )
+    end
+    unless has_badge
       flash[:error] = I18n.t('swimmers.no_associated_badge_found')
       redirect_back( fallback_location: swimmers_path ) and return
     end
@@ -456,7 +461,7 @@ class SwimmersController < ApplicationController
     # --- "Supermaster" tab: ---
     @tab_title        = I18n.t('supermaster.supermaster')
     @season_type      = SeasonType.find_by_code('MASFIN')
-    @header_year      = params['header_year'].to_i || Season.build_header_year_from_date
+    @header_year      = params['header_year'].nil? ? Season.build_header_year_from_date : params['header_year'].to_i
     @badge            = @swimmer.badges.for_season_type( @season_type ).for_year( @header_year ).first
     @season           = @badge.season
     @team             = @badge.team

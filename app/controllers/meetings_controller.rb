@@ -546,6 +546,9 @@ class MeetingsController < ApplicationController
   # . edited or existing passage rows...: "pas_" + passage.id
   # . new rows to be created............: "new_" + MIR.id + "_" + passage_type.id
   #
+  # This will create a diff-log file inside the default output directory, while
+  # sending out an admin-email to notify the update.
+  #
   # === Parameters:
   # - id: Meeting id for which the Passages must be edited
   #
@@ -571,11 +574,11 @@ class MeetingsController < ApplicationController
     end
 
     # Create the SQL diff file, and send it, when operated remotely:
-    log_dir = File.join( Dir.pwd, 'log' )
+    output_dir = File.join( Rails.root, 'public', 'output' )
     file_name = "#{DateTime.now().strftime('%Y%m%d%H%M')}" <<
                 "#{ Rails.env == 'production' ? 'dev' : 'prod' }" <<
                 "_update_passages_#{ @meeting.code }.diff.sql"
-    full_sql_diff_path = File.join( log_dir, file_name )
+    full_sql_diff_path = File.join( output_dir, file_name )
     File.open( full_sql_diff_path, 'w' ) { |f| f.puts batch_updater.sql_diff_text_log }
     logger.info( "\r\nLog file " + file_name + " created" )
     if Rails.env == 'production'
@@ -645,9 +648,9 @@ class MeetingsController < ApplicationController
     @preselected_team_id    = params[:team_id]
 
     @meeting_events_list = @meeting.meeting_events
-      .joins(:event_type, :stroke_type)
-      .includes(:event_type, :stroke_type)
-      .order('event_types.is_a_relay, meeting_events.event_order')
+      .joins( :meeting_session, :event_type, :stroke_type )
+      .includes( :meeting_session, :event_type, :stroke_type )
+      .order( 'meeting_sessions.session_order, meeting_events.event_order' )
 
     # Get a timestamp for the cache key:
     @max_mir_updated_at = get_timestamp_from_relation_chain() # default: MIR
