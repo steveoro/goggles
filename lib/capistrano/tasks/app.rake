@@ -151,7 +151,7 @@ namespace :app do
           #
           as( user: :root ) do
             execute :chown, "-R #{fetch(:runner_user)}:#{fetch(:runner_group)} log"
-            execute :chmod, "777 log"
+            execute :chmod, "0755 log"
             execute :chown, "-R #{fetch(:runner_user)}:#{fetch(:runner_group)} tmp"
           end
         end
