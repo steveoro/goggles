@@ -30,9 +30,10 @@ class SwimmingPoolDecorator < Draper::Decorator
 
   # Computes a verbose or formal description for the name associated with this data
   def get_city_and_attributes
-    "#{city_name} #{get_pool_attributes}"
+    "#{city ? city_name : '(?)'} #{get_pool_attributes}"
   end
-  # ----------------------------------------------------------------------------
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Computes the URL for the Google Maps API service, according to the current instance
   # address, if defined. Returns nil otherwise.

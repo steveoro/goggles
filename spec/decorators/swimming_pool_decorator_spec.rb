@@ -27,6 +27,18 @@ describe SwimmingPoolDecorator, type: :model do
     ]
   end
 
+
+  describe "#get_city_and_attributes" do
+    context "when city is nil," do
+      let(:fixture_pool_with_no_city) { FactoryGirl.create(:swimming_pool, city_id: nil) }
+
+      it "returns a String" do
+        expect( fixture_pool_with_no_city.get_city_and_attributes ).to be_a( String )
+      end
+    end
+  end
+
+
   describe "#get_maps_url" do
     it "returns a non-empty string for a pool with an address" do
       expect( subject.get_maps_url ).to be_an_instance_of(String)
