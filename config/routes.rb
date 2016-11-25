@@ -63,6 +63,12 @@ Rails.application.routes.draw do
       get "meeting/edit_passages/:id",          to: "meetings#edit_passages",           as: "meeting_edit_passages"
       post "meeting/update_passages/:id",       to: "meetings#update_passages",         as: "meeting_update_passages"
 
+      # === Meeting Reservations ===
+      # The following two routes are behind POST-only actions since they both imply
+      # complex row additions and/or updates:
+      post 'meeting_reservations/edit'     # this will create a matrix of event reservations (many events for each one of the current team's athletes)
+      post 'meeting_reservations/update'   # this will in turn post the updates to the above matrix of row entries
+
       # === Records ===
       get  "records/for_season_type",           to: "records#for_season_type"
       get  "records/for_team",                  to: "records#for_team"
