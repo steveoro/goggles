@@ -49,6 +49,9 @@ describe MeetingReservationMatrixCreator, type: :strategy do
       it "does not add any row to meeting_reservations" do
         expect{ subject.call }.not_to change{ MeetingReservation.count }
       end
+      it "does not add any row to meeting_event_reservations" do
+        expect{ subject.call }.not_to change{ MeetingEventReservation.count }
+      end
     end
   end
 
@@ -80,6 +83,9 @@ describe MeetingReservationMatrixCreator, type: :strategy do
       it "does not add any row to meeting_reservations" do
         expect{ subject.call }.not_to change{ MeetingReservation.count }
       end
+      it "does not add any row to meeting_event_reservations" do
+        expect{ subject.call }.not_to change{ MeetingEventReservation.count }
+      end
     end
   end
   #-- -------------------------------------------------------------------------
@@ -104,7 +110,8 @@ describe MeetingReservationMatrixCreator, type: :strategy do
     # won't use any of its associations, nor its ID, so "build" is enough.
     subject do
       # This single row should force skipping the corresponding matrix item creation:
-      MeetingReservation.create(
+      create(
+        :meeting_event_reservation,
         meeting_id:       meeting.id,
         team_id:          team_affiliation.team_id,
         swimmer_id:       last_mir.swimmer_id,
@@ -121,21 +128,32 @@ describe MeetingReservationMatrixCreator, type: :strategy do
 
 
     describe "#call" do
-      it "has #expected_rows_count > 0" do
-        subject.call
+      it "is true" do
+        expect( subject.call ).to be true
+      end
+      it "has #expected_rows_count > 0 (before being called)" do
         expect( subject.expected_rows_count ).to be > 0
       end
-      it "has #created_rows_count > 0" do
-        subject.call
-        expect( subject.created_rows_count ).to be > 0
+      it "has #created_rows_count == 0 (before being called)" do
+        expect( subject.created_rows_count ).to eq(0)
       end
-# FIXME FAILS:
-      xit "has #created_rows_count == #expected_rows_count -1  (after being called)" do
-        subject.call
+    end
+
+
+    describe "#call (after execution)" do
+      before(:each) do
+        expect( subject.call ).to be true
+      end
+      it "has #expected_rows_count > 0 (after being called)" do
+        expect( subject.expected_rows_count ).to be > 0
+      end
+      # Since we have created a single. pre-existing row, the creator strategy
+      # should create the expected rows minus 1:
+      it "has #created_rows_count == #expected_rows_count -1  (after being called)" do
         expect( subject.created_rows_count ).to eq( subject.expected_rows_count - 1 )
       end
-      it "adds exactly #created_rows_count rows into meeting_reservations" do
-        expect{ subject.call }.to change{ MeetingReservation.count }
+      it "has 0 errors" do
+        expect( subject.total_errors ).to eq(0)
       end
     end
   end
@@ -145,14 +163,10 @@ describe MeetingReservationMatrixCreator, type: :strategy do
 
   context "for a meeting/team_affiliation couple without any previous registration," do
     # [Steve, 20161125] We use pre-existing data to speed-up fixtures here:
+    let(:rnd_csi_meeting_id_with_no_reservations) { [10101, 11101, 12101, 13101, 14101].sort{rand - 0.5}.first }
+    let(:meeting) { Meeting.find( rnd_csi_meeting_id_with_no_reservations ) }
     let(:team_affiliation) do
-# FIXME Choose an existing TA w/o any MeetingReservation assigned, not the last one!
-      # We get the last TeamAffiliation which has at least some results (so that
-      # we know that the corresponding Meeting has already been acquired)
-      Team.find(1).team_affiliations.last
-    end
-    let(:meeting) do
-      last_mir.meeting
+      TeamAffiliation.where( season_id: meeting.season_id, team_id: 1 ).first
     end
 
     # [Steve] We don't need to save the random user instance created, since we
@@ -171,33 +185,27 @@ describe MeetingReservationMatrixCreator, type: :strategy do
       it "is true" do
         expect( subject.call ).to be true
       end
-      it "has #expected_rows_count == 0 (before being called)" do
-        expect( subject.expected_rows_count ).to eq(0)
+      it "has #expected_rows_count > 0 (before being called)" do
+        expect( subject.expected_rows_count ).to be > 0
       end
-      it "has #expected_rows_count == #created_rows_count (before being called)" do
-        expect( subject.expected_rows_count ).to eq( subject.created_rows_count )
-      end
-      it "adds exactly #expected_rows_count rows to meeting_reservations" do
-        expect{ subject.call }.to change{ MeetingReservation.count }.by( subject.expected_rows_count )
+      it "has #created_rows_count == 0 (before being called)" do
+        expect( subject.created_rows_count ).to eq(0)
       end
     end
 
 
     describe "#call (after execution)" do
-      before(:all) do
+      before(:each) do
         expect( subject.call ).to be true
       end
       it "has #expected_rows_count > 0 (after being called)" do
         expect( subject.expected_rows_count ).to be > 0
       end
-      it "has #expected_rows_count == #created_rows_count (after being called)" do
+      it "has the same count for #expected_rows_count and #created_rows_count" do
         expect( subject.expected_rows_count ).to eq( subject.created_rows_count )
       end
       it "has 0 errors" do
         expect( subject.total_errors ).to eq(0)
-      end
-      it "has the same count for #expected_rows_count and #created_rows_count" do
-        expect( subject.expected_rows_count ).to eq( subject.created_rows_count )
       end
     end
   end
