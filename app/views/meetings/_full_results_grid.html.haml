@@ -4,7 +4,7 @@
     = render( partial: 'show_full_sub_legend', locals: { meeting_event: meeting_event } )
     - is_a_relay = meeting_event.event_type.is_a_relay
     - if meeting_event.meeting_programs.includes(:meeting_individual_results).joins(:meeting_individual_results).count > 0
-      - meeting_event.meeting_programs.includes(:category_type, :gender_type).order('category_types.id').each do |meeting_program|
+      - meeting_event.meeting_programs.includes(:category_type, :gender_type).order('category_types.age_begin, gender_types.id DESC').each do |meeting_program|
         %div{'class'=>"goggles-category-gap", 'id'=>"mprg#{meeting_program.id}"}
           %table.table.table-striped.table-bordered.table-hover.table-condensed
             %tbody
@@ -21,7 +21,7 @@
                   = render( partial: 'show_full_individual_result', locals: { individual_result: individual_result, is_highlighted: is_highlighted } )
 
     - if meeting_event.meeting_programs.includes(:meeting_relay_results).joins(:meeting_relay_results).count > 0
-      - meeting_event.meeting_programs.includes(:category_type, :gender_type).order('category_types.id').each do |meeting_program|
+      - meeting_event.meeting_programs.includes(:category_type, :gender_type).order('category_types.age_begin, gender_types.id DESC').each do |meeting_program|
         %div{'class'=>"goggles-category-gap", 'id'=>"mprg#{meeting_program.id}"}
           %table.table.table-striped.table-bordered.table-hover.table-condensed
             %tbody

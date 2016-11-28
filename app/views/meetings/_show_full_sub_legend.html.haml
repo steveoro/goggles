@@ -10,7 +10,7 @@
           %li
             .btn.disabled
               = GenderType.find_by_id(GenderType::MIXED_OR_ANY_ID).i18n_short + ':'
-          - meeting_event.meeting_programs.includes(:category_type, :gender_type).where(gender_type_id: GenderType::MIXED_OR_ANY_ID).order('category_types.id').each do |meeting_program|
+          - meeting_event.meeting_programs.includes(:category_type, :gender_type).where(gender_type_id: GenderType::MIXED_OR_ANY_ID).order('category_types.age_begin').each do |meeting_program|
             %li
               = link_to("#mprg#{meeting_program.id}", {class: 'goggles-nav-compact', 'data-turbolinks'=>'false'}) do
                 = meeting_program.get_category_type_name
@@ -19,7 +19,7 @@
           %li
             .btn.disabled
               = GenderType.find_by_id(GenderType::FEMALE_ID).i18n_short + ':'
-          - meeting_event.meeting_programs.includes(:category_type, :gender_type).where(gender_type_id: GenderType::FEMALE_ID).order('category_types.id').each do |meeting_program|
+          - meeting_event.meeting_programs.includes(:category_type, :gender_type).where(gender_type_id: GenderType::FEMALE_ID).order('category_types.age_begin').each do |meeting_program|
             %li
               = link_to("#mprg#{meeting_program.id}", {class: 'goggles-nav-compact', 'data-turbolinks'=>'false'}) do
                 = meeting_program.get_category_type_name
@@ -28,7 +28,7 @@
           %li
             .btn.disabled
               = GenderType.find_by_id(GenderType::MALE_ID).i18n_short + ':'
-          - meeting_event.meeting_programs.includes(:category_type, :gender_type).where(gender_type_id: GenderType::MALE_ID).order('category_types.id').each do |meeting_program|
+          - meeting_event.meeting_programs.includes(:category_type, :gender_type).where(gender_type_id: GenderType::MALE_ID).order('category_types.age_begin').each do |meeting_program|
             %li
               = link_to("#mprg#{meeting_program.id}", {class: 'goggles-nav-compact', 'data-turbolinks'=>'false'}) do
                 = meeting_program.get_category_type_name

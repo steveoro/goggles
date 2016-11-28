@@ -196,7 +196,7 @@ class Api::V1::MeetingsController < Api::BaseController
         date:       event.get_scheduled_date,
 
         progs: event.meeting_programs.includes(:category_type, :gender_type)
-          .order('category_types.id').map do |prog|
+          .order('category_types.age_begin').map do |prog|
              {
                id:       prog.id,
                category: prog.category_type.get_short_name,
