@@ -175,6 +175,9 @@ class ChampionshipsController < ApplicationController
     when 151 # CSI 2015/2016
       # Enhance individual ranking
       @individual_ranking = EnhanceIndividualRankingDAO.new( @season )
+    when 161 # CSI 2016/2017
+      # Enhance individual ranking
+      @individual_ranking = EnhanceIndividualRankingDAO.new( @season )
     end
 
     # Manage updates for cache
