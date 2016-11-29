@@ -4,7 +4,7 @@
   - if @season.meeting_individual_results.count > 0
     = show_tab_link( params, 'ranking_regional_er_csi', t('championships.team_ranking'), championships_ranking_regional_er_csi_path( id: @season.id ) )
 
-    - if @season.id == 141 || @season.id == 151
+    - if @season.id == 141 || @season.id == 151 || @season.id == 161
       = show_tab_link( params, 'individual_rank_regional_er_csi', t('championships.individual_rank'), championships_individual_rank_regional_er_csi_path( id: @season.id ) )
 
     = show_tab_link( params, 'event_ranking_regional_er_csi', t('championships.event_ranking'), championships_event_ranking_regional_er_csi_path( id: @season.id ) )
