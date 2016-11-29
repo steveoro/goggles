@@ -42,7 +42,7 @@ describe MiscController, type: :controller do
       end
     end
 
-    context "as logged but not associated user" do
+    context "as a logged but not associated user" do
       before(:each) do
         login_user()
         expect( subject.current_user ).to be_an_instance_of( User )
@@ -66,24 +66,33 @@ describe MiscController, type: :controller do
     end
 
 
-    context "as logged and swimmer-associated user" do
+    context "as a logged-in and swimmer-associated user" do
       before(:each) do
-        @user = create(:user)
+        # XXX Using existing fixture data to speed-up testing:
+        @user = User.find( [1, 2].sort{rand * 0.5 }.first )
+#        swimmer = @user.swimmer
+#        fix_season = Meeting.for_season_type( SeasonType.find_by_code('MASFIN') )
+#            .has_results.to_a
+#              .sort{rand * 0.5}.first
+#              .season
+        # ****************[ OLD complex method BEGIN]**************************
+#        @user = create(:user)
         # Select from seasons that have badges and time standards
-        fix_season = Meeting.for_season_type( SeasonType.find_by_code( 'MASFIN' )).has_results[ ( rand * Meeting.for_season_type( SeasonType.find_by_code( 'MASFIN' )).has_results.count - 1 ).to_i ].season
+#        fix_season = Meeting.for_season_type( SeasonType.find_by_code( 'MASFIN' )).has_results[ ( rand * Meeting.for_season_type( SeasonType.find_by_code( 'MASFIN' )).has_results.count - 1 ).to_i ].season
         # Get a random swimmer from the fixture season:
-        swimmer = Swimmer
-          .includes(:badges)
-          .where( "badges.season_id" => fix_season.id )[ ( rand * Swimmer.includes(:badges).where( "badges.season_id" => fix_season.id ).count - 1 ).to_i ]
-        expect( swimmer ).not_to be nil
+#        swimmer = Swimmer
+#          .includes(:badges)
+#          .where( "badges.season_id" => fix_season.id )[ ( rand * Swimmer.includes(:badges).where( "badges.season_id" => fix_season.id ).count - 1 ).to_i ]
+#        expect( swimmer ).not_to be nil
 # DEBUG
 #        puts( "\r\n- fixture season: #{@fixture_season.inspect}" )
 #        puts( "- swimmer: #{swimmer.inspect}" )
 # DEBUG
 #        puts "\r\n- @user PRE-association: #{@user.inspect}"
-        @user.set_associated_swimmer( swimmer )
+#        @user.set_associated_swimmer( swimmer )
 # DEBUG
 #        puts "- @user POST-association: #{@user.inspect}"
+        # ****************[ OLD complex method END]****************************
 
         login_user( @user )
         expect( subject.current_user ).to be_an_instance_of( User )
@@ -279,25 +288,38 @@ describe MiscController, type: :controller do
 
     context "with a correct request for a logged user with associated swimmer" do
       before(:each) do
+        # XXX Using existing fixture data to speed-up testing:
+        @user = User.find( [1, 2].sort{rand * 0.5 }.first )
+        swimmer = @user.swimmer
+        fix_season = Meeting.for_season_type( SeasonType.find_by_code('MASFIN') )
+            .has_results.to_a
+              .sort{rand * 0.5}.first
+              .season
+        # ****************[ OLD complex method BEGIN]**************************
         # Select from seasons that have badges and time standards
-        fix_season = Meeting.for_season_type( SeasonType.find_by_code( 'MASFIN' )).has_results[ ( rand * Meeting.for_season_type( SeasonType.find_by_code( 'MASFIN' )).has_results.count - 1 ).to_i ].season
+#        fix_season = Meeting.for_season_type( SeasonType.find_by_code('MASFIN') )
+#            .has_results.to_a
+#              .sort{rand * 0.5}.first
+#              .season
         # Get a random swimmer from the fixture season:
-        swimmer = Swimmer
-          .includes(:badges)
-          .where( "badges.season_id" => fix_season.id )[ ( rand * Swimmer.includes(:badges).where( "badges.season_id" => fix_season.id ).count - 1 ).to_i ]
-        expect( swimmer ).not_to be nil
+#        swimmer = Swimmer
+#          .includes(:badges)
+#          .where( "badges.season_id" => fix_season.id )[ ( rand * Swimmer.includes(:badges).where( "badges.season_id" => fix_season.id ).count - 1 ).to_i ]
+#        expect( swimmer ).not_to be nil
 # DEBUG
 #        puts "\r\n- fix_season: #{fix_season.inspect}"
 #        puts "- swimmer: #{swimmer.inspect}"
-        @user = create(:user)
+#        @user = create(:user)
 # DEBUG
 #        puts "\r\n- @user PRE-association: #{@user.inspect}"
-        @user.set_associated_swimmer( swimmer )
+#        @user.set_associated_swimmer( swimmer )
 # DEBUG
 #        puts "- @user POST-association: #{@user.inspect}"
+        # ****************[ OLD complex method END]****************************
         @fixture_gender = swimmer.gender_type
         @fixture_category = swimmer.get_category_type_for_season( fix_season.id )
-        @fixture_events_by_pool_type = EventsByPoolType.not_relays.only_for_meetings.all[ ( rand * EventsByPoolType.not_relays.only_for_meetings.count - 1 ).to_i ]
+        @fixture_events_by_pool_type = EventsByPoolType.not_relays.only_for_meetings
+          .to_a.sort{rand * 0.5}.first
 
         login_user( @user )
         expect( subject.current_user ).to be_an_instance_of( User )
