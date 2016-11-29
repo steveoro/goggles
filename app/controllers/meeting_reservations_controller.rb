@@ -90,7 +90,7 @@ class MeetingReservationsController < ApplicationController
     meeting_id = params[:id].to_i
     @meeting = Meeting.find_by_id( meeting_id )
     unless ( @meeting )
-      flash[:error] = I18n.t(:invalid_action_request) + ' - no Meeting selected.'
+      flash[:error] = I18n.t(:invalid_action_request) + ' - ' + I18n.t('meeting.errors.missing_meeting_id')
       redirect_to( meetings_current_path() ) and return
     end
 
@@ -104,7 +104,7 @@ class MeetingReservationsController < ApplicationController
     @swimmer = current_user.swimmer
 
     unless ( @is_valid_team_manager || @swimmer )
-      flash[:error] = I18n.t(:invalid_action_request) + ' - not a valid Team manager or no swimmer associated!'
+      flash[:error] = I18n.t(:invalid_action_request) + ' - ' + I18n.t('meeting.errors.invalid_team_manager_or_no_swimmer')
       redirect_to( meetings_current_path() ) and return
     end
   end

@@ -683,7 +683,7 @@ class MeetingsController < ApplicationController
     meeting_id = params[:id].to_i
     @meeting = ( meeting_id > 0 ) ? Meeting.find_by_id( meeting_id ) : nil
     unless ( @meeting )
-      flash[:error] = I18n.t(:invalid_action_request) + ' - Meeting missing'
+      flash[:error] = I18n.t(:invalid_action_request) + ' - ' + I18n.t('meeting.errors.missing_meeting_id')
       redirect_to( meetings_current_path() ) and return
     end
 
@@ -719,7 +719,7 @@ class MeetingsController < ApplicationController
     team_id = params[:team_id].to_i
     @team = ( team_id > 0 ) ? Team.find_by_id( team_id ) : nil
     unless ( @team )
-      flash[:error] = I18n.t(:invalid_action_request) + ' - Team missing: ' + team_id.to_s
+      flash[:error] = I18n.t(:invalid_action_request) + ' - ' + I18n.t('meeting.errors.missing_team_id')
       redirect_to( meetings_current_path() ) and return
     end
   end
@@ -735,7 +735,7 @@ class MeetingsController < ApplicationController
     swimmer_id = params[:swimmer_id].to_i
     @swimmer = ( swimmer_id > 0 ) ? Swimmer.find_by_id( swimmer_id ) : nil
     unless ( @swimmer )
-      flash[:error] = I18n.t(:invalid_action_request) + ' - Swimmer missing'
+      flash[:error] = I18n.t(:invalid_action_request) + ' - ' + I18n.t('meeting.errors.missing_swimmer_id')
       redirect_to( meetings_current_path() ) and return
     end
   end
@@ -745,7 +745,7 @@ class MeetingsController < ApplicationController
   #
   def verify_is_team_manager
     unless ( current_user.team_managers.count > 0 )
-      flash[:error] = I18n.t(:invalid_action_request) + ' - You are not a Team manager!'
+      flash[:error] = I18n.t(:invalid_action_request) + ' - ' + I18n.t('meeting.errors.invalid_team_manager')
       redirect_to( meetings_current_path() ) and return
     end
   end

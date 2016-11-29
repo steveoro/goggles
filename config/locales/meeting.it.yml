@@ -59,6 +59,13 @@ it:
     passages: 'Passaggi'
     disqualified: 'SQ.'
 
+    errors:
+      missing_meeting_id: 'Meeting non trovato o ID selezionato non valido.'
+      missing_swimmer_id: 'Nuotatore non trovato o ID selezionato non valido.'
+      missing_team_id: 'Squadra non trovata o ID selezionato non valido.'
+      invalid_team_manager: 'Non sei un Team manager abilitato per questa stagione!'
+      invalid_team_manager_or_no_swimmer: 'Non sei un Team manager abilitato per questa stagione oppure non hai un nuotatore associato che può partecipare a questo evento!'
+
   meeting_session:
     unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sulle Sessioni Meeting'! (tab: 'meeting_sessions')"
 
