@@ -109,6 +109,34 @@ class ApplicationController < ActionController::Base
   #++
 
 
+  # Returns the full pathname of the output folder, used to create internal LOG
+  # and PDF files that may be downloaded by the user or sent directly via mail.
+  #
+  def get_output_folder
+    File.join( Rails.root, 'public', 'output' )
+  end
+
+
+  # Returns a timestamped pseudo-unique filename given a base name to append to
+  # the prefix.
+  # The prefix contains both a fixed timestamp in the format 'YYYYmmddHHMM'
+  # and an environmental code (either 'dev' or 'prod') set to the opposite of the
+  # running Rails environment.
+  # For instance, the resulting code is 'dev' when running in production and
+  # 'prod' otherwise.
+  # This is usually used to generate SQL diff files for synching between
+  # 'dev' & 'prod' environments (thus a change generated in 'dev' requires a
+  # diff file to be run on 'prod' and vice-versa).
+  #
+  def get_timestamped_env_filename( basename )
+    timestamp = DateTime.now().strftime('%Y%m%d%H%M')
+    env_code  = Rails.env == 'production' ? 'dev' : 'prod'
+    "#{ timestamp }#{ env_code }_#{ basename }"
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
   #--
   # TODO Refactor these:
   # -- Misc (controller-related) utility methods: --
