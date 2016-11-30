@@ -7,8 +7,8 @@
             %i= I18n.t('meeting.previous_editions')
           %td.goggles-centeralign{'colspan'=>'10'}
             %i= I18n.t('meeting.results')
-        - @swimmer.meetings.for_code( @meeting.code ).uniq.sort_by_date( 'DESC' ).each do |prev_meeting|
-          - if ((!@meeting.edition || @meeting.edition == 0) && prev_meeting.id != @meeting.id) || @meeting.edition > prev_meeting.edition  
+        - @swimmer.meetings.for_code( @meeting.code ).sort_by_date( 'DESC' ).to_a.uniq.each do |prev_meeting|
+          - if ((!@meeting.edition || @meeting.edition == 0) && prev_meeting.id != @meeting.id) || @meeting.edition > prev_meeting.edition
             %tr
               %td
                 = prev_meeting.decorate.get_linked_full_name
