@@ -1,8 +1,11 @@
+require 'team_manager_validator'
+
+
 =begin
 
 = MeetingDecorator
 
-  - version:  6.002
+  - version:  6.021
   - author:   Steve A.
 
   Decorator for the Meeting model.
@@ -105,7 +108,25 @@ class MeetingDecorator < Draper::Decorator
         end
       end
     end
-    linked_name
+    linked_name.html_safe
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  # Builds-up the HTML for the 'manage meeting reservation' button link.
+  # Returns an empty string if the current_user is not allowed to manage the meeting.
+  #
+  def manage_reservation_button( current_user )
+    unless TeamManagerValidator.is_manageable( object ) &&
+           TeamManagerValidator.can_manage( current_user, object )
+      ''
+    else
+      h.link_to(
+        I18n.t('meeting_reservation.manage_button_title'),
+        meeting_reservations_edit_path(id: object.id),
+        { method: :post, class: 'btn btn-default btn-xs', 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting_reservation.manage_meeting_tooltip') }
+      )
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -114,7 +135,7 @@ class MeetingDecorator < Draper::Decorator
   # using a new line for each session
   #
   def get_session_warm_up_times
-    object.get_session_warm_up_times('<br><br>').html_safe
+    object.get_session_warm_up_times('<br/><br/>').html_safe
   end
   # ----------------------------------------------------------------------------
 
@@ -122,7 +143,7 @@ class MeetingDecorator < Draper::Decorator
   # using a new line for each session
   #
   def get_session_begin_times
-    object.get_session_begin_times('<br><br>').html_safe
+    object.get_session_begin_times('<br/><br/>').html_safe
   end
   # ----------------------------------------------------------------------------
 
@@ -131,7 +152,7 @@ class MeetingDecorator < Draper::Decorator
   #
   def get_complete_events
     #object.get_complete_events.split("\r\n").map{ |e| content_tag(:p, e) }.join().html_safe
-    object.get_complete_events.split("\r\n").join('<br><br>').html_safe
+    object.get_complete_events.split("\r\n").join('<br/><br/>').html_safe
   end
   # ----------------------------------------------------------------------------
 

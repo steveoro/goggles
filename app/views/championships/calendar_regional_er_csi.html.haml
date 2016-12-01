@@ -32,6 +32,8 @@
             %tr
               %td
                 = calendar_dao.meeting.decorate.get_linked_name
+                %p/
+                = calendar_dao.meeting.decorate.manage_reservation_button( current_user )
               - if calendar_dao.meeting.header_date
                 %td.goggles-rightalign
                   - if calendar_dao.meeting.is_confirmed
@@ -49,6 +51,8 @@
                 - if index == 0
                   %td{ rowspan: session_number }
                     = calendar_dao.meeting.decorate.get_linked_name
+                    %p/
+                    = calendar_dao.meeting.decorate.manage_reservation_button( current_user )
                 - if index == 0
                   %td.goggles-rightalign{ rowspan: session_number }
                     - if calendar_dao.meeting.is_confirmed

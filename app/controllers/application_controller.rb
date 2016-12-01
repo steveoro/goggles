@@ -69,6 +69,43 @@ class ApplicationController < ActionController::Base
   #++
 
 
+  # Sets a @meeting instance if params[:id] corresponds to a valid Meeting Id.
+  # It clears to +nil+ the instance otherwise.
+  #
+  def set_meeting_from_id
+    meeting_id = params[:id].to_i
+    @meeting = meeting_id > 0 ? Meeting.find_by_id( meeting_id ) : nil
+  end
+
+
+  # Sets a @team instance if params[:team_id] corresponds to a valid Team Id.
+  # It clears to +nil+ the instance otherwise.
+  #
+  def set_team_from_team_id
+    team_id = params[:team_id].to_i
+    @team = team_id > 0 ? Team.find_by_id( team_id ) : nil
+  end
+
+
+  # Sets a @swimmer instance if params[:swimmer_id] corresponds to a valid Swimmer Id.
+  # It clears to +nil+ the instance otherwise.
+  #
+  def set_swimmer_from_swimmer_id
+    swimmer_id = params[:swimmer_id].to_i
+    @swimmer = swimmer_id > 0 ? Swimmer.find_by_id( swimmer_id ) : nil
+  end
+
+
+  # Sets a @swimmer instance from the current_user if it has an associated Swimmer.
+  # It doesn't do anything otherwise.
+  #
+  def set_swimmer_from_current_user
+    @swimmer = current_user.swimmer if current_user && current_user.swimmer
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
   # Render custom 404-error page
 #  def render_404
 #    respond_to do |format|

@@ -680,8 +680,7 @@ class MeetingsController < ApplicationController
   # id: the meeting id to be processed
   #
   def verify_meeting
-    meeting_id = params[:id].to_i
-    @meeting = ( meeting_id > 0 ) ? Meeting.find_by_id( meeting_id ) : nil
+    set_meeting_from_id
     unless ( @meeting )
       flash[:error] = I18n.t(:invalid_action_request) + ' - ' + I18n.t('meeting.errors.missing_meeting_id')
       redirect_to( meetings_current_path() ) and return
@@ -689,14 +688,12 @@ class MeetingsController < ApplicationController
 
     # Find preselected team and swimmer if user logged in and associated to a swimmer
     # and the swimmer or team partecipated to the meeting
-    if current_user && current_user.swimmer
-      swimmer = current_user.swimmer
-      team = swimmer.teams.joins(:badges).where(['badges.season_id = ?', @meeting.season_id]).first
+    set_swimmer_from_current_user
+    if @swimmer
+      team = @swimmer.teams.joins(:badges).where(['badges.season_id = ?', @meeting.season_id]).first
 
-      if @meeting.meeting_individual_results.where(['meeting_individual_results.swimmer_id = ?', swimmer.id]).count > 0 ||
-        @meeting.meeting_entries.where(['meeting_entries.swimmer_id = ?', swimmer.id]).count > 0
-        # The swimmer associated with the user parteciapte to the meeting
-        @swimmer = swimmer
+      if @meeting.meeting_individual_results.where(['meeting_individual_results.swimmer_id = ?', @swimmer.id]).count > 0 ||
+        @meeting.meeting_entries.where(['meeting_entries.swimmer_id = ?', @swimmer.id]).count > 0
         @team = team
       else
         if team && (@meeting.meeting_individual_results.where(['meeting_individual_results.team_id = ?', team.id]).count > 0 ||
@@ -716,8 +713,7 @@ class MeetingsController < ApplicationController
   # team_id: the team id to be processed
   #
   def verify_team
-    team_id = params[:team_id].to_i
-    @team = ( team_id > 0 ) ? Team.find_by_id( team_id ) : nil
+    set_team_from_team_id
     unless ( @team )
       flash[:error] = I18n.t(:invalid_action_request) + ' - ' + I18n.t('meeting.errors.missing_team_id')
       redirect_to( meetings_current_path() ) and return
@@ -732,8 +728,7 @@ class MeetingsController < ApplicationController
   # team_id: the team id to be processed
   #
   def verify_swimmer
-    swimmer_id = params[:swimmer_id].to_i
-    @swimmer = ( swimmer_id > 0 ) ? Swimmer.find_by_id( swimmer_id ) : nil
+    set_swimmer_from_swimmer_id
     unless ( @swimmer )
       flash[:error] = I18n.t(:invalid_action_request) + ' - ' + I18n.t('meeting.errors.missing_swimmer_id')
       redirect_to( meetings_current_path() ) and return

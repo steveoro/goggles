@@ -5,9 +5,7 @@ describe MeetingDecorator, type: :model do
   include Rails.application.routes.url_helpers
 
   before :each do
-#    @meeting = Meeting.find_by_id( ((rand * Meeting.count) % Meeting.count).to_i + 1 )
-    # FIXME Randomize correctly this: (the above gets some wrong IDs)
-    @meeting = Meeting.find_by_id( 13105 )
+    @meeting = Meeting.find_by_id( [13101, 13102, 13103, 13105, 14101, 14102, 14103, 14104, 14105, 15101, 15102, 15103, 15104, 15105].sort{rand * 0.5}.first )
     expect( @meeting ).to be_an_instance_of(Meeting)
     @decorated_instance = MeetingDecorator.decorate( @meeting )
   end
@@ -161,7 +159,55 @@ describe MeetingDecorator, type: :model do
   #-- --------------------------------------------------------------------------
   #++
 
-  
+
+  describe "#manage_reservation_button" do
+    it "responds to #manage_reservation_button" do
+      expect( subject ).to respond_to( :manage_reservation_button )
+    end
+
+    context "with nil current User," do
+      it "returns an empty string" do
+        expect( subject.manage_reservation_button(nil) ).to eq('')
+      end
+    end
+
+    context "with a user that is not a team_manager," do
+      it "returns an empty string" do
+        expect( subject.manage_reservation_button(create(:user)) ).to eq('')
+      end
+    end
+
+    context "with a User that is a team_manager but not for the current meeting/season," do
+      it "returns an empty string" do
+        expect( subject.manage_reservation_button(create(:team_manager).user) ).to eq('')
+      end
+    end
+
+    context "with a User that is a valid team_manager for the selected meeting (and the meeting doesn't have results acquired)," do
+      let(:meeting)       { create(:meeting, header_date: Date.today + 10.days) }
+      let(:team_manager)  do
+        create(
+          :team_manager,
+          team_affiliation: create(:team_affiliation, season: meeting.season )
+        )
+      end
+      subject { meeting.decorate }
+
+      it "returns an HTML link" do
+        expect( subject.manage_reservation_button(team_manager.user) ).to include( 'href' )
+      end
+      it "returns an HTML link to the meeting_reservations_edit path" do
+        expect( subject.manage_reservation_button(team_manager.user) ).to include( meeting_reservations_edit_path(id: subject.id) )
+      end
+      it "returns a string containing the manage reservation button title" do
+        expect( subject.manage_reservation_button(team_manager.user) ).to include( I18n.t('meeting_reservation.manage_button_title') )
+      end
+    end
+  end
+  #-- --------------------------------------------------------------------------
+  #++
+
+
   describe "#get_session_warm_up_times" do
     it "responds to #get_session_warm_up_times method" do
       expect( subject ).to respond_to( :get_session_warm_up_times )
@@ -173,7 +219,7 @@ describe MeetingDecorator, type: :model do
   #-- --------------------------------------------------------------------------
   #++
 
-  
+
   describe "#get_session_begin_times" do
     it "responds to #get_session_begin_times method" do
       expect( subject ).to respond_to( :get_session_begin_times )
@@ -185,7 +231,7 @@ describe MeetingDecorator, type: :model do
   #-- --------------------------------------------------------------------------
   #++
 
-  
+
   describe "#get_linked_swimming_pool" do
     it "responds to #get_linked_swimming_pool" do
       expect( subject ).to respond_to( :get_linked_swimming_pool )
@@ -211,9 +257,9 @@ describe MeetingDecorator, type: :model do
 
     context "meeting without defined swimming pool" do
       before :each do
-        @empty_meeting = create( :meeting ).decorate  
+        @empty_meeting = create( :meeting ).decorate
       end
-      
+
       it "returns a string" do
         expect( @empty_meeting.get_linked_swimming_pool ).to be_a_kind_of( String )
       end

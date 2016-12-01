@@ -1,2 +1,99 @@
-%h1 MeetingReservations#edit
-%p Find me in app/views/meeting_reservations/edit.html.haml
+= render( partial: 'meetings/meeting_header' )
+= render( partial: 'meetings/tabs_and_radio_title' )
+
+.col-xs-12.goggles-category-gap
+  = form_tag( meeting_reservations_update_path(id: @meeting.id), method: :post, onsubmit: "$('#loadingIndicator').show();" )
+  %table.table.table-striped.table-bordered.table-hover.table-condensed
+    %tbody
+      - @meeting_reservations.each do |reservation|
+        - min_col_size = @reservations_events[reservation.id].respond_to?(:size) && @reservations_events[reservation.id].size >= 6 ? @reservations_events[reservation.id].size : 6
+        %tr.info
+          %th{ colspan: min_col_size }
+            %br/
+            %h4= reservation.swimmer.get_full_name
+        %tr.warning
+          %td{ colspan: 2 }
+            = label_tag( 'is_coming', I18n.t('meeting_reservation.is_coming') )
+            = check_box_tag(                                              |
+              "resComing_#{reservation.id}",                              |
+              "1",                                                        |
+              reservation.is_not_coming,                                  |
+              'data-res' => reservation.id                                |
+            )                                                             |
+            %br/
+            = label_tag( 'has_payed', I18n.t('meeting_reservation.has_payed') )
+            = check_box_tag(                                              |
+              "resPayed_#{reservation.id}",                               |
+              "1",                                                        |
+              reservation.has_payed,                                      |
+              'data-res' => reservation.id                                |
+            )                                                             |
+          %td{ colspan: 4 }
+            = label_tag( 'free_notes', I18n.t('meeting_reservation.free_notes') )
+            = text_field_tag(                                             |
+              "resNotes_#{reservation.id}",                               |
+              reservation.notes,                                          |
+              'class' => "form-control text-right",                       |
+              'data-res' => reservation.id                                |
+            )                                                             |
+        - if @reservations_events[reservation.id].respond_to?(:each)
+          - @reservations_events[reservation.id].each_slice(6) do |sublist_evres|
+            %tr.success
+              - sublist_evres.each do |event_reservation|
+                - timing_hundreds = event_reservation.get_timing_instance.to_hundreds
+                %td
+                  %b= event_reservation.event_type.i18n_short
+                  %br/
+                  %i= event_reservation.get_timing
+            %tr
+              - sublist_evres.each do |event_reservation|
+                - timing_hundreds = event_reservation.get_timing_instance.to_hundreds
+                %td
+                  = text_field_tag(                                             |
+                    "evr_#{event_reservation.id}",                              |
+                    timing_hundreds > 0 ? event_reservation.get_timing : nil,   |
+                    'class' => "input-mini text-right timing",                  |
+                    'data-event-res' => event_reservation.id                    |
+                  )                                                             |
+                  %br/
+                  = label_tag( 'registered', I18n.t('meeting_reservation.registered') )
+                  = check_box_tag(                                              |
+                    "evrRegistered_#{event_reservation.id}",                    |
+                    "1",                                                        |
+                    timing_hundreds > 0,                                        |
+                    'data-event-res' => event_reservation.id                    |
+                  )                                                             |
+
+.col-xs-12.goggles-category-gap
+  .col-xs-2
+    = submit_tag( I18n.t(:save), data: {confirm: I18n.t('netzke.basepack.grid_panel.are_you_sure'), |
+        disable_with: I18n.t(:please_wait), class: 'disabled' }, class: "btn btn-primary" )         |
+    %span(id='loadingIndicator' hidden='true')
+      = image_tag( 'indicator.gif' )
+
+.col-xs-12.goggles-category-gap
+  &nbsp;
+
+:javascript
+  /**
+   * Binds formatting event to key press.
+   */
+  $('input.timing').bind('keyup', function (event) {
+      var key = event.which;
+      var currentValue = $(this).val();
+      _formatTiming( currentValue, $(this) );
+  });
+  // --------------------------------------------------------------------------
+
+  /**
+   * Formats the current value as a timing.
+   */
+  function _formatTiming( currentValue, targetNode ) {
+      // Remove formatting:
+      var newValue = currentValue.replace( /[\'\.\:\"\,]/g, "" );
+      // Enforce formatting:
+      newValue = newValue.replace( /(?=(\d{2})$)/g, "\"" );
+      newValue = newValue.replace( /(?=\B(\d{2})\D\d{2}$)/g, "\'" );
+      targetNode.val( newValue );
+  };
+  // --------------------------------------------------------------------------

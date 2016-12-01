@@ -15,7 +15,7 @@
         detach_with_id: :flt_season_id
     ) do |meeting|
         [
-            MeetingDecorator.decorate(meeting).get_logo_for_season_type,
+            meeting.decorate.get_logo_for_season_type,
             { class: 'goggles-centeralign' }
         ] if meeting.season
     end
@@ -25,8 +25,9 @@
         attribute: 'description',
         detach_with_id: :flt_description
     ) do |meeting|
-    	meeting.decorate.get_linked_name( :get_full_name )
-    	#show_tag( meeting.are_results_acquired )
+  	    meeting.decorate.get_linked_name( :get_full_name ) <<
+  	    "<p/>".html_safe <<
+        meeting.decorate.manage_reservation_button( current_user )
     end
 
     g.column(
@@ -95,7 +96,7 @@
         filter: false
     ) do |meeting|
     	#meeting.decorate.get_linked_swimming_pool
-    	meeting.decorate.get_linked_swimming_pool( :get_city_and_attributes )
+    	meeting.decorate.get_linked_swimming_pool(:get_city_and_attributes)
     end
 
 end -%>

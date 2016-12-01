@@ -1,6 +1,8 @@
 # encoding: utf-8
 require 'common/format'
 require 'wrappers/timing'
+require 'meeting_reservation_matrix_creator'
+require 'team_manager_validator'
 
 
 =begin
@@ -43,6 +45,8 @@ class MeetingReservationsController < ApplicationController
   #                (when also a team-manager, the whole matrix of rows should be editable)
   #
   def edit
+    # The creator will set-up a matrix of rows that can be edited and then persisted
+    # with the #update action
     creator = MeetingReservationMatrixCreator.new(
       meeting:          @meeting,
       team_affiliation: @team_affiliation,
@@ -57,16 +61,35 @@ class MeetingReservationsController < ApplicationController
       full_sql_diff_path = File.join( output_dir, file_name )
 
       serialize_and_deliver_diff_file( creator, "update reservations", full_sql_diff_path )
-      # TODO Alernatively, make an asynch job that sends a whole batch of edits via mail
+      # TODO Alternatively, make an asynch job that sends a whole batch of edits via mail
 
-      # Signal also locally any error or a successful operation:
+      # Signal also locally if any error occurred during setup:
       if creator.total_errors > 0
         flash[:error] = I18n.t('something_went_wrong')
-      else
-        flash[:info] = I18n.t('social.changes_saved')
       end
+    end
 
-      # (At the end we expect to remain in edit mode - no redirection should be necessary)
+    # Setup is done. Now get the list of reservations for each athlete:
+    @meeting_reservations = MeetingReservation.where(
+      meeting_id: @meeting.id,
+      team_id: @team_affiliation.team_id
+    ).joins(:swimmer)
+      .includes(:swimmer).order('swimmers.complete_name')
+
+    # Get the list of rows of event reservations for each athlete:
+    @reservations_events = {}
+    @meeting_reservations.each do |reservation|
+      @reservations_events[ reservation.id ] = MeetingEventReservation.where(
+          meeting_id: @meeting.id,
+          swimmer_id: reservation.swimmer_id
+      ).joins(:meeting_session, :meeting_event, :event_type)
+        .includes(:meeting_session, :meeting_event, :event_type)
+        .order('meeting_sessions.session_order, meeting_events.event_order')
+        .to_a
+      # Assuming 'mer' is an item of the resulting array, this yields something
+      # like:
+      #       mer.event_type.i18n_short             for the event description
+      #       mer.meeting_session.scheduled_date    for the scheduled date
     end
   end
   #-- -------------------------------------------------------------------------
@@ -87,6 +110,10 @@ class MeetingReservationsController < ApplicationController
   #                (when also a team-manager, the whole matrix of rows should be editable)
   #
   def update
+# DEBUG
+    logger.debug "\r\n\r\n!! ------ #{self.class.name} -----"
+    logger.debug "> #{params.inspect}"
+
     # TODO Make the Updater class & call it
     # TODO Serialize creator.sql_diff_text_log in a dedicated log file
     # TODO Make an asynch job that sends the results via mail
@@ -131,8 +158,7 @@ class MeetingReservationsController < ApplicationController
   #                associated swimmer (must be a "goggler").
   #
   def verify_meeting_and_association
-    meeting_id = params[:id].to_i
-    @meeting = Meeting.find_by_id( meeting_id )
+    set_meeting_from_id
     unless ( @meeting )
       flash[:error] = I18n.t(:invalid_action_request) + ' - ' + I18n.t('meeting.errors.missing_meeting_id')
       redirect_to( meetings_current_path() ) and return
@@ -140,12 +166,10 @@ class MeetingReservationsController < ApplicationController
 
     # To be a valid team manager, a user must be enabled to manage the season
     # of the selected Meeting:
-    @is_valid_team_manager = current_user &&
-              (current_user.team_managers.count > 0) &&
-              (! current_user.team_managers.find{|tm| tm.team_affiliation.season_id == @meeting.season_id }.nil?)
+    @is_valid_team_manager = TeamManagerValidator.can_manage( current_user, @meeting )
 
     # Detect if there's a swimmer associated:
-    @swimmer = current_user.swimmer
+    set_swimmer_from_current_user
 
     unless ( @is_valid_team_manager || @swimmer )
       flash[:error] = I18n.t(:invalid_action_request) + ' - ' + I18n.t('meeting.errors.invalid_team_manager_or_no_swimmer')

@@ -25,10 +25,10 @@ GIT
 
 GIT
   remote: https://github.com/steveoro/goggles_core
-  revision: 5afea36365ab7ecde28a3c8992c56abbf55f4317
+  revision: 14140f613b08fa10d900eef5677de90efbbc9521
   branch: rails5
   specs:
-    goggles_core (1.1.6.0)
+    goggles_core (1.1.9.0)
       active_hash_relation
       active_model_serializers (~> 0.10.0)
       activemodel-serializers-xml
@@ -280,7 +280,7 @@ GEM
       mime-types-data (~> 3.2015)
     mime-types-data (3.2016.0521)
     mini_portile2 (2.1.0)
-    minitest (5.9.1)
+    minitest (5.10.0)
     multi_json (1.12.1)
     mysql2 (0.4.5)
     nenv (0.3.0)

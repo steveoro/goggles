@@ -34,7 +34,7 @@
               %td.goggles-rightalign{'colspan'=>'1'}
                 - if passage.get_passage_distance != passage_types[index].length_in_meters
                   %i= "#{ passage.get_passage_distance } mt."
-                  %br
+                  %br/
                 = text_field_tag(                                             |
                   "pas_#{passage.id}",                                        |
                   passage.compute_incremental_time,                           |
@@ -42,7 +42,7 @@
                   'data-mir' => mir.id,                                       |
                   'data-passage-type' => passage.passage_type_id              |
                 )                                                             |
-                %br
+                %br/
                 = passage.get_timing
           - else
             - count = ( passage_types.count - 1 )
