@@ -13,7 +13,7 @@
               "data-provide"=>"typeahead", placeholder: I18n.t('combobox_3char_tooltip')} )  |
       .row.col-xs-12.form-group
         .col-xs-5
-          = submit_tag( I18n.t(:submit), data: { disable_with: I18n.t(:please_wait), class: 'btn disabled' }, class: 'btn btn-primary' )
+          = submit_tag( I18n.t(:submit), id: 'btnSearchSwimmerRecords', data: { disable_with: I18n.t(:please_wait), class: 'btn disabled' }, class: 'btn btn-primary' )
           %span(id='loadingIndicator' hidden='true')
             = image_tag( 'indicator.gif' )
 

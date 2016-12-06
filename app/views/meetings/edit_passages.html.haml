@@ -70,7 +70,7 @@
 
 .col-xs-12.goggles-category-gap
   .col-xs-2
-    = submit_tag( I18n.t(:save), data: {confirm: I18n.t('netzke.basepack.grid_panel.are_you_sure'), |
+    = submit_tag( I18n.t(:save), id: 'btnSavePassages', data: {confirm: I18n.t('netzke.basepack.grid_panel.are_you_sure'), |
         disable_with: I18n.t(:please_wait), class: 'disabled' }, class: "btn btn-primary" )         |
     %span(id='loadingIndicator' hidden='true')
       = image_tag( 'indicator.gif' )

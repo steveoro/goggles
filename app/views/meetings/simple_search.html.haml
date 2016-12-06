@@ -13,7 +13,7 @@
       .col-xs-8.col-sm-9
         = text_field_tag( :text, nil, { class: 'input-xxlarge' } )
         &nbsp;
-        = submit_tag( I18n.t(:submit), data: { disable_with: I18n.t(:please_wait), class: 'btn disabled' }, class: 'btn btn-primary' )
+        = submit_tag( I18n.t(:submit), id: 'btnSimpleSearchMeeting', data: { disable_with: I18n.t(:please_wait), class: 'btn disabled' }, class: 'btn btn-primary' )
         %span(id='loadingIndicator' hidden='true')
           = image_tag( 'indicator.gif' )
 
