@@ -15,6 +15,9 @@ require 'passages_batch_updater'
 
 =end
 class MeetingsController < ApplicationController
+  # Require authorization before invoking any of this controller's actions:
+  before_action :authenticate_user!, only: [:edit_passages]
+
   # Parse parameters:
   before_action :verify_meeting, only: [
       :show_full, :show_autoscroll, :show_ranking, :show_stats,
@@ -739,7 +742,7 @@ class MeetingsController < ApplicationController
   # (Actually, it verifies that the current user has any managed affiliation defined.)
   #
   def verify_is_team_manager
-    unless ( current_user.team_managers.count > 0 )
+    unless ( current_user && current_user.team_managers.count > 0 )
       flash[:error] = I18n.t(:invalid_action_request) + ' - ' + I18n.t('meeting.errors.invalid_team_manager')
       redirect_to( meetings_current_path() ) and return
     end
