@@ -13,7 +13,7 @@
             %h4= reservation.swimmer.get_full_name
         %tr.warning
           %td{ colspan: 2 }
-            = label_tag( 'is_coming', I18n.t('meeting_reservation.is_coming') )
+            = label_tag( 'is_not_coming', I18n.t('meeting_reservation.is_not_coming') )
             = check_box_tag(                                              |
               "resComing_#{reservation.id}",                              |
               "1",                                                        |
@@ -21,11 +21,11 @@
               'data-res' => reservation.id                                |
             )                                                             |
             %br/
-            = label_tag( 'has_payed', I18n.t('meeting_reservation.has_payed') )
+            = label_tag( 'has_confirmed', I18n.t('meeting_reservation.has_confirmed') )
             = check_box_tag(                                              |
               "resPayed_#{reservation.id}",                               |
               "1",                                                        |
-              reservation.has_payed,                                      |
+              reservation.has_confirmed,                                  |
               'data-res' => reservation.id                                |
             )                                                             |
           %td{ colspan: 4 }

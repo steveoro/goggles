@@ -6,7 +6,7 @@ require 'common/validation_error_tools'
 
 = MeetingReservationMatrixCreator
 
- - Goggles framework vers.:  6.015
+ - Goggles framework vers.:  6.025
  - author: Steve A.
 
  Strategy class used to build-up a list of reservations plus a full matrix of
@@ -210,7 +210,7 @@ class MeetingReservationMatrixCreator
       badge_id:         badge.id,
       user_id:          @current_user.id,
       is_not_coming:    false,
-      has_payed:        false
+      has_confirmed:    false
     )
   end
 
@@ -231,7 +231,7 @@ class MeetingReservationMatrixCreator
       badge_id:         badge.id,
       meeting_event_id: event.id,
       user_id:          @current_user.id,
-
+      is_doing_this:    false,
       suggested_minutes:  last_mir ? last_mir.minutes : 0,
       suggested_seconds:  last_mir ? last_mir.seconds : 0,
       suggested_hundreds: last_mir ? last_mir.hundreds : 0

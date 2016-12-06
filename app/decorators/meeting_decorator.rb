@@ -121,12 +121,11 @@ class MeetingDecorator < Draper::Decorator
            TeamManagerValidator.can_manage( current_user, object )
       ''
     else
-      ''
-#      h.link_to(
-#        I18n.t('meeting_reservation.manage_button_title'),
-#        meeting_reservations_edit_path(id: object.id),
-#        { method: :post, class: 'btn btn-default btn-xs', 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting_reservation.manage_meeting_tooltip') }
-#      )
+      h.link_to(
+        I18n.t('meeting_reservation.manage_button_title'),
+        meeting_reservations_edit_path(id: object.id),
+        { method: :post, class: 'btn btn-default btn-xs', 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting_reservation.manage_meeting_tooltip') }
+      )
     end
   end
   #-- -------------------------------------------------------------------------
