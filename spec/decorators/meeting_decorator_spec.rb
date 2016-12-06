@@ -193,13 +193,15 @@ describe MeetingDecorator, type: :model do
       end
       subject { meeting.decorate }
 
-      it "returns an HTML link" do
+# FIXME [20161206] FEATURE CURRENTLY DISABLED AND RELEASE POSTPONED:
+# TODO ENABLE THE FOLLOWING TESTS AND EDIT meeting_decorator.rb, lines 124-129 TO ENABLE IT
+      xit "returns an HTML link" do
         expect( subject.manage_reservation_button(team_manager.user) ).to include( 'href' )
       end
-      it "returns an HTML link to the meeting_reservations_edit path" do
+      xit "returns an HTML link to the meeting_reservations_edit path" do
         expect( subject.manage_reservation_button(team_manager.user) ).to include( meeting_reservations_edit_path(id: subject.id) )
       end
-      it "returns a string containing the manage reservation button title" do
+      xit "returns a string containing the manage reservation button title" do
         expect( subject.manage_reservation_button(team_manager.user) ).to include( I18n.t('meeting_reservation.manage_button_title') )
       end
     end
