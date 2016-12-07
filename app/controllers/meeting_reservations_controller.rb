@@ -1,7 +1,8 @@
 # encoding: utf-8
 require 'common/format'
 require 'wrappers/timing'
-require 'meeting_reservation_matrix_creator'
+require 'meeting_event_reservation_matrix_creator'
+require 'meeting_relay_reservation_matrix_creator'
 require 'team_manager_validator'
 
 
@@ -47,7 +48,7 @@ class MeetingReservationsController < ApplicationController
   def edit
     # The creator will set-up a matrix of rows that can be edited and then persisted
     # with the #update action
-    creator = MeetingReservationMatrixCreator.new(
+    creator = MeetingEventReservationMatrixCreator.new(
       meeting:          @meeting,
       team_affiliation: @team_affiliation,
       current_user:     current_user

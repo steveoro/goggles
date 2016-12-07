@@ -23,7 +23,7 @@
             %br/
             = label_tag( 'has_confirmed', I18n.t('meeting_reservation.has_confirmed') )
             = check_box_tag(                                              |
-              "resPayed_#{reservation.id}",                               |
+              "resConfirmed_#{reservation.id}",                           |
               "1",                                                        |
               reservation.has_confirmed,                                  |
               'data-res' => reservation.id                                |

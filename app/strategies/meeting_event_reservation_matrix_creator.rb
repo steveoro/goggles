@@ -4,20 +4,27 @@ require 'common/validation_error_tools'
 
 =begin
 
-= MeetingReservationMatrixCreator
+= MeetingEventReservationMatrixCreator
 
- - Goggles framework vers.:  6.025
+ - Goggles framework vers.:  6.026
  - author: Steve A.
 
- Strategy class used to build-up a list of reservations plus a full matrix of
- a total of (Events x Athletes) rows of MeetingEventReservation directly on the
- database, given a specific:
+ Strategy class used to build-up a list of reservations plus a full matrix of rows
+ composed of a total of "tot. Ind. Events" x "tot. Athletes" of MeetingEventReservation
+ records stored directly on the database.
+
+ While this class is used to actually build a vector together with a matrix,
+ check out also its companion class, MeetingRelayReservationMatrixCreator, which
+ is used to build up a plain and simple matrix of relay reservations rows.
+
+
+ Our goal is achieved given a specific:
 
  - Meeting instance
  - TeamAffiliation instance, somehow linked to the current_user instance
  - the current_user (User) instance
 
- Meeting is used to build-up the list of possibile events
+ Meeting is used to build-up the list of possibile (individual) events
  TeamAffiliation is used to collect the full list of associated Swimmers for the
  specific season/academic year.
 
@@ -30,7 +37,7 @@ require 'common/validation_error_tools'
  the specific reservation.
 
  Each added database row (both for MeetingReservation and MeetingEventReservation)
- is logged through the SqlConvertable's expposted method #sql_diff_text_log in a
+ is logged through the SqlConvertable's exposed method #sql_diff_text_log in a
  single output "diff" text, created after #call.
 
  In case of failure, the strategy fails silently, logging the actual errors inside
@@ -40,7 +47,7 @@ require 'common/validation_error_tools'
  objects.
 
 =end
-class MeetingReservationMatrixCreator
+class MeetingEventReservationMatrixCreator
   include SqlConvertable
 
   attr_reader :meeting, :team_affiliation, :current_user,
@@ -58,7 +65,7 @@ class MeetingReservationMatrixCreator
     @current_user     = params[ :current_user ]
     @total_errors     = 0
     @created_rows_count = 0
-    create_sql_diff_header( "MeetingReservationMatrixCreator: recorded from actions by #{ @current_user }" )
+    create_sql_diff_header( "MeetingEventReservationMatrixCreator: recorded from actions by #{ @current_user }" )
   end
   #-- --------------------------------------------------------------------------
   #++
@@ -89,8 +96,11 @@ class MeetingReservationMatrixCreator
   #++
 
 
-  # Returns a list of MeetingEvents for the selected @meeting.
-  # Returns an empty array in case of invalid parameter.
+  # Returns the expected row count for the execution of the creator class.
+  #
+  # The result is the expected total data area. The actual created_rows_count
+  # will be lesser than this only when some rows are skipped during creation
+  # (either due to errors or because already existing).
   #
   def expected_rows_count
     # Use memoization to avoid requering.
@@ -106,13 +116,13 @@ class MeetingReservationMatrixCreator
   private
 
 
-  # Returns a list of MeetingEvents for the selected @meeting.
+  # Returns a list of (individual) MeetingEvents for the selected @meeting.
   # Returns an empty array in case of invalid parameter.
   #
   def get_events_list
     # Use memoization to avoid requering:
     @memoized_event_list ||= if @meeting.instance_of?( Meeting )
-      @meeting.meeting_events.all
+      @meeting.meeting_events.are_not_relays.all
     else
       []
     end
