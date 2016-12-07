@@ -1,35 +1,50 @@
 .row
-  %a.btn.btn-lg.btn-block.btn-info.img-thumbnail{ :href => misc_fin_score_calculation_path(), 'data-toggle'=>'tooltip', 'title'=>I18n.t('misc.fin_score_calculation_tooltip') }
+  %a.btn.btn-block.btn-info.img-thumbnail{ href: misc_fin_score_calculation_path(), 'data-toggle'=>'tooltip', 'title'=>I18n.t('misc.fin_score_calculation_tooltip') }
     = image_tag( 'abacus-128.png', class: 'img-circle', style: "width: 50%;" )
-    %br
-    = t('misc.fin_score_calculation')
+  .text-center= I18n.t('misc.fin_score_calculation')
 
 - @seasons.each do |season|
   - # Only for CSI Regional ER at this time
   - if season.season_type.code == 'MASCSI'
     .row
-      %a.btn.btn-lg.btn-block.btn-primary.img-thumbnail{ :href => championships_calendar_regional_er_csi_path( id: season.id ), 'data-toggle'=>'tooltip', 'title'=>I18n.t('championships.calendar') }
+      &nbsp;
+    .row
+      %a.btn.btn-block.btn-primary.img-thumbnail{ href: championships_calendar_regional_er_csi_path( id: season.id ), 'data-toggle'=>'tooltip', 'title'=>I18n.t('championships.calendar') }
         = image_tag( 'date-128.png', class: 'img-circle', style: "width: 50%;" )
-        %br
-        = season.get_full_name
+        %br/
+        %i
+          %small= I18n.t('championships.championship')
+      .text-center= season.get_season_type # was: get_full_name
 
 - @results.each do |meeting|
   .row
-    %a.btn.btn-lg.btn-block.btn-success.img-thumbnail{ :href => meeting_show_full_path(id: meeting.id), 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.show_results_tooltip') }
+    &nbsp;
+  .row
+    %a.btn.btn-block.btn-success.img-thumbnail{ href: meeting_show_full_path(id: meeting.id), 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.show_results_tooltip') }
       = image_tag( 'victory-stand-128.png', class: 'img-circle', style: "width: 50%;" )
-      %br
-      = t('results') + ' ' + meeting.get_full_name
+      %br/
+      %i
+        %small= I18n.t('results')
+    .text-center= meeting.get_full_name
 
 - @start_lists.each do |meeting|
   .row
-    %a.btn.btn-lg.btn-block.btn-success.img-thumbnail{ :href => meeting_show_start_list_path(id: meeting.id), 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.start_list_tooltip') }
+    &nbsp;
+  .row
+    %a.btn.btn-block.btn-success.img-thumbnail{ href: meeting_show_start_list_path(id: meeting.id), 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.start_list_tooltip') }
       = image_tag( 'spiral-128.png', class: 'img-circle', style: "width: 50%;" )
-      %br
-      = t('meeting.start_list') + ' ' + meeting.get_full_name
+      %br/
+      %i
+        %small= I18n.t('meeting.start_list')
+    .text-center= meeting.get_full_name
 
 - @invitations.each do |meeting|
   .row
-    %a.btn.btn-lg.btn-block.btn-success.img-thumbnail{ :href => meeting_show_invitation_path(id: meeting.id), 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.manifest_tooltip') }
+    &nbsp;
+  .row
+    %a.btn.btn-lg.btn-block.btn-success.img-thumbnail{ href: meeting_show_invitation_path(id: meeting.id), 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.manifest_tooltip') }
       = image_tag( 'announcement-128.png', class: 'img-circle', style: "width: 50%;" )
-      %br
-      = t('meeting.invitation') + ' ' + meeting.get_full_name
+      %br/
+      %i
+        %small= I18n.t('meeting.invitation')
+    .text-center= meeting.get_full_name
