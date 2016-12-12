@@ -5,64 +5,89 @@
   = form_tag( meeting_reservations_update_path(id: @meeting.id), method: :post, onsubmit: "$('#loadingIndicator').show();" )
   %table.table.table-striped.table-bordered.table-hover.table-condensed
     %tbody
+      -# Common header:
+      %tr.success.text-center
+        %td{ colspan: 2 }
+          %i= I18n.t('meeting_stats.swimmers')
+        - @reservations_events[ @meeting_reservations.first.id ].each do |event_reservation|
+          - timing_hundreds = event_reservation.get_timing_instance.to_hundreds
+          %td
+            %b= event_reservation.event_type.i18n_short
+        %td
+          %i= I18n.t('meeting_reservation.free_notes')
+      -# Data rows:
       - @meeting_reservations.each do |reservation|
-        - min_col_size = @reservations_events[reservation.id].respond_to?(:size) && @reservations_events[reservation.id].size >= 6 ? @reservations_events[reservation.id].size : 6
-        %tr.info
-          %th{ colspan: min_col_size }
-            %br/
-            %h4= reservation.swimmer.get_full_name
-        %tr.warning
-          %td{ colspan: 2 }
-            = label_tag( 'is_not_coming', I18n.t('meeting_reservation.is_not_coming') )
-            = check_box_tag(                                              |
-              "resComing_#{reservation.id}",                              |
-              "1",                                                        |
-              reservation.is_not_coming,                                  |
-              'data-res' => reservation.id                                |
-            )                                                             |
-            %br/
-            = label_tag( 'has_confirmed', I18n.t('meeting_reservation.has_confirmed') )
-            = check_box_tag(                                              |
-              "resConfirmed_#{reservation.id}",                           |
-              "1",                                                        |
-              reservation.has_confirmed,                                  |
-              'data-res' => reservation.id                                |
-            )                                                             |
-          %td{ colspan: 4 }
-            = label_tag( 'free_notes', I18n.t('meeting_reservation.free_notes') )
-            = text_field_tag(                                             |
+        %tr
+          %td{ colspan: 2, class: 'info' }
+            %b= reservation.swimmer.get_full_name
+            .row.col-xs-12
+              %small
+                %i= I18n.t('meeting_reservation.is_not_coming')
+              &nbsp;&nbsp;
+              = check_box_tag(                                              |
+                "resComing_#{reservation.id}",                              |
+                "1",                                                        |
+                reservation.is_not_coming,                                  |
+                'data-res' => reservation.id                                |
+              )                                                             |
+            .row.col-xs-12
+              %small
+                %i= I18n.t('meeting_reservation.has_confirmed')
+              .goggles-label-margin80
+                .switch
+                  = check_box_tag("resConfirmed_#{reservation.id}", "1", reservation.has_confirmed, {'data-res' => reservation.id, class: 'common-switch common-switch-round' } )
+                  %label{ for: "resConfirmed_#{reservation.id}" }
+              -#= check_box_tag(                                              |
+              -#  "resConfirmed_#{reservation.id}",                           |
+              -#  "1",                                                        |
+              -#  reservation.has_confirmed,                                  |
+              -#  'data-res' => reservation.id                                |
+              -#)                                                             |
+
+          - @reservations_events[reservation.id].each do |event_reservation|
+            - timing_hundreds = event_reservation.get_timing_instance.to_hundreds
+            %td
+              = text_field_tag(                                             |
+                "evr_#{event_reservation.id}",                              |
+                timing_hundreds > 0 ? event_reservation.get_timing : nil,   |
+                'class' => "input-mini form-control text-right timing",     |
+                'data-event-res' => event_reservation.id                    |
+              )                                                             |
+              .text-center
+                %small
+                  %i= "(#{ event_reservation.get_timing })"
+              %br/
+              .goggles-label-margin15
+                .switch
+                  = check_box_tag("evrRegistered_#{event_reservation.id}", "1", timing_hundreds > 0, {'data-event-res' => event_reservation.id, class: 'common-switch common-switch-round' } )
+                  %label{ for: "evrRegistered_#{event_reservation.id}" }
+              -#.checkbox
+              -#  = label_tag( "evrRegistered_#{event_reservation.id}", I18n.t('meeting_reservation.registered') )
+              -#  = check_box_tag(                                              |
+              -#    "evrRegistered_#{event_reservation.id}",                    |
+              -#    "1",                                                        |
+              -#    timing_hundreds > 0,                                        |
+              -#    'data-event-res' => event_reservation.id                    |
+              -#  )                                                             |
+
+          %td
+            = text_area_tag(                                              |
               "resNotes_#{reservation.id}",                               |
               reservation.notes,                                          |
-              'class' => "form-control text-right",                       |
+              'class' => "text-left form-control",                        |
               'data-res' => reservation.id                                |
             )                                                             |
-        - if @reservations_events[reservation.id].respond_to?(:each)
-          - @reservations_events[reservation.id].each_slice(6) do |sublist_evres|
-            %tr.success
-              - sublist_evres.each do |event_reservation|
-                - timing_hundreds = event_reservation.get_timing_instance.to_hundreds
-                %td
-                  %b= event_reservation.event_type.i18n_short
-                  %br/
-                  %i= event_reservation.get_timing
-            %tr
-              - sublist_evres.each do |event_reservation|
-                - timing_hundreds = event_reservation.get_timing_instance.to_hundreds
-                %td
-                  = text_field_tag(                                             |
-                    "evr_#{event_reservation.id}",                              |
-                    timing_hundreds > 0 ? event_reservation.get_timing : nil,   |
-                    'class' => "input-mini text-right timing",                  |
-                    'data-event-res' => event_reservation.id                    |
-                  )                                                             |
-                  %br/
-                  = label_tag( 'registered', I18n.t('meeting_reservation.registered') )
-                  = check_box_tag(                                              |
-                    "evrRegistered_#{event_reservation.id}",                    |
-                    "1",                                                        |
-                    timing_hundreds > 0,                                        |
-                    'data-event-res' => event_reservation.id                    |
-                  )                                                             |
+
+        -#%tr
+        -#  %td{ colspan: 2, class: 'info' }
+        -#    %i= label_tag( "resNotes_#{reservation.id}", I18n.t('meeting_reservation.free_notes') )
+        -#  %td{ colspan: @reservations_events[reservation.id].size }
+        -#    = text_field_tag(                                             |
+        -#      "resNotes_#{reservation.id}",                               |
+        -#      reservation.notes,                                          |
+        -#      'class' => "text-left form-control",                        |
+        -#      'data-res' => reservation.id                                |
+        -#    )                                                             |
 
 .col-xs-12.goggles-category-gap
   .col-xs-2

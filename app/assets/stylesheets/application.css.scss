@@ -38,6 +38,27 @@
     line-height: 1em;
     min-height: 26px;
 }
+.goggles-margin-left {
+    margin-left: 4px;
+}
+.goggles-nomargin {
+    margin: 0px;
+}
+
+/* ----- Fix classes for the CSS-pure toggle switches that need a space for the label (upfront) ----- */
+.goggles-label-margin15 {
+    margin-left: 15px;
+}
+.goggles-label-margin80 {
+    margin-left: 80px;
+}
+.goggles-label-margin90 {
+    margin-left: 90px;
+}
+.goggles-label-margin100 {
+    margin-left: 100px;
+}
+
 
 /* ----- Navbar & Titlebar ----- */
 #goggles-inner-navbar {

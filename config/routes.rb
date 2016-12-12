@@ -67,6 +67,8 @@ Rails.application.routes.draw do
       # The following two routes are behind POST-only actions since they both imply
       # complex row additions and/or updates:
       post 'meeting_reservations/edit'     # this will create a matrix of event reservations (many events for each one of the current team's athletes)
+# FIXME Temp route to edit UIX
+      get 'meeting_reservations/edit'     # this will create a matrix of event reservations (many events for each one of the current team's athletes)
       post 'meeting_reservations/update'   # this will in turn post the updates to the above matrix of row entries
 
       # === Records ===
