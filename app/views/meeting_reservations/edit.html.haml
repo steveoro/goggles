@@ -5,7 +5,20 @@
   = form_tag( meeting_reservations_update_path(id: @meeting.id), method: :post, onsubmit: "$('#loadingIndicator').show();" )
   %table.table.table-striped.table-bordered.table-hover.table-condensed
     %tbody
-      -# Common header:
+      -# Common header #1: session date
+      %tr.success.text-center
+        %td{ colspan: 2 }
+          &nbsp;
+        - first_res_event = @reservations_events[ @meeting_reservations.first.id ]
+        - session_dates   = first_res_event.map{ |re| Format.a_date(re.meeting_session.scheduled_date) + ' ' + Format.a_time(re.meeting_session.begin_time) }
+        - uniq_dates      = session_dates.uniq
+        - tot_columns     = uniq_dates.map{ |d| session_dates.count(d) }
+        - uniq_dates.each_with_index do |session_date, index|
+          %td{ colspan: tot_columns[index] }
+            %i= session_date
+        %td
+          &nbsp;
+      -# Common header #2: event title
       %tr.success.text-center
         %td{ colspan: 2 }
           %i= I18n.t('meeting_stats.swimmers')
@@ -17,6 +30,9 @@
           %i= I18n.t('meeting_reservation.free_notes')
       -# Data rows:
       - @meeting_reservations.each do |reservation|
+        - res_events_ids = @reservations_events[reservation.id].map{ |re| re.id }
+        - res_coming_id = "resComing_#{reservation.id}"
+        - res_confirmed_id = "resConfirmed_#{reservation.id}"
         %tr
           %td{ colspan: 2, class: 'info' }
             %b= reservation.swimmer.get_full_name
@@ -24,51 +40,46 @@
               %small
                 %i= I18n.t('meeting_reservation.is_not_coming')
               &nbsp;&nbsp;
-              = check_box_tag(                                              |
-                "resComing_#{reservation.id}",                              |
-                "1",                                                        |
-                reservation.is_not_coming,                                  |
-                'data-res' => reservation.id                                |
-              )                                                             |
+              = check_box_tag(                                                |
+                  res_coming_id, "1", reservation.is_not_coming,              |
+                  { 'data-res' => reservation.id,                             |
+                    onclick: "toggleAllRowControls( #{ res_events_ids }, '#{ reservation.id }' );" |
+                } )                                                           |
             .row.col-xs-12
               %small
                 %i= I18n.t('meeting_reservation.has_confirmed')
               .goggles-label-margin80
                 .switch
-                  = check_box_tag("resConfirmed_#{reservation.id}", "1", reservation.has_confirmed, {'data-res' => reservation.id, class: 'common-switch common-switch-round' } )
-                  %label{ for: "resConfirmed_#{reservation.id}" }
-              -#= check_box_tag(                                              |
-              -#  "resConfirmed_#{reservation.id}",                           |
-              -#  "1",                                                        |
-              -#  reservation.has_confirmed,                                  |
-              -#  'data-res' => reservation.id                                |
-              -#)                                                             |
+                  = check_box_tag(                                            |
+                      res_confirmed_id, "1",  reservation.has_confirmed,      |
+                      { 'data-res' => reservation.id,                         |
+                        class: 'common-switch common-switch-round',           |
+                        onclick: "toggleAllRowControls( #{ res_events_ids }, '#{ reservation.id }' );" |
+                    } )                                                       |
+                  %label{ for: res_confirmed_id }
 
           - @reservations_events[reservation.id].each do |event_reservation|
             - timing_hundreds = event_reservation.get_timing_instance.to_hundreds
             %td
-              = text_field_tag(                                             |
-                "evr_#{event_reservation.id}",                              |
-                timing_hundreds > 0 ? event_reservation.get_timing : nil,   |
-                'class' => "input-mini form-control text-right timing",     |
-                'data-event-res' => event_reservation.id                    |
-              )                                                             |
+              = text_field_tag(                                                       |
+                "evr_#{event_reservation.id}",                                        |
+                event_reservation.is_doing_this ? event_reservation.get_timing : nil, |
+                'class' => "input-mini form-control text-right timing",               |
+                'data-event-res' => event_reservation.id                              |
+              )                                                                       |
               .text-center
                 %small
                   %i= "(#{ event_reservation.get_timing })"
               %br/
               .goggles-label-margin15
-                .switch
-                  = check_box_tag("evrRegistered_#{event_reservation.id}", "1", timing_hundreds > 0, {'data-event-res' => event_reservation.id, class: 'common-switch common-switch-round' } )
-                  %label{ for: "evrRegistered_#{event_reservation.id}" }
-              -#.checkbox
-              -#  = label_tag( "evrRegistered_#{event_reservation.id}", I18n.t('meeting_reservation.registered') )
-              -#  = check_box_tag(                                              |
-              -#    "evrRegistered_#{event_reservation.id}",                    |
-              -#    "1",                                                        |
-              -#    timing_hundreds > 0,                                        |
-              -#    'data-event-res' => event_reservation.id                    |
-              -#  )                                                             |
+                .switch{class: "switch_row_#{reservation.id}"}
+                  - chkbox_id = "evrChecked_#{event_reservation.id}"
+                  = check_box_tag(chkbox_id, "1", event_reservation.is_doing_this,    |
+                      {'data-event-res' => event_reservation.id,                      |
+                      class: 'common-switch common-switch-round',                     |
+                      onclick: "toggleSwitchValue(\"#{ event_reservation.id }\", \"#{ escape_javascript(event_reservation.get_timing) }\");" |
+                  } )                                                                 |
+                  %label{ for: chkbox_id }
 
           %td
             = text_area_tag(                                              |
@@ -77,17 +88,6 @@
               'class' => "text-left form-control",                        |
               'data-res' => reservation.id                                |
             )                                                             |
-
-        -#%tr
-        -#  %td{ colspan: 2, class: 'info' }
-        -#    %i= label_tag( "resNotes_#{reservation.id}", I18n.t('meeting_reservation.free_notes') )
-        -#  %td{ colspan: @reservations_events[reservation.id].size }
-        -#    = text_field_tag(                                             |
-        -#      "resNotes_#{reservation.id}",                               |
-        -#      reservation.notes,                                          |
-        -#      'class' => "text-left form-control",                        |
-        -#      'data-res' => reservation.id                                |
-        -#    )                                                             |
 
 .col-xs-12.goggles-category-gap
   .col-xs-2
@@ -120,5 +120,77 @@
       newValue = newValue.replace( /(?=(\d{2})$)/g, "\"" );
       newValue = newValue.replace( /(?=\B(\d{2})\D\d{2}$)/g, "\'" );
       targetNode.val( newValue );
+  };
+  // --------------------------------------------------------------------------
+
+  /**
+   * Sets (or resets) the value of the text edit field for the registration timing
+   * according to the boolean value of the boolean registration checkbox.
+   *
+   * Params:
+   * - event_reservation_id: the id as a string of the current event_reservation object
+   * - timing_text: text value to be set in the edit box if the checkbox is toggled on
+   */
+  function toggleSwitchValue( event_reservation_id, timing_text ) {
+    var textEditId = "#evr_" + event_reservation_id;
+    var checkBoxId = "#evrChecked_" + event_reservation_id;
+    if ( $(checkBoxId).prop('checked') ) {
+      $( textEditId ).val( timing_text );
+    }
+    else {
+      $( textEditId ).val( null );
+    }
+  };
+  // --------------------------------------------------------------------------
+
+  /**
+   * Enables or disables both the edit and the checkbox associated with a single
+   * event reservation id.
+   *
+   * Params:
+   * - eventReservationId: the id as a string of the current event reservation object
+   * - isDisabled: true or false value for the disabled property
+   */
+  function toggleRowControl( eventReservationId, isDisabled ) {
+    var textEditId = "#evr_" + eventReservationId;
+    var checkBoxId = "#evrChecked_" + eventReservationId;
+    $(textEditId).prop('disabled', isDisabled);
+    $(checkBoxId).prop('disabled', isDisabled);
+  };
+
+
+  /**
+   * Enables or disables (and clears) a whole row of edit and checkbox controls
+   * (each one associated with its composed DOM id to a single entity ID),
+   * given an array of event reservation IDs.
+   *
+   * Params:
+   * - evResIds: the array of event reservation object IDs
+   * - resComingId: DOM ID for the "is not coming" row checkbox
+   * - resConfirmedId: DOM ID for the "is confirmed" row checkbox
+   */
+  function toggleAllRowControls( evResIds, reservationId ) {
+    var isNotComing = $( "#resComing_" + reservationId ).prop('checked');
+    var isConfirmed = $( "#resConfirmed_" + reservationId ).prop('checked');
+
+    // Toggle editability & clear/reset values:
+    for (var i = 0; i < evResIds.length; i++) {
+      // Toggle editability:
+      toggleRowControl( evResIds[i], isNotComing || isConfirmed );
+
+      // Clear edit box value:
+      if ( isNotComing ) {
+        $("#evr_" + evResIds[i]).val(null);
+        $("#evrChecked_" + evResIds[i]).prop('checked', false);
+      }
+    }
+
+    // Hide or show all the row switches in one shot:
+    if ( isNotComing || isConfirmed ) {
+      $( ".switch_row_" + reservationId ).hide();
+    }
+    else {
+      $( ".switch_row_" + reservationId ).show();
+    }
   };
   // --------------------------------------------------------------------------
