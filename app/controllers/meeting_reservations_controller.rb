@@ -10,7 +10,7 @@ require 'team_manager_validator'
 
 = MeetingReservationsController
 
-  - version:  6.015
+  - version:  6.029
   - author:   Steve A.
 
 =end
@@ -115,6 +115,15 @@ class MeetingReservationsController < ApplicationController
     logger.debug "\r\n\r\n!! ------ #{self.class.name} -----"
     logger.debug "> #{params.inspect}"
 
+    # XXX Sample POST output:
+    # <ActionController::Parameters {"utf8"=>"✓",
+    #   "authenticity_token"=>"me8I1u4U6BVas/C0ajcm+zvKrCKYsFxlClf49zEBPi4scAJHmqVH4iDY1u3l4CJEuqMHkouDGn54dK9j4KpyLQ==",
+    #   "evr_1"=>"", "evr_2"=>"35\"10", "evrChecked_2"=>"1", "evr_3"=>"", "evr_4"=>"", "evr_5"=>"",
+    #   "evr_6"=>"", "evr_7"=>"", "evr_8"=>"32\"04", "evrChecked_8"=>"1",
+    #   "evr_9"=>"", "evr_10"=>"", "evr_11"=>"", "resNotes_1"=>"vengo in macchina",
+    #   "commit"=>"Salva", "id"=>"16216", "controller"=>"meeting_reservations",
+    #   "action"=>"update", "locale"=>"it"} permitted: false>
+
     # TODO Make the Updater class & call it
     # TODO Serialize creator.sql_diff_text_log in a dedicated log file
     # TODO Make an asynch job that sends the results via mail
@@ -176,6 +185,18 @@ class MeetingReservationsController < ApplicationController
       flash[:error] = I18n.t(:invalid_action_request) + ' - ' + I18n.t('meeting.errors.invalid_team_manager_or_no_swimmer')
       redirect_to( meetings_current_path() ) and return
     else
+      # FIXME [Steve, 20161213] It could be possible to have a user that is defined as TeamManager
+      #       (for example, for ease of passages editing) for a couple of TeamAffiliations
+      #       both registered to the same season and thus eligible to manage the registrations
+      #       of different teams for the same meeting, while (for referential integrity) the
+      #       badge associated to the swimmer of the TeamManager allows him/her to take
+      #       part in the same meeting with only one affiliation.
+      #
+      #       This is possibile because Team Managers are defined freely according
+      #       to user requests.
+      #
+      #       THIS MUSt BE HANDLED BY THE QUERY BELOW AND ALL THE SWIMMERS FOR
+      #       ALL INVOLVED TEAMAFFILIATIONS SHOULD BE COLLECTED!
       if @is_valid_team_manager
         enabled_manager = current_user.team_managers.includes(:team_affiliation)
           .find{|tm| tm.team_affiliation.season_id == @meeting.season_id }

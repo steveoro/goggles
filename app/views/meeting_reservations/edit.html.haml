@@ -36,28 +36,40 @@
         %tr
           %td{ colspan: 2, class: 'info' }
             %b= reservation.swimmer.get_full_name
-            .row.col-xs-12
+            - if !@is_valid_team_manager            # Hide team manager controls for standard gogglers:
+              %br/
               %small
-                %i= I18n.t('meeting_reservation.is_not_coming')
-              &nbsp;&nbsp;
-              = check_box_tag(                                                |
-                  res_coming_id, "1", reservation.is_not_coming,              |
-                  { 'data-res' => reservation.id,                             |
-                    onclick: "toggleAllRowControls( #{ res_events_ids }, '#{ reservation.id }' );" |
-                } )                                                           |
-            .row.col-xs-12
-              %small
-                %i= I18n.t('meeting_reservation.has_confirmed')
-              .goggles-label-margin80
-                .switch
-                  = check_box_tag(                                            |
-                      res_confirmed_id, "1",  reservation.has_confirmed,      |
-                      { 'data-res' => reservation.id,                         |
-                        class: 'common-switch common-switch-round',           |
-                        onclick: "toggleAllRowControls( #{ res_events_ids }, '#{ reservation.id }' );" |
-                    } )                                                       |
-                  %label{ for: res_confirmed_id }
+                %i
+                  = reservation.is_not_coming ? I18n.t('meeting_reservation.not_coming') : I18n.t('meeting_reservation.coming')
+                  = I18n.t('meeting_reservation.add_maybe') if !reservation.has_confirmed
+            - else                                  # Show full controls for team managers:
+              .row.col-xs-12
+                %small
+                  %i= I18n.t('meeting_reservation.is_not_coming')
+                &nbsp;&nbsp;
+                = check_box_tag(                                                |
+                    res_coming_id, "1", reservation.is_not_coming,              |
+                    { 'data-res' => reservation.id,                             |
+                      disabled: !@is_valid_team_manager,                        |
+                      onclick: "toggleAllRowControls( #{ res_events_ids }, '#{ reservation.id }' );" |
+                  } )                                                           |
+              .row.col-xs-12
+                %small
+                  %i= I18n.t('meeting_reservation.has_confirmed')
+                .goggles-label-margin80
+                  .switch
+                    = check_box_tag(                                            |
+                        res_confirmed_id, "1",  reservation.has_confirmed,      |
+                        { 'data-res' => reservation.id,                         |
+                          class: 'common-switch common-switch-round',           |
+                          disabled: !@is_valid_team_manager,                    |
+                          onclick: "toggleAllRowControls( #{ res_events_ids }, '#{ reservation.id }' );" |
+                      } )                                                       |
+                    %label{ for: res_confirmed_id }
 
+          -# Only team managers can edit any row; a simple swimmer can edit only his/her own row
+          -# (if the reservation hasn't been already confirmed to the manager):
+          - can_edit_events = @is_valid_team_manager || ( !reservation.has_confirmed && @swimmer && (@swimmer.id == reservation.swimmer_id) )
           - @reservations_events[reservation.id].each do |event_reservation|
             - timing_hundreds = event_reservation.get_timing_instance.to_hundreds
             %td
@@ -65,27 +77,29 @@
                 "evr_#{event_reservation.id}",                                        |
                 event_reservation.is_doing_this ? event_reservation.get_timing : nil, |
                 'class' => "input-mini form-control text-right timing",               |
+                disabled: !can_edit_events,                                           |
                 'data-event-res' => event_reservation.id                              |
               )                                                                       |
               .text-center
                 %small
                   %i= "(#{ event_reservation.get_timing })"
               %br/
-              .goggles-label-margin15
+              .goggles-label-margin15{style: (can_edit_events ? '' : 'display: none;')}
                 .switch{class: "switch_row_#{reservation.id}"}
                   - chkbox_id = "evrChecked_#{event_reservation.id}"
                   = check_box_tag(chkbox_id, "1", event_reservation.is_doing_this,    |
                       {'data-event-res' => event_reservation.id,                      |
                       class: 'common-switch common-switch-round',                     |
+                      disabled: !can_edit_events,                                     |
                       onclick: "toggleSwitchValue(\"#{ event_reservation.id }\", \"#{ escape_javascript(event_reservation.get_timing) }\");" |
                   } )                                                                 |
                   %label{ for: chkbox_id }
-
           %td
             = text_area_tag(                                              |
               "resNotes_#{reservation.id}",                               |
               reservation.notes,                                          |
               'class' => "text-left form-control",                        |
+              disabled: !can_edit_events,                                 |
               'data-res' => reservation.id                                |
             )                                                             |
 
