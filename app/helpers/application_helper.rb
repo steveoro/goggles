@@ -94,8 +94,8 @@ module ApplicationHelper
   # - action_path => the action path to be invoked upon clicking; pass a '#'
   #                  to automatically disable the action (also with styles)
   #
-  def show_tab_link( controller_params, action_name, label_text, action_path )
-    if ( controller_params[:action] == action_name )
+  def show_tab_link( controller_params, action_name, label_text, action_path, force_active = false )
+    if ( controller_params[:action] == action_name or force_active )
       content_tag( :li, class: 'active' ) do
         link_to( label_text, '#', {'data-turbolinks'=>'false'} )
       end
