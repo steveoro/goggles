@@ -67,7 +67,9 @@ class SwimmingPoolDecorator < Draper::Decorator
   #
   def get_maps_url
     full_address = get_full_address
-    if full_address.size > 1
+    if maps_uri.present?
+      maps_uri
+    elsif full_address.size > 1
       full_address.gsub!(' ', '+')
       "https://www.google.com/maps/preview#!q=#{full_address}"
     else
