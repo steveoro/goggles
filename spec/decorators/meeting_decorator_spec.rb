@@ -199,7 +199,7 @@ describe MeetingDecorator, type: :model do
         expect( subject.manage_reservation_button(team_manager.user) ).to include( 'href' )
       end
       it "returns an HTML link to the meeting_reservations_edit path" do
-        expect( subject.manage_reservation_button(team_manager.user) ).to include( meeting_reservations_edit_path(id: subject.id) )
+        expect( subject.manage_reservation_button(team_manager.user) ).to include( meeting_reservations_edit_events_path(id: subject.id) )
       end
       it "returns a string containing the manage reservation button title" do
         expect( subject.manage_reservation_button(team_manager.user) ).to include( I18n.t('meeting_reservation.manage_button_title') )

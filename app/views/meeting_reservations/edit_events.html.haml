@@ -2,6 +2,13 @@
 = render( partial: 'meetings/tabs_and_radio_title' )
 
 .col-xs-12.goggles-category-gap
+  %ul.nav.nav-tabs#pageTop{role: "tablist"}
+    = show_tab_link( params, 'edit_events', t('meeting_reservation.manage_events_title'),      |
+                     meeting_reservations_edit_events_path(id: @meeting.id), {method: :post} ) |
+    = show_tab_link( params, 'edit_relays', t('meeting_reservation.manage_relays_title'),      |
+                     meeting_reservations_edit_relays_path(id: @meeting.id), {method: :post} ) |
+  .goggles-category-gap
+
   = form_tag( meeting_reservations_update_path(id: @meeting.id), method: :post, onsubmit: "$('#loadingIndicator').show();" )
   %table.table.table-striped.table-bordered.table-hover.table-condensed
     %tbody
@@ -68,8 +75,9 @@
                     %label{ for: res_confirmed_id }
 
           -# Only team managers can edit any row; a simple swimmer can edit only his/her own row
-          -# (if the reservation hasn't been already confirmed to the manager):
-          - can_edit_events = @is_valid_team_manager || ( !reservation.has_confirmed && @swimmer && (@swimmer.id == reservation.swimmer_id) )
+          -# (if the reservation hasn't been already confirmed to the manager and the meeting
+          -#  is still manageable):
+          - can_edit_events = TeamManagerValidator.is_manageable?( @meeting ) && (@is_valid_team_manager || ( !reservation.has_confirmed && @swimmer && (@swimmer.id == reservation.swimmer_id) ))
           - @reservations_events[reservation.id].each do |event_reservation|
             - timing_hundreds = event_reservation.get_timing_instance.to_hundreds
             %td
@@ -103,10 +111,12 @@
               'data-res' => reservation.id                                |
             )                                                             |
 
+- can_save_form = TeamManagerValidator.is_manageable?( @meeting ) && ( @is_valid_team_manager || TeamManagerValidator.any_reservations_for?( current_user, @meeting ) )
 .col-xs-12.goggles-category-gap
   .col-xs-2
-    = submit_tag( I18n.t(:save), id: 'btnSaveEventReservation', data: {confirm: I18n.t('netzke.basepack.grid_panel.are_you_sure'), |
-        disable_with: I18n.t(:please_wait), class: 'disabled' }, class: "btn btn-primary" )         |
+    = submit_tag( I18n.t(:save), id: 'btnSaveEventReservation', disabled: !can_save_form,     |
+        data: {confirm: I18n.t('netzke.basepack.grid_panel.are_you_sure'),                    |
+        disable_with: I18n.t(:please_wait), class: 'disabled' }, class: "btn btn-primary" )   |
     %span(id='loadingIndicator' hidden='true')
       = image_tag( 'indicator.gif' )
 

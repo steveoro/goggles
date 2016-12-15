@@ -10,7 +10,7 @@ require 'team_manager_validator'
 
 = MeetingReservationsController
 
-  - version:  6.029
+  - version:  6.030
   - author:   Steve A.
 
 =end
@@ -45,7 +45,7 @@ class MeetingReservationsController < ApplicationController
   #                associated swimmer (must be a "goggler").
   #                (when also a team-manager, the whole matrix of rows should be editable)
   #
-  def edit
+  def edit_events
     # The creator will set-up a matrix of rows that can be edited and then persisted
     # with the #update action
     creator = MeetingEventReservationMatrixCreator.new(
@@ -71,27 +71,7 @@ class MeetingReservationsController < ApplicationController
     end
 
     # Setup is done. Now get the list of reservations for each athlete:
-    @meeting_reservations = MeetingReservation.where(
-      meeting_id: @meeting.id,
-      team_id: @team_affiliation.team_id
-    ).joins(:swimmer)
-      .includes(:swimmer).order('swimmers.complete_name')
-
-    # Get the list of rows of event reservations for each athlete:
-    @reservations_events = {}
-    @meeting_reservations.each do |reservation|
-      @reservations_events[ reservation.id ] = MeetingEventReservation.where(
-          meeting_id: @meeting.id,
-          swimmer_id: reservation.swimmer_id
-      ).joins(:meeting_session, :meeting_event, :event_type)
-        .includes(:meeting_session, :meeting_event, :event_type)
-        .order('meeting_sessions.session_order, meeting_events.event_order')
-        .to_a
-      # Assuming 'mer' is an item of the resulting array, this yields something
-      # like:
-      #       mer.event_type.i18n_short             for the event description
-      #       mer.meeting_session.scheduled_date    for the scheduled date
-    end
+    prepare_reservations_and_events( @meeting, @team_affiliation )
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -110,7 +90,7 @@ class MeetingReservationsController < ApplicationController
   #                associated swimmer (must be a "goggler").
   #                (when also a team-manager, the whole matrix of rows should be editable)
   #
-  def update
+  def update_events
 # DEBUG
     logger.debug "\r\n\r\n!! ------ #{self.class.name} -----"
     logger.debug "> #{params.inspect}"
@@ -141,13 +121,86 @@ class MeetingReservationsController < ApplicationController
       # flash[:info] = I18n.t('social.changes_saved')
     # end
 
-    # (At the end we expect to remain in edit mode - no redirection should be necessary)
+    # We need the list of reservations for each athlete in order to remain in edit mode:
+    # (At the end of the update we expect to remain in edit mode - no redirection should be necessary)
+    prepare_reservations_and_events( @meeting, @team_affiliation )
+    render 'edit_events'
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Edits the matrix of _relay_ reservations for the selected meeting, for the
+  # whole team of the currently logged-in user.
+  #
+  # See #edit_events for detailed info.
+  #
+  def edit_relays
+# DEBUG
+    logger.debug "\r\n\r\n!! ------ #{self.class.name} -----"
+    logger.debug "> #{params.inspect}"
+
+    # TODO
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # POSTs the update for the matrix of _relay_ reservations for the selected meeting,
+  # for the whole team of the currently logged-in user.
+  #
+  # See #update_events for detailed info.
+  #
+  def update_relays
+# DEBUG
+    logger.debug "\r\n\r\n!! ------ #{self.class.name} -----"
+    logger.debug "> #{params.inspect}"
+
+    # TODO
   end
   #-- -------------------------------------------------------------------------
   #++
 
 
   private
+
+
+  # Collects the list of @meeting_reservations for each Swimmer and all the
+  # associated @reservations_events.
+  #
+  # === Params:
+  # - meeting: a valid instance of Meeting
+  # - team_affiliation: a valid instance of TeamAffiliation (capable of attending the Meeting)
+  #
+  # === Prepares:
+  # - @meeting_reservations: ActiveRelation object (list of reservations for each Swimmer of the Team)
+  # - @reservations_events: Hash with the structure { <MeetingReservation.id> => <MeetingEventReservation row> }
+  #
+  def prepare_reservations_and_events( meeting, team_affiliation )
+    @meeting_reservations = MeetingReservation.where(
+      meeting_id: meeting.id,
+      team_id: team_affiliation.team_id
+    ).joins(:swimmer)
+      .includes(:swimmer).order('swimmers.complete_name')
+
+    # Get the list of rows of event reservations for each athlete:
+    @reservations_events = {}
+    @meeting_reservations.each do |reservation|
+      @reservations_events[ reservation.id ] = MeetingEventReservation.where(
+          meeting_id: meeting.id,
+          swimmer_id: reservation.swimmer_id
+      ).joins(:meeting_session, :meeting_event, :event_type)
+        .includes(:meeting_session, :meeting_event, :event_type)
+        .order('meeting_sessions.session_order, meeting_events.event_order')
+        .to_a
+      # Assuming 'mer' is an item of the resulting array, this yields something
+      # like:
+      #       mer.event_type.i18n_short             for the event description
+      #       mer.meeting_session.scheduled_date    for the scheduled date
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Verifies that a meeting id is provided as parameter and that the current user
@@ -159,6 +212,7 @@ class MeetingReservationsController < ApplicationController
   # - @is_valid_team_manager, either +true+ or +false+
   # - @swimmer, +nil+ only when no associated swimmer was found (allegedly, in this case @is_valid_team_manager should result true)
   # - @team_affiliation, a valid TeamAffiliation instance
+  # - @team, a valid Team instance
   #
   # == Params:
   # id: the meeting id to be processed
@@ -175,8 +229,11 @@ class MeetingReservationsController < ApplicationController
     end
 
     # To be a valid team manager, a user must be enabled to manage the season
-    # of the selected Meeting:
-    @is_valid_team_manager = TeamManagerValidator.can_manage( current_user, @meeting )
+    # of the selected Meeting and the meeting must still be manageable:
+    @is_valid_team_manager = TeamManagerValidator.can_manage?( current_user, @meeting ) &&
+                             TeamManagerValidator.is_manageable?( @meeting )
+    # (If the meeting is no more manageable each control of the page should be set
+    # as read-only, even if the page is still accessible because of existing reservations)
 
     # Detect if there's a swimmer associated:
     set_swimmer_from_current_user
@@ -206,6 +263,7 @@ class MeetingReservationsController < ApplicationController
           .find{|b| b.team_affiliation.season_id == @meeting.season_id }
         @team_affiliation = enabled_badge.team_affiliation
       end
+      @team = @team_affiliation.team
     end
   end
   #-- -------------------------------------------------------------------------

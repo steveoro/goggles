@@ -27,7 +27,7 @@ RSpec.describe MeetingReservationsController, type: :controller do
   describe "POST #edit" do
     context "for an unlogged user with invalid parameters," do
       it "redirects to the Login page" do
-        post :edit
+        post :edit_events
         expect(response).to redirect_to( "/users/sign_in" )
       end
     end
@@ -37,7 +37,7 @@ RSpec.describe MeetingReservationsController, type: :controller do
         login_user()
       end
       it "redirects to meetings/current page" do
-        post :edit, params: { id: random_manageable_meeting_id }
+        post :edit_events, params: { id: random_manageable_meeting_id }
         expect(response).to redirect_to( meetings_current_path )
       end
     end
@@ -47,7 +47,7 @@ RSpec.describe MeetingReservationsController, type: :controller do
         login_user( user_manager )
       end
       it "returns http success" do
-        post :edit, params: { id: random_manageable_meeting_id }
+        post :edit_events, params: { id: random_manageable_meeting_id }
         expect(response).to have_http_status(:success)
       end
     end
@@ -59,7 +59,7 @@ RSpec.describe MeetingReservationsController, type: :controller do
   describe "POST #update" do
     context "for an unlogged user with invalid parameters," do
       it "redirects to the Login page" do
-        post :update
+        post :update_events
         expect(response).to redirect_to( "/users/sign_in" )
       end
     end
@@ -69,7 +69,7 @@ RSpec.describe MeetingReservationsController, type: :controller do
         login_user()
       end
       it "redirects to the Login page" do
-        post :update, params: { id: random_manageable_meeting_id }
+        post :update_events, params: { id: random_manageable_meeting_id }
         expect(response).to redirect_to( meetings_current_path )
       end
     end
@@ -79,7 +79,7 @@ RSpec.describe MeetingReservationsController, type: :controller do
         login_user( user_manager )
       end
       it "returns http success" do
-        post :update, params: { id: random_manageable_meeting_id }
+        post :update_events, params: { id: random_manageable_meeting_id }
         expect(response).to have_http_status(:success)
       end
     end

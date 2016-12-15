@@ -66,10 +66,12 @@ Rails.application.routes.draw do
       # === Meeting Reservations ===
       # The following two routes are behind POST-only actions since they both imply
       # complex row additions and/or updates:
-      post 'meeting_reservations/edit'     # this will create a matrix of event reservations (many events for each one of the current team's athletes)
+      post 'meeting_reservations/edit_events'     # this will create a matrix of event reservations (many events for each one of the current team's athletes)
 # FIXME Temp route to edit UIX
-      get 'meeting_reservations/edit'     # this will create a matrix of event reservations (many events for each one of the current team's athletes)
-      post 'meeting_reservations/update'   # this will in turn post the updates to the above matrix of row entries
+#      get 'meeting_reservations/edit_events'     # this will create a matrix of event reservations (many events for each one of the current team's athletes)
+      post 'meeting_reservations/update_events'   # this will in turn post the updates to the above matrix of row entries
+      post 'meeting_reservations/edit_relays'     # this will create a matrix of event reservations (many events for each one of the current team's athletes)
+      post 'meeting_reservations/update_relays'   # this will in turn post the updates to the above matrix of row entries
 
       # === Records ===
       get  "records/for_season_type",           to: "records#for_season_type"

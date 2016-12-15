@@ -114,18 +114,20 @@ class MeetingDecorator < Draper::Decorator
   #++
 
   # Builds-up the HTML for the 'manage meeting reservation' button link.
-  # Returns an empty string if the current_user is not allowed to manage the meeting.
+  # Returns an empty string if the current_user is not allowed to manage (edit or
+  # update, either one or all the reservations of) the meeting.
   #
   def manage_reservation_button( current_user )
-    unless TeamManagerValidator.is_manageable( object ) &&
-           TeamManagerValidator.can_manage( current_user, object )
-      ''
-    else
+    if TeamManagerValidator.is_manageable?( object ) &&
+       TeamManagerValidator.can_manage?( current_user, object )
       h.link_to(
         I18n.t('meeting_reservation.manage_button_title'),
-        meeting_reservations_edit_path(id: object.id),
-        { method: :post, class: 'btn btn-default btn-xs', 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting_reservation.manage_meeting_tooltip') }
+        meeting_reservations_edit_events_path(id: object.id),
+        { method: :post, class: 'btn btn-default btn-xs', 'data-toggle'=>'tooltip',
+          'title'=>I18n.t('meeting_reservation.manage_meeting_tooltip') }
       )
+    else
+      ''
     end
   end
   #-- -------------------------------------------------------------------------

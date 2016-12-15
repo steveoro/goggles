@@ -94,21 +94,24 @@ module ApplicationHelper
   # - action_path => the action path to be invoked upon clicking; pass a '#'
   #                  to automatically disable the action (also with styles)
   #
-  def show_tab_link( controller_params, action_name, label_text, action_path, force_active = false )
+  # - link_to_params => hash of params for link_to
+  # - force_active   => +true+ to force the tab active as default
+  #
+  def show_tab_link( controller_params, action_name, label_text, action_path, link_params = nil, force_active = false )
     if ( controller_params[:action] == action_name or force_active )
       content_tag( :li, class: 'active' ) do
-        link_to( label_text, '#', {'data-turbolinks'=>'false'} )
+        link_to( label_text, '#', {'data-turbolinks'=>'false'}.merge!( link_params.to_h ) )
       end
     else
       # If the path specified is a null anchor, we'll assume some of the required
       # data is missing or protected behind login:
       if action_path == '#'
         content_tag( :li, class: 'disabled', 'data-turbolinks'=>'false', 'data-toggle' => 'tooltip', 'title' => I18n.t(:login_to_view_this_data) ) do
-          link_to( label_text, action_path )
+          link_to( label_text, action_path, link_params )
         end
       else
         content_tag( :li ) do
-          link_to( label_text, action_path )
+          link_to( label_text, action_path, link_params )
         end
       end
     end
