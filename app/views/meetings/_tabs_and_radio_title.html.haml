@@ -21,5 +21,5 @@
       = show_tab_link( params, 'edit_passages', t('meeting.passages'), meeting_edit_passages_path( id: @meeting.id ) )
 
   - if current_user && TeamManagerValidator.any_reservations_for?( current_user, @meeting ) || ( TeamManagerValidator.is_manageable?( @meeting ) && TeamManagerValidator.can_manage?( current_user, @meeting ) )
-    = show_tab_link( params, 'edit', t('meeting_reservation.manage_button_title'),      |
+    = show_tab_link( params, 'edit_events', t('meeting_reservation.manage_button_title'),      |
                      meeting_reservations_edit_events_path(id: @meeting.id), {method: :post} ) |

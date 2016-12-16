@@ -1,5 +1,6 @@
 # encoding: utf-8
 require 'common/format'
+require 'framework/version'
 
 
 =begin

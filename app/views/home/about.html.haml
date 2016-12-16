@@ -17,13 +17,19 @@
         .col-xs-12
           .row
             .col-xs-6
-              %h4
-                Internal Framework version:
+              %b
+                #{ GogglesCore::AppConstants::WEB_APP_NAME } web-app version:
+            .col-xs-6
+              %b= h( ::Version::FULL )
+          .row
+            .col-xs-6
+              %b
+                #{ GogglesCore::AppConstants::WEB_APP_NAME }Core version:
             .col-xs-6
               %b= h( GogglesCore::AppConstants::WEB_FRAMEWORK_VERSION ) if defined? GogglesCore::AppConstants::WEB_FRAMEWORK_VERSION
           .row
             .col-xs-6
-              = "#{ GogglesCore::AppConstants::WEB_APP_NAME } application, version:"
+              = "#{ GogglesCore::AppConstants::WEB_APP_NAME } latest DB-diff applied @ vers.:"
             .col-xs-6
               %b= h( @versioning.send(AppParameter::PARAM_APP_NAME_FIELD) )
               = show_tag( @versioning.a_bool, "time.png" )

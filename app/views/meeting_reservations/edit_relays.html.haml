@@ -7,7 +7,7 @@
     = show_tab_link( params, 'edit_relays', t('meeting_reservation.manage_relays_title'), meeting_reservations_edit_relays_path(id: @meeting.id), {method: :post} )
   .goggles-category-gap
 
-  = form_tag( meeting_reservations_update_events_path(id: @meeting.id), method: :post, onsubmit: "$('#loadingIndicator').show();" )
+  = form_tag( meeting_reservations_update_relays_path(id: @meeting.id), method: :post, onsubmit: "$('#loadingIndicator').show();" )
   %table.table.table-striped.table-bordered.table-hover.table-condensed
     %tbody
       -# Common header #1: session date
