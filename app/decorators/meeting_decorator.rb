@@ -123,7 +123,7 @@ class MeetingDecorator < Draper::Decorator
       h.link_to(
         I18n.t('meeting_reservation.manage_button_title'),
         meeting_reservations_edit_events_path(id: object.id),
-        { method: :post, class: 'btn btn-default btn-xs', 'data-toggle'=>'tooltip',
+        { class: 'btn btn-default btn-xs', 'data-toggle'=>'tooltip',
           'title'=>I18n.t('meeting_reservation.manage_meeting_tooltip') }
       )
     else

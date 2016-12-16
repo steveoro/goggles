@@ -27,7 +27,7 @@ RSpec.describe MeetingReservationsController, type: :controller do
   describe "POST #edit" do
     context "for an unlogged user with invalid parameters," do
       it "redirects to the Login page" do
-        post :edit_events
+        get :edit_events
         expect(response).to redirect_to( "/users/sign_in" )
       end
     end
@@ -37,7 +37,7 @@ RSpec.describe MeetingReservationsController, type: :controller do
         login_user()
       end
       it "redirects to meetings/current page" do
-        post :edit_events, params: { id: random_manageable_meeting_id }
+        get :edit_events, params: { id: random_manageable_meeting_id }
         expect(response).to redirect_to( meetings_current_path )
       end
     end
@@ -47,7 +47,7 @@ RSpec.describe MeetingReservationsController, type: :controller do
         login_user( user_manager )
       end
       it "returns http success" do
-        post :edit_events, params: { id: random_manageable_meeting_id }
+        get :edit_events, params: { id: random_manageable_meeting_id }
         expect(response).to have_http_status(:success)
       end
     end
@@ -78,10 +78,11 @@ RSpec.describe MeetingReservationsController, type: :controller do
       before :each do
         login_user( user_manager )
       end
-      it "returns http success" do
+      it "redirects to #edit_events" do
         post :update_events, params: { id: random_manageable_meeting_id }
-        expect(response).to have_http_status(:success)
+        expect(response).to redirect_to( meeting_reservations_edit_events_path(id: random_manageable_meeting_id) )
       end
+      # TODO Add more tests
     end
   end
   #-- -------------------------------------------------------------------------

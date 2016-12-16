@@ -6,7 +6,7 @@ require 'common/validation_error_tools'
 
 = MeetingEventReservationMatrixCreator
 
- - Goggles framework vers.:  6.026
+ - Goggles framework vers.:  6.030
  - author: Steve A.
 
  Strategy class used to build-up a list of reservations plus a full matrix of rows
@@ -47,41 +47,14 @@ require 'common/validation_error_tools'
  objects.
 
 =end
-class MeetingEventReservationMatrixCreator
-  include SqlConvertable
-
-  attr_reader :meeting, :team_affiliation, :current_user,
-              :created_rows_count, :total_errors
-
-  # Creates a new creator instance, given:
-  #
-  # - a valid Meeting instance
-  # - a valid TeamAffiliation instance
-  # - the current_user (User) instance
-  #
-  def initialize( params )
-    @meeting          = params[ :meeting ]
-    @team_affiliation = params[ :team_affiliation ]
-    @current_user     = params[ :current_user ]
-    @total_errors     = 0
-    @created_rows_count = 0
-    create_sql_diff_header( "MeetingEventReservationMatrixCreator: recorded from actions by #{ @current_user }" )
-  end
-  #-- --------------------------------------------------------------------------
-  #++
-
+class MeetingEventReservationMatrixCreator < MeetingReservationMatrixProcessor
 
   # Executes the creator given the stored parameters.
   # Returns +true+ in case of no errors, +false+ otherwise.
   #
   def call
-    unless @meeting.instance_of?( Meeting ) &&
-           @team_affiliation.instance_of?( TeamAffiliation ) &&
-           @current_user.instance_of?( User )
-      @total_errors = 1
-      create_sql_diff_footer( "INVALID PARAMETERS! Exiting..." )
-      return false
-    end
+    super
+    return false unless (@total_errors == 0)
 
     # Loop on each matrix item and create a row, if missing:
     get_badges_list.each do |badge|
@@ -96,54 +69,7 @@ class MeetingEventReservationMatrixCreator
   #++
 
 
-  # Returns the expected row count for the execution of the creator class.
-  #
-  # The result is the expected total data area. The actual created_rows_count
-  # will be lesser than this only when some rows are skipped during creation
-  # (either due to errors or because already existing).
-  #
-  def expected_rows_count
-    # Use memoization to avoid requering.
-    @memoized_expected_count ||= get_badges_list.count * (get_events_list.count + 1)
-    # (The actual matrix is composed by badges x events event reservations.
-    #  The additional column is the single list of tot. badges, 1 for each header
-    #  badge reservation)
-  end
-  #-- --------------------------------------------------------------------------
-  #++
-
-
   private
-
-
-  # Returns a list of (individual) MeetingEvents for the selected @meeting.
-  # Returns an empty array in case of invalid parameter.
-  #
-  def get_events_list
-    # Use memoization to avoid requering:
-    @memoized_event_list ||= if @meeting.instance_of?( Meeting )
-      @meeting.meeting_events.are_not_relays.all
-    else
-      []
-    end
-  end
-  #-- --------------------------------------------------------------------------
-  #++
-
-
-  # Returns a list of Badges for the selected @team_affiliation
-  # Returns an empty array in case of invalid parameter.
-  #
-  def get_badges_list
-    # Use memoization to avoid requering:
-    @memoized_badges_list ||= if @team_affiliation.instance_of?( TeamAffiliation )
-      @team_affiliation.badges.all
-    else
-      []
-    end
-  end
-  #-- --------------------------------------------------------------------------
-  #++
 
 
   # Creates a new MeetingReservation row if no pre-existing rows are found.
@@ -165,7 +91,7 @@ class MeetingEventReservationMatrixCreator
       is_ok = reservation.save
       if is_ok
         sql_diff_text_log << to_sql_insert( reservation, false, "\r\n" )
-        @created_rows_count += 1
+        @processed_rows += 1
       else
         sql_diff_text_log << "-- INSERT VALIDATION FAILURE: #{ ValidationErrorTools.recursive_error_for( reservation ) }\r\n" if reservation.invalid?
         sql_diff_text_log << "-- INSERT FAILURE: #{ $! }\r\n" if $!
@@ -197,7 +123,7 @@ class MeetingEventReservationMatrixCreator
       is_ok = reservation.save
       if is_ok
         sql_diff_text_log << to_sql_insert( reservation, false, "\r\n" )
-        @created_rows_count += 1
+        @processed_rows += 1
       else
         sql_diff_text_log << "-- INSERT VALIDATION FAILURE: #{ ValidationErrorTools.recursive_error_for( reservation ) }\r\n" if reservation.invalid?
         sql_diff_text_log << "-- INSERT FAILURE: #{ $! }\r\n" if $!

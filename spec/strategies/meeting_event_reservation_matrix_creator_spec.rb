@@ -4,93 +4,10 @@ require 'meeting_event_reservation_matrix_creator'
 
 
 describe MeetingEventReservationMatrixCreator, type: :strategy do
-  # [Steve] We don't need to save the random user instance created, since we
-  # won't use any of its associations, nor its ID, so "build" is enough.
-  subject { MeetingEventReservationMatrixCreator.new( current_user: FactoryGirl.build(:user) ) }
 
-  it_behaves_like( "(the existance of a method)", [
-    :meeting, :team_affiliation, :current_user,
-    :expected_rows_count, :created_rows_count,
-    :total_errors,
-    :call
-  ] )
+  it_behaves_like "MeetingReservationMatrixProcessor (not checking results after #call)", MeetingEventReservationMatrixCreator
   #-- -------------------------------------------------------------------------
   #++
-
-
-  context "with a nil :meeting parameter," do
-    # [Steve, 20161125] We use pre-existing data to speed-up fixtures here:
-    let(:team_affiliation) do
-      # We get the last TeamAffiliation which has at least some results (so that
-      # we know that the corresponding Meeting has already been acquired)
-      Team.find(1).team_affiliations.last
-    end
-    # [Steve] We don't need to save the random user instance created, since we
-    # won't use any of its associations, nor its ID, so "build" is enough.
-    subject do
-      MeetingEventReservationMatrixCreator.new(
-        team_affiliation: team_affiliation,
-        current_user: FactoryGirl.build(:user)
-      )
-    end
-
-    describe "#call" do
-      it "returns false" do
-        expect( subject.call ).to be false
-      end
-      it "sets #total_errors = 1" do
-        subject.call
-        expect( subject.total_errors ).to eq(1)
-      end
-      it "has #created_rows_count = 0" do
-        subject.call
-        expect( subject.created_rows_count ).to eq(0)
-      end
-      it "does not add any row to meeting_reservations" do
-        expect{ subject.call }.not_to change{ MeetingReservation.count }
-      end
-      it "does not add any row to meeting_event_reservations" do
-        expect{ subject.call }.not_to change{ MeetingEventReservation.count }
-      end
-    end
-  end
-
-
-  context "with a nil :team_affiliation parameter," do
-    # [Steve, 20161125] We use pre-existing data to speed-up fixtures here:
-    let(:meeting) { Meeting.last }
-    # [Steve] We don't need to save the random user instance created, since we
-    # won't use any of its associations, nor its ID, so "build" is enough.
-    subject do
-      MeetingEventReservationMatrixCreator.new(
-        meeting: meeting,
-        current_user: FactoryGirl.build(:user)
-      )
-    end
-
-    describe "#call" do
-      it "returns false" do
-        expect( subject.call ).to be false
-      end
-      it "sets #total_errors = 1" do
-        subject.call
-        expect( subject.total_errors ).to eq(1)
-      end
-      it "has #created_rows_count = 0" do
-        subject.call
-        expect( subject.created_rows_count ).to eq(0)
-      end
-      it "does not add any row to meeting_reservations" do
-        expect{ subject.call }.not_to change{ MeetingReservation.count }
-      end
-      it "does not add any row to meeting_event_reservations" do
-        expect{ subject.call }.not_to change{ MeetingEventReservation.count }
-      end
-    end
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-
 
   context "for a meeting/team_affiliation couple with at least an existing registration," do
     # [Steve, 20161125] We use pre-existing data to speed-up fixtures here:
@@ -126,20 +43,6 @@ describe MeetingEventReservationMatrixCreator, type: :strategy do
       )
     end
 
-
-    describe "#call" do
-      it "is true" do
-        expect( subject.call ).to be true
-      end
-      it "has #expected_rows_count > 0 (before being called)" do
-        expect( subject.expected_rows_count ).to be > 0
-      end
-      it "has #created_rows_count == 0 (before being called)" do
-        expect( subject.created_rows_count ).to eq(0)
-      end
-    end
-
-
     describe "#call (after execution)" do
       before(:each) do
         expect( subject.call ).to be true
@@ -149,8 +52,8 @@ describe MeetingEventReservationMatrixCreator, type: :strategy do
       end
       # Since we have created a single. pre-existing row, the creator strategy
       # should create the expected rows minus 1:
-      it "has #created_rows_count == #expected_rows_count -1  (after being called)" do
-        expect( subject.created_rows_count ).to eq( subject.expected_rows_count - 1 )
+      it "has #processed_rows == #expected_rows_count -1  (after being called)" do
+        expect( subject.processed_rows ).to eq( subject.expected_rows_count - 1 )
       end
       it "has 0 errors" do
         expect( subject.total_errors ).to eq(0)
@@ -180,7 +83,6 @@ describe MeetingEventReservationMatrixCreator, type: :strategy do
       )
     end
 
-
     describe "#call" do
       it "is true" do
         expect( subject.call ).to be true
@@ -188,11 +90,10 @@ describe MeetingEventReservationMatrixCreator, type: :strategy do
       it "has #expected_rows_count > 0 (before being called)" do
         expect( subject.expected_rows_count ).to be > 0
       end
-      it "has #created_rows_count == 0 (before being called)" do
-        expect( subject.created_rows_count ).to eq(0)
+      it "has #processed_rows == 0 (before being called)" do
+        expect( subject.processed_rows ).to eq(0)
       end
     end
-
 
     describe "#call (after execution)" do
       before(:each) do
@@ -201,8 +102,8 @@ describe MeetingEventReservationMatrixCreator, type: :strategy do
       it "has #expected_rows_count > 0 (after being called)" do
         expect( subject.expected_rows_count ).to be > 0
       end
-      it "has the same count for #expected_rows_count and #created_rows_count" do
-        expect( subject.expected_rows_count ).to eq( subject.created_rows_count )
+      it "has the same count for #expected_rows_count and #processed_rows" do
+        expect( subject.expected_rows_count ).to eq( subject.processed_rows )
       end
       it "has 0 errors" do
         expect( subject.total_errors ).to eq(0)

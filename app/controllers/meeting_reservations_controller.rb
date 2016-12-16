@@ -55,7 +55,7 @@ class MeetingReservationsController < ApplicationController
     )
     creator.call
     # Serialize creator.sql_diff_text_log in a dedicated log file:
-    if creator.created_rows_count > 0 || creator.total_errors > 0
+    if creator.processed_rows > 0 || creator.total_errors > 0
       # Create the SQL diff file, and send it, when operated remotely:
       output_dir = get_output_folder()
       file_name = get_timestamped_env_filename( "create_reservations_#{ @meeting.code }_#{ current_user.id }.diff.sql" )
@@ -123,8 +123,9 @@ class MeetingReservationsController < ApplicationController
 
     # We need the list of reservations for each athlete in order to remain in edit mode:
     # (At the end of the update we expect to remain in edit mode - no redirection should be necessary)
-    prepare_reservations_and_events( @meeting, @team_affiliation )
-    render 'edit_events'
+    redirect_to( meeting_reservations_edit_events_url(id: @meeting.id) )
+#    prepare_reservations_and_events( @meeting, @team_affiliation )
+#    render 'edit_events'
   end
   #-- -------------------------------------------------------------------------
   #++
