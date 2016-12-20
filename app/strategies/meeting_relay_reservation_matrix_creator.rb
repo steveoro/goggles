@@ -6,18 +6,22 @@ require 'common/validation_error_tools'
 
 = MeetingRelayReservationMatrixCreator
 
- - Goggles framework vers.:  6.026
+ - Goggles framework vers.:  6.030
  - author: Steve A.
 
  Strategy class used to build-up a matrix of MeetingRelayReservation rows on the DB,
  one for each available relay event times each registered athlete.
 
  Check out also the companion class for this one, MeetingEventReservationMatrixCreator,
- which is a little bit more convoluted, since individual events are more subtle for
- the registration process.
+ which is a little bit more convoluted, since individual events are created
+ by default together with the companion "header" column of MeetingReservation rows.
 
+ We do not create MeetingReservation rows for relay events due to the fact that:
+   1. individual events are supposed to be accessed and shown first;
+   2. as said above, preparing the individual events reservation matrix creates
+      also these "header" reservations (one for each badge).
 
- Our goal is achieved given a specific:
+ The creation of the matrix of reservation rows requires a specific:
 
  - Meeting instance
  - TeamAffiliation instance, somehow linked to the current_user instance
@@ -56,6 +60,25 @@ class MeetingRelayReservationMatrixCreator < MeetingReservationMatrixProcessor
       end
     end
     return (@total_errors == 0)
+  end
+  #-- --------------------------------------------------------------------------
+  #++
+
+
+  # Returns the expected row count for the execution of the creator class.
+  #
+  # The result is the expected total data area. The actual processed_rows
+  # will be lesser than this only when some rows are skipped during creation
+  # (either due to errors or because already existing).
+  #
+  # @override
+  #
+  def expected_rows_count
+    # Use memoization to avoid requering.
+    @memoized_expected_count ||= get_badges_list.count * get_events_list.count
+    # (The actual matrix is composed by badges x events event reservations.
+    #  The additional column is the single list of tot. badges, 1 for each header
+    #  badge reservation)
   end
   #-- --------------------------------------------------------------------------
   #++

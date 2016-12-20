@@ -58,10 +58,10 @@ class MeetingReservationsController < ApplicationController
     if creator.processed_rows > 0 || creator.total_errors > 0
       # Create the SQL diff file, and send it, when operated remotely:
       output_dir = get_output_folder()
-      file_name = get_timestamped_env_filename( "create_reservations_#{ @meeting.code }_#{ current_user.id }.diff.sql" )
+      file_name = get_timestamped_env_filename( "create_events_res_#{ @meeting.code }_#{ current_user.id }.diff.sql" )
       full_sql_diff_path = File.join( output_dir, file_name )
 
-      serialize_and_deliver_diff_file( creator, "update reservations", full_sql_diff_path )
+      serialize_and_deliver_diff_file( creator, "create/update events RESERVATIONS", full_sql_diff_path )
       # TODO Alternatively, make an asynch job that sends a whole batch of edits via mail
 
       # Signal also locally if any error occurred during setup:
@@ -70,8 +70,9 @@ class MeetingReservationsController < ApplicationController
       end
     end
 
-    # Setup is done. Now get the list of reservations for each athlete:
-    prepare_reservations_and_events( @meeting, @team_affiliation )
+    # Setup is done. Now we need to collect the lists of reservations for each athlete:
+    prepare_meeting_reservations( @meeting, @team_affiliation )  # Collect the created list of badge reservations
+    prepare_events_reservations( @meeting, @team_affiliation )   # collect the created matrix (badges x event rows) of event reservations
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -92,7 +93,7 @@ class MeetingReservationsController < ApplicationController
   #
   def update_events
 # DEBUG
-    logger.debug "\r\n\r\n!! ------ #{self.class.name} -----"
+    logger.debug "\r\n\r\n!! ------ #{self.class.name}#update_events -----"
     logger.debug "> #{params.inspect}"
 
     # XXX Sample POST output:
@@ -124,8 +125,6 @@ class MeetingReservationsController < ApplicationController
     # We need the list of reservations for each athlete in order to remain in edit mode:
     # (At the end of the update we expect to remain in edit mode - no redirection should be necessary)
     redirect_to( meeting_reservations_edit_events_url(id: @meeting.id) )
-#    prepare_reservations_and_events( @meeting, @team_affiliation )
-#    render 'edit_events'
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -137,11 +136,33 @@ class MeetingReservationsController < ApplicationController
   # See #edit_events for detailed info.
   #
   def edit_relays
-# DEBUG
-    logger.debug "\r\n\r\n!! ------ #{self.class.name} -----"
-    logger.debug "> #{params.inspect}"
+    # The creator will set-up a matrix of rows that can be edited and then persisted
+    # with the #update action
+    creator = MeetingRelayReservationMatrixCreator.new(
+      meeting:          @meeting,
+      team_affiliation: @team_affiliation,
+      current_user:     current_user
+    )
+    creator.call
+    # Serialize creator.sql_diff_text_log in a dedicated log file:
+    if creator.processed_rows > 0 || creator.total_errors > 0
+      # Create the SQL diff file, and send it, when operated remotely:
+      output_dir = get_output_folder()
+      file_name = get_timestamped_env_filename( "create_relays_res_#{ @meeting.code }_#{ current_user.id }.diff.sql" )
+      full_sql_diff_path = File.join( output_dir, file_name )
 
-    # TODO
+      serialize_and_deliver_diff_file( creator, "create/update relays RESERVATIONS", full_sql_diff_path )
+      # TODO Alternatively, make an asynch job that sends a whole batch of edits via mail
+
+      # Signal also locally if any error occurred during setup:
+      if creator.total_errors > 0
+        flash[:error] = I18n.t('something_went_wrong')
+      end
+    end
+
+    # Setup is done. Now we need to collect the lists of reservations for each athlete:
+    prepare_meeting_reservations( @meeting, @team_affiliation )  # Collect the created list of badge reservations
+    prepare_relays_reservations( @meeting, @team_affiliation )   # collect the created matrix (badges x relays rows) of relay reservations
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -154,10 +175,25 @@ class MeetingReservationsController < ApplicationController
   #
   def update_relays
 # DEBUG
-    logger.debug "\r\n\r\n!! ------ #{self.class.name} -----"
+    logger.debug "\r\n\r\n!! ------ #{self.class.name}#update_relays -----"
     logger.debug "> #{params.inspect}"
 
+    # TODO Make the Updater class & call it
+    # TODO Serialize creator.sql_diff_text_log in a dedicated log file
+    # TODO Make an asynch job that sends the results via mail
+
     # TODO
+#
+    # # Signal any error or a successful operation:
+    # if batch_updater.total_errors > 0
+      # flash[:error] = I18n.t('something_went_wrong')
+    # else
+      # flash[:info] = I18n.t('social.changes_saved')
+    # end
+
+    # We need the list of reservations for each athlete in order to remain in edit mode:
+    # (At the end of the update we expect to remain in edit mode - no redirection should be necessary)
+    redirect_to( meeting_reservations_edit_relays_url(id: @meeting.id) )
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -166,8 +202,8 @@ class MeetingReservationsController < ApplicationController
   private
 
 
-  # Collects the list of @meeting_reservations for each Swimmer and all the
-  # associated @reservations_events.
+  # Collects the list of @meeting_reservations for each Swimmer, given the specified
+  # meeting and team_affiliation.
   #
   # === Params:
   # - meeting: a valid instance of Meeting
@@ -175,15 +211,28 @@ class MeetingReservationsController < ApplicationController
   #
   # === Prepares:
   # - @meeting_reservations: ActiveRelation object (list of reservations for each Swimmer of the Team)
-  # - @reservations_events: Hash with the structure { <MeetingReservation.id> => <MeetingEventReservation row> }
   #
-  def prepare_reservations_and_events( meeting, team_affiliation )
+  def prepare_meeting_reservations( meeting, team_affiliation )
     @meeting_reservations = MeetingReservation.where(
       meeting_id: meeting.id,
       team_id: team_affiliation.team_id
-    ).joins(:swimmer)
-      .includes(:swimmer).order('swimmers.complete_name')
+    ).joins(:swimmer).includes(:swimmer).order('swimmers.complete_name')
+  end
 
+
+  # Collects the list of @reservations_events associated to the specified meeting
+  # and team_affiliation.
+  #
+  # Assumes @meeting_reservations is already filled with a list of MeetingReservation rows.
+  #
+  # === Params:
+  # - meeting: a valid instance of Meeting
+  # - team_affiliation: a valid instance of TeamAffiliation (capable of attending the Meeting)
+  #
+  # === Prepares:
+  # - @reservations_events: Hash with the structure { <MeetingReservation.id> => <MeetingEventReservation row> }
+  #
+  def prepare_events_reservations( meeting, team_affiliation )
     # Get the list of rows of event reservations for each athlete:
     @reservations_events = {}
     @meeting_reservations.each do |reservation|
@@ -198,6 +247,37 @@ class MeetingReservationsController < ApplicationController
       # like:
       #       mer.event_type.i18n_short             for the event description
       #       mer.meeting_session.scheduled_date    for the scheduled date
+    end
+  end
+
+
+  # Collects the list of @reservations_relays associated to the specified meeting
+  # and team_affiliation.
+  #
+  # Assumes @meeting_reservations is already filled with a list of MeetingReservation rows.
+  #
+  # === Params:
+  # - meeting: a valid instance of Meeting
+  # - team_affiliation: a valid instance of TeamAffiliation (capable of attending the Meeting)
+  #
+  # === Prepares:
+  # - @reservations_relays Hash with the structure { <MeetingReservation.id> => <MeetingRelayReservation row> }
+  #
+  def prepare_relays_reservations( meeting, team_affiliation )
+    # Get the list of rows of relay reservations for each athlete:
+    @reservations_relays = {}
+    @meeting_reservations.each do |reservation|
+      @reservations_relays[ reservation.id ] = MeetingRelayReservation.where(
+          meeting_id: meeting.id,
+          swimmer_id: reservation.swimmer_id
+      ).joins(:meeting_session, :meeting_event, :event_type)
+        .includes(:meeting_session, :meeting_event, :event_type)
+        .order('meeting_sessions.session_order, meeting_events.event_order')
+        .to_a
+      # Assuming 'mrr' is an item of the resulting array, this yields something
+      # like:
+      #       mrr.event_type.i18n_short             for the event description
+      #       mrr.meeting_session.scheduled_date    for the scheduled date
     end
   end
   #-- -------------------------------------------------------------------------

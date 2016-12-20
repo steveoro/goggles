@@ -17,8 +17,7 @@ require 'common/validation_error_tools'
  check out also its companion class, MeetingRelayReservationMatrixCreator, which
  is used to build up a plain and simple matrix of relay reservations rows.
 
-
- Our goal is achieved given a specific:
+ The creation of the matrix of reservation rows requires a specific:
 
  - Meeting instance
  - TeamAffiliation instance, somehow linked to the current_user instance

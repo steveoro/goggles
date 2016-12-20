@@ -46,14 +46,12 @@ describe MeetingRelayReservationMatrixCreator, type: :strategy do
       end
       # Since we have created a single. pre-existing row, the creator strategy
       # should create the expected rows minus 1:
-# FIXME THIS FAILS:
-      xit "has #processed_rows == #expected_rows_count-1 (after being called)"
-      it "has #processed_rows < #expected_rows_count (after being called)" do
+      it "has #processed_rows == #expected_rows_count-1 (after being called)" do
 # DEBUG
-        puts "\r\n- subject.expected_rows_count..: #{ subject.expected_rows_count }"
-        puts     "- subject.processed_rows...: #{ subject.processed_rows }"
-        puts     "- subject.total_errors.........: #{ subject.total_errors }"
-        expect( subject.processed_rows ).to be < subject.expected_rows_count
+#        puts "\r\n- subject.expected_rows_count..: #{ subject.expected_rows_count }"
+#        puts     "- subject.processed_rows...: #{ subject.processed_rows }"
+#        puts     "- subject.total_errors.........: #{ subject.total_errors }"
+        expect( subject.processed_rows ).to eq( subject.expected_rows_count - 1 )
       end
       it "has 0 errors" do
         expect( subject.total_errors ).to eq(0)
@@ -64,12 +62,14 @@ describe MeetingRelayReservationMatrixCreator, type: :strategy do
   #++
 
 
-  def fix_create_reservation_for_random_meeting_and_return_creator
+  def fix_choose_random_meeting_and_return_creator
     # [Steve, 20161125] We use pre-existing data to speed-up fixtures here:
     # (Usually all CSI meetings have at least 1 relay event)
     rnd_csi_meeting_id_with_no_reservations = [10101, 11101, 12101, 13101, 14101].sort{rand - 0.5}.first
     meeting = Meeting.find( rnd_csi_meeting_id_with_no_reservations )
     team_affiliation = TeamAffiliation.where( season_id: meeting.season_id, team_id: 1 ).first
+    # Remove any possible pre-existing relay registration from the fixture, just in case:
+    MeetingRelayReservation.delete_all
     # Then we can proceed to instantiate the creator:
     MeetingRelayReservationMatrixCreator.new(
       meeting: meeting,
@@ -80,28 +80,15 @@ describe MeetingRelayReservationMatrixCreator, type: :strategy do
 
   context "for a meeting/team_affiliation couple without any previous registration," do
     before(:all) do
-      @subject = fix_create_reservation_for_random_meeting_and_return_creator()
+      @subject = fix_choose_random_meeting_and_return_creator()
       expect( @subject.call ).to be true
     end
-    # [Steve, 20161125] We use pre-existing data to speed-up fixtures here:
-    # (Usually all CSI meetings have at least 1 relay event)
-#    let(:rnd_csi_meeting_id_with_no_reservations) { [10101, 11101, 12101, 13101, 14101].sort{rand - 0.5}.first }
-#    let(:meeting) { Meeting.find( rnd_csi_meeting_id_with_no_reservations ) }
-#    let(:team_affiliation) do
-#      TeamAffiliation.where( season_id: meeting.season_id, team_id: 1 ).first
-#    end
-
-    # [Steve] We don't need to save the random user instance created, since we
-    # won't use any of its associations, nor its ID, so "build" is enough.
-#    subject do
-#    end
 
     describe "#call (after execution)" do
       it "has #expected_rows_count > 0 (after being called)" do
         expect( @subject.expected_rows_count ).to be > 0
       end
-# FIXME THIS FAILS:
-      xit "has the same count for #expected_rows_count and #processed_rows" do
+      it "has the same count for #expected_rows_count and #processed_rows" do
         expect( @subject.expected_rows_count ).to eq( @subject.processed_rows )
       end
       it "has 0 errors" do
