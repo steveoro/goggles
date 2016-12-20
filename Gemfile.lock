@@ -25,10 +25,10 @@ GIT
 
 GIT
   remote: https://github.com/steveoro/goggles_core
-  revision: 50be72bd00deb420de9a8826df8105f04eaf0d62
+  revision: 715bcf5d70526249cc9d3d095de4d798568a89ba
   branch: rails5
   specs:
-    goggles_core (1.1.11.0)
+    goggles_core (1.1.12.0)
       active_hash_relation
       active_model_serializers (~> 0.10.0)
       activemodel-serializers-xml
@@ -162,7 +162,7 @@ GEM
       execjs
     coffee-script-source (1.10.0)
     color (1.8)
-    concurrent-ruby (1.0.2)
+    concurrent-ruby (1.0.3)
     countries (1.2.5)
       currencies (~> 0.4.2)
       i18n_data (~> 0.7.0)
@@ -425,7 +425,7 @@ GEM
     slop (3.6.0)
     sort_alphabetical (1.0.2)
       unicode_utils (>= 1.2.2)
-    sprockets (3.7.0)
+    sprockets (3.7.1)
       concurrent-ruby (~> 1.0)
       rack (> 1, < 3)
     sprockets-rails (3.2.0)
