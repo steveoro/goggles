@@ -7,7 +7,7 @@ require 'wrappers/timing'
 
 = MeetingReservationMatrixUpdater
 
- - Goggles framework vers.:  6.030
+ - Goggles framework vers.:  6.031
  - author: Steve A.
 
  Strategy class used to update the existing matrix of either MeetingEventReservation
@@ -33,11 +33,19 @@ require 'wrappers/timing'
  In case of failure, the strategy fails silently, logging the errors inside the
  same generated SQL diff text.
 
- Keep in mind that serialization of this diff SQL text is delegated to external
+=== Notes:
+
+ 1. Keep in mind that serialization of this diff SQL text is delegated to external
  objects.
+
+ 2. To clear a timing value, send the updated value ('0') to the related toggle switch.
+ Setting the timing text to "0'00\"" won't clear the value, but set it to "no-time".
+ Setting the timing text to empty or nil will force skip the update on the field.
 
 =end
 class MeetingReservationMatrixUpdater < MeetingReservationMatrixProcessor
+
+  attr_reader :reservation_keys
 
   # Creates a new Updater instance using the +params+ hash specified.
   #
@@ -53,6 +61,9 @@ class MeetingReservationMatrixUpdater < MeetingReservationMatrixProcessor
   # The +current_user+ parameter is used only for logging purposes.
   #
   def initialize( params, current_user )
+    raise ArgumentError.new('params must either be a kind of Hash or an ActionController::Parameters instance.') unless params.instance_of?( ActionController::Parameters ) || params.kind_of?( Hash )
+    # Let's store the whole params structure, so it can be retrieved easily later on:
+    @params = params
     # Sample possible params structure:
     # <ActionController::Parameters {"utf8"=>"✓",
     #   "authenticity_token"=>"<a string token>",
@@ -64,15 +75,9 @@ class MeetingReservationMatrixUpdater < MeetingReservationMatrixProcessor
     #   "id"=>"16216", # <= this is the meeting ID (but it's currently unused)
     #   "controller"=>"meeting_reservations", "action"=>"update",
     #   "locale"=>"en"} permitted: false> # (We currently don't care about #permitted)
-    @params = params
+
     @reservation_keys = params.keys.select do |k|
-      k =~ /#{ DOM_PRE_RES_NOT_COMING }|#{ DOM_PRE_RES_CONFIRMED }|#{ DOM_PRE_RES_NOTES }/
-    end
-    @event_keys = params.keys.select do |k|
-      k =~ /#{ DOM_PRE_EVENT_TIMING }|#{ DOM_PRE_EVENT_CHECKED }/
-    end
-    @relay_keys = params.keys.select do |k|
-      k =~ /#{ DOM_PRE_RELAY_CHECKED }|#{ DOM_PRE_RELAY_NOTES }/
+      k =~ /#{ DOM_PRE_RES_NOT_COMING }|#{ DOM_PRE_RES_CONFIRMED }|#{ DOM_PRE_RES_NOTES }|#{ DOM_PRE_EVENT_TIMING }|#{ DOM_PRE_EVENT_CHECKED }|#{ DOM_PRE_RELAY_CHECKED }|#{ DOM_PRE_RELAY_NOTES }/
     end
     @total_errors = 0
     @processed_rows = 0
@@ -88,17 +93,23 @@ class MeetingReservationMatrixUpdater < MeetingReservationMatrixProcessor
     @reservation_keys.each do |key|
       if key =~ /#{ DOM_PRE_RES_NOT_COMING }/
         update_record_and_log( DOM_PRE_RES_NOT_COMING, key, MeetingReservation, 'is_not_coming' )
-
       elsif key =~ /#{ DOM_PRE_RES_CONFIRMED }/
         update_record_and_log( DOM_PRE_RES_CONFIRMED, key, MeetingReservation, 'has_confirmed' )
-
       elsif key =~ /#{ DOM_PRE_RES_NOTES }/
         update_record_and_log( DOM_PRE_RES_NOTES, key, MeetingReservation, 'notes' )
+
+      elsif key =~ /#{ DOM_PRE_EVENT_CHECKED }/
+        update_record_and_log( DOM_PRE_EVENT_CHECKED, key, MeetingEventReservation, 'is_doing_this' )
+      elsif key =~ /#{ DOM_PRE_EVENT_TIMING }/
+        update_record_and_log( DOM_PRE_EVENT_TIMING, key, MeetingEventReservation, 'timing' )
+
+      elsif key =~ /#{ DOM_PRE_RELAY_CHECKED }/
+        update_record_and_log( DOM_PRE_RELAY_CHECKED, key, MeetingRelayReservation, 'is_doing_this' )
+      elsif key =~ /#{ DOM_PRE_RELAY_NOTES }/
+        update_record_and_log( DOM_PRE_RELAY_NOTES, key, MeetingRelayReservation, 'notes' )
       end
     end
-
-# TODO ****************************************************
-# (update all changed rows)
+    return( @total_errors == 0 )
   end
   #-- --------------------------------------------------------------------------
   #++
@@ -108,10 +119,12 @@ class MeetingReservationMatrixUpdater < MeetingReservationMatrixProcessor
   #
   # The result is the expected number of updated rows.
   # The actual processed_rows will be lesser than this only when some updates
-  # are skipped due to errors.
+  # are skipped due to errors or empty or unprocessable values.
+  # (We won't create a new SQL update query for each empty string passed as
+  #  a timing)
   #
   def expected_rows_count
-    @reservation_keys.count + @event_keys.count
+    @reservation_keys.count
   end
   #-- --------------------------------------------------------------------------
   #++
@@ -141,9 +154,9 @@ class MeetingReservationMatrixUpdater < MeetingReservationMatrixProcessor
   def update_record_and_log( prefix, key, entity, field_name )
     # Extract the row id and retrive the DB row, if possible:
     id = extract_row_id( key, prefix )
-    row = entity.find_by_id( id )
+    record = entity.find_by_id( id )
 
-    if row
+    if record
       new_value = @params[ key ]
       # Pre-process new_value according to destination field type:
       if new_value
@@ -166,13 +179,19 @@ class MeetingReservationMatrixUpdater < MeetingReservationMatrixProcessor
 
         elsif new_value.instance_of?( TrueClass ) || new_value.instance_of?( FalseClass )
           record.send(field_name + '=', new_value)
+          # Clear also the timing if the field is 'is_doing_this' and the value is false:
+          if (field_name =~ /is_doing_this/) && (! new_value)
+            record.suggested_minutes = nil
+            record.suggested_seconds = nil
+            record.suggested_hundreds = nil
+          end
         end
       else
         # (We ignore null or unparsable values)
       end
 
       if record.save                            # Store the update:
-        sql_diff_text_log << to_sql_update( record, false, "\r\n" )
+        sql_diff_text_log << to_sql_update( record, false, record.attributes, "\r\n\r\n" )
         @processed_rows += 1
       else                                      # Log failure:
         sql_diff_text_log << "-- UPDATE VALIDATION FAILURE: #{ ValidationErrorTools.recursive_error_for( record ) }\r\n" if record.invalid?

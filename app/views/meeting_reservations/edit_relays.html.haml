@@ -51,6 +51,7 @@
                 %small
                   %i= I18n.t('meeting_reservation.is_not_coming')
                 &nbsp;&nbsp;
+                = hidden_field_tag res_coming_id, ''
                 = check_box_tag(                                                |
                     res_coming_id, "1", reservation.is_not_coming,              |
                     { 'data-res' => reservation.id,                             |
@@ -62,6 +63,7 @@
                   %i= I18n.t('meeting_reservation.has_confirmed')
                 .goggles-label-margin80
                   .switch
+                    = hidden_field_tag res_confirmed_id, ''
                     = check_box_tag(                                            |
                         res_confirmed_id, "1",  reservation.has_confirmed,      |
                         { 'data-res' => reservation.id,                         |
@@ -91,6 +93,7 @@
                   %div{style: (can_edit_events ? '' : 'display: none;')}
                     .switch{class: "switch_row_#{reservation.id}"}
                       - chkbox_id = "#{ MeetingReservationMatrixProcessor::DOM_PRE_RELAY_CHECKED }#{relay_reservation.id}"
+                      = hidden_field_tag chkbox_id, ''
                       = check_box_tag(chkbox_id, "1", relay_reservation.is_doing_this,    |
                           {'data-event-res' => relay_reservation.id,                      |
                           class: 'common-switch common-switch-round',                     |

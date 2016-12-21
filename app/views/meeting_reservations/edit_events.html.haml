@@ -52,6 +52,7 @@
                 %small
                   %i= I18n.t('meeting_reservation.is_not_coming')
                 &nbsp;&nbsp;
+                = hidden_field_tag res_coming_id, ''
                 = check_box_tag(                                                |
                     res_coming_id, "1", reservation.is_not_coming,              |
                     { 'data-res' => reservation.id,                             |
@@ -63,6 +64,7 @@
                   %i= I18n.t('meeting_reservation.has_confirmed')
                 .goggles-label-margin80
                   .switch
+                    = hidden_field_tag res_confirmed_id, ''
                     = check_box_tag(                                            |
                         res_confirmed_id, "1",  reservation.has_confirmed,      |
                         { 'data-res' => reservation.id,                         |
@@ -93,6 +95,7 @@
               .goggles-label-margin15{style: (can_edit_events ? '' : 'display: none;')}
                 .switch{class: "switch_row_#{reservation.id}"}
                   - chkbox_id = "#{ MeetingReservationMatrixProcessor::DOM_PRE_EVENT_CHECKED }#{event_reservation.id}"
+                  = hidden_field_tag chkbox_id, ''
                   = check_box_tag(chkbox_id, "1", event_reservation.is_doing_this,    |
                       {'data-event-res' => event_reservation.id,                      |
                       class: 'common-switch common-switch-round',                     |
@@ -155,7 +158,7 @@
    */
   function toggleSwitchValue( eventReservationId, timingText ) {
     var textEditId = "##{ MeetingReservationMatrixProcessor::DOM_PRE_EVENT_TIMING }" + eventReservationId;
-    var checkBoxId = "##{ MeetingReservationMatrixProcessor::DOM_PRE_EVENT_CHECKED }" + eventReservationId;
+    var checkBoxId = ".common-switch##{ MeetingReservationMatrixProcessor::DOM_PRE_EVENT_CHECKED }" + eventReservationId;
     if ( $(checkBoxId).prop('checked') ) {
       $( textEditId ).val( timingText );
     }
@@ -175,7 +178,7 @@
    */
   function toggleRowControl( eventReservationId, isDisabled ) {
     var textEditId = "##{ MeetingReservationMatrixProcessor::DOM_PRE_EVENT_TIMING }" + eventReservationId;
-    var checkBoxId = "##{ MeetingReservationMatrixProcessor::DOM_PRE_EVENT_CHECKED }" + eventReservationId;
+    var checkBoxId = ".common-switch##{ MeetingReservationMatrixProcessor::DOM_PRE_EVENT_CHECKED }" + eventReservationId;
     $(textEditId).prop('disabled', isDisabled);
     $(checkBoxId).prop('disabled', isDisabled);
   };
@@ -192,8 +195,8 @@
    * - resConfirmedId: DOM ID for the "is confirmed" row checkbox
    */
   function toggleAllRowControls( evResIds, reservationId ) {
-    var isNotComing = $( "##{ MeetingReservationMatrixProcessor::DOM_PRE_RES_NOT_COMING }" + reservationId ).prop('checked');
-    var isConfirmed = $( "##{ MeetingReservationMatrixProcessor::DOM_PRE_RES_CONFIRMED }" + reservationId ).prop('checked');
+    var isNotComing = $( ".common-switch##{ MeetingReservationMatrixProcessor::DOM_PRE_RES_NOT_COMING }" + reservationId ).prop('checked');
+    var isConfirmed = $( ".common-switch##{ MeetingReservationMatrixProcessor::DOM_PRE_RES_CONFIRMED }" + reservationId ).prop('checked');
 
     // Toggle editability & clear/reset values:
     for (var i = 0; i < evResIds.length; i++) {
@@ -203,7 +206,7 @@
       // Clear edit box value:
       if ( isNotComing ) {
         $("##{ MeetingReservationMatrixProcessor::DOM_PRE_EVENT_TIMING }" + evResIds[i]).val(null);
-        $("##{ MeetingReservationMatrixProcessor::DOM_PRE_EVENT_CHECKED }" + evResIds[i]).prop('checked', false);
+        $(".common-switch##{ MeetingReservationMatrixProcessor::DOM_PRE_EVENT_CHECKED }" + evResIds[i]).prop('checked', false);
       }
     }
 
