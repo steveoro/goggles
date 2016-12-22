@@ -4,16 +4,23 @@ require 'team_manager_validator'
 
 
 describe TeamManagerValidator, type: :strategy do
-    let(:old_meeting)   { Meeting.find_by_id( [13101, 13102, 13103, 13105, 14101, 14102, 14103, 14104, 14105, 15101, 15102, 15103, 15104, 15105].sort{rand * 0.5}.first ) }
-    let(:meeting_with_reservation)  { Meeting.find_by_id( [12101, 12102, 16101].sort{rand * 0.5}.first ) }
-    let(:user_for_reservation)      { User.find_by_id( [1, 2].sort{rand * 0.5}.first ) }
-    let(:new_meeting)   { create(:meeting, header_date: Date.today + 10.days) }
-    let(:team_manager)  do
-      create(
-        :team_manager,
-        team_affiliation: create(:team_affiliation, season: new_meeting.season )
-      )
-    end
+  # These are assumed NOT to have any reservations and to be ccrrently "closed":
+  let(:old_meeting)   { Meeting.find_by_id( [13101, 13102, 13103, 13105, 14101, 14102, 14103, 14104, 14105, 15101, 15102, 15103, 15104, 15105].sort{rand * 0.5}.first ) }
+
+  # For one of these we will add temporarilty a reservation row:
+  let(:meeting_with_reservation)  { Meeting.find_by_id( [12101, 12102, 16101].sort{rand * 0.5}.first ) }
+  # This will be a user that has attended to one of the above meeting:
+  let(:user_for_reservation)      { User.find_by_id( [1, 2].sort{rand * 0.5}.first ) }
+
+  # This meeting is assumed to be far-fetched in the future, without reservations (yet)
+  let(:new_meeting)   { create(:meeting, header_date: Date.today + 10.days) }
+  # Team manager for the above meeting
+  let(:team_manager)  do
+    create(
+      :team_manager,
+      team_affiliation: create(:team_affiliation, season: new_meeting.season )
+    )
+  end
 
 
   describe "self.can_manage?" do

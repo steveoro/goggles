@@ -24,7 +24,7 @@ RSpec.describe MeetingReservationsController, type: :controller do
   end
 
 
-  describe "POST #edit_events" do
+  describe "GET #edit_events" do
     context "for an unlogged user with invalid parameters," do
       it "redirects to the Login page" do
         get :edit_events
@@ -89,7 +89,7 @@ RSpec.describe MeetingReservationsController, type: :controller do
   #++
 
 
-  describe "POST #edit_relays" do
+  describe "GET #edit_relays" do
     context "for an unlogged user with invalid parameters," do
       it "redirects to the Login page" do
         get :edit_relays
@@ -114,6 +114,42 @@ RSpec.describe MeetingReservationsController, type: :controller do
       it "returns http success" do
         get :edit_relays, params: { id: random_manageable_meeting_id }
         expect(response).to have_http_status(:success)
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  describe "GET #printout_event_sheet" do
+    context "for an unlogged user with invalid parameters," do
+      it "redirects to the Login page" do
+        get :printout_event_sheet
+        expect(response).to redirect_to( "/users/sign_in" )
+      end
+    end
+
+    context "for a logged-in generic user," do
+      before :each do
+        login_user()
+      end
+      it "redirects to meetings/current page" do
+        get :printout_event_sheet, params: { id: random_manageable_meeting_id }
+        expect(response).to redirect_to( meetings_current_path )
+      end
+    end
+
+    context "for a logged-in valid user," do
+      before :each do
+        login_user( user_manager )
+      end
+      it "returns http success" do
+        get :printout_event_sheet, params: { id: random_manageable_meeting_id }
+        expect(response).to have_http_status(:success)
+      end
+      it "receives a PDF file" do
+        get :printout_event_sheet, params: { id: random_manageable_meeting_id }
+        expect( response.body).to include("%PDF")
       end
     end
   end

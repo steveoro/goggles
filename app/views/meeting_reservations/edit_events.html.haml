@@ -7,116 +7,114 @@
     = show_tab_link( params, 'edit_relays', t('meeting_reservation.manage_relays_title'), meeting_reservations_edit_relays_path(id: @meeting.id) )
   .goggles-category-gap
 
-  = form_tag( meeting_reservations_update_events_path(id: @meeting.id), method: :post, onsubmit: "$('#loadingIndicator').show();" )
-  %table.table.table-striped.table-bordered.table-hover.table-condensed
-    %tbody
-      -# Common header #1: session date
-      %tr.success.text-center
-        %td{ colspan: 2 }
-          &nbsp;
-        - first_res_event = @reservations_events[ @meeting_reservations.first.id ]
-        - session_dates   = first_res_event.map{ |re| Format.a_date(re.meeting_session.scheduled_date) + ' ' + Format.a_time(re.meeting_session.begin_time) }
-        - uniq_dates      = session_dates.uniq
-        - tot_columns     = uniq_dates.map{ |d| session_dates.count(d) }
-        - uniq_dates.each_with_index do |session_date, index|
-          %td{ colspan: tot_columns[index] }
-            %i= session_date
+= form_tag( meeting_reservations_update_events_path(id: @meeting.id), method: :post, onsubmit: "$('#loadingIndicator').show();" )
+%table.table.table-striped.table-bordered.table-hover.table-condensed
+  %tbody
+    -# Common header #1: session date
+    %tr.success.text-center
+      %td{ colspan: 2 }
+        &nbsp;
+      - first_res_event = @reservations_events[ @meeting_reservations.first.id ]
+      - session_dates   = first_res_event.map{ |re| Format.a_date(re.meeting_session.scheduled_date) + ' ' + Format.a_time(re.meeting_session.begin_time) }
+      - uniq_dates      = session_dates.uniq
+      - tot_columns     = uniq_dates.map{ |d| session_dates.count(d) }
+      - uniq_dates.each_with_index do |session_date, index|
+        %td{ colspan: tot_columns[index] }
+          %i= session_date
+      %td
+        &nbsp;
+    -# Common header #2: event title
+    %tr.success.text-center
+      %td{ colspan: 2 }
+        %i= I18n.t('meeting_stats.swimmers')
+      - @reservations_events[ @meeting_reservations.first.id ].each do |event_reservation|
+        - timing_hundreds = event_reservation.get_timing_instance.to_hundreds
         %td
-          &nbsp;
-      -# Common header #2: event title
-      %tr.success.text-center
-        %td{ colspan: 2 }
-          %i= I18n.t('meeting_stats.swimmers')
-        - @reservations_events[ @meeting_reservations.first.id ].each do |event_reservation|
+          %b= event_reservation.event_type.i18n_short
+      %td
+        %i= I18n.t('meeting_reservation.free_notes')
+    -# Data rows:
+    - @meeting_reservations.each do |reservation|
+      - res_events_ids = @reservations_events[reservation.id].map{ |re| re.id }
+      - res_coming_id = "#{ MeetingReservationMatrixProcessor::DOM_PRE_RES_NOT_COMING }#{ reservation.id }"
+      - res_confirmed_id = "#{ MeetingReservationMatrixProcessor::DOM_PRE_RES_CONFIRMED }#{reservation.id}"
+      %tr
+        %td{ colspan: 2, class: 'info' }
+          %b= reservation.swimmer.get_full_name
+          - if !@is_valid_team_manager            # Hide team manager controls for standard gogglers:
+            %br/
+            %small
+              %i
+                = reservation.is_not_coming ? I18n.t('meeting_reservation.not_coming') : I18n.t('meeting_reservation.coming')
+                = I18n.t('meeting_reservation.add_maybe') if !reservation.has_confirmed
+          - else                                  # Show full controls for team managers:
+            .row.col-xs-12
+              %small
+                %i= I18n.t('meeting_reservation.is_not_coming')
+              &nbsp;&nbsp;
+              = hidden_field_tag( res_coming_id, reservation.is_not_coming )
+              = check_box_tag(                                                  |
+                  "chk_#{ res_coming_id }", true, reservation.is_not_coming,    |
+                  { disabled: !@is_valid_team_manager,                          |
+                    onclick: "toggleAllRowControls( #{ res_events_ids }, '#{ reservation.id }' );" |
+                } )                                                             |
+            .row.col-xs-12
+              %small
+                %i= I18n.t('meeting_reservation.has_confirmed')
+              .goggles-label-margin80
+                .switch
+                  = hidden_field_tag( res_confirmed_id, reservation.has_confirmed )
+                  = check_box_tag(                                                    |
+                      "chk_#{ res_confirmed_id }", true,  reservation.has_confirmed,  |
+                      { class: 'common-switch common-switch-round',                   |
+                        disabled: !@is_valid_team_manager,                            |
+                        onclick: "toggleAllRowControls( #{ res_events_ids }, '#{ reservation.id }' );" |
+                    } )                                                               |
+                  %label{ for: "chk_#{ res_confirmed_id }" }
+
+        -# Only team managers can edit any row; a simple swimmer can edit only his/her own row.
+        -# (if the reservation hasn't been already confirmed to the manager and the meeting
+        -#  is still manageable)
+        -# At the same time, row controls are editable only if the reservation hasn't been already confirmed or if the swimmer is not coming to the meeting
+        - can_edit_events = (!reservation.has_confirmed) && (!reservation.is_not_coming) && TeamManagerValidator.is_manageable?( @meeting ) && (@is_valid_team_manager || ( @swimmer && (@swimmer.id == reservation.swimmer_id)))
+        - @reservations_events[reservation.id].each do |event_reservation|
           - timing_hundreds = event_reservation.get_timing_instance.to_hundreds
           %td
-            %b= event_reservation.event_type.i18n_short
-        %td
-          %i= I18n.t('meeting_reservation.free_notes')
-      -# Data rows:
-      - @meeting_reservations.each do |reservation|
-        - res_events_ids = @reservations_events[reservation.id].map{ |re| re.id }
-        - res_coming_id = "#{ MeetingReservationMatrixProcessor::DOM_PRE_RES_NOT_COMING }#{ reservation.id }"
-        - res_confirmed_id = "#{ MeetingReservationMatrixProcessor::DOM_PRE_RES_CONFIRMED }#{reservation.id}"
-        %tr
-          %td{ colspan: 2, class: 'info' }
-            %b= reservation.swimmer.get_full_name
-            - if !@is_valid_team_manager            # Hide team manager controls for standard gogglers:
-              %br/
+            = text_field_tag(                                                       |
+              "#{ MeetingReservationMatrixProcessor::DOM_PRE_EVENT_TIMING }#{event_reservation.id}",                                        |
+              event_reservation.is_doing_this ? event_reservation.get_timing : nil, |
+              'class' => "input-mini form-control text-right timing",               |
+              disabled: !can_edit_events,                                           |
+              'data-event-res' => event_reservation.id                              |
+            )                                                                       |
+            .text-center
               %small
-                %i
-                  = reservation.is_not_coming ? I18n.t('meeting_reservation.not_coming') : I18n.t('meeting_reservation.coming')
-                  = I18n.t('meeting_reservation.add_maybe') if !reservation.has_confirmed
-            - else                                  # Show full controls for team managers:
-              .row.col-xs-12
-                %small
-                  %i= I18n.t('meeting_reservation.is_not_coming')
-                &nbsp;&nbsp;
-                = hidden_field_tag res_coming_id, ''
-                = check_box_tag(                                                |
-                    res_coming_id, "1", reservation.is_not_coming,              |
-                    { 'data-res' => reservation.id,                             |
-                      disabled: !@is_valid_team_manager,                        |
-                      onclick: "toggleAllRowControls( #{ res_events_ids }, '#{ reservation.id }' );" |
-                  } )                                                           |
-              .row.col-xs-12
-                %small
-                  %i= I18n.t('meeting_reservation.has_confirmed')
-                .goggles-label-margin80
-                  .switch
-                    = hidden_field_tag res_confirmed_id, ''
-                    = check_box_tag(                                            |
-                        res_confirmed_id, "1",  reservation.has_confirmed,      |
-                        { 'data-res' => reservation.id,                         |
-                          class: 'common-switch common-switch-round',           |
-                          disabled: !@is_valid_team_manager,                    |
-                          onclick: "toggleAllRowControls( #{ res_events_ids }, '#{ reservation.id }' );" |
-                      } )                                                       |
-                    %label{ for: res_confirmed_id }
+                %i= "(#{ event_reservation.get_timing })"
+            %br/
+            .goggles-label-margin15{style: (can_edit_events ? '' : 'display: none;')}
+              .switch{class: "switch_row_#{reservation.id}"}
+                - chkbox_id = "#{ MeetingReservationMatrixProcessor::DOM_PRE_EVENT_CHECKED }#{event_reservation.id}"
+                = hidden_field_tag( chkbox_id, event_reservation.is_doing_this )
+                = check_box_tag("chk_#{ chkbox_id }", true, event_reservation.is_doing_this,  |
+                  { class: 'common-switch common-switch-round',                               |
+                    disabled: !can_edit_events,                                               |
+                    onclick: "toggleSwitchValue(\"#{ event_reservation.id }\", \"#{ escape_javascript(event_reservation.get_timing) }\");" |
+                } )                                                                           |
+                %label{ for: "chk_#{ chkbox_id }" }
+        %td
+          = text_area_tag(                                              |
+            "#{ MeetingReservationMatrixProcessor::DOM_PRE_RES_NOTES }#{reservation.id}",                               |
+            reservation.notes,                                          |
+            'class' => "text-left form-control",                        |
+            disabled: !can_edit_events,                                 |
+            'data-res' => reservation.id                                |
+          )                                                             |
 
-          -# Only team managers can edit any row; a simple swimmer can edit only his/her own row
-          -# (if the reservation hasn't been already confirmed to the manager and the meeting
-          -#  is still manageable):
-          - can_edit_events = TeamManagerValidator.is_manageable?( @meeting ) && (@is_valid_team_manager || ( !reservation.has_confirmed && @swimmer && (@swimmer.id == reservation.swimmer_id) ))
-          - @reservations_events[reservation.id].each do |event_reservation|
-            - timing_hundreds = event_reservation.get_timing_instance.to_hundreds
-            %td
-              = text_field_tag(                                                       |
-                "#{ MeetingReservationMatrixProcessor::DOM_PRE_EVENT_TIMING }#{event_reservation.id}",                                        |
-                event_reservation.is_doing_this ? event_reservation.get_timing : nil, |
-                'class' => "input-mini form-control text-right timing",               |
-                disabled: !can_edit_events,                                           |
-                'data-event-res' => event_reservation.id                              |
-              )                                                                       |
-              .text-center
-                %small
-                  %i= "(#{ event_reservation.get_timing })"
-              %br/
-              .goggles-label-margin15{style: (can_edit_events ? '' : 'display: none;')}
-                .switch{class: "switch_row_#{reservation.id}"}
-                  - chkbox_id = "#{ MeetingReservationMatrixProcessor::DOM_PRE_EVENT_CHECKED }#{event_reservation.id}"
-                  = hidden_field_tag chkbox_id, ''
-                  = check_box_tag(chkbox_id, "1", event_reservation.is_doing_this,    |
-                      {'data-event-res' => event_reservation.id,                      |
-                      class: 'common-switch common-switch-round',                     |
-                      disabled: !can_edit_events,                                     |
-                      onclick: "toggleSwitchValue(\"#{ event_reservation.id }\", \"#{ escape_javascript(event_reservation.get_timing) }\");" |
-                  } )                                                                 |
-                  %label{ for: chkbox_id }
-          %td
-            = text_area_tag(                                              |
-              "#{ MeetingReservationMatrixProcessor::DOM_PRE_RES_NOTES }#{reservation.id}",                               |
-              reservation.notes,                                          |
-              'class' => "text-left form-control",                        |
-              disabled: !can_edit_events,                                 |
-              'data-res' => reservation.id                                |
-            )                                                             |
-
-- can_save_form = TeamManagerValidator.is_manageable?( @meeting ) && ( @is_valid_team_manager || TeamManagerValidator.any_reservations_for?( current_user, @meeting ) )
 .col-xs-12.goggles-category-gap
   .col-xs-2
+    - can_save_form = TeamManagerValidator.is_manageable?( @meeting ) && ( @is_valid_team_manager || TeamManagerValidator.any_reservations_for?( current_user, @meeting ) )
     = submit_tag( I18n.t(:save), id: 'btnSaveEventReservation', disabled: !can_save_form,     |
-        data: {confirm: I18n.t('netzke.basepack.grid_panel.are_you_sure'),                    |
+        data: { confirm: I18n.t('meeting_reservation.do_you_want_to_save_changes'),           |
         disable_with: I18n.t(:please_wait), class: 'disabled' }, class: "btn btn-primary" )   |
     %span(id='loadingIndicator' hidden='true')
       = image_tag( 'indicator.gif' )
@@ -157,13 +155,18 @@
    * - timingText: text value to be set in the edit box if the checkbox is toggled on
    */
   function toggleSwitchValue( eventReservationId, timingText ) {
-    var textEditId = "##{ MeetingReservationMatrixProcessor::DOM_PRE_EVENT_TIMING }" + eventReservationId;
-    var checkBoxId = ".common-switch##{ MeetingReservationMatrixProcessor::DOM_PRE_EVENT_CHECKED }" + eventReservationId;
-    if ( $(checkBoxId).prop('checked') ) {
-      $( textEditId ).val( timingText );
+    var textEdit   = $("##{ MeetingReservationMatrixProcessor::DOM_PRE_EVENT_TIMING }" + eventReservationId);
+    var hiddenFld  = $("##{ MeetingReservationMatrixProcessor::DOM_PRE_EVENT_CHECKED }" + eventReservationId);
+    var fieldValue = hiddenFld.val();
+    var isChecked  = (fieldValue == true) || (fieldValue == 'true') || (fieldValue == '1');
+    // Toggle the field (set the opposite value of the hidden field):
+    if ( isChecked ) {
+      $( hiddenFld ).val( false );
+      $( textEdit ).val( null );
     }
     else {
-      $( textEditId ).val( null );
+      $( hiddenFld ).val( true );
+      $( textEdit ).val( timingText );
     }
   };
   // --------------------------------------------------------------------------
@@ -177,10 +180,12 @@
    * - isDisabled: true or false value for the disabled property
    */
   function toggleRowControl( eventReservationId, isDisabled ) {
-    var textEditId = "##{ MeetingReservationMatrixProcessor::DOM_PRE_EVENT_TIMING }" + eventReservationId;
-    var checkBoxId = ".common-switch##{ MeetingReservationMatrixProcessor::DOM_PRE_EVENT_CHECKED }" + eventReservationId;
-    $(textEditId).prop('disabled', isDisabled);
-    $(checkBoxId).prop('disabled', isDisabled);
+    var textEdit = $("##{ MeetingReservationMatrixProcessor::DOM_PRE_EVENT_TIMING }" + eventReservationId);
+    var checkBox = $("#chk_##{ MeetingReservationMatrixProcessor::DOM_PRE_EVENT_CHECKED }" + eventReservationId);
+    textEdit.prop( 'disabled', isDisabled );
+    // Set the hidden field & the checkbox itself (so that we can POST both checked & unchecked values):
+    // (We need the checkbox to have a different ID from the hidden field so that the CSS toggle can work)
+    checkBox.prop( 'disabled', isDisabled );
   };
 
 
@@ -195,8 +200,14 @@
    * - resConfirmedId: DOM ID for the "is confirmed" row checkbox
    */
   function toggleAllRowControls( evResIds, reservationId ) {
-    var isNotComing = $( ".common-switch##{ MeetingReservationMatrixProcessor::DOM_PRE_RES_NOT_COMING }" + reservationId ).prop('checked');
-    var isConfirmed = $( ".common-switch##{ MeetingReservationMatrixProcessor::DOM_PRE_RES_CONFIRMED }" + reservationId ).prop('checked');
+    var isNotComing = $("#chk_#{ MeetingReservationMatrixProcessor::DOM_PRE_RES_NOT_COMING }" + reservationId).prop('checked');
+    var isConfirmed = $("#chk_#{ MeetingReservationMatrixProcessor::DOM_PRE_RES_CONFIRMED }" + reservationId).prop('checked');
+    var textNotes   = $("##{ MeetingReservationMatrixProcessor::DOM_PRE_RES_NOTES }" + reservationId);
+    // Set the hidden fields value:
+    $( "##{ MeetingReservationMatrixProcessor::DOM_PRE_RES_NOT_COMING }" + reservationId ).val( isNotComing );
+    $( "##{ MeetingReservationMatrixProcessor::DOM_PRE_RES_CONFIRMED }" + reservationId ).val( isConfirmed );
+    // Toggle row notes editability:
+    textNotes.prop( 'disabled', isNotComing || isConfirmed );
 
     // Toggle editability & clear/reset values:
     for (var i = 0; i < evResIds.length; i++) {
@@ -206,7 +217,10 @@
       // Clear edit box value:
       if ( isNotComing ) {
         $("##{ MeetingReservationMatrixProcessor::DOM_PRE_EVENT_TIMING }" + evResIds[i]).val(null);
-        $(".common-switch##{ MeetingReservationMatrixProcessor::DOM_PRE_EVENT_CHECKED }" + evResIds[i]).prop('checked', false);
+        // (See method above for the reason why we are doing the following)
+        // (We also clear the hidden field whenever an athlete is not coming)
+        $("##{ MeetingReservationMatrixProcessor::DOM_PRE_EVENT_CHECKED }" + evResIds[i]).val(false);
+        $("#chk_#{ MeetingReservationMatrixProcessor::DOM_PRE_EVENT_CHECKED }" + evResIds[i]).prop('checked', false);
       }
     }
 

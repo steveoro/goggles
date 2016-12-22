@@ -7,7 +7,7 @@ require 'wrappers/timing'
 
 = MeetingReservationMatrixUpdater
 
- - Goggles framework vers.:  6.031
+ - Goggles framework vers.:  6.032
  - author: Steve A.
 
  Strategy class used to update the existing matrix of either MeetingEventReservation
@@ -77,7 +77,7 @@ class MeetingReservationMatrixUpdater < MeetingReservationMatrixProcessor
     #   "locale"=>"en"} permitted: false> # (We currently don't care about #permitted)
 
     @reservation_keys = params.keys.select do |k|
-      k =~ /#{ DOM_PRE_RES_NOT_COMING }|#{ DOM_PRE_RES_CONFIRMED }|#{ DOM_PRE_RES_NOTES }|#{ DOM_PRE_EVENT_TIMING }|#{ DOM_PRE_EVENT_CHECKED }|#{ DOM_PRE_RELAY_CHECKED }|#{ DOM_PRE_RELAY_NOTES }/
+      k =~ /^#{ DOM_PRE_RES_NOT_COMING }|^#{ DOM_PRE_RES_CONFIRMED }|^#{ DOM_PRE_RES_NOTES }|^#{ DOM_PRE_EVENT_TIMING }|^#{ DOM_PRE_EVENT_CHECKED }|^#{ DOM_PRE_RELAY_CHECKED }|^#{ DOM_PRE_RELAY_NOTES }/
     end
     @total_errors = 0
     @processed_rows = 0
@@ -158,15 +158,42 @@ class MeetingReservationMatrixUpdater < MeetingReservationMatrixProcessor
 
     if record
       new_value = @params[ key ]
+# DEBUG
+#      puts "\r\n'#{field_name}' => <#{ new_value.inspect }>"
       # Pre-process new_value according to destination field type:
-      if new_value
-        new_value = ( new_value.to_i > 0 ) if field_name =~ /is_not_coming|has_confirmed|is_doing_this/
-        new_value = sanitize_input( new_value ) if field_name == 'notes'
-        # Need to get a single Timing instance from the value and then get the single fields: suggested_seconds, minutes and hundreds
-        new_value = TimingParser.parse( new_value ) if field_name == 'timing' # (Not an actual field, but gives us the type)
+      # (Note that the FalseClass yields #present? to false, so we check
+      # against nil here, forcing to nil any other ignored value,
+      # including the empty string - which is returned by almost every
+      # non-edited text field)
+      unless new_value.nil?
+                                                    # Convert to True/False class boolean fields:
+        if field_name =~ /is_not_coming|has_confirmed|is_doing_this/
+# DEBUG
+#          puts "bool set"
+          new_value = ( [1, '1', true, 'true'].member?(new_value) )
+                                                    # Sanitize free text fields:
+        elsif field_name == 'notes'
+# DEBUG
+#          puts "sanitize text"
+          new_value = sanitize_input( new_value )
+                                                    # Convert timing fields to instances:
+        elsif field_name == 'timing'                # (Not an actual field, but gives us the type)
+# DEBUG
+#          puts "timing set"
+          # (We need to get a single Timing instance from the value and then get
+          #  the single fields: suggested_seconds, minutes and hundreds)
+          new_value = TimingParser.parse( new_value )
+
+        else                                        # Ignore any other case:
+# DEBUG
+#          puts "set to nil"
+          new_value = nil
+        end
       end
 
-      if new_value.present?                     # Was some value actually given?
+      unless new_value.nil?                         # Any value to process?
+# DEBUG
+#        puts "value found present"
         # Process new_value according to destination field type.
         # We have 3 types: boolean, integer from timing text and free notes (to be sanitized)
         if new_value.instance_of?( String )
@@ -180,24 +207,32 @@ class MeetingReservationMatrixUpdater < MeetingReservationMatrixProcessor
         elsif new_value.instance_of?( TrueClass ) || new_value.instance_of?( FalseClass )
           record.send(field_name + '=', new_value)
           # Clear also the timing if the field is 'is_doing_this' and the value is false:
-          if (field_name =~ /is_doing_this/) && (! new_value)
-            record.suggested_minutes = nil
-            record.suggested_seconds = nil
-            record.suggested_hundreds = nil
+          if (field_name =~ /is_doing_this/) && (! new_value) &&
+             (entity.name == 'MeetingEventReservation')
+            record.suggested_minutes = 0
+            record.suggested_seconds = 0
+            record.suggested_hundreds = 0
           end
         end
+                                                    # Save the change:
+        if record.save
+# DEBUG
+#          puts "save successful"
+          sql_diff_text_log << to_sql_update( record, false, record.attributes, "\r\n\r\n" )
+          @processed_rows += 1
+        else                                        # Log also in case of failure:
+# DEBUG
+#          puts "\r\nsave FAILURE: record.invalid?: #{ record.invalid? }, validation: #{  ValidationErrorTools.recursive_error_for( record ) }"
+          sql_diff_text_log << "-- UPDATE VALIDATION FAILURE: #{ ValidationErrorTools.recursive_error_for( record ) }\r\n" if record.invalid?
+          sql_diff_text_log << "-- UPDATE FAILURE: #{ $! }\r\n" if $!
+          @total_errors += 1
+        end
+      # else: we ignore (skip) null or unparsable values
       else
-        # (We ignore null or unparsable values)
+# DEBUG
+#        puts "ELSE (skip)"
       end
 
-      if record.save                            # Store the update:
-        sql_diff_text_log << to_sql_update( record, false, record.attributes, "\r\n\r\n" )
-        @processed_rows += 1
-      else                                      # Log failure:
-        sql_diff_text_log << "-- UPDATE VALIDATION FAILURE: #{ ValidationErrorTools.recursive_error_for( record ) }\r\n" if record.invalid?
-        sql_diff_text_log << "-- UPDATE FAILURE: #{ $! }\r\n" if $!
-        @total_errors += 1
-      end
     else                                        # Reservation row not found:
       sql_diff_text_log << "-- RESERVATION ROW NOT FOUND: id = #{ id }\r\n"
       sql_diff_text_log << "-- #{ entity.name } update skipped: '#{ field_name }' = '#{ new_value }'\r\n"

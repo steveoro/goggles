@@ -64,10 +64,12 @@ Rails.application.routes.draw do
       post "meeting/update_passages/:id",       to: "meetings#update_passages",         as: "meeting_update_passages"
 
       # === Meeting Reservations ===
-      get 'meeting_reservations/edit_events'      # this will create a matrix of event reservations (many events for each one of the current team's athletes)
-      post 'meeting_reservations/update_events'   # this will in turn post the updates to the above matrix of row entries
-      get 'meeting_reservations/edit_relays'      # this will create a matrix of event reservations (many events for each one of the current team's athletes)
-      post 'meeting_reservations/update_relays'   # this will in turn post the updates to the above matrix of row entries
+      get 'meeting_reservations/edit_events'      # creates a matrix of event reservations (many events for each one of the current team's athletes)
+      post 'meeting_reservations/update_events'   # post updates for the above matrix of row entries
+      get 'meeting_reservations/edit_relays'      # creates a matrix of relay reservations (many events for each one of the current team's athletes)
+      post 'meeting_reservations/update_relays'   # post updates for the above matrix of row entries
+      get 'meeting_reservations/printout_event_sheet'
+
 
       # === Records ===
       get  "records/for_season_type",           to: "records#for_season_type"

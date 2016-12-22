@@ -121,7 +121,7 @@ en:
 
   combobox_generic_tooltip: "Write directly what you want to search or press the button to show all the items."
   combobox_3char_tooltip: "(3 characters min.)"
-  something_went_wrong: "Something went wrong, check the log file."
+  something_went_wrong: "Something went wrong. The admins will check that out as soon as possible."
   requested_entity_missing: "A requested entity has not been created yet"
   transaction_cancelled: "Transaction cancelled."
   missing_request_parameter: "Invalid Action: missing a request parameter!"

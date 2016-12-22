@@ -122,7 +122,7 @@ it:
 
   combobox_generic_tooltip: "Scrivi direttamente quello che vuoi cercare o premi il pulsante per mostrare tutte le voci."
   combobox_3char_tooltip: "(3 caratteri min.)"
-  something_went_wrong: "Qualcosa e' andato storto, controllare il file di log."
+  something_went_wrong: "Qualcosa e' andato storto. Gli amministratori interverranno non appena possibile."
   requested_entity_missing: "Un entita' fondamentale non e' stata ancora creata"
   transaction_cancelled: "Transazione annullata."
   missing_request_parameter: "Azione non valida: parametro della richiesta mancante!"

@@ -53,26 +53,38 @@ class MeetingReservationsController < ApplicationController
       team_affiliation: @team_affiliation,
       current_user:     current_user
     )
-    creator.call
-    # Serialize creator.sql_diff_text_log in a dedicated log file:
-    if creator.processed_rows > 0 || creator.total_errors > 0
-      # Create the SQL diff file, and send it, when operated remotely:
-      output_dir = get_output_folder()
-      file_name = get_timestamped_env_filename( "create_events_res_#{ @meeting.code }_#{ current_user.id }.diff.sql" )
-      full_sql_diff_path = File.join( output_dir, file_name )
 
-      serialize_and_deliver_diff_file( creator, "create/update events RESERVATIONS", full_sql_diff_path )
-      # TODO Alternatively, make an asynch job that sends a whole batch of edits via mail
-
-      # Signal also locally if any error occurred during setup:
-      if creator.total_errors > 0
-        flash[:error] = I18n.t('something_went_wrong')
-      end
-    end
+    # Launch the creator and send the diff file, if any:
+    perform_matrix_creation( creator, current_user, 'event' )
 
     # Setup is done. Now we need to collect the lists of reservations for each athlete:
     prepare_meeting_reservations( @meeting, @team_affiliation )  # Collect the created list of badge reservations
     prepare_events_reservations( @meeting, @team_affiliation )   # collect the created matrix (badges x event rows) of event reservations
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Edits the matrix of _relay_ reservations for the selected meeting, for the
+  # whole team of the currently logged-in user.
+  #
+  # See #edit_events for detailed info.
+  #
+  def edit_relays
+    # The creator will set-up a matrix of rows that can be edited and then persisted
+    # with the #update action
+    creator = MeetingRelayReservationMatrixCreator.new(
+      meeting:          @meeting,
+      team_affiliation: @team_affiliation,
+      current_user:     current_user
+    )
+
+    # Launch the creator and send the diff file, if any:
+    perform_matrix_creation( creator, current_user, 'relay' )
+
+    # Setup is done. Now we need to collect the lists of reservations for each athlete:
+    prepare_meeting_reservations( @meeting, @team_affiliation )  # Collect the created list of badge reservations
+    prepare_relays_reservations( @meeting, @team_affiliation )   # collect the created matrix (badges x relays rows) of relay reservations
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -95,105 +107,93 @@ class MeetingReservationsController < ApplicationController
 # DEBUG
     logger.debug "\r\n\r\n!! ------ #{self.class.name}#update_events -----"
     logger.debug "> #{params.inspect}"
-
     # XXX Sample POST output:
     # <ActionController::Parameters {"utf8"=>"✓",
-    #   "authenticity_token"=>"me8I1u4U6BVas/C0ajcm+zvKrCKYsFxlClf49zEBPi4scAJHmqVH4iDY1u3l4CJEuqMHkouDGn54dK9j4KpyLQ==",
-    #   "evr_1"=>"", "evr_2"=>"35\"10", "evrChecked_2"=>"1", "evr_3"=>"", "evr_4"=>"", "evr_5"=>"",
-    #   "evr_6"=>"", "evr_7"=>"", "evr_8"=>"32\"04", "evrChecked_8"=>"1",
-    #   "evr_9"=>"", "evr_10"=>"", "evr_11"=>"", "resNotes_1"=>"vengo in macchina",
-    #   "commit"=>"Salva", "id"=>"16216", "controller"=>"meeting_reservations",
-    #   "action"=>"update", "locale"=>"it"} permitted: false>
+    #   "authenticity_token"=>"<auth_string_token>",
+    #     "resNC_1"=>"false", "resCnf_1"=>"true", "chk_resCnf_1"=>"true", "evrChk_1"=>"false", "resNotes_1"=>"2 seats available",
+    #     "evrChk_2"=>"true", "chk_evrChk_2"=>"true", "evrChk_3"=>"false", "evrChk_4"=>"true",
+    #     "chk_evrChk_4"=>"true", "resNotes_1"=>"", "resNC_47"=>"true", "chk_resNC_47"=>"true",
+    #     "resCnf_47"=>"false",
+    #     # [...]
+    #   "commit"=>"Save", "id"=>"16216", "controller"=>"meeting_reservations",
+    #   "action"=>"update", "locale"=>"en"} permitted: false>
 
-    # TODO Make the Updater class & call it
-    # TODO Serialize creator.sql_diff_text_log in a dedicated log file
-    # TODO Make an asynch job that sends the results via mail
+    perform_matrix_update( params, current_user )
 
-    # Create the SQL diff file, and send it, when operated remotely:
-    # output_dir = get_output_folder()
-    # file_name = get_timestamped_env_filename( "update_reservations_#{ @meeting.code }_#{ current_user.id }.diff.sql" )
-    # full_sql_diff_path = File.join( output_dir, file_name )
-    # serialize_and_deliver_diff_file( updater, "update reservations", full_sql_diff_path )
-#
-    # # Signal any error or a successful operation:
-    # if batch_updater.total_errors > 0
-      # flash[:error] = I18n.t('something_went_wrong')
-    # else
-      # flash[:info] = I18n.t('social.changes_saved')
-    # end
-
-    # We need the list of reservations for each athlete in order to remain in edit mode:
-    # (At the end of the update we expect to remain in edit mode - no redirection should be necessary)
+    # At the end of the update we expect to remain in edit mode:
     redirect_to( meeting_reservations_edit_events_url(id: @meeting.id) )
   end
   #-- -------------------------------------------------------------------------
   #++
 
 
-  # Edits the matrix of _relay_ reservations for the selected meeting, for the
-  # whole team of the currently logged-in user.
+  # POSTs the update for the matrix of reservations for the selected meeting, for the whole team
+  # of the currently logged-in user.
   #
-  # See #edit_events for detailed info.
+  # Posting updates for non-existing rows will fail silently.
   #
-  def edit_relays
-    # The creator will set-up a matrix of rows that can be edited and then persisted
-    # with the #update action
-    creator = MeetingRelayReservationMatrixCreator.new(
-      meeting:          @meeting,
-      team_affiliation: @team_affiliation,
-      current_user:     current_user
-    )
-    creator.call
-    # Serialize creator.sql_diff_text_log in a dedicated log file:
-    if creator.processed_rows > 0 || creator.total_errors > 0
-      # Create the SQL diff file, and send it, when operated remotely:
-      output_dir = get_output_folder()
-      file_name = get_timestamped_env_filename( "create_relays_res_#{ @meeting.code }_#{ current_user.id }.diff.sql" )
-      full_sql_diff_path = File.join( output_dir, file_name )
-
-      serialize_and_deliver_diff_file( creator, "create/update relays RESERVATIONS", full_sql_diff_path )
-      # TODO Alternatively, make an asynch job that sends a whole batch of edits via mail
-
-      # Signal also locally if any error occurred during setup:
-      if creator.total_errors > 0
-        flash[:error] = I18n.t('something_went_wrong')
-      end
-    end
-
-    # Setup is done. Now we need to collect the lists of reservations for each athlete:
-    prepare_meeting_reservations( @meeting, @team_affiliation )  # Collect the created list of badge reservations
-    prepare_relays_reservations( @meeting, @team_affiliation )   # collect the created matrix (badges x relays rows) of relay reservations
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-
-
-  # POSTs the update for the matrix of _relay_ reservations for the selected meeting,
-  # for the whole team of the currently logged-in user.
+  # == Params:
+  # id: the meeting id to be processed
   #
-  # See #update_events for detailed info.
+  # == Implied parameters:
+  # current_user:  user must be logged-in and either be a team-manager or have an
+  #                associated swimmer (must be a "goggler").
+  #                (when also a team-manager, the whole matrix of rows should be editable)
   #
   def update_relays
 # DEBUG
     logger.debug "\r\n\r\n!! ------ #{self.class.name}#update_relays -----"
     logger.debug "> #{params.inspect}"
 
-    # TODO Make the Updater class & call it
-    # TODO Serialize creator.sql_diff_text_log in a dedicated log file
-    # TODO Make an asynch job that sends the results via mail
+    perform_matrix_update( params, current_user )
 
-    # TODO
-#
-    # # Signal any error or a successful operation:
-    # if batch_updater.total_errors > 0
-      # flash[:error] = I18n.t('something_went_wrong')
-    # else
-      # flash[:info] = I18n.t('social.changes_saved')
-    # end
-
-    # We need the list of reservations for each athlete in order to remain in edit mode:
-    # (At the end of the update we expect to remain in edit mode - no redirection should be necessary)
+    # At the end of the update we expect to remain in edit mode:
     redirect_to( meeting_reservations_edit_relays_url(id: @meeting.id) )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Prepares the PDF print-out for the event and relay reservations for the current
+  # meeting.
+  #
+  # == Params:
+  # id: the meeting id to be processed
+  #
+  # == Implied parameters:
+  # current_user:  user must be logged-in and either be a team-manager or have an
+  #                associated swimmer (must be a "goggler").
+  #                (when also a team-manager, the whole matrix of rows should be editable)
+  #
+  def printout_event_sheet()
+# DEBUG
+    logger.debug "\r\n\r\n!! ------ #{self.class.name}#printout_event_sheet -----"
+    logger.debug "> #{params.inspect}"
+
+    # TODO Example implementation from Trainings:
+
+    # training_rows = @training.training_rows.includes(:exercise, :training_step_type).sort_by_part_order.all
+    # if training_rows.size < 1
+      # flash[:error] = I18n.t(:no_detail_to_process)
+      # redirect_to( trainings_path() ) and return
+    # end
+    # title = I18n.t('trainings.show_title').gsub( "{TRAINING_TITLE}", @training.title )
+                                                    # # == OPTIONS setup + RENDERING phase ==
+    # base_filename = "#{I18n.t('trainings.training')}_#{@training.title}"
+    # filename = create_unique_filename( base_filename ) + '.pdf'
+    # options = {
+      # :report_title         => title,
+      # :meta_info_subject    => 'training model printout',
+      # :meta_info_keywords   => "Goggles, #{base_filename}'",
+      # :header_row           => TrainingDecorator.decorate( @training ),
+      # :detail_rows          => TrainingRowDecorator.decorate_collection( training_rows )
+    # }
+    # FIXME:
+    send_data(                                      # == Render layout & send data:
+        "", # TrainingPrintoutLayout.render( options ),
+        type: 'application/pdf',
+        filename: 'TEMPTEST'
+    )
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -284,6 +284,84 @@ class MeetingReservationsController < ApplicationController
   #++
 
 
+  # Calls the creator specified, then serializes the SQL diff file, whenever
+  # any processed row or error exists.
+  #
+  def perform_matrix_creation( creator, current_user, entity_simple_description )
+    creator.call
+    # Serialize creator.sql_diff_text_log in a dedicated log file:
+    if creator.processed_rows > 0 || creator.total_errors > 0
+      # Create the SQL diff file, and send it, when operated remotely:
+      output_dir = get_output_folder()
+      file_name = get_timestamped_env_filename( "create_#{ entity_simple_description }_res_#{ @meeting.code }_#{ current_user.id }.diff.sql" )
+      full_sql_diff_path = File.join( output_dir, file_name )
+
+      serialize_and_deliver_diff_file( creator, "create #{ entity_simple_description } RESERVATIONS", full_sql_diff_path )
+      # TODO Alternatively, make an asynch job that sends a whole batch of edits via mail
+
+      # Signal also locally if any error occurred during setup:
+      if creator.total_errors > 0
+        flash[:error] = I18n.t('meeting_reservation.error_during_creation')
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Performs the update process given the parameters hash and the current user.
+  # Works indipendently for both ind. events and relays (including badge reservations).
+  #
+  def perform_matrix_update( params, current_user )
+    # The updater will parse the parameter and update the corresponding rows, while
+    # creating an SQL diff text to be serialized for database synchronization:
+    updater = MeetingReservationMatrixUpdater.new( params, current_user )
+    updater.call
+
+    # Serialize updater.sql_diff_text_log in a dedicated log file:
+    if updater.processed_rows > 0 || updater.total_errors > 0
+      # Create the SQL diff file, and send it, when operated remotely:
+      output_dir = get_output_folder()
+      file_name = get_timestamped_env_filename( "update_event_res_#{ @meeting.code }_#{ current_user.id }.diff.sql" )
+      full_sql_diff_path = File.join( output_dir, file_name )
+
+      serialize_and_deliver_diff_file( updater, "update RESERVATIONS", full_sql_diff_path )
+      # TODO Alternatively, make an asynch job that sends a whole batch of edits via mail
+
+      # Signal also locally if any error occurred during setup:
+      if updater.total_errors > 0
+        flash[:error] = I18n.t('meeting_reservation.error_during_save')
+      else
+        flash[:info] = I18n.t('meeting_reservation.changes_saved')
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Creates the SQL diff file using an SqlConvertable-compatible instance (must respond
+  # to #sql_diff_text_log) and sends the file via mail if the current environment
+  # is in production mode.
+  #
+  def serialize_and_deliver_diff_file( sql_convertable, mail_title, full_diff_pathname )
+    File.open( full_diff_pathname, 'w' ) { |f| f.puts sql_convertable.sql_diff_text_log }
+    base_filename = File.basename( full_diff_pathname )
+    logger.info( "\r\nLog file '#{ base_filename }' created" )
+    if Rails.env == 'production'
+      AgexMailer.action_notify_mail(
+        current_user,
+        mail_title,
+        "User #{current_user} has edited remotely the reservations for his/hers team, meeting ID #{@meeting.id}.\r\nThe attached log file must be synchronized locally.",
+        base_filename,
+        full_sql_diff_path
+      ).deliver
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
   # Verifies that a meeting id is provided as parameter and that the current user
   # is either associated to a swimmer or is the team_manager of a team.
   # Else, returns an invalid action request.
@@ -345,28 +423,6 @@ class MeetingReservationsController < ApplicationController
         @team_affiliation = enabled_badge.team_affiliation
       end
       @team = @team_affiliation.team
-    end
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-
-
-  # Creates the SQL diff file using an SqlConvertable-compatible instance (must respond
-  # to #sql_diff_text_log) and sends the file via mail if the current environment
-  # is in production mode.
-  #
-  def serialize_and_deliver_diff_file( sql_convertable, mail_title, full_diff_pathname )
-    File.open( full_diff_pathname, 'w' ) { |f| f.puts sql_convertable.sql_diff_text_log }
-    base_filename = File.basename( full_diff_pathname )
-    logger.info( "\r\nLog file '#{ base_filename }' created" )
-    if Rails.env == 'production'
-      AgexMailer.action_notify_mail(
-        current_user,
-        mail_title,
-        "User #{current_user} has edited remotely the reservations for his/hers team, meeting ID #{@meeting.id}.\r\nThe attached log file must be synchronized locally.",
-        base_filename,
-        full_sql_diff_path
-      ).deliver
     end
   end
   #-- -------------------------------------------------------------------------
