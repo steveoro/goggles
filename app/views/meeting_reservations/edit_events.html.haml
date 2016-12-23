@@ -80,13 +80,14 @@
         - @reservations_events[reservation.id].each do |event_reservation|
           - timing_hundreds = event_reservation.get_timing_instance.to_hundreds
           %td
-            = text_field_tag(                                                       |
-              "#{ MeetingReservationMatrixProcessor::DOM_PRE_EVENT_TIMING }#{event_reservation.id}",                                        |
-              event_reservation.is_doing_this ? event_reservation.get_timing : nil, |
-              'class' => "input-mini form-control text-right timing",               |
-              disabled: !can_edit_events,                                           |
-              'data-event-res' => event_reservation.id                              |
-            )                                                                       |
+            .text-center
+              = text_field_tag(                                                       |
+                "#{ MeetingReservationMatrixProcessor::DOM_PRE_EVENT_TIMING }#{event_reservation.id}",                                        |
+                event_reservation.is_doing_this ? event_reservation.get_timing : nil, |
+                'class' => "input-mini form-control text-right timing",               |
+                disabled: !can_edit_events,                                           |
+                'data-event-res' => event_reservation.id                              |
+              )                                                                       |
             .text-center
               %small
                 %i= "(#{ event_reservation.get_timing })"

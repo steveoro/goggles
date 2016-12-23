@@ -1,5 +1,6 @@
 require 'rails_helper'
 
+
 RSpec.describe MeetingReservationsController, type: :controller do
   # XXX We rely directly on the existing seeds to speed up this test:
   #     Alternatively, we could:
@@ -10,13 +11,12 @@ RSpec.describe MeetingReservationsController, type: :controller do
   let(:user_manager) { User.find(2) } # (Leega user can currently manage at least a couple of seasons)
 
   let(:random_manageable_meeting_id) do
-    user_manager.team_managers
-      .map do |tm|                    # Get all the affiliations that have results:
+    user_manager.team_managers.map do |tm|          # Get all the affiliations that have results:
         tm.team_affiliation.meeting_individual_results
           .map{ |mir| mir.meeting }.uniq
-      end.flatten
-        .compact.map{ |meeting| meeting.id }
-          .uniq.sort{rand - 0.5}.first
+    end.flatten
+      .compact.map{ |meeting| meeting.id }
+        .uniq.sort{rand - 0.5}.first
     # FIXME some MIRs have been reported to have a nil Meeting! Check out the list
     # above without .compact !
     # Like this:
@@ -82,6 +82,7 @@ RSpec.describe MeetingReservationsController, type: :controller do
         post :update_events, params: { id: random_manageable_meeting_id }
         expect(response).to redirect_to( meeting_reservations_edit_events_path(id: random_manageable_meeting_id) )
       end
+
       # TODO Add more tests
     end
   end
@@ -116,6 +117,8 @@ RSpec.describe MeetingReservationsController, type: :controller do
         expect(response).to have_http_status(:success)
       end
     end
+
+      # TODO Add more tests
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -133,24 +136,41 @@ RSpec.describe MeetingReservationsController, type: :controller do
       before :each do
         login_user()
       end
-      it "redirects to meetings/current page" do
+      it "redirects to meetings#current" do
         get :printout_event_sheet, params: { id: random_manageable_meeting_id }
         expect(response).to redirect_to( meetings_current_path )
       end
     end
 
     context "for a logged-in valid user," do
-      before :each do
-        login_user( user_manager )
+      context "when there's no data available" do
+        before :each do
+          login_user( user_manager )
+        end
+        it "redirects to #edit_events" do
+          get :printout_event_sheet, params: { id: random_manageable_meeting_id }
+          expect(response).to redirect_to( meeting_reservations_edit_events_url(id: random_manageable_meeting_id) )
+        end
       end
-      it "returns http success" do
-        get :printout_event_sheet, params: { id: random_manageable_meeting_id }
-        expect(response).to have_http_status(:success)
-      end
-      # TODO (Missing layout)
-      xit "receives a PDF file" do
-        get :printout_event_sheet, params: { id: random_manageable_meeting_id }
-        expect( response.body).to include("%PDF")
+
+      context "when there's some data available" do
+        let(:res_event) do
+          FactoryGirl.create( :meeting_event_reservation,
+            meeting_id: random_manageable_meeting_id,
+            user_id: user_manager.id
+          )
+        end
+        before :each do
+          login_user( user_manager )
+        end
+        it "returns http success" do
+          get :printout_event_sheet, params: { id: random_manageable_meeting_id }
+          expect(response).to have_http_status(:success)
+        end
+        it "receives a PDF file" do
+          get :printout_event_sheet, params: { id: random_manageable_meeting_id }
+          expect( response.body ).to include("%PDF")
+        end
       end
     end
   end

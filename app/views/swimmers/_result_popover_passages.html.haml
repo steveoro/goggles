@@ -2,7 +2,7 @@
   - individual_result.passages.order(:passage_type_id).each do |passage|
     %tr
       %td.goggles-rightalign
-        %i= "#{ passage.get_passage_distance } mt."
+        %i= "#{ passage.get_passage_distance } #{ I18n.t('meters_short') }"
       %td.goggles-rightalign
         = passage.get_timing
       %td.goggles-rightalign

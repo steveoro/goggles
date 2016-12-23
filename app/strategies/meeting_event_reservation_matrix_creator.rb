@@ -6,7 +6,7 @@ require 'common/validation_error_tools'
 
 = MeetingEventReservationMatrixCreator
 
- - Goggles framework vers.:  6.030
+ - Goggles framework vers.:  6.034
  - author: Steve A.
 
  Strategy class used to build-up a list of reservations plus a full matrix of rows
@@ -155,9 +155,16 @@ class MeetingEventReservationMatrixCreator < MeetingReservationMatrixProcessor
   def prepare_new_event_reservation( badge, event )
     # Retrieve last MIR (when possibile), to fill-in with suggested enrollment timing:
     swimmer = badge.swimmer
-    last_mir = swimmer.meeting_individual_results
-      .joins(:meeting_event).where(['event_type_id = ?', event.event_type_id])
-      .last
+    best_finder = SwimmerBestFinder.new( swimmer )
+    seasonal_best = best_finder.get_involved_season_best_for_event(
+      best_finder.get_contemporary_seasons_involved_into( @meeting.season ),
+      event.event_type,
+      @meeting.pool_types.first
+    )
+    # [Steve] Old ugly method:
+    #last_mir = swimmer.meeting_individual_results
+    #  .joins(:meeting_event).where(['event_type_id = ?', event.event_type_id])
+    #  .last
 
     MeetingEventReservation.new(
       meeting_id:       @meeting.id,
@@ -167,9 +174,9 @@ class MeetingEventReservationMatrixCreator < MeetingReservationMatrixProcessor
       meeting_event_id: event.id,
       user_id:          @current_user.id,
       is_doing_this:    false,
-      suggested_minutes:  last_mir ? last_mir.minutes : 0,
-      suggested_seconds:  last_mir ? last_mir.seconds : 0,
-      suggested_hundreds: last_mir ? last_mir.hundreds : 0
+      suggested_minutes:  seasonal_best ? seasonal_best.minutes : 0,
+      suggested_seconds:  seasonal_best ? seasonal_best.seconds : 0,
+      suggested_hundreds: seasonal_best ? seasonal_best.hundreds : 0
     )
   end
   #-- --------------------------------------------------------------------------

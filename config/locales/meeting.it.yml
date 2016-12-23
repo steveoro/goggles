@@ -172,3 +172,5 @@ it:
     changes_saved: "Modifiche salvate!"
     event_sheet_pdf: "&nbsp;PDF foglio passaggi"
     event_sheet_pdf_tooltip: "Click to download the PDF data sheet for collecting swimmer passages"
+    event_sheet_title: "Raccolta passaggi"
+    event_sheet_basefilename: "passaggi"

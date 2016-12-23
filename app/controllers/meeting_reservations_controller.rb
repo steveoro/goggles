@@ -170,29 +170,97 @@ class MeetingReservationsController < ApplicationController
     logger.debug "\r\n\r\n!! ------ #{self.class.name}#printout_event_sheet -----"
     logger.debug "> #{params.inspect}"
 
-    # TODO Example implementation from Trainings:
+    # Collect all events for this Meeting, respecting session and event order:
+    @events = @meeting.meeting_events
+        .joins(:meeting_session, :event_type)
+        .includes(:meeting_session, :event_type)
+        .order('meeting_sessions.session_order, event_order')
+        .to_a
 
-    # training_rows = @training.training_rows.includes(:exercise, :training_step_type).sort_by_part_order.all
-    # if training_rows.size < 1
-      # flash[:error] = I18n.t(:no_detail_to_process)
-      # redirect_to( trainings_path() ) and return
+    # Collect all available event (both ind. and relays) reservations:
+    @reservations_events = {}
+    @reservations_relays = {}
+
+    @events.each do |event|
+      if event.event_type.is_a_relay
+        @reservations_relays[ event.id ] = MeetingRelayReservation.where(
+          meeting_event_id: event.id,
+          is_doing_this:    true
+        ).joins(:meeting_session, :meeting_event, :event_type, :swimmer)
+          .includes(:meeting_session, :meeting_event, :event_type, :swimmer)
+          .order('meeting_sessions.session_order, meeting_events.event_order')
+          .to_a
+      else
+        @reservations_events[ event.id ] = MeetingEventReservation.where(
+          meeting_event_id: event.id,
+          is_doing_this:    true
+        ).joins(:meeting_session, :meeting_event, :event_type, :swimmer)
+          .includes(:meeting_session, :meeting_event, :event_type, :swimmer)
+          .order('meeting_sessions.session_order, meeting_events.event_order')
+          .to_a
+      end
+    end
+
+    # Collect all related swimmer reservations (to gather also notes):
+    all_swimmer_ids = ( @reservations_events.values + @reservations_relays.values )
+      .flatten
+      .map{ |res| res.swimmer_id }
+      .uniq
+    @meeting_reservations = MeetingReservation.where(
+      meeting_id:    @meeting.id,
+      team_id:       @team_affiliation.team_id,
+      is_not_coming: false,
+      swimmer_id:    all_swimmer_ids
+    ).joins(:swimmer).includes(:swimmer)
+
+# DEBUG
+    # logger.debug "---------------"
+    # logger.debug "@events:"
+    # @events.each{ |ev| logger.debug ev.inspect }
+    # logger.debug "---------------"
+    # logger.debug "- available @meeting_reservations tot...: #{ @meeting_reservations.count }"
+    # logger.debug "- available @reservations_events subarrays tot....: #{ @reservations_events.count }"
+    # logger.debug "- available @reservations_relays subarrays tot....: #{ @reservations_relays.count }"
+    # logger.debug "---------------"
+    # logger.debug "@meeting_reservations:"
+    # @meeting_reservations.each{ |r| logger.debug r.inspect }
+    # logger.debug "---------------"
+    # logger.debug "@reservations_events hash:"
+    # @reservations_events.values.each_with_index do |re, idx|
+      # logger.debug( "\r\nEvent #{idx+1}, tot.: #{re.count}" )
+      # logger.debug( re.inspect )
     # end
-    # title = I18n.t('trainings.show_title').gsub( "{TRAINING_TITLE}", @training.title )
-                                                    # # == OPTIONS setup + RENDERING phase ==
-    # base_filename = "#{I18n.t('trainings.training')}_#{@training.title}"
-    # filename = create_unique_filename( base_filename ) + '.pdf'
-    # options = {
-      # :report_title         => title,
-      # :meta_info_subject    => 'training model printout',
-      # :meta_info_keywords   => "Goggles, #{base_filename}'",
-      # :header_row           => TrainingDecorator.decorate( @training ),
-      # :detail_rows          => TrainingRowDecorator.decorate_collection( training_rows )
-    # }
-    # FIXME:
+    # logger.debug "---------------"
+    # logger.debug "@reservations_relays hash:"
+    # @reservations_relays.values.each_with_index do |re, idx|
+      # logger.debug( "\r\nEvent #{idx+1}, tot.: #{re.count}" )
+      # logger.debug( re.inspect )
+    # end
+    # logger.debug "---------------"
+
+    if all_swimmer_ids.size < 1
+      flash[:error] = I18n.t(:no_detail_to_process)
+      redirect_to( meeting_reservations_edit_events_url(id: @meeting.id) ) and return
+    end
+                                                    # == OPTIONS setup + RENDERING phase ==
+    base_filename = "#{I18n.t('meeting_reservation.event_sheet_basefilename')}_#{@meeting.code}"
+    filename = create_unique_filename( base_filename ) + '.pdf'
+    options = {
+      report_title:         I18n.t('meeting_reservation.event_sheet_title'),
+      meta_info_subject:    'passages collection model sheet printout',
+      meta_info_keywords:   "Goggles, #{base_filename}'",
+      meeting:              @meeting,
+      team:                 @team_affiliation.team,
+      events:               @events,
+      meeting_reservations: @meeting_reservations,
+      reservations_events:  @reservations_events,
+      reservations_relays:  @reservations_relays
+    }
+
     send_data(                                      # == Render layout & send data:
-        "", # TrainingPrintoutLayout.render( options ),
+        PassagesCollectSheetLayout.render( options ),
         type: 'application/pdf',
-        filename: 'TEMPTEST'
+        filename: filename
     )
   end
   #-- -------------------------------------------------------------------------

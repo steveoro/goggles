@@ -22,7 +22,7 @@
             %td
             - passage_types.each do |passage_type|
               %td.goggles-rightalign
-                %i= "#{ passage_type.length_in_meters } mt."
+                %i= "#{ passage_type.length_in_meters } #{ I18n.t('meters_short') }"
             %td.goggles-rightalign
               =I18n.t('meeting.timing')
         %tr
@@ -33,7 +33,7 @@
             - passages.order(:passage_type_id).each_with_index do |passage, index|
               %td.goggles-rightalign{'colspan'=>'1'}
                 - if passage.get_passage_distance != passage_types[index].length_in_meters
-                  %i= "#{ passage.get_passage_distance } mt."
+                  %i= "#{ passage.get_passage_distance } #{ I18n.t('meters_short') }"
                   %br/
                 = text_field_tag(                                             |
                   "pas_#{passage.id}",                                        |
