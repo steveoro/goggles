@@ -164,6 +164,7 @@ en:
     add_maybe: " (maybe)"
     is_doing_this: "Is doing it"
     free_notes: "Notes"
+    entry_time: "Entry"
     suggested_timing: "Suggested timing"
     registered: "Registered"
     error_during_creation: "Error while creating the matrix of reservations. The admins have already been notified with an e-mail. Please, try again your edits later."

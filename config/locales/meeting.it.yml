@@ -164,6 +164,7 @@ it:
     add_maybe: "(forse)"
     is_doing_this: "Fa questo"
     free_notes: "Note"
+    entry_time: "Iscriz."
     suggested_timing: "Tempo suggerito"
     registered: "Iscritto"
     error_during_creation: "Errore durante la creazione della matrice delle prenotazioni. Gli amministratori sono gia' stati avvisati con una e-mail. Riprova a modificare piu' tardi."

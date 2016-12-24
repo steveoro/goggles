@@ -4,7 +4,7 @@
 
 == PassagesCollectSheetLayout
 
-- version:  6.034
+- version:  6.035
 - author:   Steve A.
 
 =end
@@ -48,15 +48,21 @@ class PassagesCollectSheetLayout
   #   rows associated to the linked meeting_event_id
   #
   def self.render( options )
+# TODO/FIXME detect max columns in advance for passages and build a multi-page document
+#      with layout orientation change to :landscape only for events which total length is > 400 m.
+#      (the :landscape pages must contain, in order, only the long distance event)
+    has_long_events = options[:events].any? do|event|
+      ( !event.event_type.is_a_relay ) && ( event.event_type.length_in_meters >= 400 )
+    end
+
     options[:pdf_format] = {
       page_size:      'A4',
-# TODO detect max columns for passages and change to :landscape when a certain bias is reached
-      page_layout:    :portrait,
+      page_layout:    ( has_long_events ? :landscape : :portrait ),
                                                     # Document margins (in PS pts):
-      left_margin:    30,
-      right_margin:   30,
-      top_margin:     40,
-      bottom_margin:  40,
+      left_margin:    16,
+      right_margin:   16,
+      top_margin:     20,
+      bottom_margin:  20,
                                                     # Metadata:
       info: {
         Title:        options[ :report_title ],
@@ -130,32 +136,16 @@ class PassagesCollectSheetLayout
     reservations_events = options[:reservations_events]
     reservations_relays = options[:reservations_relays]
 
-###########################################
-
-# Sample width from trainings:
-#    column_widths = [
-#       20,                                          # part order
-#       60,                                          # training_step_type description
-#       40,                                          # esteemed tot. duration in secs
-#       40,                                          # grouping multiplier
-#       40,                                          # total distance with multiplier
-#      330                                           # full exercise description
-#    ]
-
     pdf.bounding_box( [0, pdf.bounds.height - 40],
-                      width: pdf.bounds.width,
-                      height: pdf.bounds.height-80 ) do
-                                                    # -- Report title and header:
+                      width: pdf.bounds.width, height: pdf.bounds.height-80 ) do
+      # -- Report title and header:
       pdf.text(
-        "<u><b>#{ options[:report_title] }</b>: #{ meeting.get_full_name }</u>",
-        { align: :center, size: 12, inline_format: true }
+        "<u><i>#{ options[:report_title] }</i>: <b>#{ meeting.get_full_name }</b></u>",
+        { align: :center, size: 10, inline_format: true }
       )
+      pdf.move_down( 10 )
 
       events.each do |event|
-        # We must compose the data for the table as an Array of Arrays.
-        # We build a new table for each event:
-        detail_table_array = []
-
         # Get the pool type and the passage types:
         pool_type = meeting.event_types.where( id: event.event_type_id ).first
           .pool_types
@@ -169,143 +159,157 @@ class PassagesCollectSheetLayout
           TeamPassageTemplate.get_default_passage_types_for( event.event_type.length_in_meters, pool_type.length_in_meters ) :
           TeamPassageTemplate.get_template_passage_types_for( team, event.event_type, pool_type )
 
-        # Enlist all passage types for this event
-        row_array = passage_types.map{ |p| "#{ p.length_in_meters } #{ I18n.t('meters_short') }" }
+        # Enlist all passage types for this event composing their labels:
+        row_array = passage_types.map{ |p| "<i>#{ p.length_in_meters }</i>" }
 
         # For each event:
-        if event.event_type.is_a_relay                # RELAYS:
-          # Add an header for the event:
-          detail_table_array << [ event.get_full_name, row_array[0], row_array[1] ]
-
-          # Consider each relay reservation as a single row:
-          reservations_relays[ event.id ].each do |res|
-            # Add the swimmer name in the front cell and add the resulting row (array):
-            detail_table_array << [
-                res.swimmer.complete_name,
-                ' ',
-                ' '                                   # empty space to insert timing
-            ]
-          end
-        else                                          # IND. EVENTS:
-          # Add an header for the event:
-          detail_table_array << [event.get_full_name] + row_array
-
-          # Sort reservation events by reservation timing:
-          sorted_events = reservations_events[ event.id ].sort do |r1, r2|
-            Timing.new(
-              r1.suggested_hundreds,
-              r1.suggested_seconds,
-              r1.suggested_minutes
-            ) <=> Timing.new(
-              r2.suggested_hundreds,
-              r2.suggested_seconds,
-              r2.suggested_minutes
-            )
-          end
-
-          # Map all reservations for this event as individual rows
-          sorted_events.each do |res|
-            # Add the swimmer name in the front cell and add the remaining
-            # columns as empty cells so that we can have an empty space
-            # in which we can draw the passage timing:
-            detail_table_array << [ res.swimmer.complete_name ] + row_array.map{|cell| ''}
-          end
+        data_table_array = if event.event_type.is_a_relay
+          # --- RELAYS data setup ---
+          self.prepare_relay_data_table( event, row_array, reservations_relays[ event.id ] )
+        else
+          # --- IND.EVENTS data setup ---
+          self.prepare_event_data_table( event, row_array, reservations_events[ event.id ] )
         end
+        # Detect to many columns:
+        is_a_long_event = row_array.count > 11
 
         # Draw the table:
-        pdf.table( detail_table_array, position: :left, row_colors: ["ffffff", "eeeeee"] ) do
-          cells.style do |c|
-            c.height = 30 if c.row > 0
-            c.width = 60 if c.column > 0
+        pdf.table( data_table_array, header: true, position: :left,
+                   row_colors: ["ffffff", "eeeeee"],
+                   width: is_a_long_event ? pdf.bounds.width - 10 : nil,
+                   cell_style: { inline_format: true, overflow: :shrink_to_fit,
+                                 min_font_size: 6 } ) do
+          cells.style do |c|                        # Custom cell styling:
+            if c.row == 0                           # header row / labels
+              c.align = :center
+              c.valign = :center
+              c.background_color = "DFF0D8"         # light greenish
+              c.height = 30
+              c.size = 10
+                                                    # Any other row below the header:
+            elsif c.column == 0                     # (swimmers column)
+              c.background_color = "C4E3F3"         # light cyan
+              c.size = 10
+            end
+
+            if c.column > 0                         # Timing/entry column sizing
+              c.width = 60 unless is_a_long_event   # all column width fixed when we have space
+              c.width = 40 if is_a_long_event && c.column > 1
+
+              if c.row > 0  && c.column == 1        # (registration entry times)
+                c.background_color = "D9EDF7"       # lighter cyan
+                c.align = :right
+                c.size = 8
+              end
+            end
           end
         end
         pdf.move_down( 10 )
       end
 
-###########################################
-
-    # The following checks for residual grouping sub-table at the end of the
-    # detail row loop scan.
-    #
-    # This is due to the fact the each grouping is composed of at least 2 detail
-    # rows, where the first one acts as the group header.
-    #
-    # So we must check also that the subtable size is valid (> 0) to verify that
-    # the header has been already added to the list.
-    # if group_array && (group_subtable_array.size > 0)
-      # sub_table = pdf.make_table( group_subtable_array, cell_style: {size: 8}, position: :left ) do
-        # cells.column(0).align = :right
-        # cells.column(0).width = column_widths[4]
-        # cells.column(0).borders = [:top, :bottom, :left]
-        # cells.column(1).align = :left
-        # cells.column(1).borders = [:top, :bottom, :right]
-        # cells.column(1).width = column_widths[5]
-      # end
-      # group_array << { content: sub_table, colspan: 2 }
-      # detail_table_array << group_array
-      # group_array = nil                           # Reset the group temp storage
-      # group_subtable_array = []
-    # end
-
-      # pdf.text(
-        # "<i>#{ I18n.t('trainings.total_meters') }:</i> #{ header_row.compute_total_distance }",
-        # { align: :left, size: 8, inline_format: true }
-      # )
-      # tot_secs = header_row.compute_total_seconds()
-      # pdf.text(
-        # "<i>#{ I18n.t('trainings.esteemed_timing') }:</i> #{ Timing.to_hour_string(tot_secs) }",
-        # { align: :left, size: 8, inline_format: true }
-      # )
-      # pdf.move_down( 10 )
-                                                    # -- Main data table:
-#      pdf.table( detail_table_array, position: :center, row_colors: ["ffffff", "eeeeee"] ) do
-        # cells.style do |c|                          # Cell is not a subtable and it's empty? Clear it:
-          # if ( !c.content.instance_of?(Prawn::Table) ) &&
-             # ( c.content.empty? || c.content.nil? )
-# #            c.background_color = (c.row % 2).zero? ? "ffffff" : "eeeeee"
-            # c.borders = [:top, :bottom, :left]
-                                                    # # Cell is normal training row?
-          # elsif ( !c.content.instance_of?(Prawn::Table) )
-# #            c.background_color = (c.row % 2).zero? ? "ffffff" : "eeeeee"
-            # c.size = 8
-            # case c.column
-            # when 0
-              # c.borders = [:top, :bottom, :left]
-              # c.align = :right
-              # c.width = column_widths[0]
-              # c.size = 7
-            # when 1
-              # c.borders = [:top, :bottom]
-              # c.align = :left
-              # c.width = column_widths[1]
-              # c.size = 7
-            # when 2
-              # c.borders = [:top, :bottom]
-              # c.align = :right
-              # c.width = column_widths[2]
-            # when 3
-              # c.borders = [:top, :bottom, :left]
-              # c.align = :left
-              # c.width = column_widths[3]
-            # when 4
-              # c.borders = [:top, :bottom]
-              # c.align = :right
-              # c.width = column_widths[4]
-            # when 5
-              # c.borders = [:top, :bottom, :right]
-              # c.align = :left
-              # c.width = column_widths[5]
-            # end
-                                                    # # Cell is a group sub-table?
-          # elsif c.content.instance_of?(Prawn::Table)
-            # c.content.row_colors = (c.row % 2).zero? ? ["ffffff"] : ["eeeeee"]
-          # end
-        # end
-#      end
-#      pdf.move_down( 10 )
-
       pdf.stroke_horizontal_rule()
     end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Setup for the Array of Array that holds the data for a relay-type
+  # data-sheet table.
+  #
+  # == Params:
+  # data_table_array: an empty array
+  # event: the event (MeetingEvent) to be processed
+  # passage_labels: an array of string describing the columns for the data sheet
+  # reservation_array: the Array of MeetingRelayReservation containing the reservation data associated to the event
+  #
+  # == Returns:
+  # The prepared array of array (rows of data), ready to be rendered as a table.
+  #
+  def self.prepare_relay_data_table( event, passage_labels, reservation_array )
+    # We must compose the data for the table as an Array of Arrays.
+    # We build a new table for each event:
+    data_table_array = []
+
+    # Add a custom header for the event:
+    data_table_array << (
+      [
+        "<i><b>#{ event.get_full_name }</b></i>",
+        # FIXME Quick'n'dirty way to get at least a couple of free columns to write passages during relays:
+        #       This does not take in account certain passage types/pool types combos for relays.
+        #       (The actual computation to get the label right is more complex)
+        " ",                                # space to write the chosen relay order or anything else
+        "<i>#{ passage_labels[0] }</i>",    # 1st lap passage (FIXME label may be wrong)
+        "<i>#{ passage_labels[1] }</i>",    # 2nd lap passage (FIXME label may be wrong)
+      ]
+    )
+
+    # Consider each relay reservation as a single row:
+    reservation_array.each do |res|
+      # Add the swimmer name in the front cell and add the resulting row (array):
+      data_table_array << [
+          res.swimmer.complete_name,
+          ' ', # empty free space
+          # Empty space to insert timing:
+          ' ',
+          ' '
+      ]
+    end
+
+    data_table_array
+  end
+
+
+  # Setup for the Array of Array that holds the data for the ind.event-type
+  # data-sheet table.
+  #
+  # == Params:
+  # event: the event (MeetingEvent) to be processed
+  # passage_labels: an array of string describing the columns for the data sheet
+  # reservation_array: the Array of MeetingEventReservation containing the reservation data associated to the event
+  #
+  # == Returns:
+  # The prepared array of array (rows of data), ready to be rendered as a table.
+  #
+  def self.prepare_event_data_table( event, passage_labels, reservation_array )
+    # We must compose the data for the table as an Array of Arrays.
+    # We build a new table for each event:
+    data_table_array = []
+
+    # Add a custom header for the event:
+    data_table_array << (
+      [
+        "<i><b>#{ event.get_full_name }</b></i>",
+        "<i>#{ I18n.t('meeting_reservation.entry_time') }</i>"
+      ] + passage_labels
+    )
+
+    # Sort reservation events by entry timing in descending order:
+    sorted_events = reservation_array.sort do |r1, r2|
+      Timing.new(
+        r2.suggested_hundreds, r2.suggested_seconds, r2.suggested_minutes
+      ) <=> Timing.new(
+        r1.suggested_hundreds, r1.suggested_seconds, r1.suggested_minutes
+      )
+    end
+
+    # Map all reservations for this event as individual rows
+    sorted_events.each do |res|
+      # Compute the entry timing:
+      entry_timing = Timing.new(res.suggested_hundreds, res.suggested_seconds, res.suggested_minutes )
+      # Add the swimmer name as column #0, the entry timing as column #1
+      # and add the remaining columns as empty cells so that we can have
+      # enough blank cells write each passage timing:
+      data_table_array << (
+        [
+          res.swimmer.complete_name,
+          "<i>#{ entry_timing.to_s }</i>"
+        ] +
+        passage_labels.map{ |cell| '' }
+      )
+    end
+
+    data_table_array
   end
   #-- -------------------------------------------------------------------------
   #++

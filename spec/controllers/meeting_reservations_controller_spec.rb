@@ -142,6 +142,7 @@ RSpec.describe MeetingReservationsController, type: :controller do
       end
     end
 
+
     context "for a logged-in valid user," do
       context "when there's no data available" do
         before :each do
@@ -153,22 +154,39 @@ RSpec.describe MeetingReservationsController, type: :controller do
         end
       end
 
-      context "when there's some data available" do
-        let(:res_event) do
-          FactoryGirl.create( :meeting_event_reservation,
-            meeting_id: random_manageable_meeting_id,
-            user_id: user_manager.id
-          )
+      context "when there's at least a reservation available" do
+        # [Steve, 20161125] We use pre-existing data to speed-up fixtures here:
+        let(:team_affiliation) do
+          # We get the last TeamAffiliation which has at least some results (so that
+          # we know that the corresponding Meeting has already been acquired)
+          Team.find(1).team_affiliations.joins(:meeting_individual_results).last
         end
+        let(:last_mir) do
+          team_affiliation.meeting_individual_results.last
+        end
+        let(:meeting) do
+          last_mir.meeting
+        end
+
         before :each do
+          # This single row should force skipping the corresponding matrix item creation:
+          new_res = FactoryGirl.create(
+            :meeting_event_reservation,
+            meeting_id:       meeting.id,
+            team_id:          team_affiliation.team_id,
+            swimmer_id:       last_mir.swimmer_id,
+            badge_id:         last_mir.badge_id,
+            meeting_event_id: last_mir.meeting_event.id
+          )
+# DEBUG
+          puts "\r\n- added res: #{ new_res.inspect }"
+          puts "- event: #{ last_mir.meeting_event.get_full_name }"
           login_user( user_manager )
         end
-        it "returns http success" do
-          get :printout_event_sheet, params: { id: random_manageable_meeting_id }
-          expect(response).to have_http_status(:success)
-        end
-        it "receives a PDF file" do
-          get :printout_event_sheet, params: { id: random_manageable_meeting_id }
+
+        it "returns http success and receives a PDF file" do
+          get :printout_event_sheet, params: { id: meeting.id }
+          expect( response ).to have_http_status(:success)
           expect( response.body ).to include("%PDF")
         end
       end
