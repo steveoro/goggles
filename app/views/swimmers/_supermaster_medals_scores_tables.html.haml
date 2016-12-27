@@ -1,0 +1,39 @@
+.col-xs-12.goggles-category-gap
+  .col-xs-4
+    %table.table.table-bordered.table-hover.table-condensed
+      %tbody
+        %tr{'class'=>'info'}
+          %td{'colspan'=>2}
+            %b= I18n.t('supermaster.medals_summary')
+            = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+              = image_tag('bullet_arrow_up.png')
+        - MedalType.are_not_jokes.sort_by_rank.each do |medal_type|
+          %tr
+            %td
+              = image_tag( medal_type.get_medal_tag )
+              %b= medal_type.i18n_description
+            %td.goggles-rightalign
+              %b= @meeting_individual_results.has_rank(medal_type.rank).count
+  .col-xs-offset-1.col-xs-4
+    %table.table.table-bordered.table-hover.table-condensed
+      %tbody
+        %tr{'class'=>'info'}
+          %td{'colspan'=>2}
+            %b= I18n.t('supermaster.scores_summary')
+            = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+              = image_tag('bullet_arrow_up.png')
+        %tr
+          %td
+            %b= I18n.t('best')
+          %td.goggles-rightalign
+            %b= @meeting_individual_results.first.decorate.get_formatted_standard_points
+        %tr
+          %td
+            %b= I18n.t('worst')
+          %td.goggles-rightalign
+            %b= @meeting_individual_results.last.decorate.get_formatted_standard_points
+        %tr
+          %td
+            %b= I18n.t('average')
+          %td.goggles-rightalign
+            %b= (@meeting_individual_results.collect{ |row| row.standard_points }.sum / @meeting_individual_results.count).round(2)

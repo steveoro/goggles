@@ -1,0 +1,16 @@
+%ul.nav.nav-tabs#season_list{role: "seasonlist"}
+  - swimmer_badges = @swimmer.badges.includes(:category_type, :season).joins(:category_type, :season).for_season_type(@season_type).sort_by_season('DESC')
+  - swimmer_badges.map{ |badge| badge.category_type.code }.uniq.each do |category_code|
+    - category_badges = swimmer_badges.select{|badge| badge.category_type.code == category_code }
+    - sub_menu_title = category_badges.first.category_type.get_short_name
+    - first_year = category_badges.last.season.header_year[0..3].to_i
+    - last_year  = category_badges.first.season.header_year[0..3].to_i
+    - is_active  = ( first_year..last_year ).include?( @header_year.to_i )
+    = content_tag( :li, class: "dropdown" + (is_active ? ' active' : ''), role: "presentation" ) do
+      = link_to( "#", class: "dropdown-toggle", "data-turbolinks"=>"false", "data-toggle"=>"dropdown", role: "button", "aria-haspopup"=>"true", "aria-expanded"=>"false" ) do
+        = sub_menu_title
+        = content_tag( :span, '', class: "caret" )
+      %ul.dropdown-menu
+        - category_badges.each do |badge|
+          %li= link_to( badge.season.header_year, swimmer_supermaster_path(id: @swimmer.id, header_year: badge.season.header_year) )
+.col-xs-12.goggles-category-gap

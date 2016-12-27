@@ -14,3 +14,4 @@
   %h4
     = "#{@tab_title} -- "
     = I18n.t('radiography.radio_tab_title').gsub('{SWIMMER_NAME}', @swimmer.get_full_name)
+    %i= "(#{ @header_year })" unless @header_year.nil?

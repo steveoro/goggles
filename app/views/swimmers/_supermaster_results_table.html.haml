@@ -1,0 +1,42 @@
+-# Shows all supermaster results
+.col-xs-12.col-md-6.table-responsive
+  %table.table.table-striped.table-bordered.table-hover.table-condensed
+    %tbody
+      %tr{'class'=>'info'}
+        %td
+          %b= I18n.t('supermaster.results_detail')
+          = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+            = image_tag('bullet_arrow_up.png')
+        %td
+          %b= I18n.t('event')
+        %td.goggles-rightalign
+          %b= I18n.t('rnk')
+        %td.goggles-rightalign
+          %b= I18n.t('timing')
+        %td.goggles-rightalign
+          %b= I18n.t('score')
+        %td.goggles-centeralign{'data-toggle'=>'tooltip', 'title'=>I18n.t('supermaster.supermaster')}
+          %b= I18n.t('supermaster.supermaster_short')
+        %td.goggles-centeralign{'data-toggle'=>'tooltip', 'title'=>I18n.t('supermaster.ironmaster')}
+          %b= I18n.t('supermaster.ironmaster_short')
+        %td.goggles-centeralign{'data-toggle'=>'tooltip', 'title'=>I18n.t('supermaster.team_ranking')}
+          %b= I18n.t('supermaster.team_ranking_short')
+      - @meeting_individual_results.each do |mir|
+        %tr
+          %td
+            = mir.meeting.decorate.get_linked_full_name_with_date
+          %td
+            = "#{mir.event_type.code} (#{mir.pool_type.code})"
+          %td.goggles-rightalign
+            = mir.decorate.show_any_rank_medal
+            = mir.decorate.get_rank_description
+          %td.goggles-rightalign{ 'class' => mir.is_personal_best ? 'success' : '' }
+            = mir.get_timing
+          %td.goggles-rightalign
+            = mir.decorate.get_formatted_standard_points
+          %td.goggles-centeralign{'data-toggle'=>'tooltip', 'title'=>"#{I18n.t('supermaster.ranked_for')} #{I18n.t('supermaster.supermaster')}"}
+            = show_tag( supermaster_score.results.include?( mir ) )
+          %td.goggles-centeralign{'data-toggle'=>'tooltip', 'title'=>"#{I18n.t('supermaster.ranked_for')} #{I18n.t('supermaster.ironmaster')}"}
+            = show_tag( ironmaster_score.results.include?( mir ) )
+          %td.goggles-centeralign{'data-toggle'=>'tooltip', 'title'=>"#{I18n.t('supermaster.ranked_for')} #{I18n.t('supermaster.team_ranking')}"}
+            = show_tag( team_ranking_score.results.include?( mir ) )
