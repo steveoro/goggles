@@ -25,7 +25,7 @@ describe TeamsController, type: :controller do
 
 
   describe '[GET #radio/:id]' do
-        # We need to set this to make the redirect_to(:back) passes the tests:
+    # We need to set this to make the redirect_to(:back) passes the tests:
     before(:each) { request.env["HTTP_REFERER"] = teams_path() }
 
     context "with an HTML request for a non-existing id," do
@@ -40,9 +40,10 @@ describe TeamsController, type: :controller do
     end
 
     context "with an HTML request for a valid id," do
-      before :each do
-        @fixture = create( :team )
-      end
+    before(:all) { @fixture = create( :team ) }
+#    before :each do
+#      @fixture = create( :team )
+#    end
       it "handles successfully the request" do
         get :radio, params: { id: @fixture.id }
         expect(response.status).to eq( 200 )
@@ -62,9 +63,7 @@ describe TeamsController, type: :controller do
 
 
   shared_examples_for "(Teams restricted GET action as an unlogged user)" do |action_sym|
-    before :each do
-      @fixture = create( :team )
-    end
+    before(:all) { @fixture = create( :team ) }
 
     context "unlogged user" do
       it "displays the Login page for an invalid id" do
@@ -79,9 +78,9 @@ describe TeamsController, type: :controller do
 
 
   shared_examples_for "(Teams restricted GET action as a logged-in user)" do |action_sym|
+    before(:all) { @fixture = create( :team ) }
     before :each do
-      @fixture = create( :team )
-        # We need to set this to make the redirect_to(:back) passes the tests:
+      # We need to set this to make the redirect_to(:back) passes the tests:
       request.env["HTTP_REFERER"] = teams_path()
       login_user()
     end
@@ -121,8 +120,8 @@ describe TeamsController, type: :controller do
     it_behaves_like( "(Teams restricted GET action as a logged-in user)", :current_swimmers )
 
     context "with an HTML request for a valid id and a logged-in user," do
+      before(:all) { @fixture = create( :team_affiliation_with_badges ).team }
       before :each do
-        @fixture = create( :team_affiliation_with_badges ).team
         # We need to set this to make the redirect_to(:back) passes the tests:
         request.env["HTTP_REFERER"] = teams_path()
         login_user()
@@ -151,8 +150,8 @@ describe TeamsController, type: :controller do
     it_behaves_like( "(Teams restricted GET action as a logged-in user)", :palmares )
 
     context "with an HTML request for a valid id and a logged-in user," do
+      before(:all) { @fixture = Team.find(1) }
       before :each do
-        @fixture = Team.find(1)
         request.env["HTTP_REFERER"] = teams_path()
         login_user()
         get :palmares, params: { id: @fixture.id }
@@ -171,8 +170,8 @@ describe TeamsController, type: :controller do
     it_behaves_like( "(Teams restricted GET action as a logged-in user)", :goggle_cup )
 
     context "with an HTML request for a valid id and a logged-in user for for a team that doesn't have a current Goggle cup," do
+      before(:all) { @fixture = create( :team_affiliation_with_badges ).team }
       before :each do
-        @fixture = create( :team_affiliation_with_badges ).team
         request.env["HTTP_REFERER"] = teams_path()
         login_user()
         get :goggle_cup, params: { id: @fixture.id }
@@ -201,8 +200,8 @@ describe TeamsController, type: :controller do
     end
 
     context "with an HTML request for a valid id and a logged-in user for for a team that has a current Goggle cup," do
+      before(:all) { @fixture = Team.find(1).decorate }
       before :each do
-        @fixture = Team.find(1).decorate
         request.env["HTTP_REFERER"] = teams_path()
         login_user()
         get :goggle_cup, params: { id: @fixture.id }
@@ -242,8 +241,8 @@ describe TeamsController, type: :controller do
     it_behaves_like( "(Teams restricted GET action as a logged-in user)", :palmares )
 
     context "with an HTML request for a valid id and a logged-in user for for a team that doesn't have closed Goggle cup," do
+      before(:all) { @fixture = create( :team_affiliation_with_badges ).team }
       before :each do
-        @fixture = create( :team_affiliation_with_badges ).team
         request.env["HTTP_REFERER"] = teams_path()
         login_user()
         get :goggle_cup_all_of_fame, params: { id: @fixture.id }
@@ -259,8 +258,8 @@ describe TeamsController, type: :controller do
     end
 
     context "with an HTML request for a valid id and a logged-in user for for a team that has some closed Goggle cup," do
+      before(:all) { @fixture = Team.find(1) }
       before :each do
-        @fixture = Team.find(1)
         request.env["HTTP_REFERER"] = teams_path()
         login_user()
         get :goggle_cup_all_of_fame, params: { id: @fixture.id }
