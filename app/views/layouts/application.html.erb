@@ -44,9 +44,14 @@
             <!-- Alerts & error messages -->
             <div class="col-xs-12">
                 <% if notice || flash[:info] %>
-                    <div class="alert alert-info" role="alert">
-                        <button type="button" class="close" data-dismiss="alert">&times;</button>
-                        <%= notice || flash[:info] %>
+                    <div id="notice" class="modal fade" tabindex="-1" role="dialog">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-body alert-info text-center">
+                                    <%= notice || flash[:info] %>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 <% end %>
                 <% if flash[:warning] %>
@@ -81,6 +86,16 @@
                 <%= yield %>
             </div>
 
+            <!-- After the content has been yield, toggle the script: -->
+            <script>
+                // (Wait for the page to be ready)
+                $( function() {
+                    // Briefly show the flash notice if it is defined, and then hide it away:
+                    $("#notice").fadeTo(3000, 500).slideUp(500, function(){
+                        $("#notice").modal('close');
+                    });
+                });
+            </script>
         </div>
     </div>
 </body>
