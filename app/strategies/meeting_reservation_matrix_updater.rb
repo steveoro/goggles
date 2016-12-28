@@ -7,7 +7,7 @@ require 'wrappers/timing'
 
 = MeetingReservationMatrixUpdater
 
- - Goggles framework vers.:  6.032
+ - Goggles framework vers.:  6.036
  - author: Steve A.
 
  Strategy class used to update the existing matrix of either MeetingEventReservation

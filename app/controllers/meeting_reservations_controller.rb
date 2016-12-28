@@ -10,7 +10,7 @@ require 'team_manager_validator'
 
 = MeetingReservationsController
 
-  - version:  6.030
+  - version:  6.036
   - author:   Steve A.
 
 =end
@@ -105,8 +105,8 @@ class MeetingReservationsController < ApplicationController
   #
   def update_events
 # DEBUG
-    logger.debug "\r\n\r\n!! ------ #{self.class.name}#update_events -----"
-    logger.debug "> #{params.inspect}"
+#    logger.debug "\r\n\r\n!! ------ #{self.class.name}#update_events -----"
+#    logger.debug "> #{params.inspect}"
     # XXX Sample POST output:
     # <ActionController::Parameters {"utf8"=>"✓",
     #   "authenticity_token"=>"<auth_string_token>",
@@ -142,8 +142,8 @@ class MeetingReservationsController < ApplicationController
   #
   def update_relays
 # DEBUG
-    logger.debug "\r\n\r\n!! ------ #{self.class.name}#update_relays -----"
-    logger.debug "> #{params.inspect}"
+#    logger.debug "\r\n\r\n!! ------ #{self.class.name}#update_relays -----"
+#    logger.debug "> #{params.inspect}"
 
     perform_matrix_update( params, current_user )
 
@@ -167,8 +167,8 @@ class MeetingReservationsController < ApplicationController
   #
   def printout_event_sheet()
 # DEBUG
-    logger.debug "\r\n\r\n!! ------ #{self.class.name}#printout_event_sheet -----"
-    logger.debug "> #{params.inspect}"
+#    logger.debug "\r\n\r\n!! ------ #{self.class.name}#printout_event_sheet -----"
+#    logger.debug "> #{params.inspect}"
 
     # Collect all events for this Meeting, respecting session and event order:
     @events = @meeting.meeting_events

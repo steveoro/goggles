@@ -39,7 +39,8 @@
       - res_confirmed_id = "#{ MeetingReservationMatrixProcessor::DOM_PRE_RES_CONFIRMED }#{reservation.id}"
       %tr
         %td{ colspan: 1, class: 'info' }
-          %b= reservation.swimmer.get_full_name
+          %a{'id'=>"swimmer#{reservation.swimmer_id}", 'href'=>"#{ swimmer_radio_path(id: reservation.swimmer_id) }", 'data-toggle'=>'tooltip', 'title'=>I18n.t('radiography.radio_tab_tooltip')}
+            %b= reservation.swimmer.get_full_name
         %td{ colspan: 1, class: 'info' }
           - if !@is_valid_team_manager            # Hide team manager controls for standard gogglers:
             %small
@@ -77,7 +78,7 @@
         -# At the same time, row controls are editable only if the reservation hasn't been already confirmed or if the swimmer is not coming to the meeting
         - can_edit_events = (!reservation.has_confirmed) && (!reservation.is_not_coming) && TeamManagerValidator.is_manageable?( @meeting ) && (@is_valid_team_manager || ( @swimmer && (@swimmer.id == reservation.swimmer_id)))
         - @reservations_relays[reservation.id].each do |relay_reservation|
-          %td
+          %td{ 'data-toggle'=>'tooltip', 'title'=> relay_reservation.event_type.i18n_short }
             -#.row
             -#  .col-xs-9
             -#    = text_field_tag(                                                       |
