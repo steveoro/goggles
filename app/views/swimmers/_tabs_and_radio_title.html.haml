@@ -1,11 +1,12 @@
-%ul.nav.nav-tabs#pageTop{role: "tablist"}
+.col-xs-12.goggles-category-gap#pageTop
+%ul.nav.nav-tabs{role: "tablist"}
   = show_tab_link( params, 'radio', t('radiography.radio_tab'), swimmer_radio_path(id: @swimmer.id) )
   = show_tab_link( params, 'supermaster', t('supermaster.title'), swimmer_supermaster_path(id: @swimmer.id) )
   = show_tab_link( params, 'current_goggle_cup', @goggle_cups_tab_title, swimmer_current_goggle_cup_path(id: @swimmer.id) )
   = show_tab_link( params, 'medals', t('radiography.medals_tab'), swimmer_medals_path(id: @swimmer.id) )
   = show_tab_link( params, 'best_timings', t('radiography.best_timings_tab'), swimmer_best_timings_path(id: @swimmer.id) )
-  = show_tab_link( params, 'full_history_by_date', t('radiography.full_history_by_date'), swimmer_full_history_1_path(id: @swimmer.id) )
-  = show_tab_link( params, 'full_history_by_time', t('radiography.full_history_by_event'), swimmer_full_history_2_path(id: @swimmer.id) )
+  = show_tab_link( params, 'full_history_1', t('radiography.full_history_by_date'), swimmer_full_history_1_path(id: @swimmer.id) )
+  = show_tab_link( params, 'full_history_2', t('radiography.full_history_by_event'), swimmer_full_history_2_path(id: @swimmer.id) )
   = show_tab_link( params, 'trainings', t('radiography.trainings_tab'), swimmer_trainings_path(id: @swimmer.id) )
 
 .col-xs-12.goggles-category-gap
