@@ -1,7 +1,20 @@
 en:
   tutorials_title: "Tutorial / Overview"
+  tutorials_tab:
+    index: "Overview"
+    features: "Features"
+    registration: "Registration"
+    radio: "Radiography"
+    meetings: "Meetings"
+    passages: "Passages"
+    reservations: "Reservations"
+    goggle_cups: "Goggle-Cups"
+    scoring: "Scoring preview"
+    pools: "Swimming pools"
+    trainings: "Trainings"
 
   tutorial:
+    meeting_reservations: "Meeting reservations"
     how_to_register: "Registration"
     what_can_i_do: "What can I do with Goggles?"
     what_about_meetings: "What about meetings?"

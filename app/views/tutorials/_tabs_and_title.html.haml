@@ -1,0 +1,16 @@
+%script
+  new WOW().init();
+
+.col-xs-12.goggles-category-gap#pageTop
+%ul.nav.nav-tabs{role: "tablist"}
+  = show_tab_link( params, 'index', t('tutorials_tab.index'), tutorials_index_path() )
+  = show_tab_link( params, 'features', t('tutorials_tab.features'), tutorials_features_path() )
+  = show_tab_link( params, 'registration', t('tutorials_tab.registration'), tutorials_registration_path() )
+  = show_tab_link( params, 'radio', t('tutorials_tab.radio'), tutorials_radio_path() )
+  = show_tab_link( params, 'meetings', t('tutorials_tab.meetings'), tutorials_meetings_path() )
+  = show_tab_link( params, 'passages', t('tutorials_tab.passages'), tutorials_passages_path() )
+  = show_tab_link( params, 'reservations', t('tutorials_tab.reservations'), tutorials_reservations_path() )
+  = show_tab_link( params, 'goggle_cups', t('tutorials_tab.goggle_cups'), tutorials_goggle_cups_path() )
+  = show_tab_link( params, 'scoring', t('tutorials_tab.scoring'), tutorials_scoring_path() )
+  = show_tab_link( params, 'pools', t('tutorials_tab.pools'), tutorials_pools_path() )
+  = show_tab_link( params, 'trainings', t('tutorials_tab.trainings'), tutorials_trainings_path() )

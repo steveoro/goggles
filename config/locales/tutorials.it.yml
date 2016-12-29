@@ -1,7 +1,20 @@
 it:
   tutorials_title: "Panoramica / Tutorial"
+  tutorials_tab:
+    index: "Panoramica"
+    features: "Caratteristiche"
+    registration: "Registrazione"
+    radio: "Radiografia"
+    meetings: "Meeting"
+    passages: "Passaggi"
+    reservations: "Prenotazioni"
+    goggle_cups: "Goggle-Cup"
+    scoring: "Calcolo punteggi"
+    pools: "Piscine"
+    trainings: "Allenamenti"
 
   tutorial:
+    meeting_reservations: "'Prenotazioni' meeting"
     how_to_register: "La registrazione"
     what_can_i_do: "Cosa posso fare con Goggles?!?"
     what_about_meetings: "Tutto sulle gare"

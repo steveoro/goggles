@@ -1,2 +1,10 @@
-%h1 Tutorials#scoring
-%p Find me in app/views/tutorials/scoring.html.haml
+= render( partial: 'tabs_and_title' )
+
+%section.home-section#how_to_calculate_fin_score
+  .container
+    .row
+      .section-heading.text-center
+        .wow.bounceInDown( data-wow-delay="0.5s" )
+          %h2= t('tutorial.how_to_calculate_fin_score')
+        %p.wow.bounceInUp( data-wow-delay="0.5s" )
+          = t('coming_soon')

@@ -1,2 +1,10 @@
-%h1 Tutorials#features
-%p Find me in app/views/tutorials/features.html.haml
+= render( partial: 'tabs_and_title' )
+
+%section.home-section#features
+  .container
+    .row
+      .section-heading.text-center
+        .wow.bounceInDown( data-wow-delay="0.5s" )
+          %h2= t('tutorials_tab.features')
+        %p.wow.bounceInUp( data-wow-delay="0.5s" )
+          = t('coming_soon')

@@ -2,7 +2,11 @@
   .accordion-group
     .accordion-heading
       %a.accordion-toggle{'data-toggle' => 'collapse', 'data-parent' => '#accordionTeam', :href => '#collapseTeam', 'data-turbolinks'=>'false'}
-        %h3.alert.alert-success#headerTeam{'data-toggle' => 'tooltip', 'title' => I18n.t(:detail_show_tooltip)}= @team.get_full_name
+        %h3.alert.alert-success#headerTeam{'data-toggle' => 'tooltip', 'title' => I18n.t(:detail_show_tooltip)}
+          = @team.get_full_name
+          &nbsp;
+          &nbsp;
+          = link_to( image_tag('img_radiography.jpg', class: 'img-circle', style: "width: 25px;"), team_radio_path(id: @team.id), {'data-toggle' => 'tooltip', 'title' => I18n.t('radiography.team_radio_tab_tooltip')} )
     .accordion-body.collapse.in#collapseTeam
       .accordion-inner
         .row

@@ -1,2 +1,10 @@
-%h1 Tutorials#pools
-%p Find me in app/views/tutorials/pools.html.haml
+= render( partial: 'tabs_and_title' )
+
+%section.home-section#pools
+  .container
+    .row
+      .section-heading.text-center
+        .wow.bounceInDown( data-wow-delay="0.5s" )
+          %h2= t('tutorials_tab.pools')
+        %p.wow.bounceInUp( data-wow-delay="0.5s" )
+          = t('coming_soon')

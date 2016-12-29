@@ -1,2 +1,10 @@
-%h1 Tutorials#reservations
-%p Find me in app/views/tutorials/reservations.html.haml
+= render( partial: 'tabs_and_title' )
+
+%section.home-section#reservations
+  .container
+    .row
+      .section-heading.text-center
+        .wow.bounceInDown( data-wow-delay="0.5s" )
+          %h2= t('tutorial.meeting_reservations')
+        %p.wow.bounceInUp( data-wow-delay="0.5s" )
+          = t('coming_soon')
