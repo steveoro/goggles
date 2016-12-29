@@ -1,5 +1,5 @@
 = render( partial: 'meeting_header' )
-= render( partial: 'tabs_and_radio_title' )
+= render( partial: 'tabs_and_title' )
 .goggles-category-gap.col-xs-12
 
 - cache( cache_key_for_meeting( 'show_invitation', @meeting.id, @max_mir_updated_at ) ) do

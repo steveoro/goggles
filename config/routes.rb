@@ -2,7 +2,7 @@ Rails.application.routes.draw do
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
-  mount GogglesCore::Engine => "home#index"
+  mount GogglesCore::Engine => "home/index"
 
   # [Steve, 20130716] Root's route required by Devise:
   root to: "home#index", locale: /en|it/
@@ -16,7 +16,19 @@ Rails.application.routes.draw do
       match "about",                            to: "home#about",         via: :get,    as: "home_about"
       match "contact_us",                       to: "home#contact_us",    via: :get,    as: "home_contact_us"
       match "maintenance",                      to: "home#maintenance",   via: :get,    as: "home_maintenance"
-      match "tutorials",                        to: "home#tutorials",     via: :get,    as: "home_tutorials"
+
+      # === Tutorials ===
+      get 'tutorials/index'
+      get 'tutorials/features'
+      get 'tutorials/registration'
+      get 'tutorials/radio'
+      get 'tutorials/meetings'
+      get 'tutorials/passages'
+      get 'tutorials/reservations'
+      get 'tutorials/goggle_cups'
+      get 'tutorials/scoring'
+      get 'tutorials/pools'
+      get 'tutorials/trainings'
 
       # === Socials ===
       # A user associates himself/herself with a swimmer:

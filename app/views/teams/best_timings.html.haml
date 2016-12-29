@@ -1,5 +1,5 @@
 - if @team_best_finder
-  = render( partial: 'tabs_and_radio_title' )
+  = render( partial: 'tabs_and_title' )
   - cache( cache_key_for_team( 'best_timnigs', @team.id, @max_updated_at, @highlight_swimmer_id ) ) do
     .col-xs-12#sub_legend
       -# --- Sub-legend for each gender + pool-type

@@ -1,4 +1,4 @@
-= render( partial: 'tabs_and_radio_title' )
+= render( partial: 'tabs_and_title' )
 - cache( cache_key_for_swimmer( 'supermaster', @swimmer.id, @max_updated_at, false, false, @badge.id ) ) do
   - supermaster_score = @sssc.calculate_supermaster_score
   - ironmaster_score = @sssc.calculate_ironmaster_score

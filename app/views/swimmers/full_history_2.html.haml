@@ -1,4 +1,4 @@
-= render( partial: 'tabs_and_radio_title' )
+= render( partial: 'tabs_and_title' )
 - cache( cache_key_for_swimmer( 'full_history_2', @swimmer.id, @max_updated_at ) ) do
   - pool_type_25 = PoolType.find_by_code('25').i18n_verbose
   - pool_type_50 = PoolType.find_by_code('50').i18n_verbose

@@ -1,4 +1,4 @@
-= render( partial: 'tabs_and_radio_title' )
+= render( partial: 'tabs_and_title' )
 - cache( cache_key_for_meeting( 'show_team_entries', @meeting.id, @max_entry_updated_at, @team ? @team.id : 0 ) ) do
   - swimmers = []
   - @meeting.meeting_entries.for_team(@team).sort_by_swimmer.each do |meeting_entry|

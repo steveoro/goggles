@@ -4,7 +4,7 @@
 - has_goggle_cup = team.has_goggle_cup_at?( @meeting.header_date )
 - event_list = []
 = render( partial: 'meeting_header' )
-= render( partial: 'tabs_and_radio_title' )
+= render( partial: 'tabs_and_title' )
 - cache( cache_key_for_meeting( 'show_swimmer_results', @meeting.id, @max_mir_updated_at, team_id, @swimmer.id) ) do
   .goggles-category-gap.col-xs-12
     .col-xs-3.alert.alert-success

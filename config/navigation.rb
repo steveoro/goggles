@@ -169,7 +169,7 @@ SimpleNavigation::Configuration.run do |navigation|
       lev2_nav.item :key_user_trainings,      t('misc_main_menu.user_trainings'),         user_trainings_path()
       lev2_nav.item :key_user_tr_stories,     t('misc_main_menu.user_training_stories'),  user_training_stories_path()
       lev2_nav.item :key_separator4_2,        content_tag(:span, ''), class: 'divider'
-      lev2_nav.item :key_tutorial,            t('tutorials_title'),                       home_tutorials_path()
+      lev2_nav.item :key_tutorial,            t('tutorials_title'),                       tutorials_index_path()
     end
 
     # you can also specify a css id or class to attach to this particular level

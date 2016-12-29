@@ -1,4 +1,4 @@
-= render( partial: 'tabs_and_radio_title' )
+= render( partial: 'tabs_and_title' )
 - cache( cache_key_for_team( 'current_swimmers', @team.id, @max_updated_at ) ) do
   - if @swimmers.size > 0
     .row

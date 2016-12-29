@@ -1,5 +1,5 @@
 = render( partial: 'meeting_header' )
-= render( partial: 'tabs_and_radio_title' )
+= render( partial: 'tabs_and_title' )
 
 .col-xs-12.goggles-category-gap
   = form_tag( meeting_update_passages_path(@meeting.id), onsubmit: "$('#loadingIndicator').show();" )
