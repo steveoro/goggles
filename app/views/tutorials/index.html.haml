@@ -1,10 +1,22 @@
 = render( partial: 'tabs_and_title' )
 
-%section.home-section#what_is_goggles
+%section.home-section#overview
   .container
-    .row
-      %h3= I18n.t('info_about.presentation.title')
-      %p= I18n.t('info_about.presentation.part_1')
-      %p= I18n.t('info_about.presentation.part_2')
-      %p= I18n.t('info_about.presentation.part_3')
-      %p= I18n.t('info_about.presentation.part_4')
+    .row.col-xs-12
+      .section-heading.text-center
+        .wow.bounceInDown( data-wow-delay="0.5s" )
+          %h2= I18n.t('tutorial.index.title')
+    .row.col-xs-12
+      %h3= t('tutorial.index.subtitle')
+    .row.col-xs-12
+      %p= I18n.t('tutorial.index.part1')
+      %p= I18n.t('tutorial.index.part2')
+      %p= I18n.t('tutorial.index.part3')
+      %p= I18n.t('tutorial.index.part4')
+      %p= I18n.t('tutorial.index.part5')
+      %p= I18n.t('tutorial.index.part6')
+      %p= I18n.t('tutorial.index.part7')
+      %p= I18n.t('tutorial.index.part8')
+      %p= I18n.t('tutorial.index.part9')
+
+= render( partial: 'what_can_i_do' )

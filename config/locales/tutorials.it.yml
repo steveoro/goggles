@@ -14,6 +14,7 @@ it:
     trainings: "Allenamenti"
 
   tutorial:
+    if_you_wanna_know_more: "Se ne vuoi sapere di più:"
     meeting_reservations: "'Prenotazioni' meeting"
     how_to_register: "La registrazione"
     what_can_i_do: "Cosa posso fare con Goggles?!?"
@@ -26,6 +27,34 @@ it:
     back_to_start: "Torna all'inizio"
     argument_index: 'Indice argomenti'
 
+    index:
+      title: "Panoramica"
+      subtitle: "Come funziona il tutto?"
+      part1: "In Goggles puoi trovare i risultati delle gare di nuoto (prevalentemente Master) di vari circuiti ufficiali attivi, nazionali ed internazionali (FIN, FINA, LEN, CSI, ... Se un circuito manca, si tratta solo di avere pazienza: prima o poi troveremo il modo di aggiungerlo)."
+      part2: "Goggles è totalmente gratuito e nasce dal lavoro appassionato di nuotatori Master come te. Volevamo uno strumento che presentasse ed archiviasse in modo omogeneo i nostri risultati come nessuno aveva fatto prima, ed allora ci siamo dati da fare."
+      part3: "Goggles acquisisce, in modo più o meno automatico, i risultati delle gare pubblicati on-line dalle federazioni e di dominio pubblico, ma anche quelli fornitici direttamente da volontari, disponibili a volte solo in formato cartaceo. (Ci servono ovviamente volontari per fare questo: se avete risultati e volete pubblicarli, non esitate a contattarci via mail.)"
+      part4: "I dati vengono correlati fra loro durante l'acquisizione e, quando sono ce ne sono abbastanza, permettono a Goggles di stilare statistiche dettagliate e rapporti di performance nel tempo per ogni atleta che partecipa alle gare. Noi chiamiamo questa vista la 'Radiografia' del nuotatore. E' disponibile per tutti i nuotatori che hanno almeno qualche risultato pubblicato, non solo per gli utenti. (Il fatto di essere utenti permette comunque di vedere più dettagli.)"
+      part5: "In questo modo è possibile confrontare il proprio rendimento attuale col passato o di ritrovare vecchi risultati o record personali ormai dimenticati."
+      part6: "Per poter dire a Goggles chi si è, creando un utente, si ha la possibilità di associare il proprio account ad un nuotatore (se esistono già risultati acquisiti che lo riguardano), permettendo poi così di presentare i dati in modo personalizzato, in base alla propria squadra e alle gare effettuate."
+      part7: "Se poi sei anche il coordinatore della tua squadra di nuoto, dopo aver registrato il tuo utente, puoi anche richiederci via mail l'abilitazione ad essere 'Team manager', in modo da poter inserire direttamente dal sito i passaggi gara tuoi e/o dei tuoi amici/compagni di squadra."
+      part8: "Come 'Team manager' è anche possibile accedere all'interfaccia per gestire un comodo elenco di chi parteciperà o meno ad uno specifico Meeting fra tutti i tesserati di squadra. Questo permette di ottenere alla fine un prospetto stampabile, ordinato in base agli eventi del Meeting scelto, sul quale poter così segnare più facilmente tutti i passaggi gara."
+      part9: "Goggles, tra le tante cose, permette anche l'inserimento e la gestione di vari modelli d'allenamento, personalizzabili, stampabili e condivisibili (volendo - ma puoi anche decidere di tenerteli segreti ed accessibili solo a te, nel caso). Tenete comunque presente che la gestione degli allenamenti è ancora in 'beta' e sarà soggetta a forte restyling grafico in futuro. (Ma nessun allenamento tra quelli già inseriti verrà cancellato o modificato.)"
+
+    features:
+      title: "Caratteristiche principali"
+      part1: "Ricerche tramite filtraggio di parametri, in base a campi o parole chiave, o nomi parziali. Nello specifico:"
+      part1_1: "Ricerca meeting/gare"
+      part1_2: "Ricerca atleti"
+      part1_3: "Ricerca squadre"
+      part1_4: "Ricerca piscine, con possibilità di scrivere o consultare brevi recensioni o commenti (per potersi poi ricordare come era quella piscina frequentata tanto tempo fa...)"
+      part2: "Raccolta (e ricerca) 'personal best' per ogni atleta, squadra, stagione o federazione."
+      part3: "Radiografia atleti: prospetti riassuntivi per statistiche fra i risultati in base alle gare effettuate (tra quelle acquisite da Goggles)."
+      part4: "Radiografia squadre: statistiche complessive su tutti gli atleti affiliati ad una squadra, computo dei tempi migliori interni alla squadra e possibilità di definire campionati interni 'custom' (Goggle-Cup)."
+      part5: "Gestione passaggi gara: possibilità di inserire o modificare i passaggi gara per tutti gli atleti partecipanti ad un meeting, da parte dei team manager."
+      part6: "Gestione 'prenotazioni' gara: se sei un team manager, questo ti permette di selezionare chi della squadra parteciperà ad un meeting, in modo da poter poi ottenere un prospetto stampabile su carta, su cui segnarti agevolmente i vari passaggi gara."
+      part7: "Gestione (e ricerca) allenamenti: creazione e gestione di modelli di allenamento personalizzabili per ogni utente, con possibilità di stampa, condivisione e note sull'esecuzione, con storico degli allenamenti svolti."
+      part8: "Calcolo punteggi ed obiettivi: calcolo punteggio FIN in base a tempo, o calcolo del tempo da raggiungere per ottenere un determinato punteggio; rapporto di confronto virtuale fra atleti in categoria partecipanti a stesse specialità ('Duel in the pool')."
+
     how_to_register_text:
       line1: "Sei un nuotatore master?"
       line2: "...E magari vorresti vedere ricostruita la tua carriera natatoria master degli ultimi dodici anni, con anche quelle prime gare di cui non avevi tenuto i risultati, quando ancora si gareggiava in slip?"
@@ -33,13 +62,14 @@ it:
       line4: "O ancora, perché no, paragonare fra loro le tue prestazioni, confrontando i passaggi ed i parziali raccolti alle gare e che stanno sbiadendo sui fogli ingialliti nel terzo cassetto del mobile dello studio?"
       line5: "Ecco, allora probabilmente Goggles potrebbe aiutarti. Mentre stai leggendo queste poche righe Goggles sta lentamente, ma inesorabilmente acquisendo i dati della varie gare master per poterli poi presentare finalmente ordinati e riuniti. Probabilmente già ora Goggles consosce alcuni dei tuoi risultati e porebbe mostrarteli in ordine temporale o per prestazione, fornendoti dati statistici, punteggi, piazzamenti e medaglie."
       line6: "Perché Goggles possa farlo è sufficiente che ti registri e crei il tuo profilo. Clicca sul pulsante 'Registrati!' nella pagina di benvenuto. Ti verranno chiesti unicamente i dati necessari per poterti associare ad un nuotatore fra quelli in archivio (cognome, nome, anno di nascita) ed un indirizzo email per autenticarti e, solo se lo vorrai, per ricevere notifiche su risultati o amici di corsia."
-      line7: "Una volta registrato potrai associarti ad nuotatore ed accedere alla tua radiografia ed allora sì che... buon divertimento!"
-      line8: "Goggles è gratuito e si impegna a non dare i tuoi dati a terze parti e ti garantisce che non cercherà nemmeno di contattarti a scopo commerciale. Se vuoi saperne di più puoi dare una letta alla storia di Googles."
+      line7: "Una volta registrato potrai associarti ad un nuotatore ed accedere alla tua radiografia ed allora sì che... buon divertimento!"
+      regi_steps_title: "La procedura di registrazione"
+      line8: "Goggles è gratuito e si impegna a non dare i tuoi dati a terze parti e ti garantisce che non cercherà nemmeno di contattarti a scopo commerciale. Se vuoi saperne di più puoi dare una letta alla storia di Googles, nella sezione 'Panoramica'."
       line9: "In qualsiasi momento potrai annullare la registrazione e tornare a risultati cartacei e fogli di calcolo. ;-p"
       line10: "Segui questi semplici passi (davvero, promesso, nessuno cercherà di venderti una batteria di pentole):"
       line11: "Vai alla pagina di registrazione"
       line12: "Compila il tuo profilo"
-      line13: "Non accontentarti del profilo minimo e clicca anche sull'associazione ad un nuotatore (perché sei un'atleta, giusto?)"
+      line13: "Non accontentarti del profilo minimo e clicca anche sull'associazione ad un nuotatore (perché *sei* un'atleta, giusto?)"
       line14: "Lascia che Goggles ti associ ad un nuotatore che conosce, o scegline tu uno manualmente (contattaci se il tuo nome non compare nell'elenco!)"
 
     what_can_i_do_text:

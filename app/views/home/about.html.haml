@@ -3,6 +3,13 @@
   = render( partial: 'what_is_goggles' )
 
 .col-xs-12
+  .row
+    %p
+      = I18n.t('tutorial.if_you_wanna_know_more')
+      &nbsp;
+      =link_to( I18n.t('tutorials_title'), tutorials_index_path() )
+
+.col-xs-12
   %hr
 
 .accordion

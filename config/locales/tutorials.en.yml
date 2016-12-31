@@ -14,17 +14,46 @@ en:
     trainings: "Trainings"
 
   tutorial:
+    if_you_wanna_know_more: "If you wanna know more:"
     meeting_reservations: "Meeting reservations"
     how_to_register: "Registration"
     what_can_i_do: "What can I do with Goggles?"
     what_about_meetings: "What about meetings?"
-    how_to_view_passages: "Performance passages"
+    how_to_view_passages: "Lap times or 'passages' timings"
     what_about_trainings: "What about trainings?"
     how_to_calculate_fin_score: "FIN score computation"
     back_argument: "Back to previous topic"
     next_argument: 'Skip to next topic'
     back_to_start: "Back to the beginning"
     argument_index: 'Topics'
+
+    index:
+      title: "Overview"
+      subtitle: "How does this work?"
+      part1: "With Goggles You can browse the results from the Master Swimming Championships currently active among several federations (FIN, FINA, LEN, CSI, ...). If a Championship Circuit or Federation is missing, You can bet that sooner or later we'll figure out a way to add it to the list of supported data results."
+      part2: "Goggles is totally free and is born from the passionate work of Master swimmers like you. We wanted a tool that showcased and archived thoroughly our results as no one had done before. So we put a lot of effort in it."
+      part3: "Goggles acquires, in a more or less automatic way, the Meetings results published on-line by the federations, but accepts also those supplied (by hand :-)) directly by volunteers, sometimes only available in paper format. (We obviously need volunteers to do this: if you have results and you want to publish them, please contact us via e-mail.)"
+      part4: "The data is then linked together during acquisition and, when there's enough of it available, it allows Goggles to produce detailed statistics and performance reports over time for each one of the athletes participating in the competitions. We call this view the 'Radiography' of the swimmer. It is available for all the swimmers who have at least some published results, not only for users. (But being a user allows to show more details.)"
+      part5: "In this way you can compare your current performances with the past or rediscover old results or forgotten personal records."
+      part6: "In order to state your identity to Goggles, when creating a user, you have the option to associate your account with a swimmer (if there are already any meeting results concerning him), thus allowing Goggles to showcase the data in more customized view, according to your team and the races that you made."
+      part7: "And, if you're also the coordinator of your swimming team, after registering your account, you can also ask us by e-mail to enable your account as a 'Team manager', so that you can then enter directly from the site the passage/lap times of yours and your friends or teammates."
+      part8: "As a 'team' manager, you can also access the interface to manage a convenient list of those who will participate or not to a specific meeting among all the members of the team. This allows you to eventually get a printable report, sorted by the events of the chosen Meeting, on which you'll be able to write down more easily all the passages or lap times of each race or event."
+      part9: "Goggles, among other things, allows the creation and the management of various training models, customizable, printable and sharable (in case you want it - but you can also decide to keep them secret and accessible only to you, just in case). Just keep in mind that the training management feature is still in 'beta' and it will be subject to strong restyling in the future. (But no training among those already entered will be deleted or edited.)"
+
+    features:
+      title: "Main features"
+      part1: "Search results through filtering of parameters, on the basis of fields or key words, or partial names. In particular:"
+      part1_1: "Search meetings or results"
+      part1_2: "Search swimmers"
+      part1_3: "Search teams"
+      part1_4: "Search pools, and write reviews about them or brief comments (in order to then remember how it was that pool frequented so long ago ...)"
+      part2: "Collecting (and research) 'personal best' for any athlete, team, season or federation."
+      part3: "Swimmer Radiography: statistical summaries about the overall acquired results throughout the 'career' of the swimmer."
+      part4: "Team Radiography: overall statistic summaries about all the Teams' swimmers, calculation of the best times inside the team and possibility to define internal 'custom' championships (Goggle-Cups)."
+      part5: "Lap or 'passage' timings management: ability (for the team manager) to enter or edit the lap times for all athletes in a team participating in a meeting."
+      part6: "Meeting 'reservations' management: if you are a team manager, this allows you to to select who among the whole team will participate in a meeting, so you can then get a printable brochure on paper, on which you can write down easily each lap timing."
+      part7: "Trainings management (and research): create and manage training models, customizable for each user, with the possibility of printing, sharing and commenting after the execution, with an archive of performed workouts."
+      part8: "Scores and objectives calculation: FIN score calculation based on time, or calculation of the time to reach in order to obtain a certain score; virtual relationship comparison between participants in same categories, for any particular event."
 
     how_to_register_text:
       line1: "Are You a Master Swimmer? (Duh!)"
@@ -34,14 +63,16 @@ en:
       line5: "Can You relate to all this? Well, then surely Goggles can help. While you're reading this stuff, Goggles is slowly but unrelentingly acquiring data from various Master's Meetings, to eventually be able to show them all cleaned, ordered and grouped together. Probably, even now Goggles knows some of Your results and it could show them to you in chronological order or by performance achievements, presenting you with statistical data, rankings and medals."
       line6: "In order for Goggles to do so, You just need to register and create your profile. Click on 'Sign-up!' on the welcome page. We'll ask You just enough data to match Your profile with an existing swimmer (surname, name, date of birth) and an e-mail address to authenticate yourself and - only if You whish - to receive notifies and updates on your results and your team mates'"
       line7: "Once You've registered, You'll be able to associate Yourself to a matching Swimmer and visit your 'ID-Card' page (your 'Radiography')... And then the fun begins!"
-      line8: "Goggles is totally free and we promise we never give access to Your personal data to others. We guarantee that we won't ever contact You for commercial purposes. If You're interested and want to know more, just give a read to Goggles' history"
+
+      regi_steps_title: "The registration procedure"
+      line8: "Goggles is totally free and we promise we'll never give access to Your personal data to others. We guarantee that we won't ever contact You for commercial purposes. If You're interested and want to know more, just give a read about Goggles' history in the 'Overview' section."
       line9: "You can cancel Your registration in any moment and go back to keeping results on paper and spreadsheets, anytime. ;-P"
 
       line10: "Follow these easy steps: (really, promise: no one's gonna try to sell you a cookware set!)"
-      line11: "Go to Registration/Sign-up page"
+      line11: "Go to the Registration/Sign-up page"
       line12: "Compile Your profile"
-      line13: "Don't give up easily, and click also on the link to the Swimmer association (because you're an athlete, right?)"
-      line14: "Follow Goggles lead to match you with a swimmer, or chose one manually (contact us if your name isn't in the list!)"
+      line13: "Don't give up easily, and click also on the link to the Swimmer association (because you *are* a swimmer, right?)"
+      line14: "Follow Goggles lead, in order find your match with an existing swimmer, or chose one manually (don't hesitate to contact us if your name isn't in the list!)"
 
     what_can_i_do_text:
       line0: "A short overview"

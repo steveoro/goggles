@@ -5,6 +5,62 @@
     .row
       .section-heading.text-center
         .wow.bounceInDown( data-wow-delay="0.5s" )
-          %h2= t('tutorials_tab.features')
-        %p.wow.bounceInUp( data-wow-delay="0.5s" )
-          = t('coming_soon')
+          %h2= t('tutorial.features.title')
+    .row
+      %ul
+        %li= I18n.t('tutorial.features.part1')
+        %ul
+          %li
+            = I18n.t('tutorial.features.part1_1')
+            &nbsp;
+            = "=>"
+            &nbsp;
+            = link_to( "(#{ I18n.t('tutorial.what_about_meetings') })", tutorials_meetings_path() )
+          %li= I18n.t('tutorial.features.part1_2')
+          %li= I18n.t('tutorial.features.part1_3')
+          %li
+            = I18n.t('tutorial.features.part1_4')
+            &nbsp;
+            = "=>"
+            &nbsp;
+            = link_to( "(#{ I18n.t('tutorials_tab.pools') })", tutorials_pools_path() )
+      %ul
+        %li= I18n.t('tutorial.features.part2')
+      %ul
+        %li
+          = I18n.t('tutorial.features.part3')
+          &nbsp;
+          = "=>"
+          &nbsp;
+          = link_to( "(#{ I18n.t('tutorials_tab.radio') })", tutorials_radio_path() )
+      %ul
+        %li
+          = I18n.t('tutorial.features.part4')
+      %ul
+        %li
+          = I18n.t('tutorial.features.part5')
+          &nbsp;
+          = "=>"
+          &nbsp;
+          = link_to( "(#{ I18n.t('tutorial.how_to_view_passages') })", tutorials_passages_path() )
+      %ul
+        %li
+          = I18n.t('tutorial.features.part6')
+          &nbsp;
+          = "=>"
+          &nbsp;
+          = link_to( "(#{ I18n.t('tutorials_tab.reservations') })", tutorials_reservations_path() )
+      %ul
+        %li
+          = I18n.t('tutorial.features.part7')
+          &nbsp;
+          = "=>"
+          &nbsp;
+          = link_to( "(#{ I18n.t('tutorial.what_about_trainings') })", tutorials_trainings_path() )
+      %ul
+        %li
+          = I18n.t('tutorial.features.part8')
+          &nbsp;
+          = "=>"
+          &nbsp;
+          = link_to( "(#{ I18n.t('tutorial.how_to_calculate_fin_score') })", tutorials_scoring_path() )
