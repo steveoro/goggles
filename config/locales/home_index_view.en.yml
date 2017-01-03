@@ -35,4 +35,9 @@ en:
     event_total: "Events"
     stand_bonus: "Stands"
     hard_bonus: "Hardness"
+    personal_standard_times: 'Personal standard times used to calculate personal enhancement'
+    time_standards: 'Time standards used to calculate performance score'
+    ranking_rules: "Individual ranking rules summary"
+    how_to_meeting_score: 'Meeting score is calculated considering ranking (max 100 points), the performance (tabellar score base 100) and the personal enhancement (max 10 points). For each meetings is considered the event with the better complessive score. The event score is upgraded with double stands bonus (max 10 points) and the hard event bonus (max 8 points).'
+    how_to_individual_ranking: 'In indvidual ranking are considered the best 5 meeting scores among the season.'
     

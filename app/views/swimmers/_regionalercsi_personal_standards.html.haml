@@ -1,0 +1,19 @@
+-# Personal standards, used to calculate enhancement score
+.col-xs-12.goggles-category-gap#personal_standards
+  .col-xs-12.table-responsive
+    %b= I18n.t('regionalercsi.personal_standard_times')
+    %table.table.table-striped.table-bordered.table-hover.table-condensed
+      %tbody
+        %tr{'class'=>'info'}
+          %td.goggles-centeralign
+            %b= I18n.t('meeting_calendar.pool_type')
+          - @events_list.each do |event_type|
+            %td.goggles-centeralign
+              %b= event_type.code
+        - PoolType.only_for_meetings.each do |pool_type|
+          %tr
+            %td.goggles-centeralign{'class'=>'info'}
+              %b= pool_type.code
+            - @events_list.each do |event_type|
+              %td.goggles-rightalign
+                = SeasonPersonalStandard.get_standard( @season.id, @swimmer.id, pool_type.id, event_type.id ).get_timing if SeasonPersonalStandard.has_standard?( @season.id, @swimmer.id, pool_type.id, event_type.id ) 

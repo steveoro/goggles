@@ -6,12 +6,17 @@
 
   .col-xs-12
     = render( partial: 'regionalercsi_google_gauge', locals: { individual_ranking: individual_ranking, meetings_number: meetings_number } )
-    = render( partial: 'regionalercsi_meetings_table' )
     = render( partial: 'regionalercsi_results_table' )
+    .col-xs-12.col-md-1.table-responsive.goggles-category-gap
+    = render( partial: 'regionalercsi_meetings_table' )
+    = render( partial: 'regionalercsi_time_standards' )
+    = render( partial: 'regionalercsi_personal_standards' )
+    = render( partial: 'regionalercsi_rules' )
 
   -#= render( partial: 'supermaster_rankings_table', locals: { supermaster_score: supermaster_score, ironmaster_score: ironmaster_score, team_ranking_score: team_ranking_score } )
   -#= render( partial: 'supermaster_meetings_table' )
-  -#= render( partial: 'supermaster_rules' )
+
+
 
   .col-xs-12.goggles-category-gap#bottom_of_page
     &nbsp;

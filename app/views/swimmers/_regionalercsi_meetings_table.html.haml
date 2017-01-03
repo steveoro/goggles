@@ -1,5 +1,5 @@
 -# Shows summary of meetings results
-.col-xs-12.col-md-5.table-responsive.goggles-category-gap
+.col-xs-12.col-md-5.table-responsive.goggles-category-gap#meeting_results
   %table.table.table-striped.table-bordered.table-hover.table-condensed
     %tbody
       %tr{'class'=>'info'}
@@ -19,6 +19,7 @@
           %b= I18n.t('regionalercsi.individual_ranking_short')
           
       - @swimmer_score.meetings.each_with_index do |meeting,index|
+        -
         %tr
           %td
             = meeting.meeting.decorate.get_linked_full_name_with_date
@@ -32,4 +33,4 @@
             %b= meeting.get_total_points
           %td.goggles-centeralign{'data-toggle'=>'tooltip', 'title'=>"#{I18n.t('supermaster.ranked_for')} #{I18n.t('supermaster.supermaster')}"}
             = show_tag( index < 5 )
-.col-xs-12.col-md-1.table-responsive.goggles-category-gap
+            

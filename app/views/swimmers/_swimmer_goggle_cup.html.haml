@@ -49,7 +49,7 @@
   - EventsByPoolType.not_relays.for_pool_type_code( '25' ).distance_more_than(50).distance_less_than(1500).sort_by_event.each do |events_by_pool_type|
     - events_list << events_by_pool_type.event_type
   - @goggle_cups.each do |goggle_cup|
-    %h3= "#{I18n.t('goggle_cup.standard_times')} #{goggle_cup.get_full_name}"
+    %b= "#{I18n.t('goggle_cup.standard_times')} #{goggle_cup.get_full_name}"
     .col-xs-12.table-responsive
       %table.table.table-striped.table-bordered.table-hover.table-condensed
         %tbody

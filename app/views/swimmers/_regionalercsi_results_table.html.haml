@@ -29,7 +29,7 @@
         %td.goggles-rightalign
           %b= I18n.t('regionalercsi.enhance_score')
           
-      - @swimmer_score.meetings.sort!{ |m,n| m.header_date <=> n.header_date }.each do |meeting|
+      - @swimmer_score.meetings.sort{ |m,n| m.header_date <=> n.header_date }.each do |meeting|
         - meeting.event_results.each_with_index do |event,index|
           - mir = event.meeting_individual_result
           %tr
