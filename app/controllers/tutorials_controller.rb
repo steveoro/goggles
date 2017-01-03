@@ -5,7 +5,7 @@
 
 = TutorialsController
 
-  - version:  6.038
+  - version:  6.039
   - author:   Steve A.
 
 =end
@@ -31,8 +31,13 @@ class TutorialsController < ApplicationController
   #++
 
   # Describes in more depth the features of the "Radiography"
-  # (for Swimmers and for Teams)
-  def radio
+  # (for Swimmers)
+  def radio_swimmer
+  end
+
+  # Describes in more depth the features of the "Radiography"
+  # (for Teams)
+  def radio_team
   end
   #-- -------------------------------------------------------------------------
   #++

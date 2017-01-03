@@ -23,9 +23,16 @@ RSpec.describe TutorialsController, type: :controller do
     end
   end
 
-  describe "GET #radio" do
+  describe "GET #radio_swimmer" do
     it "returns http success" do
-      get :radio
+      get :radio_swimmer
+      expect(response).to have_http_status(:success)
+    end
+  end
+
+  describe "GET #radio_team" do
+    it "returns http success" do
+      get :radio_team
       expect(response).to have_http_status(:success)
     end
   end

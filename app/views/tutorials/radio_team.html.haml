@@ -1,0 +1,76 @@
+= render( partial: 'tabs_and_title' )
+
+%section.home-section#radio
+  .container
+    .row
+      .section-heading.text-center
+        .wow.bounceInDown( data-wow-delay="0.5s" )
+          %h2= t('tutorials_tab.radio_team')
+    .row.col-xs-12
+      %p= t('tutorial.radio_team.main')
+    .row.col-xs-12
+      .wow.rollIn( data-wow-delay="1s" )
+        .col-xs-12
+          = image_tag( "tutorial/radioteam_main.png", class: "img-responsive img-rounded" )
+
+    .col-xs-12.goggles-category-gap
+      %hr/
+    .row.col-xs-12
+      .section-heading
+        %h3= t('tutorial.radio_team.swimmers_subtitle')
+    .row.col-xs-12
+      .col-xs-12.col-sm-8
+        .wow.bounceInLeft( data-wow-delay="1s" )
+          = image_tag( "tutorial/radioteam_swimmers.png", class: "img-responsive img-rounded" )
+      .col-xs-12.col-sm-4
+        %p= t('tutorial.radio_team.swimmers')
+
+    .col-xs-12.goggles-category-gap
+      %hr/
+    .row.col-xs-12
+      .section-heading
+        %h3= t('tutorial.radio_team.teambest_subtitle')
+    .row.col-xs-12
+      .col-xs-12.col-sm-8
+        .wow.bounceInLeft( data-wow-delay="1s" )
+          = image_tag( "tutorial/radioteam_teambest.png", class: "img-responsive img-rounded" )
+      .col-xs-12.col-sm-4
+        %p= t('tutorial.radio_team.teambest')
+
+    .col-xs-12.goggles-category-gap
+      %hr/
+    .row.col-xs-12
+      .section-heading
+        %h3= t('tutorial.radio_team.palmares_subtitle')
+    .row.col-xs-12
+      .col-xs-12.col-sm-8
+        .wow.bounceInLeft( data-wow-delay="1s" )
+          = image_tag( "tutorial/radioteam_palmares.png", class: "img-responsive img-rounded" )
+      .col-xs-12.col-sm-4
+        %p= t('tutorial.radio_team.palmares')
+
+    .col-xs-12.goggles-category-gap
+      %hr/
+    .row.col-xs-12
+      .section-heading
+        %h3= t('tutorial.radio_team.gogglecup_subtitle')
+    .row.col-xs-12
+      .col-xs-12.col-sm-8
+        .wow.bounceInLeft( data-wow-delay="1s" )
+          = image_tag( "tutorial/radioteam_gogglecup.png", class: "img-responsive img-rounded" )
+      .col-xs-12.col-sm-4
+        %p= t('tutorial.radio_team.gogglecup')
+    .row.col-xs-12
+      %p= link_to( "=> (#{ I18n.t('tutorials_tab.goggle_cups') })", tutorials_goggle_cups_path() )
+
+    .col-xs-12.goggles-category-gap
+      %hr/
+    .row.col-xs-12
+      .section-heading
+        %h3= t('tutorial.radio_team.gogglecup_history_subtitle')
+    .row.col-xs-12
+      .col-xs-12.col-sm-8
+        .wow.bounceInLeft( data-wow-delay="1s" )
+          = image_tag( "tutorial/radioteam_gogglecup_history.png", class: "img-responsive img-rounded" )
+      .col-xs-12.col-sm-4
+        %p= t('tutorial.radio_team.gogglecup_history')

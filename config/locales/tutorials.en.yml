@@ -79,10 +79,15 @@ en:
       trainings_1: "La pagina degli Allenamenti riassume il totale degli allenamenti memorizzati da Goggles per un nuotatore."
     radio_team:
       main: ""
+      swimmers_subtitle: ""
       swimmers: ""
+      teambest_subtitle: ""
       teambest: ""
+      palmares_subtitle: ""
       palmares: ""
+      gogglecup_subtitle: ""
       gogglecup: ""
+      gogglecup_history_subtitle: ""
       gogglecup_history: ""
     meetings:
       current: "Selezionando 'Gare'=>'Tutte le gare correnti', si arriva all'elenco pre-filtrato delle gare correnti."
