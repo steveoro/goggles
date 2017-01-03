@@ -98,7 +98,7 @@
                     - mir = MeetingIndividualResultDecorator.decorate( individual_result )
                     %td.goggles-noborder.goggles-rightalign
                       - event_type = mir.meeting_event.event_type
-                      %a(href="\##{event_type.code}")= event_type.i18n_short
+                      %a{href: "\##{event_type.code}", 'data-turbolinks'=>'false'}= event_type.i18n_short
                     %td.goggles-noborder.goggles-rightalign.col-xs-1
                       = mir.get_timing
                     %td.goggles-noborder.goggles-rightalign

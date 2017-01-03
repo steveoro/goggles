@@ -6,5 +6,55 @@
       .section-heading.text-center
         .wow.bounceInDown( data-wow-delay="0.5s" )
           %h2= t('tutorial.what_about_meetings')
-        %p.wow.bounceInUp( data-wow-delay="0.5s" )
-          = t('coming_soon')
+    .row.col-xs-12
+      %p= t('tutorial.meetings.current')
+    .row.col-xs-12
+      .wow.rollIn( data-wow-delay="1s" )
+        .col-xs-12
+          = image_tag( "tutorial/meetings_current.png", class: "img-responsive img-rounded" )
+    .row.col-xs-12
+      %p= t('tutorial.meetings.current_1')
+      %p= t('tutorial.meetings.current_2')
+      %p= link_to( "=> (#{ I18n.t('tutorials_tab.reservations') })", tutorials_reservations_path() )
+
+    .col-xs-12.goggles-category-gap
+      %hr/
+    .row.col-xs-12
+      %p= t('tutorial.meetings.results')
+    .row.col-xs-12
+      .wow.bounceInLeft( data-wow-delay="1s" )
+        = image_tag( "tutorial/meetings_results.png", class: "img-responsive img-rounded" )
+    .row.col-xs-12
+      %p= t('tutorial.meetings.results_1')
+    .row.col-xs-12
+      .wow.bounceInRight( data-wow-delay="1s" )
+        = image_tag( "tutorial/meetings_results_1.png", class: "img-responsive img-rounded" )
+    .row.col-xs-12
+      %p= t('tutorial.meetings.results_2')
+
+    .col-xs-12.goggles-category-gap
+      %hr/
+    .row.col-xs-12
+      %p= t('tutorial.meetings.teamresults')
+    .row.col-xs-12
+      .wow.bounceInLeft( data-wow-delay="1s" )
+        = image_tag( "tutorial/meetings_teamresults.png", class: "img-responsive img-rounded" )
+    .row.col-xs-12
+      %p= t('tutorial.meetings.teamresults_1')
+      %p= t('tutorial.meetings.teamresults_2')
+
+    .col-xs-12.goggles-category-gap
+      %hr/
+    .row.col-xs-12
+      %p= t('tutorial.meetings.swimmerresults')
+    .row.col-xs-12
+      .wow.bounceInRight( data-wow-delay="1s" )
+        = image_tag( "tutorial/meetings_swimmerresults.png", class: "img-responsive img-rounded" )
+    .row.col-xs-12
+      %p= t('tutorial.meetings.swimmerresults_1')
+
+    .col-xs-12.goggles-category-gap
+      %hr/
+    .row.col-xs-12
+      %p= t('tutorial.meetings.passages')
+      %p= link_to( "=> (#{ I18n.t('tutorial.how_to_view_passages') })", tutorials_passages_path() )
