@@ -6,5 +6,22 @@
       .section-heading.text-center
         .wow.bounceInDown( data-wow-delay="0.5s" )
           %h2= t('tutorial.how_to_view_passages')
-        %p.wow.bounceInUp( data-wow-delay="0.5s" )
-          = t('coming_soon')
+    .row.col-xs-12
+      %p= t('tutorial.passages.line_1')
+    .row.col-xs-12
+      .wow.rollIn( data-wow-delay="1s" )
+        .col-xs-12
+          = image_tag( "tutorial/passages.jpg", class: "img-responsive img-rounded" )
+      .wow.bounceInRight( data-wow-delay="1s" )
+        .col-xs-12
+          %p= t('tutorial.passages.line_2')
+        .col-xs-12
+          %p= t('tutorial.passages.line_3')
+
+    .row.col-xs-12
+      .wow.rollIn( data-wow-delay="1s" )
+        .col-xs-12
+          = image_tag( "tutorial/meetings_passages.png", class: "img-responsive img-rounded" )
+      .wow.bounceInRight( data-wow-delay="1s" )
+        .col-xs-12
+          %p= t('tutorial.passages.line_4')
