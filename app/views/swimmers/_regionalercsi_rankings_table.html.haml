@@ -1,0 +1,40 @@
+.col-xs-12.col-md-8.goggles-category-gap#rankings
+  -# Calculate best 5 on 6 results
+  - event_score = 0
+  - medal_bonus_score = 0
+  - event_bonus_score = 0
+  - @swimmer_score.meetings.each_with_index do |meeting,index|
+    - if index < 5
+      - event_score += meeting.event_points + meeting.performance_points + meeting.enhance_points
+      - medal_bonus_score += meeting.medal_bonus_points
+      - event_bonus_score += meeting.event_bonus_points
+
+
+  %table.table.table-bordered.table-hover.table-condensed
+    %tbody
+      %tr{'class'=>'info'}
+        %td
+          %b= I18n.t('regionalercsi.score')
+        %td.goggles-rightalign
+          %b= I18n.t('regionalercsi.meetings')
+        %td.goggles-rightalign
+          %b= I18n.t('regionalercsi.event_total')
+        %td.goggles-rightalign
+          %b= I18n.t('regionalercsi.stand_bonus')
+        %td.goggles-rightalign
+          %b= I18n.t('regionalercsi.hard_bonus')
+        %td.goggles-rightalign
+          %b= I18n.t('total')
+      %tr
+        %td
+          %b= I18n.t('regionalercsi.individual_ranking')
+        %td.goggles-rightalign{ 'class' => @swimmer_score.meetings.size >= 5 ? 'success' : @swimmer_score.meetings.size > 2 ? 'warning' : 'error' }
+          = @swimmer_score.meetings.size > 5 ? 5 : @swimmer_score.meetings.size
+        %td.goggles-rightalign
+          = event_score
+        %td.goggles-rightalign
+          = medal_bonus_score
+        %td.goggles-rightalign
+          = event_bonus_score
+        %td.goggles-rightalign
+          %b= @swimmer_score.total_best_5_on_6
