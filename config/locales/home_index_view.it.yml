@@ -20,4 +20,19 @@ it:
     how_to_ironmaster: "La classifica Ironmaster (IM) prende in considerazione i migliori punteggi ottenuti nelle differenti 18 possibili specialità, senza considerare il tipo visca in cui sono state disputate le gare. L'IronMaster si considera completo se vengono diputate tutte e 18 le diverse specialità."
     how_to_team_ranking: "La classifica di società (CS) prende in considerazione i migliori 3 punteggi ottenuti in 3 differenti specialità, senza considerare il tipo visca in cui sono state disputate le gare. Per entrare a fare parte delal classifica occorre aver preso parte ad almeno 2 manifestazioni. Non sono ammessi gli under 25 e gli M25 a partire dall'anno solare del compimento del venticinquesimo anno."
 
-    
+  regionalercsi:
+    title: "CSI Regionale"   
+    meetings: "Prove"
+    score: "Punteggio"
+    results_detail: "Dettaglio risultati"
+    individual_ranking: "Classifica individuale"
+    individual_ranking_short: "Cl"
+    rank_score: "Piazz."
+    performance_score: "Tab."
+    enhance_score: "Indiv."
+    medals_summary: "Medagliere"
+    meetings_summary: "Riepilogo prove"
+    event_total: "Gare"
+    stand_bonus: "Podi"
+    hard_bonus: "Impegno"
+       

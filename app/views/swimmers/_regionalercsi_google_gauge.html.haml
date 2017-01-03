@@ -1,0 +1,51 @@
+.col-xs-12.col-md-5#charts.goggles-category-gap
+  = render( partial: 'swimmer_badge', locals: { season: @season, swimmer: @swimmer, badge: @badge, team: @team, team_affiliation: @team_affiliation } )
+.col-xs-12.col-md-5
+  .col-xs-6
+    .div{'align' => 'center', 'id' => 'meetingnumber_chart' }
+  .col-xs-6
+    .div{'align' => 'center', 'id' => 'individualranking_chart' }
+.col-xs-12.col-md-2
+  = render( partial: 'regionalercsi_medals_scores_tables' )
+
+:javascript
+  google.charts.load('current', {'packages':['gauge']});
+  google.charts.setOnLoadCallback(drawChart);
+
+  function drawChart() {
+    var mn_score = Number.parseFloat( "#{meetings_number}" );
+    var mn_title = String( 'Prove' ) 
+    var ir_score = Number.parseFloat( "#{individual_ranking}" );
+    var ir_title = String( 'Punteggio' ) 
+
+    var dataMN = google.visualization.arrayToDataTable([
+      ['Label', 'Value'],
+      [mn_title, mn_score]
+    ]);
+    var dataIR = google.visualization.arrayToDataTable([
+      ['Label', 'Value'],
+      [ir_title, ir_score]
+    ]);
+
+    var optionsMN = {
+      redFrom: 0, redTo: 2,
+      yellowFrom:2, yellowTo: 4,
+      greenFrom: 4, greenTo: 6,
+      min: 0, max: 6,
+      majorTicks: ['0', '1', '2', '3', '4', '5', '6']
+    };
+    var optionsIR = {
+      redFrom: 0, redTo: 399,
+      yellowFrom:400, yellowTo: 799,
+      greenFrom: 800, greenTo: 1200,
+      min: 0, max: 1200,
+      majorTicks: ['0', '', '', '600', '', '', '1200'],
+      minorTicks: 5
+    };
+
+    var chartMN = new google.visualization.Gauge(document.getElementById('meetingnumber_chart'));
+    var chartIR = new google.visualization.Gauge(document.getElementById('individualranking_chart'));
+
+    chartMN.draw(dataMN, optionsMN);
+    chartIR.draw(dataIR, optionsIR);
+  };

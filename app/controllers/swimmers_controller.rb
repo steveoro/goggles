@@ -477,6 +477,45 @@ class SwimmersController < ApplicationController
   end
 
 
+  # Radiography for a specified swimmer id: "Regional ER CSI" tab rendering.
+  # Show regional Emilia Romagna CSI results stats and explanation
+  #
+  # == Params:
+  # id: the swimmer id to be processed
+  #
+  # header_year: typically nil, it's a current date override for when checking
+  #      for @swimmer badges in current season (mainly used only inside specs
+  #      to test a couple of edge conditions)
+  #
+  def regionalercsi
+    params.permit! # (No unsafe params can be passed)
+    has_badge = if params['header_year'].nil?
+      @swimmer.has_badge_for_season_and_year?
+    else
+      @swimmer.has_badge_for_season_and_year?( params['header_year'].to_i )
+    end
+    unless has_badge
+      flash[:error] = I18n.t('swimmers.no_associated_badge_found')
+      redirect_back( fallback_location: swimmers_path ) and return
+    end
+
+    # --- "Regional ER CSI" tab: ---
+    @tab_title        = I18n.t('regionalercsi.title')
+    @season_type      = SeasonType.find_by_code('MASCSI')
+    @header_year      = params['header_year'].nil? ? Season.build_header_year_from_date : params['header_year'].to_i
+    @badge            = @swimmer.badges.for_season_type( @season_type ).for_year( @header_year ).first
+    @season           = @badge.season
+    @team             = @badge.team
+    # Check for overrides
+    @team_affiliation = if params['header_year'].present?
+      @team.team_affiliations.for_season_type( @season_type ).for_year( @header_year ).first
+    else
+      @team.get_current_affiliation( @season_type )
+    end
+    @swimmer_score = EnhanceIndividualRankingDAO::EIRSwimmerScoreDAO.new( @swimmer, @season )
+  end
+
+
   # Radiography for a specified swimmer id: "Goggle cup" tab rendering.
   # Show results which concurrs in current goggle cup score, if any
   # For each result, ordered by goggle cup points show google cup point

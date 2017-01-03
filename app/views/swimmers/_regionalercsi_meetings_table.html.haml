@@ -1,0 +1,35 @@
+-# Shows summary of meetings results
+.col-xs-12.col-md-5.table-responsive.goggles-category-gap
+  %table.table.table-striped.table-bordered.table-hover.table-condensed
+    %tbody
+      %tr{'class'=>'info'}
+        %td
+          %b= I18n.t('regionalercsi.meetings_summary')
+          = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+            = image_tag('bullet_arrow_up.png')
+        %td.goggles-rightalign
+          %b= I18n.t('regionalercsi.event_total')
+        %td.goggles-rightalign
+          %b= I18n.t('regionalercsi.stand_bonus')
+        %td.goggles-rightalign
+          %b= I18n.t('regionalercsi.hard_bonus')
+        %td.goggles-rightalign
+          %b= I18n.t('tot')
+        %td.goggles-centeralign{'data-toggle'=>'tooltip', 'title'=>I18n.t('regioanlercsi.individual_ranking')}
+          %b= I18n.t('regionalercsi.individual_ranking_short')
+          
+      - @swimmer_score.meetings.each_with_index do |meeting,index|
+        %tr
+          %td
+            = meeting.meeting.decorate.get_linked_full_name_with_date
+          %td.goggles-rightalign
+            = (meeting.event_points + meeting.performance_points + meeting.enhance_points)
+          %td.goggles-rightalign
+            = meeting.medal_bonus_points
+          %td.goggles-rightalign
+            = meeting.event_bonus_points
+          %td.goggles-rightalign
+            %b= meeting.get_total_points
+          %td.goggles-centeralign{'data-toggle'=>'tooltip', 'title'=>"#{I18n.t('supermaster.ranked_for')} #{I18n.t('supermaster.supermaster')}"}
+            = show_tag( index < 5 )
+.col-xs-12.col-md-1.table-responsive.goggles-category-gap
