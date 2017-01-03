@@ -1,0 +1,55 @@
+-# Shows all regional er csi results
+.col-xs-12.col-md-6.table-responsive.goggles-category-gap
+  %table.table.table-striped.table-bordered.table-hover.table-condensed
+    %tbody
+      %tr{'class'=>'info'}
+        %td{'rowspan'=>2}
+          %b= I18n.t('regionalercsi.results_detail')
+          = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+            = image_tag('bullet_arrow_up.png')
+        %td{'colspan'=>3}
+          %b= I18n.t('result')
+        %td{'colspan'=>3}
+          %b= I18n.t('score')
+        %td.goggles-rightalign{'rowspan'=>2}
+          %b= I18n.t('tot')
+        %td.goggles-centeralign{'data-toggle'=>'tooltip', 'title'=>I18n.t('regioanlercsi.individual_ranking'),'rowspan'=>2}
+          %b= I18n.t('regionalercsi.individual_ranking_short')
+      %tr{'class'=>'info'}
+        %td.goggles-centeralign
+          %b= I18n.t('event')
+        %td.goggles-rightalign
+          %b= I18n.t('rnk')
+        %td.goggles-rightalign
+          %b= I18n.t('timing')
+        %td.goggles-rightalign
+          %b= I18n.t('regionalercsi.rank_score')
+        %td.goggles-rightalign
+          %b= I18n.t('regionalercsi.performance_score')
+        %td.goggles-rightalign
+          %b= I18n.t('regionalercsi.enhance_score')
+          
+      - @swimmer_score.meetings.sort!{ |m,n| m.header_date <=> n.header_date }.each do |meeting|
+        - meeting.event_results.each_with_index do |event,index|
+          - mir = event.meeting_individual_result
+          %tr
+            - if index == 0
+              %td{'rowspan'=>meeting.event_results.count}
+                = meeting.meeting.decorate.get_linked_full_name_with_date
+            %td.goggles-centeralign
+              = mir.event_type.code
+            %td.goggles-rightalign
+              = mir.decorate.show_any_rank_medal
+              = mir.decorate.get_rank_description
+            %td.goggles-rightalign{ 'class' => mir.is_personal_best ? 'success' : '' }
+              = mir.get_timing
+            %td.goggles-rightalign
+              = event.event_points
+            %td.goggles-rightalign
+              = event.performance_points
+            %td.goggles-rightalign
+              = event.enhance_points
+            %td.goggles-rightalign
+              %b= event.get_total_points
+            %td.goggles-centeralign{'data-toggle'=>'tooltip', 'title'=>"#{I18n.t('supermaster.ranked_for')} #{I18n.t('supermaster.supermaster')}"}
+              = show_tag( index == 0 )

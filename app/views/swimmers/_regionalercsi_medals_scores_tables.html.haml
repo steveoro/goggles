@@ -1,0 +1,15 @@
+.col-xs-12.goggles-category-gap
+  %table.table.table-bordered.table-hover.table-condensed
+    %tbody
+      %tr{'class'=>'info'}
+        %td{'colspan'=>2}
+          %b= I18n.t('regionalercsi.medals_summary')
+          = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+            = image_tag('bullet_arrow_up.png')
+      - MedalType.are_not_jokes.sort_by_rank.each do |medal_type|
+        %tr
+          %td
+            = image_tag( medal_type.get_medal_tag )
+            %b= medal_type.i18n_description
+          %td.goggles-rightalign
+            %b= @badge.meeting_individual_results.has_rank(medal_type.rank).count

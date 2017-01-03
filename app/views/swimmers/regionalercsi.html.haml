@@ -1,0 +1,17 @@
+= render( partial: 'tabs_and_title' )
+- cache( cache_key_for_swimmer( 'regionalercsi', @swimmer.id, @max_updated_at, false, false, @badge.id ) ) do
+  - individual_ranking = @swimmer_score.total_best_5_on_6
+  - meetings_number = @swimmer_score.meetings.size
+  = render( partial: 'regionalercsi_sub_tab_menu' )
+
+  .col-xs-12
+    = render( partial: 'regionalercsi_google_gauge', locals: { individual_ranking: individual_ranking, meetings_number: meetings_number } )
+    = render( partial: 'regionalercsi_meetings_table' )
+    = render( partial: 'regionalercsi_results_table' )
+
+  -#= render( partial: 'supermaster_rankings_table', locals: { supermaster_score: supermaster_score, ironmaster_score: ironmaster_score, team_ranking_score: team_ranking_score } )
+  -#= render( partial: 'supermaster_meetings_table' )
+  -#= render( partial: 'supermaster_rules' )
+
+  .col-xs-12.goggles-category-gap#bottom_of_page
+    &nbsp;
