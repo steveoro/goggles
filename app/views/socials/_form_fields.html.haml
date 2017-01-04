@@ -4,23 +4,27 @@
       = label_tag( :text_message, I18n.t('social.message_title') +':', :for => :text_message, class: 'control-label' )
       .controls
         = text_area_tag( :text_message, message_body, class: 'input-xxlarge' )
-.row
-  %label.checkbox
-    = I18n.t('social.request_to_shares_passages')
-    = check_box_tag( :shares_passages, '1', @friendship.shares_passages, id: "spanSharePass#{@swimming_buddy.id}", 'data-toggle' => 'tooltip', title: I18n.t('social.shares_passages_hint') )
+-# XXX [Steve, 20170104] Currently. although planned, passages are only public (no sharing check is performed)
+-#.row
+-#  %label.checkbox
+-#    = check_box_tag( :shares_passages, '1', @friendship.shares_passages, id: "spanSharePass#{@swimming_buddy.id}", 'data-toggle' => 'tooltip', title: I18n.t('social.shares_passages_hint') )
+-#    &nbsp;
+-#    = I18n.t('social.request_to_shares_passages')
 .row
   %label.checkbox
     = check_box_tag( :shares_trainings, '1', @friendship.shares_trainings, id: "spanShareTrain#{@swimming_buddy.id}", 'data-toggle' => 'tooltip', title: I18n.t('social.shares_trainings_hint') )
+    &nbsp;
     = I18n.t('social.request_to_shares_trainings')
 .row
   %label.checkbox
     = check_box_tag( :shares_calendars, '1', @friendship.shares_calendars, id: "spanShareCal#{@swimming_buddy.id}", 'data-toggle' => 'tooltip', title: I18n.t('social.shares_calendars_hint') )
+    &nbsp;
     = I18n.t('social.request_to_shares_calendars')
 .row
-  %hr
+  %hr/
 .row
   .form-group
     .controls
-      = f.submit( @submit_title, id: 'submitBtn', :data => {disable_with: I18n.t(:please_wait), class: 'btn disabled'}, class: 'btn' )
+      = f.submit( @submit_title, id: 'submitBtn', data: {disable_with: I18n.t(:please_wait), class: 'disabled'}, class: "btn btn-primary" )
       %span(id='loadingIndicator' hidden='true')
         = image_tag( 'indicator.gif' )

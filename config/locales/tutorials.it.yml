@@ -148,6 +148,7 @@ it:
       social2: "Per modificare l'elenco dei propri compagni di allenamento, basta selezionare sempre nel menù laterale la voce 'Swimming buddies'. Dall'elenco di utenti che compare, cliccando su di un nome si va alla radiografia del nuotatore corrispondente, dove compaiono i pulsanti per le condivisioni."
       social3: "Il pulsante per la conferma/deconferma dell'identità, serve per confermare (se conoscete personalmente quel nuotatore) che l'associazione tra il nuotatore ed il nome utente è vera. (E' ovviamente possibile de-confermare un utente se vi siete sbagliati o non siete sicuri della sua identità digitale.) Un utente/'goggler' confermato per ora può fare poco di più di un utente 'normale' non confermato, ma ottiene comunque la nostra stima. :-)"
       social4: "Sulla radiografia di un nuotatore 'goggler', cliccando su 'Modifica', si possono editare i parametri di condivisione dell'amicizia (o della richiesta di amicizia)."
+      social4_1: "La creazione e condivisione di calendari personalizzati gare per ora è solo stata pianificata ma non ancora introdotta."
       social5: "Cliccando su 'Rimuovi' si elimina del tutto la possibilità di condivsione - o la richiesta (se questa non è ancora stata accettata)."
       trainings_subtitle: "Allenamenti e modelli"
       search: "Nella finestra di ricerca degli allenamenti è possibile ricercarli (per ora) in base alla descrizione. I risultati base partono dagli unici allenamenti accessibili (o condivisi) con l'utente corrente."

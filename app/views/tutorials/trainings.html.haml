@@ -24,8 +24,14 @@
       .col-xs-12.col-sm-5
         %p= t('tutorial.trainings.social3')
     .row.col-xs-12
-      %p= t('tutorial.trainings.social4')
       %p= t('tutorial.trainings.social5')
+    .row.col-xs-12
+      .col-xs-12.col-sm-7
+        %p= t('tutorial.trainings.social4')
+        %p= t('tutorial.trainings.social4_1')
+      .col-xs-12.col-sm-5
+        .wow.flipInX( data-wow-delay="1.5s" )
+          = image_tag( "tutorial/social_edit.png", class: "img-responsive img-rounded" )
 
     .col-xs-12.goggles-category-gap
       %hr/
@@ -48,7 +54,7 @@
       %p= t('tutorial.trainings.edit')
     .row.col-xs-12
       .col-xs-12.col-sm-8
-        .wow.lightSpeedIn( data-wow-delay="1s" )
+        .wow.bounceInLeft( data-wow-delay="1s" )
           = image_tag( "tutorial/user_training_edit.png", class: "img-responsive img-rounded" )
       .col-xs-12.col-sm-4
         %p= t('tutorial.trainings.edit2')
@@ -60,12 +66,12 @@
     .row.col-xs-12
       %p= t('tutorial.trainings.show')
     .row.col-xs-12
-      .wow.lightSpeedIn( data-wow-delay="1s" )
+      .wow.flipInX( data-wow-delay="1s" )
         = image_tag( "tutorial/user_training_show.png", class: "img-responsive img-rounded" )
     .row.col-xs-12
       %p= t('tutorial.trainings.show1')
     .row.col-xs-12
-      .wow.lightSpeedIn( data-wow-delay="1s" )
+      .wow.lightSpeedIn( data-wow-delay="1.5s" )
         = image_tag( "tutorial/user_training_show1.png", class: "img-responsive img-rounded" )
 
     .col-xs-12.goggles-category-gap
@@ -75,7 +81,7 @@
     .row.col-xs-12
       %p= t('tutorial.trainings.stories')
     .row.col-xs-12
-      .wow.lightSpeedIn( data-wow-delay="1s" )
+      .wow.flipInX( data-wow-delay="1.5s" )
         = image_tag( "tutorial/user_training_stories.png", class: "img-responsive img-rounded" )
     .row.col-xs-12
       %p= t('tutorial.trainings.stories2')
@@ -84,7 +90,7 @@
       %hr/
     .row.col-xs-12
       .col-xs-12.col-sm-7
-        .wow.lightSpeedIn( data-wow-delay="1s" )
+        .wow.lightSpeedIn( data-wow-delay="1.5s" )
         = image_tag( "tutorial/trainings.png", class: "img-responsive img-rounded" )
       .col-xs-12.col-sm-5
         %p= t('tutorial.trainings.radio_show')

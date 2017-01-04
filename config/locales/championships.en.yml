@@ -46,4 +46,4 @@ en:
     begin: "Begin"
     events: "Session events"
     pool: "Swimming"
-    remark: "N.B. Dates with asterisks (*) and meetings without time scheduling should be considered as not confirmed"
+    remark: "Note: starred dates (*) and meetings without time scheduling should be considered as not confirmed"
