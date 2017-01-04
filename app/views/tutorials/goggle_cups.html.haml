@@ -6,5 +6,34 @@
       .section-heading.text-center
         .wow.bounceInDown( data-wow-delay="0.5s" )
           %h2= t('tutorials_tab.goggle_cups')
-        %p.wow.bounceInUp( data-wow-delay="0.5s" )
-          = t('coming_soon')
+    .row.col-xs-12
+      %p= t('tutorial.radio_swimmer.gogglecup_intro')
+      %p= t('tutorial.goggle_cups.note_1')
+      %p= t('tutorial.goggle_cups.note_2')
+
+    .col-xs-12.goggles-category-gap
+      %hr/
+    .row.col-xs-12
+      .col-xs-12.col-sm-8
+        .wow.lightSpeedIn( data-wow-delay="1s" )
+          = image_tag( "tutorial/radio_gogglecup.png", class: "img-responsive img-rounded" )
+      .col-xs-12.col-sm-4
+        %p= t('tutorial.radio_swimmer.gogglecup_intro2')
+    .row.col-xs-12
+      %p= t('tutorial.radio_swimmer.gogglecup_1')
+
+    .col-xs-12.goggles-category-gap
+      %hr/
+    .row.col-xs-12
+      .col-xs-12.col-sm-8
+        .wow.bounceInLeft( data-wow-delay="1s" )
+          = image_tag( "tutorial/radioteam_gogglecup.png", class: "img-responsive img-rounded" )
+      .col-xs-12.col-sm-4
+        %p= t('tutorial.radio_team.gogglecup')
+
+    .row.col-xs-12
+      .col-xs-12.col-sm-8
+        .wow.bounceInLeft( data-wow-delay="1s" )
+          = image_tag( "tutorial/radioteam_gogglecup_history.png", class: "img-responsive img-rounded" )
+      .col-xs-12.col-sm-4
+        %p= t('tutorial.radio_team.gogglecup_history')

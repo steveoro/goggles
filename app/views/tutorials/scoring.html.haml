@@ -6,5 +6,44 @@
       .section-heading.text-center
         .wow.bounceInDown( data-wow-delay="0.5s" )
           %h2= t('tutorial.how_to_calculate_fin_score')
-        %p.wow.bounceInUp( data-wow-delay="0.5s" )
-          = t('coming_soon')
+    .row.col-xs-12
+      %p= t('tutorial.scoring.intro_1')
+
+    .col-xs-12.goggles-category-gap
+      %hr/
+    .row.col-xs-12
+      .section-heading
+        %h3= t('tutorial.scoring.fin_score_subtitle')
+    .row.col-xs-12
+      .col-xs-12.col-sm-8
+        .wow.lightSpeedIn( data-wow-delay="1s" )
+          = image_tag( "tutorial/fin_score_calculation_whole.png", class: "img-responsive img-rounded" )
+      .col-xs-12.col-sm-4
+        %p= t('tutorial.scoring.fin_score_1')
+        %p= t('tutorial.scoring.fin_score_2')
+
+    .col-xs-12.goggles-category-gap
+      %hr/
+    .row.col-xs-12
+      .section-heading
+        %h3= t('tutorial.scoring.fin_time_subtitle')
+    .row.col-xs-12
+      .col-xs-12.col-sm-8
+        .wow.lightSpeedIn( data-wow-delay="1s" )
+          = image_tag( "tutorial/fin_time_calculation_whole.png", class: "img-responsive img-rounded" )
+      .col-xs-12.col-sm-4
+        %p= t('tutorial.scoring.fin_time_1')
+        %p= t('tutorial.scoring.fin_time_2')
+
+    .col-xs-12.goggles-category-gap
+      %hr/
+    .row.col-xs-12
+      .section-heading
+        %h3= t('tutorial.scoring.duel_subtitle')
+    .row.col-xs-12
+      .col-xs-12.col-sm-8
+        .wow.lightSpeedIn( data-wow-delay="1s" )
+          = image_tag( "tutorial/duel_in_the_pool.png", class: "img-responsive img-rounded" )
+      .col-xs-12.col-sm-4
+        %p= t('tutorial.scoring.duel_1')
+        %p= t('tutorial.scoring.duel_2')

@@ -56,8 +56,10 @@
       .col-xs-12.col-sm-4
         %p= t('tutorial.radio_swimmer.gogglecup_intro2')
     .row.col-xs-12
-      %p= t('tutorial.radio_swimmer.gogglecup_1')
-      %p= link_to( "=> (#{ I18n.t('tutorials_tab.goggle_cups') })", tutorials_goggle_cups_path() )
+      %p
+        = t('tutorial.radio_swimmer.gogglecup_1')
+        &nbsp;
+        = link_to( "=>(#{ I18n.t('tutorials_tab.goggle_cups') })", tutorials_goggle_cups_path() )
 
     .col-xs-12.goggles-category-gap
       %hr/
@@ -114,9 +116,11 @@
       .section-heading
         %h3= t('tutorial.radio_swimmer.trainings_subtitle')
     .row.col-xs-12
+      = render( partial: 'goggles/feature_wip_disclaimer' )
+    .row.col-xs-12
       %p= t('tutorial.radio_swimmer.trainings_1')
     .row.col-xs-12
       .wow.bounceInLeft( data-wow-delay="1s" )
         = image_tag( "tutorial/radio_trainings.png", class: "img-responsive img-rounded" )
     .row.col-xs-12
-      %p= link_to( "=> (#{ I18n.t('tutorial.what_about_trainings') })", tutorials_trainings_path() )
+      %p= link_to( "=>(#{ I18n.t('tutorial.what_about_trainings') })", tutorials_trainings_path() )

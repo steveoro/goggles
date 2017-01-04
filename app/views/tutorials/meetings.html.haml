@@ -14,8 +14,10 @@
           = image_tag( "tutorial/meetings_current.png", class: "img-responsive img-rounded" )
     .row.col-xs-12
       %p= t('tutorial.meetings.current_1')
-      %p= t('tutorial.meetings.current_2')
-      %p= link_to( "=> (#{ I18n.t('tutorials_tab.reservations') })", tutorials_reservations_path() )
+      %p
+        = t('tutorial.meetings.current_2')
+        &nbsp;
+        = link_to( "=>(#{ I18n.t('tutorials_tab.reservations') })", tutorials_reservations_path() )
 
     .col-xs-12.goggles-category-gap
       %hr/
@@ -41,7 +43,10 @@
         = image_tag( "tutorial/meetings_teamresults.png", class: "img-responsive img-rounded" )
     .row.col-xs-12
       %p= t('tutorial.meetings.teamresults_1')
-      %p= t('tutorial.meetings.teamresults_2')
+      %p
+        = t('tutorial.meetings.teamresults_2')
+        &nbsp;
+        = link_to( "=>(#{ I18n.t('tutorials_tab.radio_team') })", tutorials_radio_team_path() )
 
     .col-xs-12.goggles-category-gap
       %hr/
@@ -51,10 +56,17 @@
       .wow.bounceInRight( data-wow-delay="1s" )
         = image_tag( "tutorial/meetings_swimmerresults.png", class: "img-responsive img-rounded" )
     .row.col-xs-12
-      %p= t('tutorial.meetings.swimmerresults_1')
+      %p
+        = t('tutorial.meetings.swimmerresults_1')
+        &nbsp;
+        = link_to( "=>(#{ I18n.t('tutorials_tab.radio_swimmer') })", tutorials_radio_swimmer_path() )
+        &nbsp;
+        = t('tutorial.meetings.swimmerresults_2')
 
     .col-xs-12.goggles-category-gap
       %hr/
     .row.col-xs-12
-      %p= t('tutorial.meetings.passages')
-      %p= link_to( "=> (#{ I18n.t('tutorial.how_to_view_passages') })", tutorials_passages_path() )
+      %p
+        = t('tutorial.meetings.passages')
+        &nbsp;
+        = link_to( "=>(#{ I18n.t('tutorial.how_to_view_passages') })", tutorials_passages_path() )

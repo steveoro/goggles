@@ -6,5 +6,38 @@
       .section-heading.text-center
         .wow.bounceInDown( data-wow-delay="0.5s" )
           %h2= t('tutorials_tab.pools')
-        %p.wow.bounceInUp( data-wow-delay="0.5s" )
-          = t('coming_soon')
+    .row.col-xs-12
+      %p= t('tutorial.pools.search')
+    .row.col-xs-12
+      .wow.lightSpeedIn( data-wow-delay="1s" )
+        = image_tag( "tutorial/pools_search.png", class: "img-responsive img-rounded" )
+
+    .col-xs-12.goggles-category-gap
+      %hr/
+    .row.col-xs-12
+      %p= t('tutorial.pools.detail')
+    .row.col-xs-12
+      .col-xs-12.col-sm-8
+        .wow.lightSpeedIn( data-wow-delay="1s" )
+          = image_tag( "tutorial/pools_details.png", class: "img-responsive img-rounded" )
+      .col-xs-12.col-sm-4
+        %p= t('tutorial.pools.detail2')
+
+    .col-xs-12.goggles-category-gap
+      %hr/
+    .row.col-xs-12
+      .section-heading
+        %h3= t('tutorial.pools.review_subtitle')
+    .row.col-xs-12
+      %p= t('tutorial.pools.review_edit')
+    .row.col-xs-12
+      .wow.lightSpeedIn( data-wow-delay="1s" )
+        = image_tag( "tutorial/pool_review_edit.png", class: "img-responsive img-rounded" )
+
+    .row.col-xs-12
+      %p= t('tutorial.pools.review_show')
+    .row.col-xs-12
+      .wow.lightSpeedIn( data-wow-delay="1s" )
+        = image_tag( "tutorial/pool_review_show.png", class: "img-responsive img-rounded" )
+    .row.col-xs-12
+      %p= t('tutorial.pools.review_show2')

@@ -6,5 +6,85 @@
       .section-heading.text-center
         .wow.bounceInDown( data-wow-delay="0.5s" )
           %h2= t('tutorial.what_about_trainings')
-        %p.wow.bounceInUp( data-wow-delay="0.5s" )
-          = t('coming_soon')
+    .row.col-xs-12
+      = render( partial: 'goggles/feature_wip_disclaimer' )
+
+    .row.col-xs-12
+      .section-heading
+        %h3= t('tutorial.trainings.social_subtitle')
+    .row.col-xs-12
+      %p= t('tutorial.trainings.intro')
+      %p= t('tutorial.trainings.intro2')
+      %p= t('tutorial.trainings.social1')
+      %p= t('tutorial.trainings.social2')
+    .row.col-xs-12
+      .col-xs-12.col-sm-7
+        .wow.lightSpeedIn( data-wow-delay="1s" )
+          = image_tag( "tutorial/social_buttons.png", class: "img-responsive img-rounded" )
+      .col-xs-12.col-sm-5
+        %p= t('tutorial.trainings.social3')
+    .row.col-xs-12
+      %p= t('tutorial.trainings.social4')
+      %p= t('tutorial.trainings.social5')
+
+    .col-xs-12.goggles-category-gap
+      %hr/
+      .section-heading
+        %h3= t('tutorial.trainings.trainings_subtitle')
+    .row.col-xs-12
+      %p= t('tutorial.trainings.search')
+    .row.col-xs-12
+      .col-xs-12.col-sm-7
+        .wow.lightSpeedIn( data-wow-delay="1s" )
+          = image_tag( "tutorial/user_training_search.png", class: "img-responsive img-rounded" )
+      .col-xs-12.col-sm-5
+        %p= t('tutorial.trainings.search2')
+    .row.col-xs-12
+      %p= t('tutorial.trainings.search3')
+
+    .col-xs-12.goggles-category-gap
+      %hr/
+    .row.col-xs-12
+      %p= t('tutorial.trainings.edit')
+    .row.col-xs-12
+      .col-xs-12.col-sm-8
+        .wow.lightSpeedIn( data-wow-delay="1s" )
+          = image_tag( "tutorial/user_training_edit.png", class: "img-responsive img-rounded" )
+      .col-xs-12.col-sm-4
+        %p= t('tutorial.trainings.edit2')
+    .row.col-xs-12
+      %p= t('tutorial.trainings.edit3')
+
+    .col-xs-12.goggles-category-gap
+      %hr/
+    .row.col-xs-12
+      %p= t('tutorial.trainings.show')
+    .row.col-xs-12
+      .wow.lightSpeedIn( data-wow-delay="1s" )
+        = image_tag( "tutorial/user_training_show.png", class: "img-responsive img-rounded" )
+    .row.col-xs-12
+      %p= t('tutorial.trainings.show1')
+    .row.col-xs-12
+      .wow.lightSpeedIn( data-wow-delay="1s" )
+        = image_tag( "tutorial/user_training_show1.png", class: "img-responsive img-rounded" )
+
+    .col-xs-12.goggles-category-gap
+      %hr/
+      .section-heading
+        %h3= t('tutorial.trainings.stories_subtitle')
+    .row.col-xs-12
+      %p= t('tutorial.trainings.stories')
+    .row.col-xs-12
+      .wow.lightSpeedIn( data-wow-delay="1s" )
+        = image_tag( "tutorial/user_training_stories.png", class: "img-responsive img-rounded" )
+    .row.col-xs-12
+      %p= t('tutorial.trainings.stories2')
+
+    .col-xs-12.goggles-category-gap
+      %hr/
+    .row.col-xs-12
+      .col-xs-12.col-sm-7
+        .wow.lightSpeedIn( data-wow-delay="1s" )
+        = image_tag( "tutorial/trainings.png", class: "img-responsive img-rounded" )
+      .col-xs-12.col-sm-5
+        %p= t('tutorial.trainings.radio_show')

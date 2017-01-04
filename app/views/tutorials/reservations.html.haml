@@ -6,5 +6,32 @@
       .section-heading.text-center
         .wow.bounceInDown( data-wow-delay="0.5s" )
           %h2= t('tutorial.meeting_reservations')
-        %p.wow.bounceInUp( data-wow-delay="0.5s" )
-          = t('coming_soon')
+    .row.col-xs-12
+      = render( partial: 'goggles/feature_wip_disclaimer' )
+
+    .row.col-xs-12
+      %p= t('tutorial.reservations.line_1')
+      %p
+        %i= t('tutorial.reservations.line_1_1')
+    .row.col-xs-12
+      .col-xs-12.col-sm-8
+        .wow.rollIn( data-wow-delay="1s" )
+          = image_tag( "tutorial/reservations_button.png", class: "img-responsive img-rounded" )
+      .col-xs-12.col-sm-4
+        .col-xs-12
+          %p= t('tutorial.reservations.line_2')
+    .row.col-xs-12
+      %p= t('tutorial.reservations.line_3')
+
+    .row.col-xs-12
+      .col-xs-12.col-sm-8
+        .wow.bounceInLeft( data-wow-delay="1s" )
+          = image_tag( "tutorial/reservations_edit.png", class: "img-responsive img-rounded" )
+      .col-xs-12.col-sm-4
+        %p= t('tutorial.reservations.line_4')
+
+    .row.col-xs-12
+      %p= t('tutorial.reservations.line_5')
+    .row.col-xs-12
+      .wow.bounceInRight( data-wow-delay="1s" )
+        = image_tag( "tutorial/reservations_tab.png", class: "img-responsive img-rounded" )
