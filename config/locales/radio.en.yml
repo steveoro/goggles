@@ -65,9 +65,9 @@ en:
     results_detail: "Results detail"
     ranked_for: "Ranked for"
     ranking_rules: "Supermaster ranking rules"
-    how_to_supermaster: "Supermaster rank (SM) consider the 5 best scores obtained in 5 different event types, without distinguishing for pool types."
-    how_to_ironmaster: "Supermaster rank (IM) consider the best scores obtained in all the 18 possible event types, without distinguishing for pool types. Swimmer should collect all 18 event types to complete IronMaster."
-    how_to_team_ranking: "La classifica di società (CS) prende in considerazione i migliori 3 punteggi ottenuti in 3 differenti specialità, senza considerare il tipo visca in cui sono state disputate le gare. Per entrare a fare parte della classifica occorre aver preso parte ad almeno 2 manifestazioni. Non sono ammessi gli under 25 e gli M25 a partire dall'anno solare del compimento del venticinquesimo anno."
+    how_to_supermaster: "The Supermaster ranking (SM) considers the 5 best scores, obtained in 5 different event types, without distinguishing among the meeting pool types."
+    how_to_ironmaster: "The Supermaster ranking (IM) considers the best scores obtained in all the 18 possible event types, without distinguishing among the meeting pool types. All competing swimmers are required to attend to all 18 possible event types in order achieve IronMaster completion and ranking."
+    how_to_team_ranking: "The Team ranking (CS) takes into account the 3 best scores, obtained in 3 different event types, without distinguishing among the meeting pool types. To get into the Team ranking, swimmers are required to attend at least to 2 different meetings. Under-25 are not admintted. M-25's are admitted starting from the solar year in which the swimmer becomes 25 years old."
 
   regionalercsi:
     title: "CSI Regional"
@@ -77,15 +77,15 @@ en:
     individual_ranking: "Individual ranking"
     individual_ranking_short: "IR"
     rank_score: "Rank"
-    performance_score: "Tabellar"
-    enhance_score: "Enhancement"
+    performance_score: "Perf."
+    enhance_score: "Enhan."
     medals_summary: "Medals"
     meetings_summary: "Meeting summary"
     event_total: "Events"
     stand_bonus: "Stands"
-    hard_bonus: "Hardness"
-    personal_standard_times: 'Personal standard times used to calculate personal enhancement'
-    time_standards: 'Time standards used to calculate performance score'
+    hard_bonus: "Hardest"
+    personal_standard_times: "Personal standard times used to calculate self-improvement"
+    time_standards: "Time standards used to calculate performance score"
     ranking_rules: "Individual ranking rules summary"
-    how_to_meeting_score: 'Meeting score is calculated considering ranking (max 100 points), the performance (tabellar score base 100) and the personal enhancement (max 10 points). For each meetings is considered the event with the better complessive score. The event score is upgraded with double stands bonus (max 10 points) and the hard event bonus (max 8 points).'
-    how_to_individual_ranking: 'In indvidual ranking are considered the best 5 meeting scores among the season.'
+    how_to_meeting_score: "The overall meeting score is computed taking into account the ranking score (max 100 points), the performance score (in base 100) and the self-improvement score (max 10 points). For each meeting is considered just the event that has the best overall score. The event score is upgraded with a 'double ranking' bonus points (max 10 points) in case of double same-rank results, plus the 'hardest' event type bonus score (max 8 points)."
+    how_to_individual_ranking: "For the individual rankings are taken into account the best 5 meeting scores among the whole season."
