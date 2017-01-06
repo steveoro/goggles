@@ -1,6 +1,5 @@
 # encoding: utf-8
 require 'rails_helper'
-require 'meeting_reservation_matrix_processor'
 
 
 shared_examples_for "MeetingReservationMatrixProcessor (not checking results after #call)" do |subject_class|

@@ -5,12 +5,12 @@ Rails.application.routes.draw do
   mount GogglesCore::Engine => "home/index"
 
   # [Steve, 20130716] Root's route required by Devise:
-  root to: "home#index", locale: /en|it/
+  root to: "home#index", locale: /it|en/
 
-  get "/(:locale)", locale: /en|it/, to: "home#index"
+  get "/(:locale)", locale: /it|en/, to: "home#index"
 
   scope "/" do
-    scope "(:locale)", locale: /en|it/ do
+    scope "(:locale)", locale: /it|en/ do
       # === Home ===
       match "wip",                              to: "home#wip",           via: :get,    as: "home_wip"
       match "about",                            to: "home#about",         via: :get,    as: "home_about"

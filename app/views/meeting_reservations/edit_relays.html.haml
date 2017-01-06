@@ -90,21 +90,20 @@
             -#    )                                                                       |
             -#  .col-xs-3.goggles-relay-reservation-cell-toggle
             -#    %br/
-            .text-center{class: "switch_row_#{reservation.id}"}
-              -#.switch{class: "switch_row_#{reservation.id}"}
+            .text-center{class: "switch_row_#{ reservation.id }"}
               - chkbox_id = "#{ MeetingReservationMatrixProcessor::DOM_PRE_RELAY_CHECKED }#{relay_reservation.id}"
               = hidden_field_tag( chkbox_id, relay_reservation.is_doing_this )
-              = check_box_tag( chkbox_id, true, relay_reservation.is_doing_this,  |
-                               { disabled: !can_edit_events } )                   |
-              -#%label{ for: chkbox_id }
+              = check_box_tag( "chk_#{ chkbox_id }", true, relay_reservation.is_doing_this,  |
+                    { disabled: !can_edit_events,                                            |
+                      onclick: "toggleSwitchValue(\"#{ relay_reservation.id }\");" } )       |
         %td
-          = text_area_tag(                                              |
+          = text_area_tag(                                                                |
             "#{ MeetingReservationMatrixProcessor::DOM_PRE_RES_NOTES }#{reservation.id}", |
-            reservation.notes,                                          |
-            'class' => "text-left form-control",                        |
-            disabled: !can_edit_events,                                 |
-            'data-res' => reservation.id                                |
-          )                                                             |
+            reservation.notes,                                                            |
+            'class' => "text-left form-control",                                          |
+            disabled: !can_edit_events,                                                   |
+            'data-res' => reservation.id                                                  |
+          )                                                                               |
 
 .col-xs-12.goggles-category-gap
   .col-xs-2
@@ -120,6 +119,23 @@
 
 :javascript
   /**
+   * Sets (or resets) the checkbox and the hidden field associated with a single
+   * relay reservation id.
+   *
+   * Params:
+   * - relayReservationId: the id as a string of the current event reservation object
+   */
+  function toggleSwitchValue( relayReservationId ) {
+    var checkBox   = $("#chk_#{ MeetingReservationMatrixProcessor::DOM_PRE_RELAY_CHECKED }" + relayReservationId);
+    var hiddenFld  = $("##{ MeetingReservationMatrixProcessor::DOM_PRE_RELAY_CHECKED }" + relayReservationId);
+    var fieldValue = checkBox.prop('checked');
+    var isChecked  = (fieldValue == true) || (fieldValue == 'true') || (fieldValue == '1');
+    // Set the hidden field value according to current checkbox value (so that we can POST also false values):
+    hiddenFld.val( isChecked );
+  };
+  // --------------------------------------------------------------------------
+
+  /**
    * Enables or disables both the edit and the checkbox associated with a single
    * relay reservation id.
    *
@@ -128,11 +144,20 @@
    * - isDisabled: true or false value for the disabled property
    */
   function toggleRowControl( relayReservationId, isDisabled ) {
-    var textEditId = "##{ MeetingReservationMatrixProcessor::DOM_PRE_RELAY_NOTES }" + relayReservationId;
-    $(textEditId).prop('disabled', isDisabled);
-    var checkBoxId = "##{ MeetingReservationMatrixProcessor::DOM_PRE_RELAY_CHECKED }" + relayReservationId;
-    $(checkBoxId).prop('disabled', isDisabled);
+    var checkBox = $("#chk_#{ MeetingReservationMatrixProcessor::DOM_PRE_RELAY_CHECKED }" + relayReservationId);
+    checkBox.prop( 'disabled', isDisabled );
+    // [Steve, 20161229] Relay notes not currently displayed; leave this commented-out:
+    // var textEdit = $("##{ MeetingReservationMatrixProcessor::DOM_PRE_RELAY_NOTES }" + relayReservationId);
+    // textEdit.prop( 'disabled', isDisabled );
+
+    //DEBUG
+    //console.log( "relayReservationId: ", relayReservationId );
+    //console.log( "isDisabled: ", isDisabled );
+    //console.log( "checkBox: ", checkBox );
+    //console.log( "checkBox.prop('checked'): ", checkBox.prop('checked') );
+    //console.log( "hidden field: ", $("##{ MeetingReservationMatrixProcessor::DOM_PRE_RELAY_CHECKED }"+relayReservationId).val() );
   };
+  // --------------------------------------------------------------------------
 
 
   /**
@@ -145,30 +170,35 @@
    * - reservationId: row ID of the "parent" (badge) reservation
    */
   function toggleAllRowControls( relResIds, reservationId ) {
-    var isNotComing = $( "##{ MeetingReservationMatrixProcessor::DOM_PRE_RES_NOT_COMING }" + reservationId ).prop('checked');
-    var isConfirmed = $( "##{ MeetingReservationMatrixProcessor::DOM_PRE_RES_CONFIRMED }" + reservationId ).prop('checked');
-    var textNotes   = $( "##{ MeetingReservationMatrixProcessor::DOM_PRE_RES_NOTES }" + reservationId );
-    // FIXME DO we need this?
+    var isNotComing = $("#chk_#{ MeetingReservationMatrixProcessor::DOM_PRE_RES_NOT_COMING }" + reservationId).prop('checked');
+    var isConfirmed = $("#chk_#{ MeetingReservationMatrixProcessor::DOM_PRE_RES_CONFIRMED }" + reservationId).prop('checked');
+    var textNotes   = $("##{ MeetingReservationMatrixProcessor::DOM_PRE_RES_NOTES }" + reservationId);
     // Set the hidden fields value:
-    //$( "##{ MeetingReservationMatrixProcessor::DOM_PRE_RES_NOT_COMING }" + reservationId ).val( isNotComing );
-    //$( "##{ MeetingReservationMatrixProcessor::DOM_PRE_RES_CONFIRMED }" + reservationId ).val( isConfirmed );
+    $( "##{ MeetingReservationMatrixProcessor::DOM_PRE_RES_NOT_COMING }" + reservationId ).val( isNotComing );
+    $( "##{ MeetingReservationMatrixProcessor::DOM_PRE_RES_CONFIRMED }" + reservationId ).val( isConfirmed );
     // Toggle row notes editability:
     textNotes.prop( 'disabled', isNotComing || isConfirmed );
 
+    // DEBUG
+    //console.log( "relResIds: ", relResIds );
+
     // Toggle editability & clear/reset values:
     for (var i = 0; i < relResIds.length; i++) {
-      // Toggle editability:
+      // Toggle editability and set hidden field value:
       toggleRowControl( relResIds[i], isNotComing || isConfirmed );
 
-      // Clear edit box value:
+      // Clear edit box value and the reservation checkbox and the hidden field:
       if ( isNotComing ) {
+        // [Steve, 20161229] Relay notes not currently displayed; leave this commented-out:
         //$("##{ MeetingReservationMatrixProcessor::DOM_PRE_RELAY_NOTES }" + relResIds[i]).val(null);
-        $("##{ MeetingReservationMatrixProcessor::DOM_PRE_RELAY_CHECKED }" + relResIds[i]).prop('checked', false);
+        $("##{ MeetingReservationMatrixProcessor::DOM_PRE_RELAY_CHECKED }" + relResIds[i]).val( false );
+        $("#chk_#{ MeetingReservationMatrixProcessor::DOM_PRE_RELAY_CHECKED }" + relResIds[i]).prop( 'checked', false );
       }
     }
 
+    // (Here we must NOT hide the row controls when isConfirmed, since we need to see the actual resulting checkbox status)
     // Hide or show all the row switches in one shot:
-    if ( isNotComing || isConfirmed ) {
+    if ( isNotComing ) {
       $( ".switch_row_" + reservationId ).hide();
     }
     else {

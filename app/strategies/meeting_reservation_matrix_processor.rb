@@ -6,7 +6,7 @@ require 'common/validation_error_tools'
 
 = MeetingReservationMatrixProcessor
 
- - Goggles framework vers.:  6.030
+ - Goggles framework vers.:  6.040
  - author: Steve A.
 
  Parent Strategy class used as common ancestor for the creator and updater classes
@@ -23,18 +23,18 @@ class MeetingReservationMatrixProcessor
   # reservation. (These are for internal usage only).
   # These strings are followed by the actual reservation row ID as found
   # in the database.
-  DOM_PRE_RES_NOT_COMING = "resNC_"
-  DOM_PRE_RES_CONFIRMED  = "resCnf_"
-  DOM_PRE_RES_NOTES      = "resNotes_"
+  DOM_PRE_RES_NOT_COMING = "resNC_"    unless defined? DOM_PRE_RES_NOT_COMING
+  DOM_PRE_RES_CONFIRMED  = "resCnf_"   unless defined? DOM_PRE_RES_CONFIRMED
+  DOM_PRE_RES_NOTES      = "resNotes_" unless defined? DOM_PRE_RES_NOTES
 
   # Form DOM ID prefixes for detail row fields regarding an event reservation
   # (individual or relay). (These are for internal usage only).
   # These strings are followed by the actual event/relay reservation row ID as
   # found in the database.
-  DOM_PRE_EVENT_TIMING   = "evr_"
-  DOM_PRE_EVENT_CHECKED  = "evrChk_"
-  DOM_PRE_RELAY_CHECKED  = "errChk_"
-  DOM_PRE_RELAY_NOTES    = "errNotes_"
+  DOM_PRE_EVENT_TIMING   = "evr_"      unless defined? DOM_PRE_EVENT_TIMING
+  DOM_PRE_EVENT_CHECKED  = "evrChk_"   unless defined? DOM_PRE_EVENT_CHECKED
+  DOM_PRE_RELAY_CHECKED  = "errChk_"   unless defined? DOM_PRE_RELAY_CHECKED
+  DOM_PRE_RELAY_NOTES    = "errNotes_" unless defined? DOM_PRE_RELAY_NOTES
   #-- --------------------------------------------------------------------------
   #++
 

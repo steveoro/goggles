@@ -4,7 +4,7 @@
 
 == PassagesCollectSheetLayout
 
-- version:  6.035
+- version:  6.040
 - author:   Steve A.
 
 =end
@@ -12,7 +12,7 @@ class PassagesCollectSheetLayout
   require "prawn"
   require 'common/format'
 
-  AUTHOR_STRING = '--=[  Goggles  -o^o-  ]=-- / (p) 2013-2016' unless defined?(AUTHOR_STRING)
+  AUTHOR_STRING = '--=[  Goggles  -o^o-  ]=-- / (p) 2013-2017' unless defined?(AUTHOR_STRING)
 
 
   # Prepares rendering options, default values and starts the rendering
@@ -235,6 +235,7 @@ class PassagesCollectSheetLayout
     data_table_array << (
       [
         "<i><b>#{ event.get_full_name }</b></i>",
+        "<i>#{ I18n.t('swimmers.year_of_birth') } / #{ I18n.t('swimmers.age_current') }</i>",
         # FIXME Quick'n'dirty way to get at least a couple of free columns to write passages during relays:
         #       This does not take in account certain passage types/pool types combos for relays.
         #       (The actual computation to get the label right is more complex)
@@ -249,6 +250,7 @@ class PassagesCollectSheetLayout
       # Add the swimmer name in the front cell and add the resulting row (array):
       data_table_array << [
           res.swimmer.complete_name,
+          "#{ res.swimmer.year_of_birth } / #{ Date::today.year - res.swimmer.year_of_birth }",
           ' ', # empty free space
           # Empty space to insert timing:
           ' ',

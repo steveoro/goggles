@@ -322,7 +322,7 @@ describe MeetingsController, type: :controller do
       end
 
       it "accepts the request" do
-        expect( response.status ).to redirect_to( meeting_edit_passages_path(15202, locale: 'en') )
+        expect( response.status ).to redirect_to( meeting_edit_passages_path(15202, locale: I18n.default_locale) )
       end
       # TODO
     end

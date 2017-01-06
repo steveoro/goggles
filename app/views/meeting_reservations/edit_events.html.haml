@@ -187,8 +187,6 @@
     var textEdit = $("##{ MeetingReservationMatrixProcessor::DOM_PRE_EVENT_TIMING }" + eventReservationId);
     var checkBox = $("#chk_##{ MeetingReservationMatrixProcessor::DOM_PRE_EVENT_CHECKED }" + eventReservationId);
     textEdit.prop( 'disabled', isDisabled );
-    // Set the hidden field & the checkbox itself (so that we can POST both checked & unchecked values):
-    // (We need the checkbox to have a different ID from the hidden field so that the CSS toggle can work)
     checkBox.prop( 'disabled', isDisabled );
   };
 
