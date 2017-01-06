@@ -422,7 +422,7 @@ class MeetingReservationsController < ApplicationController
         mail_title,
         "User #{current_user} has edited remotely the reservations for his/hers team, meeting ID #{@meeting.id}.\r\nThe attached log file must be synchronized locally.",
         base_filename,
-        full_sql_diff_path
+        full_diff_pathname
       ).deliver
     end
   end

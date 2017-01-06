@@ -176,10 +176,6 @@ before 'deploy:check:linked_files', 'app:setup:prod_env'
 
 before 'deploy:check:linked_files', 'app:setup:common_output'
 
-# Clear the cache before restart:
-#
-before 'deploy:restart', 'remote:tmp_clear'
-
 # [Steve, 20141201] Warning: this may lead to errors on "cold" deploys, where the creation
 # of the DB has been somehow skipped volontarily.
 # Commented-out since we now clear the DB directly on the backup dump and we rebuild
