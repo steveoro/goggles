@@ -168,3 +168,13 @@ span.ui-spinner .ui-icon {
 .goggles-meeting-fin {
     background: #AACCF6;
 }
+
+td#goggles-border-lx-thick {
+    border-left-width: 3px;
+    border-left-color: darkgrey;
+}
+
+td#goggles-border-rx-thick {
+    border-right-width: 3px;
+    border-right-color: darkgrey;
+}

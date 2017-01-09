@@ -7,7 +7,7 @@ require 'wrappers/timing'
 
 = MeetingReservationMatrixUpdater
 
- - Goggles framework vers.:  6.036
+ - Goggles framework vers.:  6.043
  - author: Steve A.
 
  Strategy class used to update the existing matrix of either MeetingEventReservation
@@ -182,7 +182,8 @@ class MeetingReservationMatrixUpdater < MeetingReservationMatrixProcessor
 #          puts "timing set"
           # (We need to get a single Timing instance from the value and then get
           #  the single fields: suggested_seconds, minutes and hundreds)
-          new_value = TimingParser.parse( new_value )
+          # [Steve, 20170109] Fix for empty POST-ed results: (we MUST ignore empties, when the field is a Timing)
+          new_value = (new_value == '') ? nil : TimingParser.parse( new_value )
 
         else                                        # Ignore any other case:
 # DEBUG
@@ -204,7 +205,9 @@ class MeetingReservationMatrixUpdater < MeetingReservationMatrixProcessor
           record.suggested_seconds = new_value.seconds
           record.suggested_hundreds = new_value.hundreds
 
-        elsif new_value.instance_of?( TrueClass ) || new_value.instance_of?( FalseClass )
+        # If it's a boolean value, we process the new value only in case of an actual change:
+        elsif ( new_value.instance_of?( TrueClass ) || new_value.instance_of?( FalseClass ) ) &&
+              ( record.send(field_name) != new_value )
           record.send(field_name + '=', new_value)
           # Clear also the timing if the field is 'is_doing_this' and the value is false:
           if (field_name =~ /is_doing_this/) && (! new_value) &&

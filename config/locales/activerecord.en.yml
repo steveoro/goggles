@@ -10,6 +10,7 @@ en:
       result_type: "Result Type"
       season_type: "Season Type"
       season: "Season"
+      session: "Session"
       data_import_season: "(Temp.) Season"
       meeting: "Meeting"
       data_import_meeting: "(Temp.) Meeting"

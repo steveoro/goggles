@@ -105,8 +105,8 @@ class MeetingReservationsController < ApplicationController
   #
   def update_events
 # DEBUG
-#    logger.debug "\r\n\r\n!! ------ #{self.class.name}#update_events -----"
-#    logger.debug "> #{params.inspect}"
+    logger.debug "\r\n\r\n!! ------ #{self.class.name}#update_events -----"
+    logger.debug "> #{params.inspect}"
     # XXX Sample POST output:
     # <ActionController::Parameters {"utf8"=>"✓",
     #   "authenticity_token"=>"<auth_string_token>",

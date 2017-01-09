@@ -55,6 +55,7 @@ it:
       score_computation_type: "Tipo Calcolo Punti"
       season_type: "Tipo Stagione"
       season: "Stagione"
+      session: "Sessione"
       shower_type: "Tipo Docce"
       stroke_type: "Stile"
       swimmer_level_type: "Liv. nuotatore"
