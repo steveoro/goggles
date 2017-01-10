@@ -112,7 +112,7 @@ describe MeetingReservationMatrixUpdater, type: :strategy do
     let(:current_user)  { FactoryGirl.build(:user) }
 
     context "with some MISSING but edited meeting reservations," do
-      let(:missing_res_id) { MeetingReservation.count > 0 ? MeetingReservation.last + 10000 : 100 }
+      let(:missing_res_id) { MeetingReservation.count > 0 ? MeetingReservation.last.id + 10000 : 100 }
       let(:params) do
         {
           "#{ MeetingReservationMatrixProcessor::DOM_PRE_RES_NOT_COMING }#{ missing_res_id }"=>"1",

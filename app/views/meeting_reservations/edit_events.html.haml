@@ -10,51 +10,8 @@
 = form_tag( meeting_reservations_update_events_path(id: @meeting.id), method: :post, onsubmit: "$('#loadingIndicator').show();" )
 %table.table.table-striped.table-bordered.table-hover.table-condensed
   %tbody
-    %tr.affix-top#header_row
-      - first_res_event = @reservations_events[ @meeting_reservations.first.id ]
-      - session_dates   = first_res_event.map{ |re| Format.a_date(re.meeting_session.scheduled_date) + ' ' + Format.a_time(re.meeting_session.begin_time) }
-      - session_orders  = first_res_event.map{ |re| "(#{ I18n.t('activerecord.models.session') } #{ re.meeting_session.session_order }) #{ DayPartType.new(code: re.meeting_session.day_part_type.code).i18n_short }" }
-      - uniq_dates  = session_dates.uniq
-      - uniq_orders = session_orders.uniq
-      -# Common header #1: session date
-      %tr.success.text-center
-        %td{ colspan: 2 }
-          &nbsp;
-        - tot_columns = uniq_dates.map{ |date| session_dates.count(date) }
-        - uniq_dates.each_with_index do |session_date, index|
-          -# Avoid a thick border on the last column:
-          - is_not_last_item = index+1 < uniq_dates.count
-          %td{ colspan: tot_columns[index], id: (is_not_last_item ? "goggles-border-rx-thick" : nil) }
-            %i= session_date
-        %td
-          &nbsp;
-      -# Common header #2: session order + day part type
-      %tr.success.text-center
-        %td{ colspan: 2 }
-        - tot_columns = uniq_orders.map{ |order| session_orders.count(order) }
-        - uniq_orders.each_with_index do |session_order, index|
-          -# Avoid a thick border on the last column:
-          - is_not_last_item = index+1 < uniq_orders.count
-          %td{ colspan: tot_columns[index], id: (is_not_last_item ? "goggles-border-rx-thick" : nil) }
-            %i= session_order
-        %td
-          &nbsp;
-      -# Common header #3: event title
-      %tr.success.text-center
-        %td{ colspan: 2 }
-          %i= I18n.t('meeting_stats.swimmers')
-        - curr_session_order = 1
-        - first_res_event.each do |event_reservation|
-          - timing_hundreds = event_reservation.get_timing_instance.to_hundreds
-          - if event_reservation.meeting_session.session_order > curr_session_order
-            - curr_session_order = event_reservation.meeting_session.session_order
-            %td#goggles-border-lx-thick
-              %b= event_reservation.event_type.i18n_short
-          - else
-            %td
-              %b= event_reservation.event_type.i18n_short
-        %td
-          %i= I18n.t('meeting_reservation.free_notes')
+    = render( partial: 'header_row', locals: { first_reservation: @reservations_events[@meeting_reservations.first.id] } )
+
     -# Data rows:
     - @meeting_reservations.each do |reservation|
       - res_events_ids = @reservations_events[reservation.id].map{ |re| re.id }
@@ -101,11 +58,10 @@
         -# At the same time, row controls are editable only if the reservation hasn't been already confirmed or if the swimmer is not coming to the meeting
         - can_edit_events = (!reservation.has_confirmed) && (!reservation.is_not_coming) && TeamManagerValidator.is_manageable?( @meeting ) && (@is_valid_team_manager || ( @swimmer && (@swimmer.id == reservation.swimmer_id)))
         - @reservations_events[reservation.id].each do |event_reservation|
-          - timing_hundreds = event_reservation.get_timing_instance.to_hundreds
           %td{ 'data-toggle'=>'tooltip', 'title'=> event_reservation.event_type.i18n_short }
             .text-center
               = text_field_tag(                                                       |
-                "#{ MeetingReservationMatrixProcessor::DOM_PRE_EVENT_TIMING }#{event_reservation.id}",                                        |
+                "#{ MeetingReservationMatrixProcessor::DOM_PRE_EVENT_TIMING }#{event_reservation.id}", |
                 event_reservation.is_doing_this ? event_reservation.get_timing : nil, |
                 'class' => "input-mini form-control text-right timing",               |
                 disabled: !can_edit_events,                                           |

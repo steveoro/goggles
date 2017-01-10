@@ -10,28 +10,8 @@
 = form_tag( meeting_reservations_update_relays_path(id: @meeting.id), method: :post, onsubmit: "$('#loadingIndicator').show();" )
 %table.table.table-striped.table-bordered.table-hover.table-condensed
   %tbody
-    -# Common header #1: session date
-    %tr.success.text-center
-      %td{ colspan: 2 }
-        &nbsp;
-      - first_res_relay = @reservations_relays[ @meeting_reservations.first.id ]
-      - session_dates   = first_res_relay.map{ |re| Format.a_date(re.meeting_session.scheduled_date) + ' ' + Format.a_time(re.meeting_session.begin_time) }
-      - uniq_dates      = session_dates.uniq
-      - tot_columns     = uniq_dates.map{ |d| session_dates.count(d) }
-      - uniq_dates.each_with_index do |session_date, index|
-        %td{ colspan: tot_columns[index] }
-          %i= session_date
-      %td
-        &nbsp;
-    -# Common header #2: event title
-    %tr.success.text-center
-      %td{ colspan: 2 }
-        %i= I18n.t('meeting_stats.swimmers')
-      - @reservations_relays[ @meeting_reservations.first.id ].each do |relay_reservation|
-        %td
-          %b= relay_reservation.event_type.i18n_short
-      %td
-        %i= I18n.t('meeting_reservation.free_notes')
+    = render( partial: 'header_row', locals: { first_reservation: @reservations_relays[@meeting_reservations.first.id] } )
+
     -# Data rows:
     - @meeting_reservations.each do |reservation|
       - res_events_ids = @reservations_relays[reservation.id].map{ |re| re.id }
