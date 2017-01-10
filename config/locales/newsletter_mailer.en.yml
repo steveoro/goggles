@@ -12,3 +12,7 @@ en:
     community:
       generic_title: "You have some unread notifies!"
       unread_news: "Unread news"
+    reservations:
+      title: "MEETING RESERVATIONS update"
+      subject: "MEETING RESERVATIONS update"
+      contents: "The user <i>%{user_name}</i> has just updated the meeting reservations for '<b>%{meeting_name}</b>'.<br/>You can check (and manage) this out right <a href=\"%{manage_url}\">here</a>."

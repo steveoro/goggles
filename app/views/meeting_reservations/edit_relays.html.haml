@@ -16,7 +16,6 @@
     - @meeting_reservations.each do |reservation|
       - res_events_ids = @reservations_relays[reservation.id].map{ |re| re.id }
       - res_coming_id = "#{ MeetingReservationMatrixProcessor::DOM_PRE_RES_NOT_COMING }#{reservation.id}"
-      - res_confirmed_id = "#{ MeetingReservationMatrixProcessor::DOM_PRE_RES_CONFIRMED }#{reservation.id}"
       %tr
         %td{ colspan: 1, class: 'info' }
           %a{'id'=>"swimmer#{reservation.swimmer_id}", 'href'=>"#{ swimmer_radio_path(id: reservation.swimmer_id) }", 'data-toggle'=>'tooltip', 'title'=>I18n.t('radiography.radio_tab_tooltip')}
@@ -38,31 +37,17 @@
                   { disabled: !@is_valid_team_manager,                          |
                     onclick: "toggleAllRowControls( #{ res_events_ids }, '#{ reservation.id }' );" |
                 } )                                                             |
-            .row.col-xs-12
-              %small
-                %i= I18n.t('meeting_reservation.has_confirmed')
-              .goggles-label-margin80
-                .switch
-                  = hidden_field_tag( res_confirmed_id, reservation.has_confirmed )
-                  = check_box_tag(                                                    |
-                      "chk_#{ res_confirmed_id }", true,  reservation.has_confirmed,  |
-                      { class: 'common-switch common-switch-round',                   |
-                        disabled: !@is_valid_team_manager,                            |
-                        onclick: "toggleAllRowControls( #{ res_events_ids }, '#{ reservation.id }' );" |
-                    } )                                                               |
-                  %label{ for: "chk_#{ res_confirmed_id }" }
 
         -# Only team managers can edit any row; a simple swimmer can edit only his/her own row
-        -# (if the reservation hasn't been already confirmed to the manager and the meeting
-        -#  is still manageable):
-        -# At the same time, row controls are editable only if the reservation hasn't been already confirmed or if the swimmer is not coming to the meeting
-        - can_edit_events = (!reservation.has_confirmed) && (!reservation.is_not_coming) && TeamManagerValidator.is_manageable?( @meeting ) && (@is_valid_team_manager || ( @swimmer && (@swimmer.id == reservation.swimmer_id)))
+        -# (if the reservation is manageable):
+        -# At the same time, row controls are enabled only if the swimmer is coming to the meeting
+        - can_edit_events = (!reservation.is_not_coming) && TeamManagerValidator.is_manageable?( @meeting ) && (@is_valid_team_manager || ( @swimmer && (@swimmer.id == reservation.swimmer_id)))
         - @reservations_relays[reservation.id].each do |relay_reservation|
           %td{ 'data-toggle'=>'tooltip', 'title'=> relay_reservation.event_type.i18n_short }
             -#.row
             -#  .col-xs-9
             -#    = text_field_tag(                                                       |
-            -#      "#{ MeetingReservationMatrixProcessor::DOM_PRE_RELAY_NOTES }#{relay_reservation.id}",                                        |
+            -#      "#{ MeetingReservationMatrixProcessor::DOM_PRE_RELAY_NOTES }#{relay_reservation.id}", |
             -#      relay_reservation.is_doing_this ? relay_reservation.notes : nil,      |
             -#      'class' => "form-control",                                            |
             -#      disabled: !can_edit_events,                                           |
@@ -151,13 +136,11 @@
    */
   function toggleAllRowControls( relResIds, reservationId ) {
     var isNotComing = $("#chk_#{ MeetingReservationMatrixProcessor::DOM_PRE_RES_NOT_COMING }" + reservationId).prop('checked');
-    var isConfirmed = $("#chk_#{ MeetingReservationMatrixProcessor::DOM_PRE_RES_CONFIRMED }" + reservationId).prop('checked');
     var textNotes   = $("##{ MeetingReservationMatrixProcessor::DOM_PRE_RES_NOTES }" + reservationId);
     // Set the hidden fields value:
     $( "##{ MeetingReservationMatrixProcessor::DOM_PRE_RES_NOT_COMING }" + reservationId ).val( isNotComing );
-    $( "##{ MeetingReservationMatrixProcessor::DOM_PRE_RES_CONFIRMED }" + reservationId ).val( isConfirmed );
     // Toggle row notes editability:
-    textNotes.prop( 'disabled', isNotComing || isConfirmed );
+    textNotes.prop( 'disabled', isNotComing );
 
     // DEBUG
     //console.log( "relResIds: ", relResIds );
@@ -165,7 +148,7 @@
     // Toggle editability & clear/reset values:
     for (var i = 0; i < relResIds.length; i++) {
       // Toggle editability and set hidden field value:
-      toggleRowControl( relResIds[i], isNotComing || isConfirmed );
+      toggleRowControl( relResIds[i], isNotComing );
 
       // Clear edit box value and the reservation checkbox and the hidden field:
       if ( isNotComing ) {

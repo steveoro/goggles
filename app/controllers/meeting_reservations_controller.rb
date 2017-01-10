@@ -10,7 +10,7 @@ require 'team_manager_validator'
 
 = MeetingReservationsController
 
-  - version:  6.036
+  - version:  6.044
   - author:   Steve A.
 
 =end
@@ -105,8 +105,8 @@ class MeetingReservationsController < ApplicationController
   #
   def update_events
 # DEBUG
-    logger.debug "\r\n\r\n!! ------ #{self.class.name}#update_events -----"
-    logger.debug "> #{params.inspect}"
+#    logger.debug "\r\n\r\n!! ------ #{self.class.name}#update_events -----"
+#    logger.debug "> #{params.inspect}"
     # XXX Sample POST output:
     # <ActionController::Parameters {"utf8"=>"✓",
     #   "authenticity_token"=>"<auth_string_token>",
@@ -417,6 +417,7 @@ class MeetingReservationsController < ApplicationController
     base_filename = File.basename( full_diff_pathname )
     logger.info( "\r\nLog file '#{ base_filename }' created" )
     if Rails.env == 'production'
+      # Send the DB diff file to the SysOp
       AgexMailer.action_notify_mail(
         current_user,
         mail_title,
@@ -424,6 +425,22 @@ class MeetingReservationsController < ApplicationController
         base_filename,
         full_diff_pathname
       ).deliver
+
+      # Send an additional mail message to the related team manager users (except the current user):
+      filtered_managers = @team_affiliation.team_managers.all.select{ |tm| tm.user_id != current_user.id }
+      filtered_managers.each do |team_manager|
+        NewsletterMailer.custom_mail(
+          team_manager.user,
+          I18n.t("newsletter_mailer.reservations.subject"),
+          I18n.t("newsletter_mailer.reservations.title"),
+          I18n.t(
+            "newsletter_mailer.reservations.contents",
+            user_name: current_user.get_full_name,
+            meeting_name: @meeting.get_full_name,
+            manage_url: meeting_reservations_edit_events_url(id: @meeting.id)
+          )
+        ).deliver
+      end
     end
   end
   #-- -------------------------------------------------------------------------
