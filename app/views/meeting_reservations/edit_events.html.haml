@@ -44,12 +44,14 @@
               .goggles-label-margin80
                 .switch
                   = hidden_field_tag( res_confirmed_id, reservation.has_confirmed )
-                  = check_box_tag(                                                    |
-                      "chk_#{ res_confirmed_id }", true,  reservation.has_confirmed,  |
-                      { class: 'common-switch common-switch-round',                   |
-                        disabled: !@is_valid_team_manager,                            |
-                        onclick: "toggleAllRowControls( #{ res_events_ids }, '#{ reservation.id }' );" |
-                    } )                                                               |
+                  = check_box_tag(                                                        |
+                      "chk_#{ res_confirmed_id }", true,  reservation.has_confirmed,      |
+                      { class: 'common-switch common-switch-round has_confirmed_switch',  |
+                        disabled: !@is_valid_team_manager,                                |
+                        'data-event-res' => reservation.id,                               |
+                        'data-event-ids' => res_events_ids,                               |
+                        onclick: "toggleConfirmSwitchValue( #{ res_events_ids }, '#{ reservation.id }' );" |
+                    } )                                                                   |
                   %label{ for: "chk_#{ res_confirmed_id }" }
 
         -# Only team managers can edit any row; a simple swimmer can edit only his/her own row.
@@ -58,7 +60,7 @@
         -# At the same time, row controls are editable only if the reservation hasn't been already confirmed or if the swimmer is not coming to the meeting
         - can_edit_events = (!reservation.has_confirmed) && (!reservation.is_not_coming) && TeamManagerValidator.is_manageable?( @meeting ) && (@is_valid_team_manager || ( @swimmer && (@swimmer.id == reservation.swimmer_id)))
         - @reservations_events[reservation.id].each do |event_reservation|
-          %td{ 'data-toggle'=>'tooltip', 'title'=> event_reservation.event_type.i18n_short }
+          %td{ 'data-toggle'=>'tooltip', 'title'=> "#{ event_reservation.event_type.i18n_short }, #{ reservation.swimmer.get_full_name }" }
             .text-center
               = text_field_tag(                                                       |
                 "#{ MeetingReservationMatrixProcessor::DOM_PRE_EVENT_TIMING }#{event_reservation.id}", |
@@ -66,8 +68,7 @@
                 'class' => "input-mini form-control text-right timing",               |
                 disabled: !can_edit_events,                                           |
                 'data-toggle'=>'tooltip',                                             |
-                'title'=> event_reservation.event_type.i18n_short,                    |
-                'data-event-res' => event_reservation.id                              |
+                'title'=> event_reservation.event_type.i18n_short                     |
               )                                                                       |
             .text-center
               %small
@@ -80,7 +81,7 @@
                 = check_box_tag("chk_#{ chkbox_id }", true, event_reservation.is_doing_this,  |
                   { class: 'common-switch common-switch-round',                               |
                     disabled: !can_edit_events,                                               |
-                    onclick: "toggleSwitchValue(\"#{ event_reservation.id }\", \"#{ escape_javascript(event_reservation.get_timing) }\");" |
+                    onclick: "toggleEventSwitchValue(\"#{ event_reservation.id }\", \"#{ escape_javascript(event_reservation.get_timing) }\");" |
                 } )                                                                           |
                 %label{ for: "chk_#{ chkbox_id }" }
         %td
@@ -129,6 +130,33 @@
   // --------------------------------------------------------------------------
 
   /**
+   * Sets (or resets) the value of the hidden field whenever the confirm switch label
+   * is toggled.
+   *
+   * The reservation row is assumed to be toggled as read-only whenever a user confirms
+   * its choices.
+   * However, to avoid ignoring disabled edited row values during HTML form POST,
+   * we disable the whole row controls only after 'onsubmit' (upon the next page reload).
+   *
+   * Params:
+   * - evResIds: the array of event reservation object IDs
+   * - reservationId: row ID of the "parent" (badge) reservation
+   */
+  function toggleConfirmSwitchValue( evResIds, reservationId ) {
+    var isConfirmed = $("#chk_#{ MeetingReservationMatrixProcessor::DOM_PRE_RES_CONFIRMED }" + reservationId).prop('checked');
+    // Set the hidden fields accordingly:
+    $( "##{ MeetingReservationMatrixProcessor::DOM_PRE_RES_CONFIRMED }" + reservationId ).val( isConfirmed );
+
+    // For the above reasons, we only reset editability whenever the switch is turned off
+    // again, but we do not never disable the row controls if the field is confirmed:
+    // (to avoid ignoring POST-ed edited but disabled fields)
+    if ( !isConfirmed ) {
+      toggleAllRowControls( evResIds, reservationId );
+    }
+  };
+
+
+  /**
    * Sets (or resets) the value of the text edit field for the registration timing
    * according to the boolean value of the boolean registration checkbox.
    *
@@ -136,7 +164,7 @@
    * - eventReservationId: the id as a string of the current event_reservation object
    * - timingText: text value to be set in the edit box if the checkbox is toggled on
    */
-  function toggleSwitchValue( eventReservationId, timingText ) {
+  function toggleEventSwitchValue( eventReservationId, timingText ) {
     var textEdit   = $("##{ MeetingReservationMatrixProcessor::DOM_PRE_EVENT_TIMING }" + eventReservationId);
     var hiddenFld  = $("##{ MeetingReservationMatrixProcessor::DOM_PRE_EVENT_CHECKED }" + eventReservationId);
     var fieldValue = hiddenFld.val();
