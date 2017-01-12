@@ -60,7 +60,7 @@
           -# (if the reservation hasn't been already confirmed to the manager and the meeting
           -#  is still manageable)
           -# At the same time, row controls are editable only if the reservation hasn't been already confirmed or if the swimmer is not coming to the meeting
-          - can_edit_events = (!reservation.has_confirmed) && (!reservation.is_not_coming) && TeamManagerValidator.is_manageable?( @meeting ) && (@is_valid_team_manager || ( @swimmer && (@swimmer.id == reservation.swimmer_id)))
+          - can_edit_events = (!reservation.has_confirmed) && (!reservation.is_not_coming) && TeamManagerValidator.is_reservation_manageable?( @meeting ) && (@is_valid_team_manager || ( @swimmer && (@swimmer.id == reservation.swimmer_id)))
           - @reservations_events[reservation.id].each do |event_reservation|
             %td{ 'data-toggle'=>'tooltip', 'title'=> "#{ event_reservation.event_type.i18n_short }, #{ reservation.swimmer.get_full_name }" }
               .text-center
@@ -97,7 +97,7 @@
 
 .col-xs-12.goggles-category-gap
   .col-xs-2
-    - can_save_form = TeamManagerValidator.is_manageable?( @meeting ) && ( @is_valid_team_manager || TeamManagerValidator.any_reservations_for?( current_user, @meeting ) )
+    - can_save_form = TeamManagerValidator.is_reservation_manageable?( @meeting ) && ( @is_valid_team_manager || TeamManagerValidator.any_reservations_for?( current_user, @meeting ) )
     = submit_tag( I18n.t(:save), id: 'btnSaveEventReservation', disabled: !can_save_form,     |
         data: { confirm: I18n.t('meeting_reservation.do_you_want_to_save_changes'),           |
         disable_with: I18n.t(:please_wait), class: 'disabled' }, class: "btn btn-primary" )   |

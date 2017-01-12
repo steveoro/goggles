@@ -122,7 +122,7 @@ class MeetingDecorator < Draper::Decorator
   #
   def manage_reservation_button( current_user )
     if ( current_user && TeamManagerValidator.any_reservations_for?(current_user, object) ) ||
-       ( TeamManagerValidator.is_manageable?( object ) &&
+       ( TeamManagerValidator.is_reservation_manageable?( object ) &&
          TeamManagerValidator.can_manage?( current_user, object ) )
       h.link_to(
         I18n.t('meeting_reservation.manage_button_title'),

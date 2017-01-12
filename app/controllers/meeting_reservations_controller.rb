@@ -472,18 +472,21 @@ class MeetingReservationsController < ApplicationController
       redirect_to( meetings_current_path() ) and return
     end
 
-    # To be a valid team manager, a user must be enabled to manage the season
-    # of the selected Meeting and the meeting must still be manageable:
+    # To be a valid team manager (precisely, for editing & adding reservations),
+    # a user must be:
+    # - enabled to manage the season of the selected Meeting (...AND...)
+    # - the meeting must still be 'reservation-manageable'
     @is_valid_team_manager = TeamManagerValidator.can_manage?( current_user, @meeting ) &&
-                             TeamManagerValidator.is_manageable?( @meeting )
-    # (If the meeting is no more manageable each control of the page should be set
-    # as read-only, even if the page is still accessible because of existing reservations)
+                             TeamManagerValidator.is_reservation_manageable?( @meeting )
+    # (If the meeting is no more 'reservation-manageable', each view page widget
+    #  should be set as read-only, even if the page is still accessible because
+    #  of existing reservations.)
 
     # Detect if there's a swimmer associated:
     set_swimmer_from_current_user
 
-    # Bail out unless the user is a valid team manager, or if a swimmer checks
-    # a meeting w/ reservation that does not belong to him/her:
+    # Bail out unless the user is a valid team manager, or if a swimmer is checking
+    # a meeting w/ reservations that do not belong to him/her:
     unless ( @is_valid_team_manager ||
              ( @swimmer && TeamManagerValidator.any_reservations_for?(current_user, @meeting) )
            )
@@ -491,7 +494,8 @@ class MeetingReservationsController < ApplicationController
       redirect_to( meetings_current_path() ) and return
     end
 
-    # Avoid creating useless reservations for already closed meetings by redirecting elsewhere:
+    # Avoid creating useless new reservations for already closed meetings,
+    # by redirecting elsewhere:
     if ( MeetingReservation.where( meeting_id: @meeting.id ).count == 0 ) &&
        ( @meeting.meeting_individual_results.count > 0 || @meeting.are_results_acquired? )
       flash[:error] = I18n.t(:invalid_action_request) + ' - ' + I18n.t('meeting.errors.meeting_already_closed')

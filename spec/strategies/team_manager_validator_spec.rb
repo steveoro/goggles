@@ -5,7 +5,8 @@ require 'team_manager_validator'
 
 describe TeamManagerValidator, type: :strategy do
   # These are assumed NOT to have any reservations and to be ccrrently "closed":
-  let(:old_meeting)   { Meeting.find_by_id( [13101, 13102, 13103, 13105, 14101, 14102, 14103, 14104, 14105, 15101, 15102, 15103, 15104, 15105].sort{rand * 0.5}.first ) }
+  let(:old_meeting)               { Meeting.find_by_id( [13101, 13102, 13103, 13105, 14101, 14102, 14103, 14104, 14105, 15101, 15102, 15103, 15104, 15105].sort{rand * 0.5}.first ) }
+  let(:old_unmanageable_meeting)  { Meeting.find_by_id( [16232, 16231, 16236, 16237, 16358, 16233, 16300, 16239, 16243, 16242, 16245, 16246, 16247, 16316].sort{rand * 0.5}.first ) }
 
   # For one of these we will add temporarilty a reservation row:
   let(:meeting_with_reservation)  { Meeting.find_by_id( [12101, 12102, 16101].sort{rand * 0.5}.first ) }
@@ -57,20 +58,61 @@ describe TeamManagerValidator, type: :strategy do
   #++
 
 
-  describe "self.is_manageable?" do
+  describe "self.is_reservation_manageable?" do
     context "for a nil meeting," do
       it "returns false" do
-        expect( TeamManagerValidator.is_manageable?(nil) ).to be false
+        expect( TeamManagerValidator.is_reservation_manageable?(nil) ).to be false
       end
     end
     context "for an old meeting with results already acquired," do
       it "returns false" do
-        expect( TeamManagerValidator.is_manageable?(old_meeting) ).to be false
+        expect( TeamManagerValidator.is_reservation_manageable?(old_meeting) ).to be false
       end
     end
     context "for a new, future meeting with no results," do
       it "returns true" do
-        expect( TeamManagerValidator.is_manageable?(new_meeting) ).to be true
+        expect( TeamManagerValidator.is_reservation_manageable?(new_meeting) ).to be true
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  describe "self.any_manageable_results_for?" do
+    context "with a nil current user and a valid Meeting," do
+      it "returns false" do
+        expect(
+          TeamManagerValidator.any_manageable_results_for?( nil, new_meeting )
+        ).to be false
+      end
+    end
+    context "with a valid user/team-manager but a nil Meeting," do
+      it "returns false" do
+        expect(
+          TeamManagerValidator.any_manageable_results_for?( team_manager.user, nil )
+        ).to be false
+      end
+    end
+    context "with a valid user/team-manager that can manage the season of an old meeting (with results already acquired) BUT with no managed team results," do
+      it "returns false" do
+        expect(
+          TeamManagerValidator.any_manageable_results_for?( User.find(2), old_unmanageable_meeting )
+        ).to be false
+      end
+    end
+    context "with a valid user/team-manager that can manage an old meeting (with results already acquired)," do
+      it "returns true" do
+        expect(
+          TeamManagerValidator.any_manageable_results_for?( User.find(2), old_meeting )
+        ).to be true
+      end
+    end
+    context "with a valid user/team-manager that can manage a new, future meeting with no results," do
+      it "returns false" do
+        expect(
+          TeamManagerValidator.any_manageable_results_for?( team_manager.user, new_meeting )
+        ).to be false
       end
     end
   end

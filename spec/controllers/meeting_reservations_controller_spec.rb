@@ -202,7 +202,7 @@ RSpec.describe MeetingReservationsController, type: :controller do
         before :each do
           login_user( team_manager_with_results.user )
         end
-        it "redirects to #edit_events" do
+        it "redirects to meetings#current" do
           get :printout_event_sheet, params: { id: unmanageable_meeting_with_results.id }
           expect(response).to redirect_to( meetings_current_path )
         end
