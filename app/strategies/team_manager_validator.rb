@@ -43,6 +43,7 @@ class TeamManagerValidator
     # and the results must not be already acquired.
     meeting.instance_of?( Meeting ) &&
     ( !meeting.are_results_acquired? ) &&
+    ( meeting.meeting_individual_results.count == 0 ) &&
     ( meeting.header_date >= Date.today )
   end
   #-- --------------------------------------------------------------------------

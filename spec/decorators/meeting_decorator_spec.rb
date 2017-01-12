@@ -193,8 +193,6 @@ describe MeetingDecorator, type: :model do
       end
       subject { meeting.decorate }
 
-# FIXME [20161206] FEATURE CURRENTLY DISABLED AND RELEASE POSTPONED:
-# TODO ENABLE THE FOLLOWING TESTS AND EDIT meeting_decorator.rb, lines 124-129 TO ENABLE IT
       it "returns an HTML link" do
         expect( subject.manage_reservation_button(team_manager.user) ).to include( 'href' )
       end
@@ -203,6 +201,26 @@ describe MeetingDecorator, type: :model do
       end
       it "returns a string containing the manage reservation button title" do
         expect( subject.manage_reservation_button(team_manager.user) ).to include( I18n.t('meeting_reservation.manage_button_title') )
+      end
+    end
+
+    context "with a standard goggler (user w/ swimmer) that is NOT a manager, BUT the meeting has some reservations created," do
+      let(:meeting)       { create(:meeting, header_date: Date.today + 10.days) }
+      let(:badge)         { create( :badge, season_id: meeting.season_id ) }
+      let(:user)          { create( :user, swimmer_id: badge.swimmer_id ) }
+      subject do
+        create( :meeting_reservation, swimmer_id: badge.swimmer_id, meeting_id: meeting.id )
+        meeting.decorate
+      end
+
+      it "returns an HTML link" do
+        expect( subject.manage_reservation_button(user) ).to include( 'href' )
+      end
+      it "returns an HTML link to the meeting_reservations_edit path" do
+        expect( subject.manage_reservation_button(user) ).to include( meeting_reservations_edit_events_path(id: subject.id) )
+      end
+      it "returns a string containing the manage reservation button title" do
+        expect( subject.manage_reservation_button(user) ).to include( I18n.t('meeting_reservation.manage_button_title') )
       end
     end
   end

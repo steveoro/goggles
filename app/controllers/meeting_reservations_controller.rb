@@ -482,33 +482,48 @@ class MeetingReservationsController < ApplicationController
     # Detect if there's a swimmer associated:
     set_swimmer_from_current_user
 
-    unless ( @is_valid_team_manager || @swimmer )
+    # Bail out unless the user is a valid team manager, or if a swimmer checks
+    # a meeting w/ reservation that does not belong to him/her:
+    unless ( @is_valid_team_manager ||
+             ( @swimmer && TeamManagerValidator.any_reservations_for?(current_user, @meeting) )
+           )
       flash[:error] = I18n.t(:invalid_action_request) + ' - ' + I18n.t('meeting.errors.invalid_team_manager_or_no_swimmer')
       redirect_to( meetings_current_path() ) and return
-    else
-      # FIXME [Steve, 20161213] It could be possible to have a user that is defined as TeamManager
-      #       (for example, for ease of passages editing) for a couple of TeamAffiliations
-      #       both registered to the same season and thus eligible to manage the registrations
-      #       of different teams for the same meeting, while (for referential integrity) the
-      #       badge associated to the swimmer of the TeamManager allows him/her to take
-      #       part in the same meeting with only one affiliation.
-      #
-      #       This is possibile because Team Managers are defined freely according
-      #       to user requests.
-      #
-      #       THIS MUSt BE HANDLED BY THE QUERY BELOW AND ALL THE SWIMMERS FOR
-      #       ALL INVOLVED TEAMAFFILIATIONS SHOULD BE COLLECTED!
-      if @is_valid_team_manager
-        enabled_manager = current_user.team_managers.includes(:team_affiliation)
-          .find{|tm| tm.team_affiliation.season_id == @meeting.season_id }
-        @team_affiliation = enabled_manager.team_affiliation
-      else
-        enabled_badge = @swimmer.badges.includes(:team_affiliation)
-          .find{|b| b.team_affiliation.season_id == @meeting.season_id }
-        @team_affiliation = enabled_badge.team_affiliation
-      end
-      @team = @team_affiliation.team
     end
+
+    # Avoid creating useless reservations for already closed meetings by redirecting elsewhere:
+    if ( MeetingReservation.where( meeting_id: @meeting.id ).count == 0 ) &&
+       ( @meeting.meeting_individual_results.count > 0 || @meeting.are_results_acquired? )
+      flash[:error] = I18n.t(:invalid_action_request) + ' - ' + I18n.t('meeting.errors.meeting_already_closed')
+      redirect_to( meetings_current_path() ) and return
+    end
+
+    # FIXME [Steve, 20161213] It could be possible to have a user that is defined as TeamManager
+    #       (for example, for ease of passages editing) for a couple of TeamAffiliations
+    #       both registered to the same season and thus eligible to manage the registrations
+    #       of different teams for the same meeting, while (for referential integrity) the
+    #       badge associated to the swimmer of the TeamManager allows him/her to take
+    #       part in the same meeting with only one affiliation.
+    #
+    #       This is possibile because Team Managers are defined freely according
+    #       to user requests.
+    #
+    #       THIS MUSt BE HANDLED BY THE QUERY BELOW AND ALL THE SWIMMERS FOR
+    #       ALL INVOLVED TEAMAFFILIATIONS SHOULD BE COLLECTED!
+    if @is_valid_team_manager
+      enabled_manager = current_user.team_managers.includes(:team_affiliation)
+        .find{|tm| tm.team_affiliation.season_id == @meeting.season_id }
+      @team_affiliation = enabled_manager.team_affiliation
+    else
+# DEBUG
+#      puts "\r\n--- @swimmer: #{ @swimmer.inspect }"
+#      puts "--- @meeting: #{ @meeting.inspect }"
+
+      enabled_badge = @swimmer.badges.includes(:team_affiliation)
+        .find{|b| b.team_affiliation.season_id == @meeting.season_id }
+      @team_affiliation = enabled_badge.team_affiliation
+    end
+    @team = @team_affiliation.team
   end
   #-- -------------------------------------------------------------------------
   #++

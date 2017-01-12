@@ -117,9 +117,13 @@ class MeetingDecorator < Draper::Decorator
   # Returns an empty string if the current_user is not allowed to manage (edit or
   # update, either one or all the reservations of) the meeting.
   #
+  # The button is rendered also if the current_user has any reservations already
+  # existing for the decorated object (Meeting).
+  #
   def manage_reservation_button( current_user )
-    if TeamManagerValidator.is_manageable?( object ) &&
-       TeamManagerValidator.can_manage?( current_user, object )
+    if ( current_user && TeamManagerValidator.any_reservations_for?(current_user, object) ) ||
+       ( TeamManagerValidator.is_manageable?( object ) &&
+         TeamManagerValidator.can_manage?( current_user, object ) )
       h.link_to(
         I18n.t('meeting_reservation.manage_button_title'),
         meeting_reservations_edit_events_path(id: object.id),
