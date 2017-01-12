@@ -18,7 +18,7 @@
       - res_coming_id = "#{ MeetingReservationMatrixProcessor::DOM_PRE_RES_NOT_COMING }#{ reservation.id }"
       - res_confirmed_id = "#{ MeetingReservationMatrixProcessor::DOM_PRE_RES_CONFIRMED }#{reservation.id}"
       -# Avoid showing rows for people who's not coming:
-      - unless @is_valid_team_manager || reservation.is_not_coming
+      - if @is_valid_team_manager || !reservation.is_not_coming
         %tr
           %td{ colspan: 2, class: 'info' }
             %a{'id'=>"swimmer#{reservation.swimmer_id}", 'href'=>"#{ swimmer_radio_path(id: reservation.swimmer_id) }", 'data-toggle'=>'tooltip', 'title'=>I18n.t('radiography.radio_tab_tooltip')}

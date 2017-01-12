@@ -1,3 +1,4 @@
+= render( partial: 'meeting_header' )
 = render( partial: 'tabs_and_title' )
 - cache( cache_key_for_meeting( 'show_team_entries', @meeting.id, @max_entry_updated_at, @team ? @team.id : 0 ) ) do
   - swimmers = []
