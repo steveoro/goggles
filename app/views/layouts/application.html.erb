@@ -94,8 +94,12 @@
                     $("#notice").fadeTo(3000, 500).slideUp(500, function(){
                         $("#notice").modal('close');
                     });
+                    // XXX [Steve, 20170113] DO NOT ENABLE GLOBALLY VIA JS THE TOOLTIP PLUGIN OF JQUERY WITH THE LINE BELOW!
+                    // It messes up with the table layouts and grid system currently used!
+                    // ----8<----
                     // Enable all tooltip on the page, even those added via JS later on:
-                    $('[data-toggle="tooltip"]').tooltip();
+                    //$('[data-toggle="tooltip"]').tooltip();
+                    // ----8<----
                 });
             </script>
         </div>
