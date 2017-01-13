@@ -121,7 +121,8 @@
     /**
      * Defines and plots the line graphs for #full_history_2
      *
-     * [Steve, 20161014] Keep always functions names unique to avoid clash.
+     * [Steve, 20161014] Remember to keep always function names unique to avoid clash.
+     * (Due to Rails5's TurboLinks caching the page & the precompiled scripts)
      */
     function plotFullHistory2Charts() {
       var eventKeys = Object.keys( dataSeries );
@@ -152,34 +153,31 @@
           legend: {
             show: true,
             position: "sw"
+          },
+          tooltip: {
+            show:    true,
+            content: "%s: %y @ %x"  // string or function
+            // All possible options with defaults for the Flot tooltip plugin:
+            // cssClass:            // string                  // "flotTip"
+            // xDateFormat:         // string                  // null
+            // yDateFormat:         // string                  // null
+            // monthNames:          // string                  // null
+            // dayNames:            // string                  // null
+            // shifts: {
+            //    x:                // int                     // 10
+            //    y:                // int                     // 20
+            // }
+            // defaultTheme:        // boolean                 // true
+            // lines:               // boolean                 // false
+            // onHover:             // function(flotItem, $tooltipEl)
+            // $compat:             // boolean                 // false
           }
       };
-
-      $( "<div id='tooltip'></div>" ).css({
-        position: "absolute",
-        display: "none",
-        border: "1px solid #fdd",
-        padding: "2px",
-        "background-color": "#fee",
-        opacity: 0.80
-      }).appendTo( "body" );
 
       // Plot each graph:
       for ( index = 0; index < eventKeys.length; index++ ) {
         var currKey = eventKeys[index];
         $.plot( "#graph" + currKey, dataSeries[ currKey ], options );
-
-        $("#graph" + currKey).bind( "plothover", function (event, pos, item) {
-          if (item) {
-            // console.log( item );
-            var x = new Date( item.datapoint[0] ).toLocaleDateString();
-            var y = tickFormatter( item.datapoint[1].toFixed(2) );
-            $("#tooltip").html(
-              y + ", " + x
-            ).css( { top: item.pageY+5, left: item.pageX+5 } )
-             .fadeIn(200);
-          }
-        } );
       }
     }
 

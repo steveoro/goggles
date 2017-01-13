@@ -94,6 +94,8 @@
                     $("#notice").fadeTo(3000, 500).slideUp(500, function(){
                         $("#notice").modal('close');
                     });
+                    // Enable all tooltip on the page, even those added via JS later on:
+                    $('[data-toggle="tooltip"]').tooltip();
                 });
             </script>
         </div>
