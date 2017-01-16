@@ -24,14 +24,6 @@ RSpec.describe MeetingReservationsController, type: :controller do
       .id
   end
 
-  let(:manageable_and_unreserved_meeting_id) do
-    team_manager.team_affiliation.season
-      .meetings.where("header_date > ?", Date.today + 1)
-      .select{ |m| m.meeting_reservations.count == 0 }
-      .sort{rand - 0.5}.first
-      .id
-  end
-
   let(:team_manager_with_results) do
     # Choose the first, random team manager, whose affiliation has
     # at least a meeting with an old header date and some results:
@@ -208,9 +200,17 @@ RSpec.describe MeetingReservationsController, type: :controller do
         end
       end
 
+      let(:manageable_and_unreserved_meeting_id) do
+        team_manager.team_affiliation.season
+          .meetings.where("header_date > ?", Date.today + 1)
+          .select{ |m| m.meeting_reservations.count == 0 }
+          .sort{rand - 0.5}.first
+          .id
+      end
+
       context "when there's no reservation data available (but the meeting is manageable)," do
         before :each do
-          login_user( team_manager_with_results.user )
+          login_user( team_manager.user )
         end
         it "redirects to #edit_events" do
           get :printout_event_sheet, params: { id: manageable_and_unreserved_meeting_id }

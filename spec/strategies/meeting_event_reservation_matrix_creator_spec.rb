@@ -26,15 +26,6 @@ describe MeetingEventReservationMatrixCreator, type: :strategy do
     # [Steve] We don't need to save the random user instance created, since we
     # won't use any of its associations, nor its ID, so "build" is enough.
     subject do
-      # This single row should force skipping the corresponding matrix item creation:
-      create(
-        :meeting_event_reservation,
-        meeting_id:       meeting.id,
-        team_id:          team_affiliation.team_id,
-        swimmer_id:       last_mir.swimmer_id,
-        badge_id:         last_mir.badge_id,
-        meeting_event_id: last_mir.meeting_event.id
-      )
       # Then we can proceed to instantiate the creator:
       MeetingEventReservationMatrixCreator.new(
         meeting: meeting,
@@ -49,11 +40,6 @@ describe MeetingEventReservationMatrixCreator, type: :strategy do
       end
       it "has #expected_rows_count > 0 (after being called)" do
         expect( subject.expected_rows_count ).to be > 0
-      end
-      # Since we have created a single. pre-existing row, the creator strategy
-      # should create the expected rows minus 1:
-      it "has #processed_rows == #expected_rows_count -1  (after being called)" do
-        expect( subject.processed_rows ).to eq( subject.expected_rows_count - 1 )
       end
       it "has 0 errors" do
         expect( subject.total_errors ).to eq(0)

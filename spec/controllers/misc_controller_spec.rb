@@ -691,9 +691,7 @@ describe MiscController, type: :controller do
 
     context "as logged and swimmer-associated user" do
       before(:each) do
-        user = create(:user)
-        swimmer = Swimmer.all[ ( rand * ( Swimmer.count - 1 ) ).to_i ]
-        user.set_associated_swimmer( swimmer )
+        user = create(:user, swimmer: create(:swimmer))
         login_user( user )
         expect( subject.current_user ).to be_an_instance_of( User )
         expect( subject.current_user.swimmer_id ).not_to be nil

@@ -5,7 +5,7 @@ describe MeetingIndividualResultDecorator, type: :model do
   include Rails.application.routes.url_helpers
 
   before :each do
-    @mir = build( :meeting_individual_result )
+    @mir = MeetingIndividualResult.limit(1000).sort{rand - 0.5}.first
     expect( @mir ).to be_an_instance_of(MeetingIndividualResult)
     @decorated_instance = MeetingIndividualResultDecorator.decorate( @mir )
   end
