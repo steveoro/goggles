@@ -25,10 +25,10 @@ GIT
 
 GIT
   remote: https://github.com/steveoro/goggles_core
-  revision: 3b4918e8ac3fadf9bd4bedc4cf7b6e5f9b0581d5
+  revision: 007fb59d8b975e2beb896f579dade70fd738a4af
   branch: rails5
   specs:
-    goggles_core (1.1.12.1)
+    goggles_core (1.1.19.1)
       active_hash_relation
       active_model_serializers (~> 0.10.0)
       activemodel-serializers-xml
@@ -73,11 +73,11 @@ GEM
       rails-dom-testing (~> 2.0)
       rails-html-sanitizer (~> 1.0, >= 1.0.2)
     active_hash_relation (1.1.0)
-    active_model_serializers (0.10.2)
+    active_model_serializers (0.10.4)
       actionpack (>= 4.1, < 6)
       activemodel (>= 4.1, < 6)
-      jsonapi (~> 0.1.1.beta2)
-      railties (>= 4.1, < 6)
+      case_transform (>= 0.2)
+      jsonapi (= 0.1.1.beta6)
     activejob (5.0.1)
       activesupport (= 5.0.1)
       globalid (>= 0.3.6)
@@ -120,7 +120,7 @@ GEM
       rack (>= 0.9.0)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
-    builder (3.2.2)
+    builder (3.2.3)
     byebug (9.0.5)
     capistrano (3.6.1)
       airbrussh (>= 1.0.0)
@@ -147,6 +147,8 @@ GEM
       rack (>= 1.0.0)
       rack-test (>= 0.5.4)
       xpath (~> 2.0)
+    case_transform (0.2)
+      activesupport
     certifi (2016.08.31)
     cocoon (1.2.9)
     code_analyzer (0.4.7)
@@ -358,7 +360,7 @@ GEM
     rb-inotify (0.9.7)
       ffi (>= 0.5.0)
     ref (2.0.0)
-    request_store (1.3.1)
+    request_store (1.3.2)
     require_all (1.3.3)
     responders (2.3.0)
       railties (>= 4.2.0, < 5.1)
@@ -413,7 +415,7 @@ GEM
     simple_form (3.3.1)
       actionpack (> 4, < 5.1)
       activemodel (> 4, < 5.1)
-    simple_token_authentication (1.14.0)
+    simple_token_authentication (1.15.0)
       actionmailer (>= 3.2.6, < 6)
       actionpack (>= 3.2.6, < 6)
       devise (>= 3.2, < 6)
@@ -439,8 +441,8 @@ GEM
       tins (~> 1.0)
     test-unit (3.2.1)
       power_assert
-    therubyracer (0.12.2)
-      libv8 (~> 3.16.14.0)
+    therubyracer (0.12.3)
+      libv8 (~> 3.16.14.15)
       ref
     thor (0.19.4)
     thread_safe (0.3.5)

@@ -4,7 +4,7 @@
 
 == PassagesCollectSheetLayout
 
-- version:  6.040
+- version:  6.054
 - author:   Steve A.
 
 =end
@@ -201,6 +201,10 @@ class PassagesCollectSheetLayout
                 c.align = :right
                 c.size = 8
               end
+              if c.row > 0  && c.column > 1         # (any data timing cell)
+                c.align = :center
+                c.valign = :center
+              end
             end
           end
         end
@@ -286,32 +290,144 @@ class PassagesCollectSheetLayout
       ] + passage_labels
     )
 
-    # Sort reservation events by entry timing in descending order:
-    sorted_events = reservation_array.sort do |r1, r2|
-      Timing.new(
-        r2.suggested_hundreds, r2.suggested_seconds, r2.suggested_minutes
-      ) <=> Timing.new(
-        r1.suggested_hundreds, r1.suggested_seconds, r1.suggested_minutes
-      )
-    end
+    # Sort reservation events by entry timing in descending order, according to current
+    # event configuration:
+    sorted_events = self.get_sorted_reservation_events( event, reservation_array )
+    previous_res = nil
 
-    # Map all reservations for this event as individual rows
+    # Map all reservations for this event as individual rows, add eventually a
+    # separator row, if required:
     sorted_events.each do |res|
-      # Compute the entry timing:
-      entry_timing = Timing.new(res.suggested_hundreds, res.suggested_seconds, res.suggested_minutes )
-      # Add the swimmer name as column #0, the entry timing as column #1
-      # and add the remaining columns as empty cells so that we can have
-      # enough blank cells write each passage timing:
-      data_table_array << (
-        [
-          res.swimmer.complete_name,
-          "<i>#{ entry_timing.to_s }</i>"
-        ] +
-        passage_labels.map{ |cell| '' }
-      )
+      if self.is_row_separator_required( event, res, previous_res )
+        data_table_array << (
+          [
+            "* * *",
+            ""
+          ] +
+          passage_labels.map{ |cell| "* * *" }
+        )
+      else
+        # Compute the entry timing:
+        entry_timing = Timing.new(res.suggested_hundreds, res.suggested_seconds, res.suggested_minutes )
+        # Add the swimmer name as column #0, the entry timing as column #1
+        # and add the remaining columns as empty cells so that we can have
+        # enough blank cells write each passage timing:
+        data_table_array << (
+          [
+            res.swimmer.complete_name,
+            "<i>#{ entry_timing.to_s }</i>"
+          ] +
+          passage_labels.map{ |cell| '' }
+        )
+      end
+      previous_res = res
     end
 
     data_table_array
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Return true if the current reservation event needs a separator row when
+  # compared to the previous res. event and the current event configuration.
+  #
+  def self.is_row_separator_required( event, curr_res, previous_res )
+    return false if previous_res.nil?
+    if event.has_separate_gender_start_list?
+      if event.has_separate_category_start_list?
+        ( curr_res.gender_type.id != previous_res.gender_type.id) ||
+        ( curr_res.category_type.age_begin != previous_res.category_type.age_begin )
+      else
+        ( curr_res.gender_type.id != previous_res.gender_type.id)
+      end
+
+    else
+      if event.has_separate_category_start_list?
+        ( curr_res.category_type.age_begin != previous_res.category_type.age_begin )
+      else
+        false
+      end
+    end
+  end
+
+
+  # Sort the reservation_array according to the event configuration.
+  #
+  def self.get_sorted_reservation_events( event, reservation_array )
+    if event.has_separate_gender_start_list?
+      if event.has_separate_category_start_list?
+        # Sort by: gender code ASC, category DESC, timing DESC:
+        reservation_array.sort! do |res_a, res_b|
+          self.get_comparable_gender_category_timing_string_for( res_b ) <=> self.get_comparable_gender_category_timing_string_for( res_a )
+        end
+      else
+        # Sort by: gender code ASC, timing DESC:
+        reservation_array.sort! do |res_a, res_b|
+          self.get_comparable_gender_timing_string_for( res_b ) <=> self.get_comparable_gender_timing_string_for( res_a )
+        end
+      end
+    else
+      if event.has_separate_category_start_list?
+        # Sort by: category DESC, timing DESC:
+        reservation_array.sort! do |res_a, res_b|
+          self.get_comparable_category_timing_string_for( res_b ) <=> self.get_comparable_category_timing_string_for( res_a )
+        end
+      else
+        # Sort by: timing DESC:
+        reservation_array.sort! do |res_a, res_b|
+          self.get_comparable_timing_string_for( res_b ) <=> self.get_comparable_timing_string_for( res_a )
+        end
+      end
+    end
+    reservation_array
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Returns a string value usable for <=> sorting operator, to allow sorting by:
+  #
+  # 1. timing value DESC (while changing NO-TIMEs with a highest-possible timing)
+  #
+  # Assumes that event_res is a MeetingEventReservation.
+  #
+  def self.get_comparable_timing_string_for( event_res )
+    "#{ event_res.get_timing.to_f > 0 ? event_res.get_timing : '99999999' }"
+  end
+
+  # Returns a string value usable for <=> sorting operator, to allow sorting by:
+  #
+  # 1. category age_begin DESC, (oldest first)
+  # 2. timing value DESC (while changing NO-TIMEs with a highest-possible timing)
+  #
+  # Assumes that event_res is a MeetingEventReservation.
+  #
+  def self.get_comparable_category_timing_string_for( event_res )
+    "#{ event_res.category_type.age_begin }-#{ event_res.get_timing.to_f > 0 ? event_res.get_timing : '99999999' }"
+  end
+
+  # Returns a string value usable for <=> sorting operator, to allow sorting by:
+  #
+  # 1. gender code ASC, (1°:'F', 2°:'M', 3°:'X')
+  # 2. timing value DESC (while changing NO-TIMEs with a highest-possible timing)
+  #
+  # Assumes that event_res is a MeetingEventReservation.
+  #
+  def self.get_comparable_gender_timing_string_for( event_res )
+    "#{ event_res.gender_type.id }#{ event_res.get_timing.to_f > 0 ? event_res.get_timing : '99999999' }"
+  end
+
+  # Returns a string value usable for <=> sorting operator, to allow sorting by:
+  #
+  # 1. gender code ASC, (1°:'F', 2°:'M', 3°:'X')
+  # 2. category age_begin DESC, (oldest first)
+  # 3. timing value DESC (while changing NO-TIMEs with a highest-possible timing)
+  #
+  # Assumes that event_res is a MeetingEventReservation.
+  #
+  def self.get_comparable_gender_category_timing_string_for( event_res )
+    "#{ event_res.gender_type.id }-#{ event_res.category_type.age_begin }-#{ event_res.get_timing.to_f > 0 ? event_res.get_timing : '99999999' }"
   end
   #-- -------------------------------------------------------------------------
   #++

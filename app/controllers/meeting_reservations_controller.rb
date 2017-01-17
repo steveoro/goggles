@@ -182,7 +182,9 @@ class MeetingReservationsController < ApplicationController
     @reservations_relays = {}
 
     @events.each do |event|
+      # *** RELAYS ***
       if event.event_type.is_a_relay
+        # TODO WE NEED A DIFFERENT LAYOUT FOR THE RELAYS
         @reservations_relays[ event.id ] = MeetingRelayReservation.where(
           meeting_event_id: event.id,
           is_doing_this:    true
@@ -190,13 +192,15 @@ class MeetingReservationsController < ApplicationController
           .includes(:meeting_session, :meeting_event, :event_type, :swimmer)
           .order('meeting_sessions.session_order, meeting_events.event_order')
           .to_a
+
+      # *** EVENTS ***
       else
         @reservations_events[ event.id ] = MeetingEventReservation.where(
           meeting_event_id: event.id,
           is_doing_this:    true
-        ).joins(:meeting_session, :meeting_event, :event_type, :swimmer)
-          .includes(:meeting_session, :meeting_event, :event_type, :swimmer)
-          .order('meeting_sessions.session_order, meeting_events.event_order')
+        ).joins(:meeting_session, :meeting_event, :category_type, :gender_type, :event_type, :swimmer)
+          .includes(:meeting_session, :meeting_event, :category_type, :gender_type, :event_type, :swimmer)
+          .order('meeting_sessions.session_order, meeting_events.event_order, category_types.code, gender_types.code')
           .to_a
       end
     end
