@@ -39,23 +39,37 @@
           - can_edit_events = (!reservation.is_not_coming) && TeamManagerValidator.is_reservation_manageable?( @meeting ) && (@is_valid_team_manager || ( @swimmer && (@swimmer.id == reservation.swimmer_id)))
           - @reservations_relays[reservation.id].each do |relay_reservation|
             %td{ 'data-toggle'=>'tooltip', 'title'=> relay_reservation.event_type.i18n_short }
-              -#.row
-              -#  .col-xs-9
-              -#    = text_field_tag(                                                       |
-              -#      "#{ MeetingReservationMatrixProcessor::DOM_PRE_RELAY_NOTES }#{relay_reservation.id}", |
-              -#      relay_reservation.is_doing_this ? relay_reservation.notes : nil,      |
-              -#      'class' => "form-control",                                            |
-              -#      disabled: !can_edit_events,                                           |
-              -#      'data-event-res' => relay_reservation.id                              |
-              -#    )                                                                       |
-              -#  .col-xs-3.goggles-relay-reservation-cell-toggle
-              -#    %br/
               .text-center{class: "switch_row_#{ reservation.id }"}
                 - chkbox_id = "#{ MeetingReservationMatrixProcessor::DOM_PRE_RELAY_CHECKED }#{relay_reservation.id}"
                 = hidden_field_tag( chkbox_id, relay_reservation.is_doing_this )
                 = check_box_tag( "chk_#{ chkbox_id }", true, relay_reservation.is_doing_this,  |
                       { disabled: !can_edit_events,                                            |
                         onclick: "toggleSwitchValue(\"#{ relay_reservation.id }\");" } )       |
+              %br/
+              - note_id = "#{ MeetingReservationMatrixProcessor::DOM_PRE_RELAY_NOTES }#{relay_reservation.id}"
+              = hidden_field_tag( note_id, relay_reservation.notes )
+              .col-xs-7
+                = text_field_tag(                                                       |
+                  "code_#{ note_id }",                                                  |
+                  relay_reservation.is_doing_this && relay_reservation.notes.to_s.size > 0 ? relay_reservation.notes.to_s.split(';').first : nil, |
+                  maxlength: 5,                                                         |
+                  'class' => "relay-notes form-control",                                |
+                  disabled: !can_edit_events,                                           |
+                  onchange: "updateRelayNotes(\"#{ relay_reservation.id }\");",         |
+                  'data-toggle'=>'tooltip',                                             |
+                  'title'=> "#{ relay_reservation.event_type.i18n_short }, #{ I18n.t('meeting_reservation.relay_codename') }" |
+                )                                                                       |
+              .col-xs-5
+                = number_field_tag(                                                     |
+                  "num_#{ note_id }",                                                   |
+                  relay_reservation.is_doing_this && relay_reservation.notes.to_s.size > 0 ? relay_reservation.notes.to_s.split(';').last.to_i : nil,  |
+                  within: 1...8,                                                        |
+                  'class' => "form-control",                                            |
+                  disabled: !can_edit_events,                                           |
+                  onchange: "updateRelayNotes(\"#{ relay_reservation.id }\");",         |
+                  'data-toggle'=>'tooltip',                                             |
+                  'title'=> "#{ relay_reservation.event_type.i18n_short }, #{ I18n.t('meeting_reservation.relay_order') }" |
+                )                                                                       |
           %td
             = text_area_tag(                                                                |
               "#{ MeetingReservationMatrixProcessor::DOM_PRE_RES_NOTES }#{reservation.id}", |
@@ -79,6 +93,14 @@
 
 :javascript
   /**
+   * Binds formatting event to key press, converting text input to uppercase.
+   */
+  $('input.relay-notes').bind('keyup', function (event) {
+      $(this).val( $(this).val().toUpperCase() );
+  });
+  // --------------------------------------------------------------------------
+
+  /**
    * Sets (or resets) the checkbox and the hidden field associated with a single
    * relay reservation id.
    *
@@ -92,6 +114,32 @@
     var isChecked  = (fieldValue == true) || (fieldValue == 'true') || (fieldValue == '1');
     // Set the hidden field value according to current checkbox value (so that we can POST also false values):
     hiddenFld.val( isChecked );
+  };
+  // --------------------------------------------------------------------------
+
+  /**
+   * Sets (or resets) the checkbox and the hidden field associated with a single
+   * relay reservation id.
+   *
+   * Params:
+   * - relayReservationId: the id as a string of the current event reservation object
+   */
+  function updateRelayNotes( relayReservationId ) {
+    var noteID = "#{ MeetingReservationMatrixProcessor::DOM_PRE_RELAY_NOTES }" + relayReservationId;
+    var codeText = $("#code_" + noteID);
+    var numField = $("#num_" + noteID);
+    var code = codeText.val();
+    var num  = numField.val();
+    // DEBUG
+    //console.log( "noteID: ", noteID );
+    //console.log( "codeText: ", codeText );
+    //console.log( "numField: ", numField );
+    console.log( "$(#noteID) val: ", $( '#'+noteID ).val() );
+    //console.log( "code: ", code );
+    //console.log( "num: ", num );
+    $( '#'+noteID ).val( code +";"+ num );
+    // DEBUG
+    console.log( "$(#noteID) val: ", $( '#'+noteID ).val() );
   };
   // --------------------------------------------------------------------------
 

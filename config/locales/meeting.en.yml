@@ -159,6 +159,8 @@ en:
     show_title: "Summary"
     show_event_list_title: "Event reservations"
     show_relay_list_title: "Relay availability"
+    relay_codename: "Relay codename"
+    relay_order: "Order in relay"
     is_not_coming: "Not coming?"
     coming: "Coming"
     not_coming: "Not coming"

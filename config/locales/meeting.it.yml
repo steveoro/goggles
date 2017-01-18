@@ -159,6 +159,8 @@ it:
     show_title: "Riassunto"
     show_event_list_title: "Iscrizioni Eventi"
     show_relay_list_title: "Disponibilità a staffette"
+    relay_codename: "Nome/codice staffetta"
+    relay_order: "Ordine in staffetta"
     is_not_coming: "Non viene?"
     coming: "Viene"
     not_coming: "Non viene"
