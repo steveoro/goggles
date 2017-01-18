@@ -10,7 +10,7 @@ require 'team_manager_validator'
 
 = MeetingReservationsController
 
-  - version:  6.044
+  - version:  6.055
   - author:   Steve A.
 
 =end
@@ -119,7 +119,6 @@ class MeetingReservationsController < ApplicationController
     #   "action"=>"update", "locale"=>"en"} permitted: false>
 
     perform_matrix_update( params, current_user )
-
     # At the end of the update we expect to remain in edit mode:
     redirect_to( meeting_reservations_edit_events_url(id: @meeting.id) )
   end
@@ -146,9 +145,24 @@ class MeetingReservationsController < ApplicationController
 #    logger.debug "> #{params.inspect}"
 
     perform_matrix_update( params, current_user )
-
     # At the end of the update we expect to remain in edit mode:
     redirect_to( meeting_reservations_edit_relays_url(id: @meeting.id) )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Shows the current matrix data for both _event_ and _relay_ reservations,
+  # for the (currently) chseon meeting, team and logged-in user.
+  #
+  def show
+    prepare_meeting_reservations( @meeting, @team_affiliation )  # Collect the created list of badge reservations
+    if @meeting_reservations.count < 1
+      flash[:error] = I18n.t(:no_result_to_show)
+      redirect_to( meetings_current_path() ) and return
+    end
+    prepare_events_reservations( @meeting, @team_affiliation )   # collect the created matrix (badges x event rows) of event reservations
+    prepare_relays_reservations( @meeting, @team_affiliation )   # collect the created matrix (badges x relays rows) of relay reservations
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -244,7 +258,7 @@ class MeetingReservationsController < ApplicationController
 
     if all_swimmer_ids.size < 1
       flash[:error] = I18n.t(:no_detail_to_process)
-      redirect_to( meeting_reservations_edit_events_url(id: @meeting.id) ) and return
+      redirect_to( meetings_current_path() ) and return
     end
                                                     # == OPTIONS setup + RENDERING phase ==
     base_filename = "#{I18n.t('meeting_reservation.event_sheet_basefilename')}_#{@meeting.code}"
@@ -489,20 +503,20 @@ class MeetingReservationsController < ApplicationController
     # Detect if there's a swimmer associated:
     set_swimmer_from_current_user
 
+    # Avoid creating useless new reservations for already closed meetings,
+    # by redirecting elsewhere:
+    if ( MeetingReservation.where( meeting_id: @meeting.id ).count == 0 ) &&
+       ( @meeting.meeting_individual_results.count > 0 || @meeting.are_results_acquired? )
+      flash[:error] = I18n.t(:invalid_action_request) + ' - ' + I18n.t('meeting.errors.meeting_already_closed')
+      redirect_to( meetings_current_path() ) and return
+    end
+
     # Bail out unless the user is a valid team manager, or if a swimmer is checking
     # a meeting w/ reservations that do not belong to him/her:
     unless ( @is_valid_team_manager ||
              ( @swimmer && TeamManagerValidator.any_reservations_for?(current_user, @meeting) )
            )
       flash[:error] = I18n.t(:invalid_action_request) + ' - ' + I18n.t('meeting.errors.invalid_team_manager_or_no_swimmer')
-      redirect_to( meetings_current_path() ) and return
-    end
-
-    # Avoid creating useless new reservations for already closed meetings,
-    # by redirecting elsewhere:
-    if ( MeetingReservation.where( meeting_id: @meeting.id ).count == 0 ) &&
-       ( @meeting.meeting_individual_results.count > 0 || @meeting.are_results_acquired? )
-      flash[:error] = I18n.t(:invalid_action_request) + ' - ' + I18n.t('meeting.errors.meeting_already_closed')
       redirect_to( meetings_current_path() ) and return
     end
 

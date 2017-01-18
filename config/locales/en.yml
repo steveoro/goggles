@@ -126,7 +126,7 @@ en:
   transaction_cancelled: "Transaction cancelled."
   missing_request_parameter: "Invalid Action: missing a request parameter!"
   invalid_action_request: "Invalid Action requested!"
-  no_detail_to_process: "There aren't any details to process for this element!"
+  no_detail_to_process: "There aren't any details to process for these parameters!"
   no_result_to_show: "There aren't any results to show with the specified parameters!"
   file_not_created_for_some_reason: "The file hasn't been created as expected."
   feature_wip_disclaimer: "Please, be advised that this feature is currently available as a PREVIEW (beta) of the actual functionality planned.\r\nIt's still under heavy development and will change substantially during the next few months!\r\nIt's even possible that you may find some buttons or tabs invisible or disabled, depending upon the moment."

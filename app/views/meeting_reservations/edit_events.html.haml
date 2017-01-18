@@ -1,16 +1,9 @@
-= render( partial: 'meetings/meeting_header' )
-= render( partial: 'meetings/tabs_and_title' )
-
-.col-xs-12.goggles-category-gap
-  %ul.nav.nav-tabs#pageTop{role: "tablist"}
-    = show_tab_link( params, 'edit_events', t('meeting_reservation.manage_events_title'), meeting_reservations_edit_events_path(id: @meeting.id) )
-    = show_tab_link( params, 'edit_relays', t('meeting_reservation.manage_relays_title'), meeting_reservations_edit_relays_path(id: @meeting.id) )
-  .goggles-category-gap
+= render( partial: 'tabs_and_title' )
 
 = form_tag( meeting_reservations_update_events_path(id: @meeting.id), method: :post, onsubmit: "$('#loadingIndicator').show();" )
 %table.table.table-striped.table-bordered.table-hover.table-condensed
   %tbody
-    = render( partial: 'header_row', locals: { first_reservation: @reservations_events[@meeting_reservations.first.id] } )
+    = render( partial: 'header_row', locals: { first_reservation: @reservations_events[@meeting_reservations.first.id], add_notes_column: true } )
 
     -# Data rows:
     - @meeting_reservations.each do |reservation|

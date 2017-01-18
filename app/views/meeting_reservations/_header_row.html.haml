@@ -14,8 +14,9 @@
       - is_not_last_item = index+1 < uniq_dates.count
       %td{ colspan: tot_columns[index], id: (is_not_last_item ? "goggles-border-rx-thick" : nil) }
         %i= session_date
-    %td
-      &nbsp;
+    - if add_notes_column
+      %td
+        &nbsp;
   -# Common header #2: session order + day part type
   %tr.success.text-center
     %td{ colspan: 2 }
@@ -25,8 +26,9 @@
       - is_not_last_item = index+1 < uniq_orders.count
       %td{ colspan: tot_columns[index], id: (is_not_last_item ? "goggles-border-rx-thick" : nil) }
         %i= session_order
-    %td
-      &nbsp;
+    - if add_notes_column
+      %td
+        &nbsp;
   -# Common header #3: event title
   %tr.success.text-center
     %td{ colspan: 2 }
@@ -40,5 +42,6 @@
       - else
         %td
           %b= event_reservation.event_type.i18n_short
-    %td
-      %i= I18n.t('meeting_reservation.free_notes')
+    - if add_notes_column
+      %td
+        %i= I18n.t('meeting_reservation.free_notes')

@@ -127,8 +127,8 @@ it:
   transaction_cancelled: "Transazione annullata."
   missing_request_parameter: "Azione non valida: parametro della richiesta mancante!"
   invalid_action_request: "Azione richiesta non valida!"
+  no_detail_to_process: "Non ci sono dati da elaborare per questi parametri!"
   no_result_to_show: "Non ci sono risultati da mostrare per i parametri richiesti!"
-  no_detail_to_process: "Non ci sono dettagli da elaborare per questo elemento!"
   file_not_created_for_some_reason: "Il file non è stato creato per qualche motivo."
   feature_wip_disclaimer: "Per favore, ricorda che questa 'feature' del sito è disponibile solo come 'PREVIEW' (beta) della funzionalità originariamente prevista.\r\nE' tutt'ora in corso il suo sviluppo e cambierà sostanzialmente nel giro dei prossimi mesi!\r\nE' anche possibile che a seconda dei momenti alcuni pulsanti o tab risultino disabilitati o invisibili."
   main: 'Principale'

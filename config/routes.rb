@@ -81,6 +81,7 @@ Rails.application.routes.draw do
       post 'meeting_reservations/update_events'   # post updates for the above matrix of row entries
       get 'meeting_reservations/edit_relays'      # creates a matrix of relay reservations (many events for each one of the current team's athletes)
       post 'meeting_reservations/update_relays'   # post updates for the above matrix of row entries
+      get 'meeting_reservations/show'
       get 'meeting_reservations/printout_event_sheet'
 
 
