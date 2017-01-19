@@ -39,16 +39,17 @@
           - can_edit_events = (!reservation.is_not_coming) && TeamManagerValidator.is_reservation_manageable?( @meeting ) && (@is_valid_team_manager || ( @swimmer && (@swimmer.id == reservation.swimmer_id)))
           - @reservations_relays[reservation.id].each do |relay_reservation|
             %td{ 'data-toggle'=>'tooltip', 'title'=> relay_reservation.event_type.i18n_short }
-              .text-center{class: "switch_row_#{ reservation.id }"}
-                - chkbox_id = "#{ MeetingReservationMatrixProcessor::DOM_PRE_RELAY_CHECKED }#{relay_reservation.id}"
-                = hidden_field_tag( chkbox_id, relay_reservation.is_doing_this )
-                = check_box_tag( "chk_#{ chkbox_id }", true, relay_reservation.is_doing_this,  |
-                      { disabled: !can_edit_events,                                            |
-                        onclick: "toggleSwitchValue(\"#{ relay_reservation.id }\");" } )       |
-              %br/
+              .col-xs-12
+                .text-center{class: "switch_row_#{ reservation.id }"}
+                  - chkbox_id = "#{ MeetingReservationMatrixProcessor::DOM_PRE_RELAY_CHECKED }#{relay_reservation.id}"
+                  = hidden_field_tag( chkbox_id, relay_reservation.is_doing_this )
+                  = check_box_tag( "chk_#{ chkbox_id }", true, relay_reservation.is_doing_this,  |
+                        { disabled: !can_edit_events,                                            |
+                          onclick: "toggleSwitchValue(\"#{ relay_reservation.id }\");" } )       |
               - note_id = "#{ MeetingReservationMatrixProcessor::DOM_PRE_RELAY_NOTES }#{relay_reservation.id}"
               = hidden_field_tag( note_id, relay_reservation.notes )
               .col-xs-7
+                %i= I18n.t('meeting_reservation.relay_codename_short_title')
                 = text_field_tag(                                                       |
                   "code_#{ note_id }",                                                  |
                   relay_reservation.is_doing_this && relay_reservation.notes.to_s.size > 0 ? relay_reservation.notes.to_s.split(';').first : nil, |
@@ -57,9 +58,10 @@
                   disabled: !can_edit_events,                                           |
                   onchange: "updateRelayNotes(\"#{ relay_reservation.id }\");",         |
                   'data-toggle'=>'tooltip',                                             |
-                  'title'=> "#{ relay_reservation.event_type.i18n_short }, #{ I18n.t('meeting_reservation.relay_codename') }" |
+                  'title'=> "#{ relay_reservation.event_type.i18n_short }, #{ I18n.t('meeting_reservation.relay_codename_tooltip') }" |
                 )                                                                       |
               .col-xs-5
+                %i= I18n.t('meeting_reservation.relay_order_short_title')
                 = number_field_tag(                                                     |
                   "num_#{ note_id }",                                                   |
                   relay_reservation.is_doing_this && relay_reservation.notes.to_s.size > 0 ? relay_reservation.notes.to_s.split(';').last.to_i : nil,  |
@@ -68,7 +70,7 @@
                   disabled: !can_edit_events,                                           |
                   onchange: "updateRelayNotes(\"#{ relay_reservation.id }\");",         |
                   'data-toggle'=>'tooltip',                                             |
-                  'title'=> "#{ relay_reservation.event_type.i18n_short }, #{ I18n.t('meeting_reservation.relay_order') }" |
+                  'title'=> "#{ relay_reservation.event_type.i18n_short }, #{ I18n.t('meeting_reservation.relay_order_tooltip') }" |
                 )                                                                       |
           %td
             = text_area_tag(                                                                |

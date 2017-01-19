@@ -1,0 +1,54 @@
+%h3= t('meeting_reservation.show_relay_config_title')
+-# Loop upon all unique relay events:
+- @reservations_relays[@meeting_reservations.first.id].each do |header_relay_event|
+  .row.col-xs-6
+    .row.col-xs-12
+      &nbsp;
+
+    -# Extract all active relay configs that pertain to the current event:, and sort them accordingly:
+    - relay_configs = @reservations_relays.values.flatten.select{ |rel| rel.is_doing_this? && (rel.meeting_event_id == header_relay_event.meeting_event_id) }.sort{ |rel_a, rel_b| "#{rel_a.meeting_event_id}#{rel_a.notes}" <=> "#{rel_b.meeting_event_id}#{rel_b.notes}" }
+    .row.col-xs-11
+      %table.table.table-striped.table-bordered.table-hover.table-condensed
+        %tbody
+          - prev_config_name = nil
+          -# Relay Data rows:
+          - relay_configs.each do |relay_reservation|
+            -# Render a new relay config header row:
+            - if prev_config_name != relay_reservation.notes.split(';').first
+              %tr
+                %td{ colspan: 2 }
+                  %small
+                    %i
+                      = t('meeting_reservation.relay_codename')
+                      &nbsp;
+                      = "'#{ relay_reservation.notes.to_s.split(';').first }'"
+              %tr
+                -# Common header #1: session date
+                %tr.success.text-center
+                  %td{ colspan: 1 }
+                    &nbsp;
+                  %td{ colspan: 1 }
+                    %i= Format.a_date(relay_reservation.meeting_session.scheduled_date) + ' ' + Format.a_time(relay_reservation.meeting_session.begin_time)
+                -# Common header #2: session order + day part type
+                %tr.success.text-center
+                  %td{ colspan: 1 }
+                    &nbsp;
+                  %td{ colspan: 1 }
+                    %i= "(#{ I18n.t('activerecord.models.session') } #{ relay_reservation.meeting_session.session_order }) #{ relay_reservation.meeting_session.day_part_type_id.nil? ? '???' : DayPartType.new(code: relay_reservation.meeting_session.day_part_type.code).i18n_short }"
+                -# Common header #3: event title
+                %tr.success.text-center
+                  %td{ colspan: 1 }
+                    %i= I18n.t('meeting_stats.swimmers')
+                  %td
+                    %b= relay_reservation.event_type.i18n_short
+            %tr
+              %td{ colspan: 1, class: 'info' }
+                %b= relay_reservation.swimmer.get_full_name
+              %td
+                - if relay_reservation.notes.to_s.size > 0
+                  .text-center
+                    = "#"
+                    = relay_reservation.notes.to_s.split(';').last.to_i
+            - prev_config_name = relay_reservation.notes.split(';').first
+    .row.col-xs-1
+      &nbsp;

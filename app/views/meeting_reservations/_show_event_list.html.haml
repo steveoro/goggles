@@ -1,0 +1,27 @@
+%h3= t('meeting_reservation.show_event_list_title')
+%table.table.table-striped.table-bordered.table-hover.table-condensed
+  %tbody
+    = render( partial: 'header_row', locals: { first_reservation: @reservations_events[@meeting_reservations.first.id], add_notes_column: true } )
+    -# Event Data rows:
+    - @meeting_reservations.each do |reservation|
+      -# Avoid showing rows for people who's not coming:
+      - unless reservation.is_not_coming || (! @reservations_events[reservation.id].any?{|res_ev| res_ev.is_doing_this? })
+        %tr
+          %td{ colspan: 2, class: 'info' }
+            %a{'id'=>"swimmer#{reservation.swimmer_id}", 'href'=>"#{ swimmer_radio_path(id: reservation.swimmer_id) }", 'data-toggle'=>'tooltip', 'title'=>I18n.t('radiography.radio_tab_tooltip')}
+              %b= reservation.swimmer.get_full_name
+            &nbsp;
+            %small
+              %i
+                = I18n.t('meeting_reservation.add_maybe') if !reservation.has_confirmed?
+
+          - @reservations_events[reservation.id].each do |event_reservation|
+            %td{ 'data-toggle'=>'tooltip', 'title'=> "#{ event_reservation.event_type.i18n_short }, #{ reservation.swimmer.get_full_name }" }
+              .text-center
+                - if event_reservation.is_doing_this?
+                  = event_reservation.get_timing
+                - else
+                  = "/"
+          %td
+            %small
+              %i= reservation.notes

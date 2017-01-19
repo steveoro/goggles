@@ -1,6 +1,6 @@
 %tr#header_row
   - session_dates   = first_reservation.map{ |re| Format.a_date(re.meeting_session.scheduled_date) + ' ' + Format.a_time(re.meeting_session.begin_time) }
-  -# FIXME Some Meeting sessions have been found with nil day_part_type_id! DEFAULT: code: 'M'
+  -# XXX Some Meeting sessions have been found with nil day_part_type_id! DEFAULT: code: 'M'
   - session_orders  = first_reservation.map{ |re| "(#{ I18n.t('activerecord.models.session') } #{ re.meeting_session.session_order }) #{ re.meeting_session.day_part_type_id.nil? ? '???' : DayPartType.new(code: re.meeting_session.day_part_type.code).i18n_short }" }
   - uniq_dates  = session_dates.uniq
   - uniq_orders = session_orders.uniq
