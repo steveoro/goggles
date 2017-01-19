@@ -7,7 +7,7 @@ require 'wrappers/timing'
 
 = MeetingReservationMatrixUpdater
 
- - Goggles framework vers.:  6.043
+ - Goggles framework vers.:  6.056
  - author: Steve A.
 
  Strategy class used to update the existing matrix of either MeetingEventReservation
@@ -143,7 +143,7 @@ class MeetingReservationMatrixUpdater < MeetingReservationMatrixProcessor
   #
   def sanitize_input( value )
     # Strip anything that could cause harm if injected with the right syntax:
-    value.gsub(/[\.\,\;\:\/\\\'\"\[\]\(\)\<\>\%\#\@\$\!\`\^\?\*]/, '')
+    value.gsub(/[\.\,\:\/\\\'\"\[\]\(\)\<\>\%\#\@\$\!\`\^\?\*]/, '')
   end
   #-- --------------------------------------------------------------------------
   #++

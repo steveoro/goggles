@@ -4,7 +4,7 @@
 
 == PassagesCollectSheetLayout
 
-- version:  6.054
+- version:  6.056
 - author:   Steve A.
 
 =end
@@ -298,6 +298,7 @@ class PassagesCollectSheetLayout
     # Map all reservations for this event as individual rows, add eventually a
     # separator row, if required:
     sorted_events.each do |res|
+      # Do we need to add a separator row?
       if self.is_row_separator_required( event, res, previous_res )
         data_table_array << (
           [
@@ -306,20 +307,19 @@ class PassagesCollectSheetLayout
           ] +
           passage_labels.map{ |cell| "* * *" }
         )
-      else
-        # Compute the entry timing:
-        entry_timing = Timing.new(res.suggested_hundreds, res.suggested_seconds, res.suggested_minutes )
-        # Add the swimmer name as column #0, the entry timing as column #1
-        # and add the remaining columns as empty cells so that we can have
-        # enough blank cells write each passage timing:
-        data_table_array << (
-          [
-            res.swimmer.complete_name,
-            "<i>#{ entry_timing.to_s }</i>"
-          ] +
-          passage_labels.map{ |cell| '' }
-        )
       end
+      # Compute the entry timing:
+      entry_timing = Timing.new(res.suggested_hundreds, res.suggested_seconds, res.suggested_minutes )
+      # Add the swimmer name as column #0, the entry timing as column #1
+      # and add the remaining columns as empty cells so that we can have
+      # enough blank cells write each passage timing:
+      data_table_array << (
+        [
+          res.swimmer.complete_name,
+          "<i>#{ entry_timing.to_s }</i>"
+        ] +
+        passage_labels.map{ |cell| '' }
+      )
       previous_res = res
     end
 
