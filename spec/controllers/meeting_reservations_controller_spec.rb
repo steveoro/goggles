@@ -58,10 +58,8 @@ RSpec.describe MeetingReservationsController, type: :controller do
     meeting
   end
 
-  let(:random_reservation) { MeetingReservation.limit(1000).sort{rand - 0.5}.first }
-  let(:meeting_with_reservation_id) do
-    MeetingReservation.limit(1000).sort{rand - 0.5}.first.meeting_id
-  end
+  let(:random_reservation)          { MeetingEventReservation.where( is_doing_this: true ).limit(1000).sort{rand - 0.5}.first }
+  let(:meeting_with_reservation_id) { random_reservation.meeting_id }
   let(:team_manager_with_resevations) do
     TeamManager.where( team_affiliation_id: random_reservation.badge.team_affiliation_id )
       .sort{ rand - 0.5 }.first
@@ -228,7 +226,7 @@ RSpec.describe MeetingReservationsController, type: :controller do
       context "for a logged-in valid user manager," do
         context "when there's no reservation data available," do
           before :each do
-            login_user( team_manager_with_results.user )
+            login_user( team_manager.user )
             get :show, params: { id: manageable_and_unreserved_meeting_id }
           end
           it "sets the flash error to :no_result_to_show" do

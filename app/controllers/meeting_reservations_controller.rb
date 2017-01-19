@@ -10,7 +10,7 @@ require 'team_manager_validator'
 
 = MeetingReservationsController
 
-  - version:  6.055
+  - version:  6.058
   - author:   Steve A.
 
 =end

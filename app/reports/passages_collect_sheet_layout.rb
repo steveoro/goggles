@@ -4,7 +4,7 @@
 
 == PassagesCollectSheetLayout
 
-- version:  6.057
+- version:  6.058
 - author:   Steve A.
 
 =end
@@ -271,7 +271,7 @@ class PassagesCollectSheetLayout
     # For each sorted relay reservation config:
     relay_configs.each_with_index do |res, index|
       # Add a custom header for each relay name change:
-      if ( prev_config_name != res.notes.split(';').first ) || (index == 0)
+      if ( prev_config_name != res.notes.to_s.split(';').first ) || (index == 0)
         # On relay change, if not at the start, add another empty line:
         if index > 0
           # New table detected! Time to render the old data:
@@ -285,7 +285,7 @@ class PassagesCollectSheetLayout
           [
             "<i><b>#{ event.get_full_name }</b></i>",
             "<i>#{ I18n.t('swimmers.year_of_birth') } / #{ I18n.t('swimmers.age_current') }</i>",
-            "<i>#{ I18n.t('meeting_reservation.relay') } '<b>#{ res.notes.split(';').first }</b>'</i>"
+            "<i>#{ I18n.t('meeting_reservation.relay') } '<b>#{ res.notes.to_s.split(';').first }</b>'</i>"
           ] + passage_labels
         )
       end
@@ -297,7 +297,7 @@ class PassagesCollectSheetLayout
           "##{ res.notes.to_s.split(';').last.to_i }" # relay fraction order
       ] + passage_labels.map{ |cell| '' }           # Empty space to insert timing
       # Update the previous config name before another loop:
-      prev_config_name = res.notes.split(';').first
+      prev_config_name = res.notes.to_s.split(';').first
     end
 
     # Draw the residual table data:
