@@ -12,9 +12,9 @@
         %tbody
           - prev_config_name = nil
           -# Relay Data rows:
-          - relay_configs.each do |relay_reservation|
+          - relay_configs.each_with_index do |relay_reservation, index|
             -# Render a new relay config header row:
-            - if prev_config_name != relay_reservation.notes.split(';').first
+            - if ( prev_config_name != relay_reservation.notes.split(';').first ) || (index == 0)
               %tr
                 %td{ colspan: 2 }
                   %small

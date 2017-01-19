@@ -83,6 +83,8 @@ Rails.application.routes.draw do
       post 'meeting_reservations/update_relays'   # post updates for the above matrix of row entries
       get 'meeting_reservations/show'
       get 'meeting_reservations/printout_event_sheet'
+      get 'meeting_reservations/relayometer'
+      post 'meeting_reservations/relayometer'
 
 
       # === Records ===

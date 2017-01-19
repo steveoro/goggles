@@ -160,6 +160,7 @@ it:
     show_event_list_title: "Iscrizioni Eventi"
     show_relay_list_title: "Disponibilità a staffette"
     show_relay_config_title: "Configurazione Staffette"
+    relay: "Staff."
     relay_codename: "Nome staffetta"
     relay_codename_tooltip: "Nome staffetta (max 5 caratt.; es: 'S1', 'S2', ecc...; ogni nome identifica in quale staffetta l'atleta deve essere messo)"
     relay_codename_short_title: "Nome"
@@ -186,3 +187,5 @@ it:
     event_sheet_pdf_tooltip: "Click to download the PDF data sheet for collecting swimmer passages"
     event_sheet_title: "Raccolta passaggi"
     event_sheet_basefilename: "passaggi"
+    relayometer_title: "Staffettometro"
+    relayometer_description: "Lo Staffettometro analizza la disponibilità corrente alle staffette di tutti gli atleti in squadra e cerca di proporre nuove configurazioni di staffetta, ottimizzate principalmente in base alle performance. Un volta presentati i risultati, puoi sia accettare alcuni o nessuno dei risultati proposti. Ogni configurazione può poi essere modificata in seguito manualmente, ogni volta che si vuole, nella pagina (a fianco) apposta."

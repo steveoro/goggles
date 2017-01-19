@@ -160,6 +160,7 @@ en:
     show_event_list_title: "Event reservations"
     show_relay_list_title: "Relay availability"
     show_relay_config_title: "Relays configuration"
+    relay: "Rel."
     relay_codename: "Relay codename"
     relay_codename_tooltip: "Relay codename (max 5 chars; ex: 'S1', 'S2', etc...; each name identifies in which relay the swimmer should be put)"
     relay_codename_short_title: "Relay name"
@@ -186,3 +187,5 @@ en:
     event_sheet_pdf_tooltip: "Click to download the PDF data sheet for collecting swimmer passages"
     event_sheet_title: "Passages model sheet"
     event_sheet_basefilename: "passages"
+    relayometer_title: "Relay-o-meter"
+    relayometer_description: "The Relay-o-meter analyzes the current relay availability of all the Team's swimmers, and proposes new relay configuration solutions, optimized mainly for performance. When the result is presented, you can either accept some or none of the resulting configurations. Each configuration can then be edited endlessly in the dedicated tab page."

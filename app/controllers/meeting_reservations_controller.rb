@@ -285,6 +285,56 @@ class MeetingReservationsController < ApplicationController
   #++
 
 
+  # GET + POST relay auto-configurator.
+  #
+  # GET: analyze and suggest the best relay(s) configuration depending upon the
+  # current relay availability of each reserved swimmer.
+  #
+  # POST: accepts and updates the relay reservations, according to the suggested changes.
+  #
+  # See #edit_relays and #update_relays for more info.
+  #
+  def relayometer
+    unless @is_valid_team_manager
+      flash[:error] = I18n.t(:invalid_action_request) + ' - ' + I18n.t('meeting.errors.invalid_team_manager_or_no_swimmer')
+      redirect_to( meetings_current_path() ) and return
+    end
+# DEBUG
+#    logger.debug "\r\n\r\n!! ------ #{self.class.name}#relayometer -----"
+#    logger.debug "> #{params.inspect}"
+
+    # Collect all relay events for this Meeting, respecting session and event order:
+    @events = @meeting.meeting_events
+        .joins(:meeting_session, :event_type)
+        .includes(:meeting_session, :event_type)
+        .where('event_types.is_a_relay = 1')
+        .order('meeting_sessions.session_order, event_order')
+        .to_a
+    # Collect the availability matrix (badges x relays rows) of relay reservations:
+    @reservations_relays = {}
+    @events.each do |event|
+      @reservations_relays[ event.id ] = MeetingRelayReservation.where(
+        meeting_event_id: event.id,
+        is_doing_this:    true
+      ).joins(:meeting_session, :meeting_event, :event_type, :swimmer)
+        .includes(:meeting_session, :meeting_event, :event_type, :swimmer)
+        .order('meeting_sessions.session_order, meeting_events.event_order')
+        .to_a
+    end
+
+    # POST: Parse the chosen config changes from the POST parameters and apply them on the reservations:
+    if request.post?
+      # TODO / WIP
+
+    # GET: Analyze current relay availability and propose some solutions:
+    else
+      # TODO / WIP
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
   private
 
 

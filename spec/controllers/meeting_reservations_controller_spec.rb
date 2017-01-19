@@ -299,6 +299,72 @@ RSpec.describe MeetingReservationsController, type: :controller do
     end
     #-- -------------------------------------------------------------------------
     #++
+
+    describe "GET #relayometer" do
+      context "for an unlogged user with invalid parameters," do
+        it "redirects to the Login page" do
+          get :relayometer
+          expect(response).to redirect_to( "/users/sign_in" )
+        end
+      end
+
+      context "for a logged-in generic user," do
+        before :each do
+          login_user()
+        end
+        it "redirects to meetings/current page" do
+          get :relayometer, params: { id: random_manageable_meeting_id }
+          expect(response).to redirect_to( meetings_current_path )
+        end
+      end
+
+      context "for a logged-in valid user manager," do
+        before :each do
+          login_user( team_manager.user )
+        end
+        it "returns http success" do
+          get :relayometer, params: { id: random_manageable_meeting_id }
+          expect(response).to have_http_status(:success)
+        end
+      end
+
+      # TODO Add more tests
+    end
+    #-- -----------------------------------------------------------------------
+    #++
+
+    describe "POST #relayometer" do
+      context "for an unlogged user with invalid parameters," do
+        it "redirects to the Login page" do
+          post :relayometer
+          expect(response).to redirect_to( "/users/sign_in" )
+        end
+      end
+
+      context "for a logged-in generic user," do
+        before :each do
+          login_user()
+        end
+        it "redirects to meetings/current page" do
+          post :relayometer, params: { id: random_manageable_meeting_id }
+          expect(response).to redirect_to( meetings_current_path )
+        end
+      end
+
+      context "for a logged-in valid user manager," do
+        before :each do
+          login_user( team_manager.user )
+        end
+        it "returns http success" do
+          post :relayometer, params: { id: random_manageable_meeting_id }
+          expect(response).to have_http_status(:success)
+        end
+      end
+
+      # TODO Add more tests
+    end
+    #-- -----------------------------------------------------------------------
+    #++
   end
   #-- -------------------------------------------------------------------------
   #++
