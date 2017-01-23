@@ -489,21 +489,16 @@ class SwimmersController < ApplicationController
   #
   def regionalercsi
     params.permit! # (No unsafe params can be passed)
-    has_badge = if params['header_year'].nil?
-      @swimmer.has_badge_for_season_and_year?
-    else
-      @swimmer.has_badge_for_season_and_year?( params['header_year'].to_i )
-    end
-    unless has_badge
+    @season_type = SeasonType.find_by_code('MASCSI')
+    @header_year = params['header_year'].nil? ? Season.build_header_year_from_date : params['header_year'].to_i
+    @badge       = @swimmer.badges.for_season_type( @season_type ).for_year( @header_year ).first
+    if @badge.nil?
       flash[:error] = I18n.t('swimmers.no_associated_badge_found')
-      redirect_back( fallback_location: swimmers_path ) and return
+      redirect_back( fallback_location: swimmer_radio_path ) and return
     end
 
     # --- "Regional ER CSI" tab: ---
     @tab_title        = I18n.t('regionalercsi.title')
-    @season_type      = SeasonType.find_by_code('MASCSI')
-    @header_year      = params['header_year'].nil? ? Season.build_header_year_from_date : params['header_year'].to_i
-    @badge            = @swimmer.badges.for_season_type( @season_type ).for_year( @header_year ).first
     @season           = @badge.season
     @team             = @badge.team
     # Check for overrides
@@ -513,7 +508,7 @@ class SwimmersController < ApplicationController
       @team.get_current_affiliation( @season_type )
     end
     @swimmer_score = EnhanceIndividualRankingDAO::EIRSwimmerScoreDAO.new( @swimmer, @season )
-    
+
     # Creates managed event list
     @events_list = []
     EventsByPoolType.not_relays.for_pool_type_code( '25' ).distance_more_than(50).distance_less_than(800).sort_by_event.each do |events_by_pool_type|
