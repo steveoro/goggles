@@ -171,6 +171,68 @@ class Api::V1::MeetingsController < Api::BaseController
   #++
 
 
+  # Tags/Untags a specific meeting id for the current_user.
+  # (JSON format) PUT-only action.
+  #
+  # === Params:
+  # - id: the Meeting.id to be tagged/untagged for the current_user.
+  #
+  def tag_for_user
+    meeting = Meeting.find_by_id( params[:id] )
+    # Meeting found?
+    if meeting && current_user
+      # Meeting already tagged?
+      if meeting.tags_by_user_list.include?(  current_user.id.to_s )
+        meeting.tags_by_user_list.remove( current_user.id.to_s )
+      else
+        meeting.tags_by_user_list.add( current_user.id.to_s )
+      end
+      # Save and return result:
+      if meeting.save
+        render( status: :ok, json: { success: true } ) and return
+      else
+        render( status: 422, json: { success: false, error: "Error during save!" } )
+      end
+    end
+    render( status: 422, json: { success: false, error: "Invalid parameters!" } )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Tags/Untags a specific meeting id for the specified TeamAffiliation.id.
+  # (JSON format) PUT-only action.
+  #
+  # Keep in mind that the action in named #tag_for_team for brevity, but the
+  # actual tag is tied to a TeamAffiliation id, not a Team id.
+  #
+  # === Params:
+  # - id: the Meeting.id to be tagged/untagged for the current_user.
+  # - t: the TeamAffiliation.id to be tagged/untagged for the current_user.
+  #
+  def tag_for_team
+    meeting = Meeting.find_by_id( params[:id] )
+    # Meeting found?
+    if meeting && params[:t].present?
+      # Meeting already tagged?
+      if meeting.tags_by_team_list.include?( params[:t] )
+        meeting.tags_by_team_list.remove( params[:t] )
+      else
+        meeting.tags_by_team_list.add( params[:t] )
+      end
+      # Save and return result:
+      if meeting.save
+        render( status: :ok, json: { success: true } ) and return
+      else
+        render( status: 422, json: { success: false, error: "Error during save!" } )
+      end
+    end
+    render( status: 422, json: { success: false, error: "Invalid parameters!" } )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
   protected
 
 
