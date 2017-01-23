@@ -1,0 +1,10 @@
+%span
+  = meeting.decorate.get_linked_name( :get_full_name )
+  - if current_user
+    - is_user_tagged = meeting.tags_by_user_list.include?( current_user.id_to_s )
+    -# TODO GET AFFILIATIONS & CHECK! is_team_tagged = meeting.tags_by_team_list.include?( current_user.id_to_s )
+    .toolTip{'data-toggle' => 'tooltip', 'data-placement' => 'bottom', 'title' => I18n.t('tags.star_tooltip') }
+      = link_to( image_tag('arrow_up.png'), vote_swimming_pool_review_path(id: review.id, vote: 1), {method: :post, confirm: I18n.t('netzke.basepack.grid_panel.are_you_sure'), class: "btn btn-xs btn-default"} )
+
+%p/
+= meeting.decorate.manage_reservation_button( current_user )
