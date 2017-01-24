@@ -146,32 +146,34 @@ class PassagesCollectSheetLayout
       pdf.move_down( 10 )
 
       events.each do |event|
-        # Get the pool type and the passage types:
-        pool_type = meeting.event_types.where( id: event.event_type_id ).first
-          .pool_types
-          .first
-        possible_passage_types = team.team_passage_templates
-          .for_event_type( event.event_type )
-          .for_pool_type( pool_type )
-
-        # passage_types.count will yield the total number of columns for the current event:
-        passage_types = possible_passage_types.count == 0 ?
-          TeamPassageTemplate.get_default_passage_types_for( event.event_type.phase_length_in_meters, pool_type.length_in_meters ) :
-          TeamPassageTemplate.get_template_passage_types_for( team, event.event_type, pool_type )
-
-        # Enlist all passage types for this event composing their labels:
-        passage_labels = passage_types.map{ |p| "<i>#{ p.length_in_meters }</i>" }
-
-        # For each event:
-        if event.event_type.is_a_relay
-          # --- RELAYS data setup & RENDERING ---
-          self.prepare_relay_data_table( pdf, event, passage_labels, reservations_relays[ event.id ] )
-        else
-          # --- IND.EVENTS data setup & RENDERING ---
-          self.prepare_event_data_table( pdf, event, passage_labels, reservations_events[ event.id ] )
+        if ( event.event_type.is_a_relay && reservations_relays[ event.id ] && reservations_relays[ event.id ].size > 0 ) || ( reservations_events[ event.id ] && reservations_events[ event.id ].size > 0 ) 
+          # Get the pool type and the passage types:
+          pool_type = meeting.event_types.where( id: event.event_type_id ).first
+            .pool_types
+            .first
+          possible_passage_types = team.team_passage_templates
+            .for_event_type( event.event_type )
+            .for_pool_type( pool_type )
+  
+          # passage_types.count will yield the total number of columns for the current event:
+          passage_types = possible_passage_types.count == 0 ?
+            TeamPassageTemplate.get_default_passage_types_for( event.event_type.phase_length_in_meters, pool_type.length_in_meters ) :
+            TeamPassageTemplate.get_template_passage_types_for( team, event.event_type, pool_type )
+  
+          # Enlist all passage types for this event composing their labels:
+          passage_labels = passage_types.map{ |p| "<i>#{ p.length_in_meters }</i>" }
+  
+          # For each event:
+          if event.event_type.is_a_relay
+            # --- RELAYS data setup & RENDERING ---
+            self.prepare_relay_data_table( pdf, event, passage_labels, reservations_relays[ event.id ] )
+          else
+            # --- IND.EVENTS data setup & RENDERING ---
+            self.prepare_event_data_table( pdf, event, passage_labels, reservations_events[ event.id ] )
+          end
+  
+          pdf.move_down( 10 )
         end
-
-        pdf.move_down( 10 )
       end
 
       pdf.stroke_horizontal_rule()

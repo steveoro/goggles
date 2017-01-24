@@ -1,7 +1,7 @@
 %h3= t('meeting_reservation.show_event_list_title')
 %table.table.table-striped.table-bordered.table-hover.table-condensed
   %tbody
-    = render( partial: 'header_row', locals: { first_reservation: @reservations_events[@meeting_reservations.first.id], add_notes_column: true } )
+    = render( partial: 'header_row', locals: { first_reservation: @reservations_events[@meeting_reservations.first.id], add_notes_column: false, add_session_name: false } )
     -# Event Data rows:
     - @meeting_reservations.each do |reservation|
       -# Avoid showing rows for people who's not coming:
@@ -21,7 +21,7 @@
                 - if event_reservation.is_doing_this?
                   = event_reservation.get_timing
                 - else
-                  = "/"
-          %td
-            %small
-              %i= reservation.notes
+                  = "-"
+          -# %td
+          -#   %small
+          -#     %i= reservation.notes
