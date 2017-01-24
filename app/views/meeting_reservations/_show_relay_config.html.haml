@@ -49,6 +49,6 @@
                   .text-center
                     = "#"
                     = relay_reservation.notes.to_s.split(';').last.to_i
-            - prev_config_name = relay_reservation.notes.split(';').first
+            - prev_config_name = relay_reservation.notes.to_s.split(';').first
     .row.col-xs-1
       &nbsp;
