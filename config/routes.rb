@@ -111,6 +111,11 @@ Rails.application.routes.draw do
       get  "swimmer/trainings/:id",             to: "swimmers#trainings",               as: "swimmer_trainings"
       get  "swimmer/closed_goggle_cup/:id",     to: "swimmers#closed_goggle_cup",       as: "swimmer_closed_goggle_cup"
 
+      # === Taggings (Meeting or Swimmer) ===
+      post 'taggings/meeting_for_user/:id',     to: "taggings#meeting_for_user",        as: "taggings_meeting_for_user"
+      post 'taggings/meeting_for_team/:id',     to: "taggings#meeting_for_team",        as: "taggings_meeting_for_team"
+      post 'taggings/swimmer_for_user/:id',     to: "taggings#swimmer_for_user",        as: "taggings_swimmer_for_user"
+
       # === Teams ===
       get  "teams/index",                       to: "teams#index",                      as: "teams"
       get  "teams/radio/:id",                   to: "teams#radio",                      as: "team_radio"
@@ -235,6 +240,7 @@ Rails.application.routes.draw do
       # === Swimmers ===
       get    "swimmers/index",                to: "swimmers#index",         as: "swimmers"
       get    "swimmers/show/:id",             to: "swimmers#show",          as: "swimmer_show"
+      put    "swimmers/tag_for_user/:id",     to: "swimmers#tag_for_user",  as: "swimmer_tag_for_user"
 
       # === SwimmingPools ===
       get    "swimming_pools/index",          to: "swimming_pools#index",   as: "swimming_pools"

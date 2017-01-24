@@ -12,9 +12,7 @@
         name: I18n.t('meeting_calendar.meeting'),
         attribute: 'description',
     ) do |meeting|
-        meeting.decorate.get_linked_name( :get_full_name ) <<
-        "<p/>".html_safe <<
-        meeting.decorate.manage_reservation_button( current_user )
+        render( partial: 'goggles/clickable_meeting_name', locals: {meeting: meeting} )
     end
 
     g.column(

@@ -2,12 +2,11 @@
 %span
   = meeting.decorate.get_linked_name( :get_full_name )
   - if current_user
-    - is_user_tagged = meeting.tags_by_user_list.include?( current_user.id.to_s )
+    - is_user_starred = meeting.tags_by_user_list.include?( current_user.id.to_s )
+    - is_team_starred = meeting.tags_by_team_list.include?( current_user.id.to_s )
     -# TODO GET AFFILIATIONS & CHECK! is_team_tagged = meeting.tags_by_team_list.include?( current_user.id_to_s )
-    %span.toolTip{'data-toggle' => 'tooltip', 'data-placement' => 'bottom', 'title' => I18n.t('tags.star_tooltip') }
-      = link_to( api_v1_meeting_tag_for_user_path(id: meeting.id), { method: :put, remote: true, success: "alert('Done!');" } ) do
-        %span{ 'id' => "meetingStarOn#{ meeting.id }", 'style' => "#{ is_user_tagged ? '' : 'display: none;' }" }
-          = image_tag( 'star.png' )
-        %span{ 'id' => "meetingStarOff#{ meeting.id }", 'style' => "#{ is_user_tagged ? 'display: none;' : '' }" }
-          = image_tag( 'star_disabled.png' )
+    %span{ 'id' => "meetingUserStar#{ meeting.id }", 'class' => 'toolTip', 'data-toggle' => 'tooltip', 'data-placement' => 'bottom', 'title' => I18n.t('tags.star_tooltip') }
+      = render(partial: 'goggles/clickable_meeting_user_star', locals: { meeting_id: meeting.id, is_starred: is_user_starred, is_saved_ok: true } )
+    %span{ 'id' => "meetingTeamStar#{ meeting.id }", 'class' => 'toolTip', 'data-toggle' => 'tooltip', 'data-placement' => 'bottom', 'title' => I18n.t('tags.star_tooltip') }
+      = render(partial: 'goggles/clickable_meeting_team_star', locals: { meeting_id: meeting.id, is_starred: is_team_starred, is_saved_ok: true } )
   = meeting.decorate.manage_reservation_button( current_user )

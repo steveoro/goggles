@@ -6,6 +6,8 @@ class Api::V1::SwimmersController < Api::BaseController
   respond_to :json
 
   before_action :ensure_format
+  # Require authorization before invoking any of this controller's actions:
+  before_action :authenticate_user_from_token!, only: [:tag_for_user]
   #-- -------------------------------------------------------------------------
   #++
 
@@ -15,6 +17,7 @@ class Api::V1::SwimmersController < Api::BaseController
   #
   # The returned set when no querying/filtering parameter is provided  is
   # capped to return 20 rows max.
+  #
   # XXX [Steve, 2016107] Note that we cannot cap the limit of the query
   # when seeking a specified value, since the actual search result may well lay
   # beyond the limit set.
@@ -48,6 +51,35 @@ class Api::V1::SwimmersController < Api::BaseController
   #
   def show
     render status: 200, json: Swimmer.find(params[:id])
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Tags/Untags a specific Swimmer id for the current_user.
+  # (JSON format) PUT-only action.
+  #
+  # === Params:
+  # - id: the Swimmer.id to be tagged/untagged for the current_user.
+  #
+  def tag_for_user
+    swimmer = Swimmer.find_by_id( params[:id] )
+    # Meeting found?
+    if swimmer && current_user
+      # Swimmer already tagged?
+      if swimmer.tags_by_user_list.include?(  current_user.id.to_s )
+        swimmer.tags_by_user_list.remove( current_user.id.to_s )
+      else
+        swimmer.tags_by_user_list.add( current_user.id.to_s )
+      end
+      # Save and return result:
+      if swimmer.save
+        render( status: :ok, json: { success: true } ) and return
+      else
+        render( status: 422, json: { success: false, error: "Error during save!" } )
+      end
+    end
+    render( status: 422, json: { success: false, error: "Invalid parameters!" } )
   end
   #-- -------------------------------------------------------------------------
   #++
