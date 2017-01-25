@@ -12,7 +12,7 @@
         name: I18n.t('meeting_calendar.meeting'),
         attribute: 'description',
     ) do |meeting|
-        render( partial: 'goggles/clickable_meeting_name', locals: {meeting: meeting} )
+        render( partial: 'goggles/taggable_meeting_name', locals: {meeting: meeting} )
     end
 
     g.column(

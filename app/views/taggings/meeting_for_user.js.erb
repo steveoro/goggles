@@ -2,6 +2,6 @@
  alert('<%= escape_javascript( flash[:error] ) %>' );
 <% end %>
 $("#meetingUserStar<%= @meeting_id %>")
-    .replaceWith('<%= escape_javascript(
+    .html('<%= escape_javascript(
         render(partial: 'goggles/clickable_meeting_user_star', locals: { meeting_id: @meeting_id, is_starred: @is_starred, is_saved_ok: @is_saved_ok } )
     ) %>');

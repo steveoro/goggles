@@ -25,7 +25,7 @@
         attribute: 'description',
         detach_with_id: :flt_description
     ) do |meeting|
-        render( partial: 'goggles/clickable_meeting_name', locals: {meeting: meeting} )
+        render( partial: 'goggles/taggable_meeting_name', locals: {meeting: meeting} )
     end
 
     g.column(
