@@ -16,7 +16,7 @@ require 'passages_batch_updater'
 =end
 class MeetingsController < ApplicationController
   # Require authorization before invoking any of this controller's actions:
-  before_action :authenticate_user!, only: [:edit_passages]
+  before_action :authenticate_user!, only: [:my, :edit_passages]
 
   # Parse parameters:
   before_action :verify_meeting, only: [
@@ -31,6 +31,37 @@ class MeetingsController < ApplicationController
   before_action :verify_is_team_manager,  only: [:edit_passages]
   #-- -------------------------------------------------------------------------
   #++
+
+
+  # Enlists all "my" meetings for the current user.
+  #
+  # Includes:
+  # - all tagged meetings (both by user_id and affiliation_id)
+  # - only meetings belonging to a not-yet ended season are shown
+  #
+  # Besides showing all meetings tagged by a team manager for an affiliation
+  # in which the current user has a badge, this allows each user to build
+  # a customized calendar to check out frequently.
+  #
+  def my
+    open_season_ids = Season.is_not_ended.select(:id).map{|s| s.id }
+    # Refine the list of open seasons:
+    browsable_season_ids = open_season_ids.select{ |season_id|
+      ! current_user.find_team_affiliation_id_from_badges_for( season_id ).nil?
+    } + open_season_ids.select{ |season_id|
+      ! current_user.find_team_affiliation_id_from_team_managers_for( season_id ).nil?
+    }
+    # Extract the browsable meetings:
+    @meetings = Meeting
+      .tagged_with( current_user.id.to_s, on: :tags_by_users )
+      .where( "meetings.season_id IN (?)", browsable_season_ids )
+      .includes( :season, :season_type, :meeting_sessions, :swimming_pools )
+      .joins( :season, :season_type, :meeting_sessions, :swimming_pools )
+      .order( "meetings.header_date" )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
 
   # Index of the meetings for the current sport/academic year.
   #
