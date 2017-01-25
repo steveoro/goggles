@@ -135,11 +135,11 @@ SimpleNavigation::Configuration.run do |navigation|
       lev2_nav.item :key_championships_regional_er_csi,  t('championships.regional_er_csi'), championships_calendar_regional_er_csi_path
     end
 
-    primary.item( :key_records,               t('records.menu_root'), '#', 'data-turbolinks'=>'false' ) do |lev2_nav|
-      lev2_nav.item :key_records_season_type, t('records.menu_by_season_type'), records_for_season_type_path()
-      lev2_nav.item :key_records_team,        t('records.menu_by_team'),        records_for_team_path()
-      lev2_nav.item :key_records_swimmer,     t('records.menu_by_swimmer'),     records_for_swimmer_path()
-    end
+#    primary.item( :key_records,               t('records.menu_root'), '#', 'data-turbolinks'=>'false' ) do |lev2_nav|
+#      lev2_nav.item :key_records_season_type, t('records.menu_by_season_type'), records_for_season_type_path()
+#      lev2_nav.item :key_records_team,        t('records.menu_by_team'),        records_for_team_path()
+#      lev2_nav.item :key_records_swimmer,     t('records.menu_by_swimmer'),     records_for_swimmer_path()
+#    end
     primary.item( :key_separator0_2, '<hr/>', '#', class: 'disabled', 'data-turbolinks'=>'false' )
 
     primary.item :key_swimmers_index,         t('swimmers.search_swimmers'), swimmers_path(), highlights_on: %r(/swimmers)
