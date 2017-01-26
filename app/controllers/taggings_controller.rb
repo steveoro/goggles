@@ -39,11 +39,11 @@ class TaggingsController < ApplicationController
       if meeting && current_user
         @meeting_id = meeting.id
         # Meeting already tagged?
-        if meeting.tags_by_user_list.include?(  current_user.id.to_s )
-          meeting.tags_by_user_list.remove( current_user.id.to_s )
+        if meeting.tags_by_user_list.include?( "u#{ current_user.id }" )
+          meeting.tags_by_user_list.remove( "u#{ current_user.id }" )
           @is_starred = false
         else
-          meeting.tags_by_user_list.add( current_user.id.to_s )
+          meeting.tags_by_user_list.add( "u#{ current_user.id }" )
           @is_starred = true
         end
         logger.info("[I] - Taggings#meeting_for_user: meeting id: #{ @meeting_id }, starred: #{ @is_starred }")
@@ -89,11 +89,11 @@ class TaggingsController < ApplicationController
         @meeting_id = meeting.id
         @team_affiliation_id = params[:t]
         # Meeting already tagged?
-        if meeting.tags_by_team_list.include?( params[:t] )
-          meeting.tags_by_team_list.remove( params[:t] )
+        if meeting.tags_by_team_list.include?( "ta#{ params[:t] }" )
+          meeting.tags_by_team_list.remove( "ta#{ params[:t] }" )
           @is_starred = false
         else
-          meeting.tags_by_team_list.add( params[:t] )
+          meeting.tags_by_team_list.add( "ta#{ params[:t] }" )
           @is_starred = true
         end
         logger.info("[I] - Taggings#meeting_for_team: meeting id: #{ @meeting_id }, team_affiliation.id: #{ @team_affiliation_id }, starred: #{ @is_starred }")
@@ -136,11 +136,11 @@ class TaggingsController < ApplicationController
       if swimmer && current_user
         @swimmer_id = swimmer.id
         # Swimmer already tagged?
-        if swimmer.tags_by_user_list.include?(  current_user.id.to_s )
-          swimmer.tags_by_user_list.remove( current_user.id.to_s )
+        if swimmer.tags_by_user_list.include?( "u#{ current_user.id }" )
+          swimmer.tags_by_user_list.remove( "u#{ current_user.id }" )
           @is_starred = false
         else
-          swimmer.tags_by_user_list.add( current_user.id.to_s )
+          swimmer.tags_by_user_list.add( "u#{ current_user.id }" )
           @is_starred = true
         end
         logger.info("[I] - Taggings#swimmer_for_user: swimmer id: #{ @swimmer_id }, starred: #{ @is_starred }")

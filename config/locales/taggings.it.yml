@@ -1,5 +1,5 @@
 it:
   tags:
-    star_tooltip: "Aggiungi a tuoi preferiti"
-    triplestar_tooltip: "Aggiungi a preferiti/calendario di squadra"
+    star_tooltip: "Aggiungi/rimuovi ai/dai tuoi preferiti"
+    triplestar_tooltip: "Aggiungi/rimuovi ai/dai preferiti/calendario di squadra"
     error_during_save: "Errore durante il salvataggio del tag. L'errore è stato registrato ed i nostri pinguini robot ci lavoreranno sopra al piu' presto!"

@@ -3,14 +3,14 @@
   = meeting.decorate.get_linked_name( :get_full_name )
   -# Avoid user-generated cruft on ended seasons:
   - if current_user && !meeting.season.is_season_ended_at()
-    - is_user_starred = meeting.tags_by_user_list.include?( current_user.id.to_s )
+    - is_user_starred = meeting.tags_by_user_list.include?( "u#{ current_user.id }" )
     - can_manage = TeamManagerValidator.can_manage?( current_user, meeting )
     - team_affiliation_id = nil
     - if can_manage
       - team_affiliation_id = current_user.find_team_affiliation_id_from_team_managers_for( meeting.season_id )
     - elsif current_user.has_associated_swimmer?
       - team_affiliation_id = current_user.find_team_affiliation_id_from_badges_for( meeting.season_id )
-    - is_team_starred = meeting.tags_by_team_list.include?( team_affiliation_id.to_s )
+    - is_team_starred = meeting.tags_by_team_list.include?( "ta#{ team_affiliation_id }" )
     -# Here we allow as taggable also meetings tagged by a manager even if the user does not have a badge yet:
     - if is_team_starred || (! team_affiliation_id.nil?)
       %span{ 'id' => "meetingUserStar#{ meeting.id }", 'class' => 'toolTip', 'data-toggle' => 'tooltip', 'data-placement' => 'bottom', 'title' => I18n.t('tags.star_tooltip') }

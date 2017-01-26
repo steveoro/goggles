@@ -55,7 +55,7 @@ class MeetingsController < ApplicationController
     @meetings = Meeting.includes( :season, :season_type, :meeting_sessions, :swimming_pools )
       .joins( :season, :season_type, :meeting_sessions, :swimming_pools )
       .where( "meetings.season_id IN (?)", browsable_season_ids )
-      .tagged_with( current_user.id.to_s, on: :tags_by_users )
+      .tagged_with( "u#{ current_user.id }", on: :tags_by_users )
       .order( "meetings.header_date" )
       .to_a
 
@@ -67,7 +67,7 @@ class MeetingsController < ApplicationController
           @meetings += Meeting.includes( :season, :season_type, :meeting_sessions, :swimming_pools )
             .joins( :season, :season_type, :meeting_sessions, :swimming_pools )
             .where( "meetings.season_id IN (?)", browsable_season_ids )
-            .tagged_with( tagger_team_affiliation_id.to_s, on: :tags_by_teams )
+            .tagged_with( "ta#{ tagger_team_affiliation_id }", on: :tags_by_teams )
             .order( "meetings.header_date" )
             .to_a
         end

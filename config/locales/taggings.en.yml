@@ -1,5 +1,5 @@
 en:
   tags:
-    star_tooltip: "Add to your favourites"
-    triplestar_tooltip: "Add to Team favourites"
+    star_tooltip: "Add/remove to/from your favourites"
+    triplestar_tooltip: "Add/remove to/from Team favourites"
     error_during_save: "Error during Tag saving. The error has been recorded and soon our robotic minions will work on it!"

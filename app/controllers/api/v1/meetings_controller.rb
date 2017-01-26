@@ -182,10 +182,10 @@ class Api::V1::MeetingsController < Api::BaseController
     # Meeting found?
     if meeting && current_user
       # Meeting already tagged?
-      if meeting.tags_by_user_list.include?(  current_user.id.to_s )
-        meeting.tags_by_user_list.remove( current_user.id.to_s )
+      if meeting.tags_by_user_list.include?( "u#{ current_user.id }" )
+        meeting.tags_by_user_list.remove( "u#{ current_user.id }" )
       else
-        meeting.tags_by_user_list.add( current_user.id.to_s )
+        meeting.tags_by_user_list.add( "u#{ current_user.id }" )
       end
       # Save and return result:
       if meeting.save
@@ -215,10 +215,10 @@ class Api::V1::MeetingsController < Api::BaseController
     # Meeting found?
     if meeting && params[:t].present?
       # Meeting already tagged?
-      if meeting.tags_by_team_list.include?( params[:t] )
-        meeting.tags_by_team_list.remove( params[:t] )
+      if meeting.tags_by_team_list.include?( "ta#{ params[:t] }" )
+        meeting.tags_by_team_list.remove( "ta#{ params[:t] }" )
       else
-        meeting.tags_by_team_list.add( params[:t] )
+        meeting.tags_by_team_list.add( "ta#{ params[:t] }" )
       end
       # Save and return result:
       if meeting.save

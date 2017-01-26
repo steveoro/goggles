@@ -132,7 +132,7 @@ describe Api::V1::MeetingsController, type: :controller, api: true do
         expect( result['success'] ).to eq( true )
       end
       it "updates the list of tags_by_user for the specified meeting" do
-        expect( random_meeting.tags_by_user_list.include?(user.id.to_s) ).to be false
+        expect( random_meeting.tags_by_user_list.include?("u#{ user.id }") ).to be false
         expect {
           put :tag_for_user, format: :json, params: { id: random_meeting.id, user_email: user.email, user_token: user.authentication_token }
           random_meeting.reload
@@ -185,7 +185,7 @@ describe Api::V1::MeetingsController, type: :controller, api: true do
         expect( result['success'] ).to eq( true )
       end
       it "updates the list of tags_by_team for the specified meeting" do
-        expect( random_meeting.tags_by_team_list.include?(team_manager.team_affiliation_id.to_s) ).to be false
+        expect( random_meeting.tags_by_team_list.include?("ta#{ team_manager.team_affiliation_id }") ).to be false
         expect {
           put :tag_for_team, format: :json, params: { id: random_meeting.id, t: team_manager.team_affiliation_id, user_email: user.email, user_token: user.authentication_token }
           random_meeting.reload

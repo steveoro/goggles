@@ -94,7 +94,7 @@ describe Api::V1::SwimmersController, type: :controller, api: true do
         expect( result['success'] ).to eq( true )
       end
       it "updates the list of tags_by_user for the specified meeting" do
-        expect( swimmer.tags_by_user_list.include?(user.id.to_s) ).to be false
+        expect( swimmer.tags_by_user_list.include?("u#{ user.id }") ).to be false
         expect {
           put :tag_for_user, format: :json, params: { id: swimmer.id, user_email: user.email, user_token: user.authentication_token }
           swimmer.reload

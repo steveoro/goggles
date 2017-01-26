@@ -67,10 +67,10 @@ class Api::V1::SwimmersController < Api::BaseController
     # Meeting found?
     if swimmer && current_user
       # Swimmer already tagged?
-      if swimmer.tags_by_user_list.include?(  current_user.id.to_s )
-        swimmer.tags_by_user_list.remove( current_user.id.to_s )
+      if swimmer.tags_by_user_list.include?( "u#{ current_user.id }" )
+        swimmer.tags_by_user_list.remove( "u#{ current_user.id }" )
       else
-        swimmer.tags_by_user_list.add( current_user.id.to_s )
+        swimmer.tags_by_user_list.add( "u#{ current_user.id }" )
       end
       # Save and return result:
       if swimmer.save
