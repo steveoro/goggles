@@ -88,6 +88,49 @@ describe MeetingsController, type: :controller do
   # ===========================================================================
 
 
+  describe 'GET #my' do
+    context "as an unlogged user," do
+      it "redirects to the login page" do
+        get( :my )
+        expect(response).to redirect_to( "/users/sign_in" )
+      end
+    end
+
+    context "as a logged but not-associated user," do
+      let(:user) { FactoryGirl.create(:user) }
+      before(:each) do
+        login_user( user )
+        expect( subject.current_user ).to be_an_instance_of( User )
+        expect( subject.current_user.id ).to eq( user.id )
+        expect( subject.current_user.swimmer_id ).to be nil
+        get( :my )
+      end
+      it "returns http success" do
+        expect(response).to have_http_status(:success)
+      end
+    end
+
+    context "as a logged and swimmer-associated user," do
+      let(:user) { FactoryGirl.create(:user, swimmer: create(:swimmer)) }
+      before(:each) do
+        login_user( user )
+        expect( subject.current_user ).to be_an_instance_of( User )
+        expect( subject.current_user.id ).to eq( user.id )
+        expect( subject.current_user.swimmer_id ).not_to be nil
+        get( :my )
+      end
+      it "returns http success" do
+        expect(response).to have_http_status(:success)
+      end
+      it "assigns a list of meetings" do
+        expect( assigns(:meetings) ).to be_an( Array )
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
   describe 'GET #current' do
     context "without parameters," do
       before(:each) { get :current }

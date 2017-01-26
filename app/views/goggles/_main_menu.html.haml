@@ -1,5 +1,5 @@
 .navmenu.navmenu-default.navmenu-fixed-left
   %a.navmenu-brand{ href: root_path }
     = GogglesCore::AppConstants::WEB_APP_NAME
-    = image_tag( GogglesCore::AppConstants::WEB_APP_LOGO )
+    = image_tag( GogglesCore::AppConstants::WEB_APP_LOGO, style: "width: 100px;" )
   = render_navigation( level: 1..2, expand_all: true, renderer: :bootstrap )

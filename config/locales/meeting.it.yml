@@ -59,8 +59,10 @@ it:
     passages: 'Passaggi'
     disqualified: 'SQ.'
     my:
-      title: "Le mie gare"
-      subtitle: "(Per i tesseramenti in corso, come da \'Preferiti\' e da Calendario squadra)"
+      menu_title: "Le mie gare"
+      title: "Le mie gare correnti"
+      tooltip: "Vai all'elenco delle tue gare nelle stagioni correnti"
+      subtitle: "(Per i tesseramenti attivi, come da \'Preferiti\' e da Calendario squadra)"
     errors:
       missing_meeting_id: 'Meeting non trovato o ID selezionato non valido.'
       missing_swimmer_id: 'Nuotatore non trovato o ID selezionato non valido.'

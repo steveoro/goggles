@@ -59,8 +59,10 @@ en:
     passages: 'Passages'
     disqualified: 'DSQ'
     my:
-      title: "My Meetings"
-      subtitle: "(For my current Team Affiliations, according to \'Starred\' meetings and the current Team Calendar)"
+      menu_title: "My Meetings"
+      title: "My current Meetings"
+      tooltip: "Browse the list of your current Meetings"
+      subtitle: "(For my active Team affiliations, according to \'Starred\' meetings and the current Team Calendar)"
     errors:
       missing_meeting_id: 'no Meeting or invalid id selected.'
       missing_swimmer_id: 'no Swimmer or invalid id selected.'

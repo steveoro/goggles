@@ -63,7 +63,7 @@ SimpleNavigation::Configuration.run do |navigation|
     )
     primary.item(
       :key_user_edit,
-      (current_user.nil? ? '' : current_user.name),
+      ( current_user.nil? ? '' : "#{ current_user.name } &nbsp; #{ image_tag('customize-01-128.png', class: 'img-circle', style: "width: 25px;")}".html_safe ),
       edit_user_registration_path(),
       if: Proc.new { user_signed_in? }
     )
@@ -88,9 +88,16 @@ SimpleNavigation::Configuration.run do |navigation|
     primary.item( :key_separator0_5, '<hr/>', '#', class: 'disabled', 'data-turbolinks'=>'false' )
     primary.item(
       :key_user_radio_id,
-      t('radiography.id_card'),
+      "#{ t('radiography.id_card') } &nbsp; #{ image_tag('img_radiography.jpg', class: 'img-circle', style: "width: 25px;")}".html_safe,
       Proc.new { current_user.nil? ? '' : swimmer_radio_path(id: current_user.swimmer_id) },
       if: Proc.new { user_signed_in? && current_user && current_user.has_associated_swimmer? }
+    )
+    primary.item(
+      :key_meetings_my,
+      "#{ t('meeting.my.menu_title') } &nbsp; #{ image_tag('shape-star2-128.png', class: 'img-circle', style: "width: 25px;")}".html_safe,
+      Proc.new { current_user.nil? ? '' : meetings_my_path() },
+      if: Proc.new { user_signed_in? && current_user && current_user.has_associated_swimmer? },
+      highlights_on: /my/
     )
     primary.item(
       :key_social_index,
@@ -100,33 +107,13 @@ SimpleNavigation::Configuration.run do |navigation|
     )
     primary.item( :key_separator0_1, '<hr/>', '#', class: 'disabled', 'data-turbolinks'=>'false', if: Proc.new { user_signed_in? && current_user && current_user.has_associated_swimmer? } )
 
-    # [Steve, 2016106] Same stuff above, but this is a version with single primary menu item & submenu:
-    # primary.item( :key_home,            t('home'), '#' ) do |lev2_nav|
-      # lev2_nav.item( :key_main,         t('main'),        root_path() )
-      # lev2_nav.item( :key_about,        t('about'),       home_about_path() )
-      # lev2_nav.item( :key_contact_us,   t('contact_us'),  home_contact_us_path() )
-      # lev2_nav.item( :key_separator1_0, content_tag(:span, ''), class: 'divider', if: Proc.new { user_signed_in? && current_user && current_user.has_associated_swimmer? } )
-      # lev2_nav.item(
-        # :key_user_radio_id,
-        # t('radiography.id_card'),
-        # Proc.new { current_user.nil? ? '' : swimmer_radio_path(id: current_user.swimmer_id) },
-        # if: Proc.new { user_signed_in? && current_user && current_user.has_associated_swimmer? }
-      # )
-      # lev2_nav.item(
-        # :key_social_index,
-        # t('social.menu_social_index'),
-        # socials_show_all_path(),
-        # if: Proc.new { user_signed_in? && current_user && current_user.has_associated_swimmer? }
-      # )
-    # end
-
-    primary.item( :key_meetings,              t('meetings'), '#', 'data-turbolinks'=>'false' ) do |lev2_nav|
-      lev2_nav.item :key_meetings_current,    t('meeting.current_menu'), meetings_current_path(), highlights_on: /current/ do |lev3_nav|
-        lev3_nav.item :key_meeting_show_full, t('show_details'), '#', 'data-turbolinks'=>'false', highlights_on: %r(/meetings/\d/show_full)
+    primary.item( :key_meetings,               t('meetings'), '#', 'data-turbolinks'=>'false' ) do |lev2_nav|
+      lev2_nav.item( :key_meetings_current,    t('meeting.current_menu'), meetings_current_path(), highlights_on: /current/ ) do |lev3_nav|
+        lev3_nav.item( :key_meeting_show_full, t('show_details'), '#', 'data-turbolinks'=>'false', highlights_on: %r(/meetings/\d/show_full) )
       end
-      lev2_nav.item( :key_separator2_0,       content_tag(:span, ''), class: 'divider' )
-      lev2_nav.item( :key_meetings_simple,    t('meeting.simple_menu'), meetings_simple_search_path(), highlights_on: %r(simple_search) )
-      lev2_nav.item( :key_meetings_custom,    t('meeting.index_menu'), meetings_custom_search_path(), highlights_on: %r(custom_search) )
+      lev2_nav.item( :key_separator2_0,        content_tag(:span, ''), class: 'divider' )
+      lev2_nav.item( :key_meetings_simple,     t('meeting.simple_menu'), meetings_simple_search_path(), highlights_on: %r(simple_search) )
+      lev2_nav.item( :key_meetings_custom,     t('meeting.index_menu'), meetings_custom_search_path(), highlights_on: %r(custom_search) )
     end
 
     primary.item( :key_championships,                    t('championships.title'), '#', 'data-turbolinks'=>'false' ) do |lev2_nav|
@@ -135,6 +122,7 @@ SimpleNavigation::Configuration.run do |navigation|
       lev2_nav.item :key_championships_regional_er_csi,  t('championships.regional_er_csi'), championships_calendar_regional_er_csi_path
     end
 
+# [Steve, 201701] Stuff removed due to synch problems w/ serialized records table:
 #    primary.item( :key_records,               t('records.menu_root'), '#', 'data-turbolinks'=>'false' ) do |lev2_nav|
 #      lev2_nav.item :key_records_season_type, t('records.menu_by_season_type'), records_for_season_type_path()
 #      lev2_nav.item :key_records_team,        t('records.menu_by_team'),        records_for_team_path()

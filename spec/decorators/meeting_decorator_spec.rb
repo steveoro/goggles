@@ -204,7 +204,7 @@ describe MeetingDecorator, type: :model do
       end
     end
 
-    context "with a standard goggler (user w/ swimmer) that is NOT a manager, BUT the meeting has some reservations created," do
+    context "with a standard goggler (user w/ swimmer) that is NOT a manager, and the MANAGEABLE meeting has some reservations created," do
       let(:meeting)       { create(:meeting, header_date: Date.today + 10.days) }
       let(:badge)         { create( :badge, season_id: meeting.season_id ) }
       let(:user)          { create( :user, swimmer_id: badge.swimmer_id ) }
@@ -221,6 +221,20 @@ describe MeetingDecorator, type: :model do
       end
       it "returns a string containing the manage reservation button title" do
         expect( subject.manage_reservation_button(user) ).to include( I18n.t('meeting_reservation.manage_button_title') )
+      end
+    end
+
+    context "with a standard goggler (user w/ swimmer) that is NOT a manager, and the CLOSED meeting has some reservations created," do
+      let(:random_res_for_closed_meeting) do
+        MeetingReservation.joins(:swimmer, :meeting).where('(header_date < now()) AND (is_not_coming = false)')
+          .distinct.sort{0.5 - rand}.first
+      end
+      let(:random_closed_meeting_with_res)  { random_res_for_closed_meeting.meeting }
+      let(:user)                            { create( :user, swimmer_id: random_res_for_closed_meeting.swimmer_id ) }
+      subject                               { random_closed_meeting_with_res.decorate }
+
+      it "returns an empty string" do
+        expect( subject.manage_reservation_button(user) ).to eq('')
       end
     end
   end

@@ -14,14 +14,14 @@ RSpec.describe TaggingsController, type: :controller do
 
 
   describe "[POST #meeting_for_user]" do
-    context "as an unlogged user" do
-      it "returns http unothorized" do
+    context "as an unlogged user," do
+      it "returns http unauthorized" do
         post( :meeting_for_user, xhr: true, params: { id: meeting.id } )
         expect(response).to have_http_status(:unauthorized)
       end
     end
 
-    context "as logged but not associated user" do
+    context "as a logged but not-associated user," do
       let(:user) { FactoryGirl.create(:user) }
       before(:each) do
         login_user( user )
@@ -38,7 +38,7 @@ RSpec.describe TaggingsController, type: :controller do
       end
     end
 
-    context "as logged and swimmer-associated user" do
+    context "as a logged and swimmer-associated user," do
       let(:user) { FactoryGirl.create(:user, swimmer: create(:swimmer)) }
       before(:each) do
         login_user( user )
@@ -60,14 +60,14 @@ RSpec.describe TaggingsController, type: :controller do
 
 
   describe "[POST #meeting_for_team]" do
-    context "as an unlogged user" do
-      it "returns http unothorized" do
+    context "as an unlogged user," do
+      it "returns http unauthorized" do
         post( :meeting_for_team, xhr: true, params: { id: meeting.id } )
         expect(response).to have_http_status(:unauthorized)
       end
     end
 
-    context "as logged but not associated user" do
+    context "as a logged but not-associated user," do
       let(:user) { FactoryGirl.create(:user) }
       before(:each) do
         login_user( user )
@@ -84,7 +84,7 @@ RSpec.describe TaggingsController, type: :controller do
       end
     end
 
-    context "as logged and swimmer-associated user" do
+    context "as a logged and swimmer-associated user," do
       let(:user) { FactoryGirl.create(:user, swimmer: create(:swimmer)) }
       before(:each) do
         login_user( user )
@@ -106,14 +106,14 @@ RSpec.describe TaggingsController, type: :controller do
 
 
   describe "[POST #swimmer_for_user]" do
-    context "as an unlogged user" do
-      it "returns http unothorized" do
+    context "as an unlogged user," do
+      it "returns http unauthorized" do
         post( :swimmer_for_user, xhr: true, params: { id: meeting.id } )
         expect(response).to have_http_status(:unauthorized)
       end
     end
 
-    context "as logged but not associated user" do
+    context "as a logged but not-associated user," do
       let(:user) { FactoryGirl.create(:user) }
       before(:each) do
         login_user( user )
@@ -130,7 +130,7 @@ RSpec.describe TaggingsController, type: :controller do
       end
     end
 
-    context "as logged and swimmer-associated user" do
+    context "as a logged and swimmer-associated user," do
       let(:user) { FactoryGirl.create(:user, swimmer: create(:swimmer)) }
       before(:each) do
         login_user( user )

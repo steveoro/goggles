@@ -51,13 +51,48 @@ class MeetingsController < ApplicationController
     } + open_season_ids.select{ |season_id|
       ! current_user.find_team_affiliation_id_from_team_managers_for( season_id ).nil?
     }
-    # Extract the browsable meetings:
-    @meetings = Meeting
-      .tagged_with( current_user.id.to_s, on: :tags_by_users )
-      .where( "meetings.season_id IN (?)", browsable_season_ids )
-      .includes( :season, :season_type, :meeting_sessions, :swimming_pools )
+    # Extract the user-tagged browsable meetings:
+    @meetings = Meeting.includes( :season, :season_type, :meeting_sessions, :swimming_pools )
       .joins( :season, :season_type, :meeting_sessions, :swimming_pools )
+      .where( "meetings.season_id IN (?)", browsable_season_ids )
+      .tagged_with( current_user.id.to_s, on: :tags_by_users )
       .order( "meetings.header_date" )
+      .to_a
+
+    # Add also the team-tagged browsable meetings.
+    # Find the current, browsable team affiliations that may have tagged the meetings,
+    # and, for each, add any tagged meeting found to the list:
+    browsable_season_ids.map{ |season_id| current_user.find_team_affiliation_id_from_team_managers_for(season_id) }
+        .compact.each do |tagger_team_affiliation_id|
+          @meetings += Meeting.includes( :season, :season_type, :meeting_sessions, :swimming_pools )
+            .joins( :season, :season_type, :meeting_sessions, :swimming_pools )
+            .where( "meetings.season_id IN (?)", browsable_season_ids )
+            .tagged_with( tagger_team_affiliation_id.to_s, on: :tags_by_teams )
+            .order( "meetings.header_date" )
+            .to_a
+        end
+
+    # Add also any already attended and closed meeting belonging to the browsable
+    # seasons: (the relationship w/ swimmer is through MIRs, so the inner join is enough)
+    if current_user.has_associated_swimmer?
+      attended_ids = current_user.swimmer.meetings
+        .where( "meetings.season_id IN (?)", browsable_season_ids )
+        .map{ |meeting| meeting.id }
+        .uniq
+        .delete_if{ |id| @meetings.any?{|m| m.id == id } }
+      if attended_ids.count > 0
+        @meetings += Meeting.includes( :season, :season_type, :meeting_sessions, :swimming_pools )
+          .joins( :season, :season_type, :meeting_sessions, :swimming_pools )
+          .where( "meetings.id IN (?)", attended_ids )
+          .order( "meetings.header_date" )
+          .to_a
+      end
+    end
+
+    # Re-sort the modified array:
+    @meetings.uniq!
+    @meetings.sort!{ |ma, mb| ma.header_date <=> mb.header_date }
+    @meetings
   end
   #-- -------------------------------------------------------------------------
   #++

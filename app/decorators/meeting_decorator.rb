@@ -5,7 +5,7 @@ require 'team_manager_validator'
 
 = MeetingDecorator
 
-  - version:  6.021
+  - version:  6.062
   - author:   Steve A.
 
   Decorator for the Meeting model.
@@ -117,13 +117,19 @@ class MeetingDecorator < Draper::Decorator
   # Returns an empty string if the current_user is not allowed to manage (edit or
   # update, either one or all the reservations of) the meeting.
   #
-  # The button is rendered also if the current_user has any reservations already
-  # existing for the decorated object (Meeting).
+  # The button will be rendered if any reservations are existing for the current_user,
+  # even if th user is not a team-manager.
+  #
+  # Note that with the current version, the button is NO LONGER rendered  when
+  # the meeting is already closed, even if the current_user has already created
+  # some reservations.
+  # (To reach the reservations management page, which will result as read-only,
+  # the user has to click to the meeting name to reach the "reservations" tab,)
   #
   def manage_reservation_button( current_user )
-    if ( current_user && TeamManagerValidator.any_reservations_for?(current_user, object) ) ||
-       ( TeamManagerValidator.is_reservation_manageable?( object ) &&
-         TeamManagerValidator.can_manage?( current_user, object ) )
+    if ( TeamManagerValidator.is_reservation_manageable?( object ) &&
+         ( TeamManagerValidator.any_reservations_for?( current_user, object ) ||
+           TeamManagerValidator.can_manage?( current_user, object )) )
       h.link_to(
         I18n.t('meeting_reservation.manage_button_title'),
         meeting_reservations_edit_events_path(id: object.id),
