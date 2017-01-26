@@ -8,6 +8,7 @@ en:
     index_menu: "Custom search"
     simple_menu: "Simple search"
     current_menu: "All current meetings"
+    search_meeting: "Search Meeting"
     show_results_tooltip: "Show all the results for this Meeting"
     show_swimmer_results_tooltip: "Show all the results for this swimmer at this Meeting"
     show_team_results_tooltip: "Show all the results for this team at this Meeting"

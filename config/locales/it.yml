@@ -43,6 +43,9 @@ it:
     swimmers: 'Nuotatori'
     meeting: 'Gara'
     meetings: 'Gare'
+    generic_search: "Cerca"
+    smart_search: "Ricerca 'smart'"
+    complicated_stuff: "Roba complicata"
 
   team:
     unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sulle Squadre! (tab: 'teams')"

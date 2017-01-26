@@ -8,6 +8,7 @@ it:
     index_menu: "Ricerca personalizzata"
     simple_menu: "Ricerca semplice"
     current_menu: "Tutte le gare correnti"
+    search_meeting: "Cerca Gare"
     show_results_tooltip: "Mostra tutti i risultati di questo Meeting"
     show_swimmer_results_tooltip: "Mostra tutti i risultati dell'atleta al Meeting"
     show_team_results_tooltip: "Mostra tutti i risultati della squadra al Meeting"

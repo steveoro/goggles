@@ -43,6 +43,9 @@ en:
     teams: 'Teams'
     meeting: 'Meeting'
     meetings: 'Meetings'
+    generic_search: "Search"
+    smart_search: "'Smart' search"
+    complicated_stuff: "Complicated stuff"
 
   team:
     unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'teams'!"
