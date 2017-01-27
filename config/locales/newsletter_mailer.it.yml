@@ -16,3 +16,7 @@ it:
       title: "Aggiornamento PRENOTAZIONI GARA"
       subject: "Aggiornamento PRENOTAZIONI GARA"
       contents: "L'utente <i>%{user_name}</i> ha aggiornato le prenotazioni gara per '<b>%{meeting_name}</b>'.<br/>Puoi controllarle direttamente <a href=\"%{manage_url}\">qui</a>."
+    new_reservations:
+      title: "Creazione PRENOTAZIONI GARA"
+      subject: "Creazione PRENOTAZIONI GARA"
+      contents: "Il tuo Team-manager <i>%{team_manager_name}</i> ha creato il foglio dove puoi segnarti le gare che vorresti fare per '<b>%{meeting_name}</b>'.<br/>Puoi controllarle direttamente <a href=\"%{manage_url}\">qui</a>.<br/><br/><p><i>Ti abbiamo inviato questa mail per avvisarti, semplicemente perché avevi segnato il Meeting fra i tuoi preferiti.</i></p>"

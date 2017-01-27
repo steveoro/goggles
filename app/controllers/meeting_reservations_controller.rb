@@ -438,6 +438,26 @@ class MeetingReservationsController < ApplicationController
       # Signal also locally if any error occurred during setup:
       if creator.total_errors > 0
         flash[:error] = I18n.t('meeting_reservation.error_during_creation')
+      # Everything ok?
+      else
+        # Only upon reservation sheet creation, signal to each possible interested
+        # user that now he/she may be able to use the newly reservation sheet:
+        interested_users = @meeting.tags_by_user_list
+            .map{ |tag| User.find(tag.remove('u').to_i) }
+            .select{ |user| user.id != current_user.id }
+        interested_users.each do |user|
+          NewsletterMailer.custom_mail(
+            user,
+            I18n.t("newsletter_mailer.new_reservations.subject"),
+            I18n.t("newsletter_mailer.new_reservations.title"),
+            I18n.t(
+              "newsletter_mailer.new_reservations.contents",
+              team_manager_name: current_user.get_full_name,
+              meeting_name: @meeting.get_full_name,
+              manage_url: meeting_reservations_edit_events_url(id: @meeting.id)
+            )
+          ).deliver
+        end
       end
     end
   end
