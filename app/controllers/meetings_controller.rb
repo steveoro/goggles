@@ -92,7 +92,6 @@ class MeetingsController < ApplicationController
     # Re-sort the modified array:
     @meetings.uniq!
     @meetings.sort!{ |ma, mb| ma.header_date <=> mb.header_date }
-    @meetings
   end
   #-- -------------------------------------------------------------------------
   #++

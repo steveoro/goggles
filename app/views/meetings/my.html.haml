@@ -1,5 +1,6 @@
 .row.col-xs-12
   .row.alert.alert-success.goggles-div-centeralign
+    %br/
     .col-xs-12
       %h3= I18n.t('meeting.my.title')
     .col-xs-12
@@ -8,14 +9,14 @@
 .row.col-xs-12
   %table.table.table-striped.table-bordered.table-hover.table-condensed#history
     %tbody
-      %tr{'class'=>'info'}
+      %tr.info.text-center
         %td
           %b= t('calendars.meeting')
-        %td.goggles-rightalign
+        %td
           %b= t('calendars.date')
-        %td.goggles-rightalign
+        %td
           %b= t('calendars.warm_up')
-        %td.goggles-rightalign
+        %td
           %b= t('calendars.begin')
         %td
           %b= t('calendars.events')

@@ -163,4 +163,50 @@ class TaggingsController < ApplicationController
   end
   #-- -------------------------------------------------------------------------
   #++
+
+
+  # Reports the still-open (not yet closed) meetings that have been starred by
+  # any team member in order to create the reservations for them by the team
+  # manager.
+  #
+  # Team manager-only action.
+  #
+  def starred_meetings
+    unless current_user.instance_of?( User ) && ( current_user.team_managers.count > 0 )
+      flash[:error] = I18n.t(:invalid_action_request) + ' - ' + I18n.t('meeting.errors.invalid_team_manager_or_no_swimmer')
+      redirect_to( root_path() ) and return
+    end
+
+    open_season_ids = Season.is_not_ended.select(:id).map{|s| s.id }
+    # Get the list of still-open, managed affiliations:
+    open_team_affiliations = open_season_ids.map{ |season_id|
+      # Find a possible team manager for the current open season:
+      team_manager = current_user.team_managers.includes(:team_affiliation).joins(:team_affiliation)
+        .select{|tm| tm.team_affiliation.season_id == season_id }.first
+      team_manager ? team_manager.team_affiliation : nil
+    }.compact
+
+    # Init the list of starred meetings and possible users
+    @meetings = []
+
+    # For each affiliation, get all the (current) badges and swimmer IDs, and filter out
+    # from all the gogglers the only one that belong to the list of swimmer IDs
+    open_team_affiliations.each do |team_affiliation|
+      user_ids = team_affiliation.badges.map{ |badge| badge.swimmer_id }
+      possible_tags = User.where( "swimmer_id IN (?)", user_ids ).map{ |user| "u#{ user.id }" }
+      # Extract the user-tagged, open and browsable meetings:
+      @meetings += Meeting.includes( :season, :season_type, :meeting_sessions, :swimming_pools )
+        .joins( :season, :season_type, :meeting_sessions, :swimming_pools )
+        .where( "meetings.header_date >= ?", Date.today )
+        .tagged_with( possible_tags, on: :tags_by_users, any: true )
+        .order( "meetings.header_date" )
+        .to_a
+    end
+
+    # Prepare the composed arrays:
+    @meetings.uniq!
+    @meetings.sort!{ |ma, mb| ma.header_date <=> mb.header_date }
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 end

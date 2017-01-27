@@ -114,6 +114,7 @@ Rails.application.routes.draw do
       post 'taggings/meeting_for_user/:id',     to: "taggings#meeting_for_user",        as: "taggings_meeting_for_user"
       post 'taggings/meeting_for_team/:id',     to: "taggings#meeting_for_team",        as: "taggings_meeting_for_team"
       post 'taggings/swimmer_for_user/:id',     to: "taggings#swimmer_for_user",        as: "taggings_swimmer_for_user"
+      get  'taggings/starred_meetings',         to: "taggings#starred_meetings",        as: "taggings_starred_meetings"
 
       # === Teams ===
       get  "teams/index",                       to: "teams#index",                      as: "teams"

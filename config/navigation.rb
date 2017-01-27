@@ -101,12 +101,19 @@ SimpleNavigation::Configuration.run do |navigation|
     )
     primary.item(
       :key_meetings_my,
-      "#{ t('meeting.my.menu_title') } &nbsp; #{ image_tag('shape-star2-128.png', class: 'img-circle', style: "width: 25px;")}".html_safe,
+      "#{ t('meeting.my.menu_title') } &nbsp; #{ image_tag('shape-star2b-128.png', class: 'img-circle', style: "width: 25px;")}".html_safe,
       Proc.new { current_user.nil? ? '' : meetings_my_path() },
       if: Proc.new { user_signed_in? && current_user && current_user.has_associated_swimmer? },
       highlights_on: /my/
     )
     primary.item( :key_meetings_current, t('meeting.current_menu'), meetings_current_path(), highlights_on: /current/ )
+    primary.item(
+      :key_starred_meetings,
+      "#{ t('tags.starred_meetings.menu') } &nbsp; #{ image_tag('thumbs-up-128.png', class: 'img-circle', style: "width: 25px;")}".html_safe,
+      taggings_starred_meetings_path(),
+      if: Proc.new { user_signed_in? && current_user && TeamManager.where(user_id: current_user.id).count > 0 },
+      highlights_on: /starred_meetings/
+    )
 
     primary.item( :key_championships,                    t('championships.title'), '#', 'data-turbolinks'=>'false' ) do |lev2_nav|
       lev2_nav.item :key_championships_supermaster_fin,  t('championships.supermaster_fin'), championships_calendar_supermaster_fin_path
