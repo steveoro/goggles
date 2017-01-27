@@ -8,6 +8,7 @@ it:
     index_menu: "Ricerca personalizzata"
     simple_menu: "Ricerca semplice"
     current_menu: "Tutte le gare correnti"
+    search_meeting: "Cerca Gare"
     show_results_tooltip: "Mostra tutti i risultati di questo Meeting"
     show_swimmer_results_tooltip: "Mostra tutti i risultati dell'atleta al Meeting"
     show_team_results_tooltip: "Mostra tutti i risultati della squadra al Meeting"
@@ -58,7 +59,11 @@ it:
     previous_editions: 'Precedenti edizioni'
     passages: 'Passaggi'
     disqualified: 'SQ.'
-
+    my:
+      menu_title: "Le mie gare"
+      title: "Le mie gare correnti"
+      tooltip: "Vai all'elenco delle tue gare nelle stagioni correnti"
+      subtitle: "(Per i tesseramenti attivi, come da \'Preferiti\' e da Calendario squadra)"
     errors:
       missing_meeting_id: 'Meeting non trovato o ID selezionato non valido.'
       missing_swimmer_id: 'Nuotatore non trovato o ID selezionato non valido.'
@@ -151,13 +156,13 @@ it:
     athletes_by_event: "Atleti / Gara"
 
   meeting_reservation:
-    manage_button_title: "Foglio iscrizioni"
+    manage_button_title: "Foglio prenotazioni"
     manage_meeting_tooltip: "Gestisci il foglio di iscrizione (per stampa e gestione interna al team)"
-    manage_meeting_disclaimer: "Qui puoi segnare le iscrizioni/prenotazioni per la partecipazione agli eventi ad uso interno. Attualmente questa funzione serve solo per la gestione interna/bordo vasca per le partecipazioni ai Meeting. ALLO STATO ATTUALE, NESSUN DATO VIENE COMUNICATO ALLA FIN O ALLE ALTRE FEDERAZIONI: LE ISCRIZIONI VANNO ANCORA GESTITE AL SOLITO MODO. Usa questa funzione solo per avere un promemoria di chi fa cosa o per mettere d'accordo i vari partecipanti."
+    manage_meeting_disclaimer: "Qui puoi segnare le prenotazioni per la partecipazione agli eventi ad uso interno. Attualmente questa funzione serve solo per la gestione interna/bordo vasca per le partecipazioni ai Meeting. ALLO STATO ATTUALE, NESSUN DATO VIENE COMUNICATO ALLA FIN O ALLE ALTRE FEDERAZIONI: LE ISCRIZIONI VANNO ANCORA GESTITE AL SOLITO MODO. Usa questa funzione solo per avere un promemoria di chi fa cosa o per mettere d'accordo i vari partecipanti."
     manage_events_title: "1. Individuali"
     manage_relays_title: "2. Staffette"
     show_title: "Riassunto"
-    show_event_list_title: "Iscrizioni Eventi"
+    show_event_list_title: "Prenotazione Eventi"
     show_relay_list_title: "Disponibilità a staffette"
     show_relay_config_title: "Configurazione Staffette"
     relay: "Staff."

@@ -1,0 +1,11 @@
+it:
+  tags:
+    star_tooltip: "Aggiungi/rimuovi ai/dai tuoi preferiti"
+    triplestar_tooltip: "Aggiungi/rimuovi ai/dai preferiti/calendario di squadra"
+    error_during_save: "Errore durante il salvataggio del tag. L'errore è stato registrato ed i nostri pinguini robot ci lavoreranno sopra al piu' presto!"
+    starred_meetings:
+      menu: "Meeting segnalati"
+      title: "Meeting segnalati dalla squadra"
+      description_1: "Questo è l'elenco dei meeting correnti non ancora iniziati per i quali i tuoi compagni di squadra hanno espresso interesse, o nei quali forse vorrebbero partecipare. Questa è anche una buona occasione per te per controllare il foglio per gestire le 'prenotazioni gara', o di crearlo, nel caso non l'avessi ancora fatto."
+      description_2: "Se il foglio per gestire le 'prenotazioni gara' non esiste ancora, lo creerai automaticamente cliccando sul pulsante sotto al nome del meeting. Goggles manderà un e-mail in automatico solo a quegli utenti fra i tuoi compagni di squadra che hanno espresso interesse per quel Meeting mettendoci una stella, e dirà loro che ora possono comunicarti che gare vorrebbero fare semplicemente usando il foglio delle prenotazioni appena creato."
+      starred_by: "Preferito da"

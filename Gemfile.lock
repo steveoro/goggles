@@ -25,10 +25,10 @@ GIT
 
 GIT
   remote: https://github.com/steveoro/goggles_core
-  revision: 007fb59d8b975e2beb896f579dade70fd738a4af
+  revision: 1ab53cff3ef4ce645300298ccd0990872edb22bb
   branch: rails5
   specs:
-    goggles_core (1.1.19.1)
+    goggles_core (1.1.23.1)
       active_hash_relation
       active_model_serializers (~> 0.10.0)
       activemodel-serializers-xml
@@ -466,7 +466,7 @@ GEM
       activemodel (>= 5.0)
       debug_inspector
       railties (>= 5.0)
-    websocket-driver (0.6.4)
+    websocket-driver (0.6.5)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.2)
     xpath (2.0.0)

@@ -67,4 +67,132 @@ describe Api::V1::MeetingsController, type: :controller, api: true do
   end
   #-- -------------------------------------------------------------------------
   #++
+
+
+  # XXX We rely directly on the existing seeds to speed up these test.
+
+  let(:team_manager) do
+    # Choose the first, random team manager, whose affiliation has
+    # at least a meeting with a far-fetched header date:
+    TeamManager.all
+      .select{ |tm| tm.team_affiliation.season.meetings.where("header_date > ?", Date.today + 1).count > 0 }
+      .sort{ rand - 0.5 }.first
+  end
+
+  let(:random_meeting) do
+    meeting = team_manager.team_affiliation.season
+      .meetings
+      .sort{rand - 0.5}.first
+    expect( meeting ).to be_a( Meeting )
+    meeting
+  end
+  let(:user) { FactoryGirl.create(:user) }
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  describe '[PUT tag_for_user/:id]' do
+    before(:each) do
+      @request.env["devise.mapping"] = Devise.mappings[:user]
+    end
+
+    context "with a non-JSON request," do
+      it "refuses the request" do
+        put :tag_for_user, params: { id: random_meeting.id, user_email: user.email, user_token: user.authentication_token }
+        expect(response.status).to eq( 406 )
+      end
+      it "doesn't changes the list of tags by users" do
+        expect {
+          put :tag_for_user, params: { id: random_meeting.id, user_email: user.email, user_token: user.authentication_token }
+          random_meeting.reload
+        }.not_to change{ random_meeting.tags_by_user_list.count }
+      end
+    end
+
+    context "with a JSON request, a not existing id but valid credentials," do
+      it "handles the request with 'unprocessable entity' error result (422)" do
+        put :tag_for_user, format: :json, params: { id: 0, user_email: user.email, user_token: user.authentication_token }
+        expect(response.status).to eq( 422 )
+      end
+      it "returns a JSON result of 'success' as false" do
+        put :tag_for_user, format: :json, params: { id: 0, user_email: user.email, user_token: user.authentication_token }
+        result = JSON.parse(response.body)
+        expect( result['success'] ).to eq( false )
+      end
+    end
+
+    context "with a JSON request, an existing id and valid credentials," do
+      it "handles successfully the request" do
+        put :tag_for_user, format: :json, params: { id: random_meeting.id, user_email: user.email, user_token: user.authentication_token }
+        expect(response.status).to eq( 200 )
+      end
+      it "returns a JSON result of 'success' as true" do
+        put :tag_for_user, format: :json, params: { id: random_meeting.id, user_email: user.email, user_token: user.authentication_token }
+        result = JSON.parse(response.body)
+        expect( result['success'] ).to eq( true )
+      end
+      it "updates the list of tags_by_user for the specified meeting" do
+        expect( random_meeting.tags_by_user_list.include?("u#{ user.id }") ).to be false
+        expect {
+          put :tag_for_user, format: :json, params: { id: random_meeting.id, user_email: user.email, user_token: user.authentication_token }
+          random_meeting.reload
+        }.to change{ random_meeting.tags_by_user_list.count }.by(1)
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  describe '[PUT tag_for_team/:id]' do
+    before(:each) do
+      @request.env["devise.mapping"] = Devise.mappings[:user]
+    end
+
+    context "with a non-JSON request," do
+      it "refuses the request" do
+        put :tag_for_team, params: { id: random_meeting.id, t: team_manager.team_affiliation_id, user_email: user.email, user_token: user.authentication_token }
+        expect(response.status).to eq( 406 )
+      end
+      it "doesn't changes the list of tags by users" do
+        expect {
+          put :tag_for_team, params: { id: random_meeting.id, t: team_manager.team_affiliation_id, user_email: user.email, user_token: user.authentication_token }
+          random_meeting.reload
+        }.not_to change{ random_meeting.tags_by_team_list.count }
+      end
+    end
+
+    context "with a JSON request, a not existing id but valid credentials," do
+      it "handles the request with 'unprocessable entity' error result (422)" do
+        put :tag_for_team, format: :json, params: { id: 0, t: team_manager.team_affiliation_id, user_email: user.email, user_token: user.authentication_token }
+        expect(response.status).to eq( 422 )
+      end
+      it "returns a JSON result of 'success' as false" do
+        put :tag_for_team, format: :json, params: { id: 0, t: team_manager.team_affiliation_id, user_email: user.email, user_token: user.authentication_token }
+        result = JSON.parse(response.body)
+        expect( result['success'] ).to eq( false )
+      end
+    end
+
+    context "with a JSON request, an existing id and valid credentials," do
+      it "handles successfully the request" do
+        put :tag_for_team, format: :json, params: { id: random_meeting.id, t: team_manager.team_affiliation_id, user_email: user.email, user_token: user.authentication_token }
+        expect(response.status).to eq( 200 )
+      end
+      it "returns a JSON result of 'success' as true" do
+        put :tag_for_team, format: :json, params: { id: random_meeting.id, t: team_manager.team_affiliation_id, user_email: user.email, user_token: user.authentication_token }
+        result = JSON.parse(response.body)
+        expect( result['success'] ).to eq( true )
+      end
+      it "updates the list of tags_by_team for the specified meeting" do
+        expect( random_meeting.tags_by_team_list.include?("ta#{ team_manager.team_affiliation_id }") ).to be false
+        expect {
+          put :tag_for_team, format: :json, params: { id: random_meeting.id, t: team_manager.team_affiliation_id, user_email: user.email, user_token: user.authentication_token }
+          random_meeting.reload
+        }.to change{ random_meeting.tags_by_team_list.count }.by(1)
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 end

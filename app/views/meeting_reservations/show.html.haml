@@ -4,10 +4,17 @@
 .col-xs-12.goggles-category-gap
   &nbsp;
 
-= render( partial: 'show_relay_list' )
-.col-xs-12.goggles-category-gap
-  &nbsp;
+- relay_count = @meeting.meeting_events.joins(:meeting_session, :event_type).includes(:meeting_session, :event_type).where('event_types.is_a_relay = 1').distinct.count
+- if relay_count > 0
+  = render( partial: 'show_relay_list' )
+  .col-xs-12.goggles-category-gap
+    &nbsp;
+  = render( partial: 'show_relay_config' )
+  .col-xs-12.goggles-category-gap
+    &nbsp;
 
-= render( partial: 'show_relay_config' )
+.col-xs-12.goggles-category-gap
+  %i= I18n.t('meeting_reservation.manage_meeting_disclaimer')
+
 .col-xs-12.goggles-category-gap
   &nbsp;

@@ -48,4 +48,60 @@ describe Api::V1::SwimmersController, type: :controller, api: true do
   end
   #-- -------------------------------------------------------------------------
   #++
+
+
+  let(:user)    { FactoryGirl.create(:user) }
+  let(:swimmer) { FactoryGirl.create(:swimmer) }
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  describe '[PUT tag_for_user/:id]' do
+
+    context "with a non-JSON request," do
+      it "refuses the request" do
+        put :tag_for_user, params: { id: swimmer.id, user_email: user.email, user_token: user.authentication_token }
+        expect(response.status).to eq( 406 )
+      end
+      it "doesn't changes the list of tags by users" do
+        expect {
+          put :tag_for_user, params: { id: swimmer.id, user_email: user.email, user_token: user.authentication_token }
+          swimmer.reload
+        }.not_to change{ swimmer.tags_by_user_list.count }
+      end
+    end
+
+    context "with a JSON request, a not existing id but valid credentials," do
+      it "handles the request with 'unprocessable entity' error result (422)" do
+        put :tag_for_user, format: :json, params: { id: 0, user_email: user.email, user_token: user.authentication_token }
+        expect(response.status).to eq( 422 )
+      end
+      it "returns a JSON result of 'success' as false" do
+        put :tag_for_user, format: :json, params: { id: 0, user_email: user.email, user_token: user.authentication_token }
+        result = JSON.parse(response.body)
+        expect( result['success'] ).to eq( false )
+      end
+    end
+
+    context "with a JSON request, an existing id and valid credentials," do
+      it "handles successfully the request" do
+        put :tag_for_user, format: :json, params: { id: swimmer.id, user_email: user.email, user_token: user.authentication_token }
+        expect(response.status).to eq( 200 )
+      end
+      it "returns a JSON result of 'success' as true" do
+        put :tag_for_user, format: :json, params: { id: swimmer.id, user_email: user.email, user_token: user.authentication_token }
+        result = JSON.parse(response.body)
+        expect( result['success'] ).to eq( true )
+      end
+      it "updates the list of tags_by_user for the specified meeting" do
+        expect( swimmer.tags_by_user_list.include?("u#{ user.id }") ).to be false
+        expect {
+          put :tag_for_user, format: :json, params: { id: swimmer.id, user_email: user.email, user_token: user.authentication_token }
+          swimmer.reload
+        }.to change{ swimmer.tags_by_user_list.count }.by(1)
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 end

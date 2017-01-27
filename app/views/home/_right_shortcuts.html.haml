@@ -1,4 +1,8 @@
 .row
+  %a.btn.btn-block.btn-primary.img-thumbnail{ href:meetings_my_path(), 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.my.title') }
+    = image_tag( 'shape-star2-128.png', class: 'img-circle', style: "width: 50%;" )
+  .text-center= I18n.t('meeting.my.title')
+.row
   %a.btn.btn-block.btn-info.img-thumbnail{ href: misc_fin_score_calculation_path(), 'data-toggle'=>'tooltip', 'title'=>I18n.t('misc.fin_score_calculation_tooltip') }
     = image_tag( 'abacus-128.png', class: 'img-circle', style: "width: 50%;" )
   .text-center= I18n.t('misc.fin_score_calculation')

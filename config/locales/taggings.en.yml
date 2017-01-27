@@ -1,0 +1,11 @@
+en:
+  tags:
+    star_tooltip: "Add/remove to/from your favourites"
+    triplestar_tooltip: "Add/remove to/from Team favourites"
+    error_during_save: "Error during Tag saving. The error has been recorded and soon our robotic minions will work on it!"
+    starred_meetings:
+      menu: "Flagged Meetings"
+      title: "Meetings starred by Team members"
+      description_1: "This is the list of not-yet started Meetings for which your team mates have expressed interest in, or for which they would like either to attend to or to enroll in. This is a good opportunity for you to check the corresponding meeting reservation sheet, o create it, in case you still haven't done it."
+      description_2: "If the reservation sheet does not exist yet, you'll automatically create one by checking it out with its button. Goggles will then send an e-mail only to the users (among your team mates) that have expressed their interest by starring a Meeting, telling them that they can now 'book' their event type preference by using the reservation sheet just created for that meeting."
+      starred_by: "Starred by"

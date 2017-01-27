@@ -11,7 +11,11 @@
   &nbsp;
 .col-xs-12
   %a.btn.btn-default.goggles-margin-bottom(href="#{ home_about_path() }")= t(:more_info)
+  &nbsp;
   %a.btn.btn-default.goggles-margin-bottom(href="#{ tutorials_index_path() }")= t('tutorials_title')
+  &nbsp;
+  %a.btn.btn-default(href="https://www.facebook.com/MasterGoggles/")
+    = image_tag('fb-find-us-online-100.png')
 .col-xs-12
   %a.btn.twitter-follow-button(href="https://twitter.com/master_goggles" data-size="large" data-show-count="false" data-show-screen-name="false")
     = t('follow_us')

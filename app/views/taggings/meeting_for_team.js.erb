@@ -1,0 +1,7 @@
+<% if flash[:error] %>
+ alert('<%= escape_javascript( flash[:error] ) %>' );
+<% end %>
+$("#meetingTeamStar<%= @meeting_id %>")
+    .html('<%= escape_javascript(
+        render(partial: 'goggles/clickable_meeting_team_star', locals: { meeting_id: @meeting_id, team_affiliation_id: @team_affiliation_id, is_starred: @is_starred, is_saved_ok: @is_saved_ok } )
+    ) %>');

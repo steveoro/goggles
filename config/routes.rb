@@ -55,12 +55,11 @@ Rails.application.routes.draw do
       post "social/edit/:id",                   to: "socials#edit"
 
       # === Meetings ===
+      get "meetings/my",                        to: "meetings#my"
       get "meetings/current",                   to: "meetings#current"
       get "meetings/custom_search",             to: "meetings#custom_search"
       get "meetings/simple_search",             to: "meetings#simple_search"
-      # TODO / FUTURE DEV:
-#      get "meetings/tagged_by_me",              to: "meetings#tagged_by_me"
-#      get "meetings/tagged_by_buddies",         to: "meetings#tagged_by_buddies"
+
       get "meetings/search_swimmer",            to: "meetings#search_swimmer"
       get "meetings/search_team",               to: "meetings#search_team"
       get "meeting/show_invitation/:id",        to: "meetings#show_invitation",         as: "meeting_show_invitation"
@@ -110,6 +109,12 @@ Rails.application.routes.draw do
       get  "swimmer/regionalercsi/:id",         to: "swimmers#regionalercsi",           as: "swimmer_regionalercsi"
       get  "swimmer/trainings/:id",             to: "swimmers#trainings",               as: "swimmer_trainings"
       get  "swimmer/closed_goggle_cup/:id",     to: "swimmers#closed_goggle_cup",       as: "swimmer_closed_goggle_cup"
+
+      # === Taggings (Meeting or Swimmer) ===
+      post 'taggings/meeting_for_user/:id',     to: "taggings#meeting_for_user",        as: "taggings_meeting_for_user"
+      post 'taggings/meeting_for_team/:id',     to: "taggings#meeting_for_team",        as: "taggings_meeting_for_team"
+      post 'taggings/swimmer_for_user/:id',     to: "taggings#swimmer_for_user",        as: "taggings_swimmer_for_user"
+      get  'taggings/starred_meetings',         to: "taggings#starred_meetings",        as: "taggings_starred_meetings"
 
       # === Teams ===
       get  "teams/index",                       to: "teams#index",                      as: "teams"
@@ -215,6 +220,8 @@ Rails.application.routes.draw do
       # === Meetings ===
       get    "meetings/index",                to: "meetings#index",         as: "meetings"
       get    "meetings/show/:id",             to: "meetings#show",          as: "meeting_show"
+      put    "meetings/tag_for_user/:id",     to: "meetings#tag_for_user",  as: "meeting_tag_for_user"
+      put    "meetings/tag_for_team/:id",     to: "meetings#tag_for_team",  as: "meeting_tag_for_team"
       # TODO meeting details w/ subentities in dedicated controllers? => No: use decorators to return custom-tailored meeting rows for API usage
 
       # === News Feeds ===
@@ -233,6 +240,7 @@ Rails.application.routes.draw do
       # === Swimmers ===
       get    "swimmers/index",                to: "swimmers#index",         as: "swimmers"
       get    "swimmers/show/:id",             to: "swimmers#show",          as: "swimmer_show"
+      put    "swimmers/tag_for_user/:id",     to: "swimmers#tag_for_user",  as: "swimmer_tag_for_user"
 
       # === SwimmingPools ===
       get    "swimming_pools/index",          to: "swimming_pools#index",   as: "swimming_pools"

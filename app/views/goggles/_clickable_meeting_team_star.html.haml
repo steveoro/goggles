@@ -1,0 +1,8 @@
+- if meeting_id.nil? || team_affiliation_id.nil?
+  = image_tag( 'bullet_error.png' )
+- else
+  = link_to( taggings_meeting_for_team_path(id: meeting_id, t: team_affiliation_id), { method: :post, remote: true } ) do
+    - if is_saved_ok
+      = image_tag( is_starred ? 'calendar_add.png' : 'calendar_add_disabled.png' )
+    - else
+      = image_tag( 'bullet_error.png' )

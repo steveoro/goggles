@@ -26,9 +26,7 @@
         attribute: 'description',
         detach_with_id: :flt_description
     ) do |meeting|
-        meeting.decorate.get_linked_name( :get_full_name ) <<
-        "<p/>".html_safe <<
-        meeting.decorate.manage_reservation_button( current_user )
+        render( partial: 'goggles/taggable_meeting_name', locals: {meeting: meeting} )
     end
 
     g.column(

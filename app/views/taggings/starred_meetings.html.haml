@@ -1,0 +1,61 @@
+.row.col-xs-12
+  .row.alert.alert-success.goggles-div-centeralign
+    %br/
+    .col-xs-12
+      %h3= I18n.t('tags.starred_meetings.title')
+
+.row.col-xs-12
+  %p= I18n.t('tags.starred_meetings.description_1')
+  %p= I18n.t('tags.starred_meetings.description_2')
+
+.row.col-xs-12
+  %table.table.table-striped.table-bordered.table-hover.table-condensed#history
+    %tbody
+      %tr.info.text-center
+        %td
+          %b= t('calendars.meeting')
+        %td
+          %b= t('calendars.date')
+        %td
+          %b= t('tags.starred_meetings.starred_by')
+        %td
+          %b= t('calendars.pool')
+      - @meetings.each do |meeting|
+        - session_count = meeting.meeting_sessions.count
+        - if session_count == 0
+          %tr
+            %td
+              = render( partial: 'goggles/taggable_meeting_name', locals: {meeting: meeting} )
+            %td.goggles-rightalign
+              - if meeting.header_date
+                - if meeting.is_confirmed
+                  = meeting.header_date
+                - else
+                  = meeting.header_date.to_s + ' (*)'
+              - else
+                = t('to_be_defined')
+            %td
+              = meeting.tags_by_user_list.map{ |tag| User.find(tag.remove('u').to_i).description }.join(', ')
+            %td
+              = t('to_be_defined')
+        - else
+          - meeting_session = meeting.meeting_sessions.first
+          %tr
+            %td
+              = render( partial: 'goggles/taggable_meeting_name', locals: {meeting: meeting} )
+            %td.goggles-rightalign
+              - if meeting.is_confirmed
+                = meeting_session.get_scheduled_date
+              - else
+                = meeting_session.get_scheduled_date.to_s + ' (*)'
+            %td
+              = meeting.tags_by_user_list.map{ |tag| User.find(tag.remove('u').to_i).description }.join(', ')
+            %td
+              = meeting_session.swimming_pool.decorate.get_linked_name( :get_city_and_attributes )
+
+.row.col-xs-12.goggles-category-gap#Remark
+  %p
+    %b= t('calendars.remark')
+
+.row.col-xs-12
+  &nbsp;

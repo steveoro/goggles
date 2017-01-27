@@ -8,6 +8,7 @@ en:
     index_menu: "Custom search"
     simple_menu: "Simple search"
     current_menu: "All current meetings"
+    search_meeting: "Search Meeting"
     show_results_tooltip: "Show all the results for this Meeting"
     show_swimmer_results_tooltip: "Show all the results for this swimmer at this Meeting"
     show_team_results_tooltip: "Show all the results for this team at this Meeting"
@@ -58,7 +59,11 @@ en:
     previous_editions: 'Previuos editions'
     passages: 'Passages'
     disqualified: 'DSQ'
-
+    my:
+      menu_title: "My Meetings"
+      title: "My current Meetings"
+      tooltip: "Browse the list of your current Meetings"
+      subtitle: "(For my active Team affiliations, according to \'Starred\' meetings and the current Team Calendar)"
     errors:
       missing_meeting_id: 'no Meeting or invalid id selected.'
       missing_swimmer_id: 'no Swimmer or invalid id selected.'
