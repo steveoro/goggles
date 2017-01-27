@@ -439,9 +439,9 @@ class MeetingReservationsController < ApplicationController
       if creator.total_errors > 0
         flash[:error] = I18n.t('meeting_reservation.error_during_creation')
       # Everything ok?
-      else
-        # Only upon reservation sheet creation, signal to each possible interested
-        # user that now he/she may be able to use the newly reservation sheet:
+      # Only upon main reservation sheet creation, signal to each possible interested
+      # user that now he/she may be able to use the newly reservation sheet:
+      elsif entity_simple_description != 'relay'
         interested_users = @meeting.tags_by_user_list
             .map{ |tag| User.find(tag.remove('u').to_i) }
             .select{ |user| user.id != current_user.id }
