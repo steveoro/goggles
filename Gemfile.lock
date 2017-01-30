@@ -25,10 +25,10 @@ GIT
 
 GIT
   remote: https://github.com/steveoro/goggles_core
-  revision: 1ab53cff3ef4ce645300298ccd0990872edb22bb
+  revision: c5fc5abfee1b56f2c49984de80f92f3019dea3b6
   branch: rails5
   specs:
-    goggles_core (1.1.23.1)
+    goggles_core (1.1.25.1)
       active_hash_relation
       active_model_serializers (~> 0.10.0)
       activemodel-serializers-xml
@@ -415,7 +415,7 @@ GEM
     simple_form (3.3.1)
       actionpack (> 4, < 5.1)
       activemodel (> 4, < 5.1)
-    simple_token_authentication (1.15.0)
+    simple_token_authentication (1.15.1)
       actionmailer (>= 3.2.6, < 6)
       actionpack (>= 3.2.6, < 6)
       devise (>= 3.2, < 6)
@@ -446,7 +446,7 @@ GEM
       ref
     thor (0.19.4)
     thread_safe (0.3.5)
-    tilt (2.0.5)
+    tilt (2.0.6)
     tins (1.12.0)
     transaction-simple (1.4.0.2)
     ttfunk (1.4.0)
@@ -459,7 +459,7 @@ GEM
       execjs (>= 0.3.0, < 3)
     unicode-display_width (1.1.1)
     unicode_utils (1.4.0)
-    warden (1.2.6)
+    warden (1.2.7)
       rack (>= 1.0)
     web-console (3.3.1)
       actionview (>= 5.0)
