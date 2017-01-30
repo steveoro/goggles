@@ -1,0 +1,21 @@
+.row.col-xs-12
+  %table.table.table-striped.table-bordered.table-hover.table-condensed
+    %tbody
+      %tr.info.text-center
+        %td
+          %b= I18n.t('general.team')
+        %td
+          %b= I18n.t('team.affiliations')
+        %td
+          %b= I18n.t('radiography.last_meeting')
+    - @teams.each do |team|
+      %tr
+        %td
+          = team.get_linked_name
+        %td
+          = team.get_season_type_list
+        %td
+          = team.get_last_meeting_name.html_safe
+
+.row.col-xs-12
+  &nbsp;

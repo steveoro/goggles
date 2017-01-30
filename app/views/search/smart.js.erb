@@ -1,0 +1,4 @@
+$('#loadingIndicator').hide();
+$('#search_results').replaceWith('<%=
+    escape_javascript( render(partial: 'search_results') )
+%>');

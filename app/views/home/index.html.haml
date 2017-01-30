@@ -1,8 +1,11 @@
 - if user_signed_in?
   .col-xs-12
-    - # Articles/News flash list:
+    %hr/
+  = render( partial: 'goggles/search_box' )
+  .col-xs-12
+    -# Articles/News flash list:
     = render( partial: 'goggles/news_articles_list' )
-    - # Association request link:
+    -# Association request link:
     = render( partial: 'goggles/associate_to_a_swimmer' ) unless current_user.has_associated_swimmer?
     -# [Steve, 2016103] After 3+ years, we should indeed comment-out this one:
     -# Be patient with this very very work in progress creature!
@@ -19,5 +22,8 @@
   .col-xs-12
     &nbsp;
   = render( partial: 'goggles/not_logged_in' )
+  .col-xs-12
+    %hr/
+  = render( partial: 'goggles/search_box' )
 
 = render( partial: 'goggles/twitter_timeline' )

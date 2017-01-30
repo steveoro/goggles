@@ -43,6 +43,8 @@ it:
     swimmers: 'Nuotatori'
     meeting: 'Gara'
     meetings: 'Gare'
+    pool: 'Piscina'
+    pools: 'Piscine'
     generic_search: "Cerca"
     smart_search: "Ricerca 'smart'"
     complicated_stuff: "Roba complicata"
@@ -74,7 +76,7 @@ it:
     index_title: "Ricerca Piscine"
     details: "Dettagli"
     reviews: "Recensioni"
-    maps_link_tooltip: "Clicca sull'icona della mappa per andare al sito di Google Maps, dove e' anche possibile ottenere indicazioni di navigazione a partire da un indirizzo di tua scelta"
+    maps_link_tooltip: "Clicca sull'icona della mappa per andare al sito di Google Maps"
 
   relay_types:
     relay: "Staffetta"
@@ -318,7 +320,6 @@ it:
   search_rankings: "Cerca Classifiche"
   search_results: "Cerca Risultati"
   relay_results: "Risultati Staffette"
-  search: "Cerca"
   search_tooltip: "Clicca sul titolo per nascondere o mostrare i comandi di filtraggio principali. E' possibile filtrare ulteriormente i risultati inserendo poi altri valori direttamente nell'elenco dei risultati."
   detail_show_tooltip: "Clicca sul titolo per nascondere o mostrare i dettagli."
   no_data_found: "Non ho trovato nessuna riga dati!"

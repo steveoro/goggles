@@ -1,0 +1,25 @@
+.row.col-xs-12
+  %table.table.table-striped.table-bordered.table-hover.table-condensed
+    %tbody
+      %tr.info.text-center
+        %td
+          %b= I18n.t('general.swimmer')
+        %td
+          %b= I18n.t('swimmers.affiliated_in_teams')
+        %td
+          %b= I18n.t('swimmers.year_of_birth')
+        %td
+          %b= I18n.t('swimmers.current_category')
+    - @swimmers.each do |swimmer|
+      %tr
+        %td
+          = swimmer.get_linked_swimmer_name.html_safe
+        %td
+          = swimmer.get_linked_team_names.html_safe
+        %td.text-right
+          = swimmer.year_of_birth
+        %td.text-right
+          = swimmer.get_current_category_type_codes.join(' / ')
+
+.row.col-xs-12
+  &nbsp;

@@ -85,6 +85,8 @@ Rails.application.routes.draw do
       get 'meeting_reservations/relayometer'
       post 'meeting_reservations/relayometer'
 
+      # === Search ===
+      get 'search/smart'
 
       # === Records ===
       get  "records/for_season_type",           to: "records#for_season_type"

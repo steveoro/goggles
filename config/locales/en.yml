@@ -43,6 +43,8 @@ en:
     teams: 'Teams'
     meeting: 'Meeting'
     meetings: 'Meetings'
+    pool: 'Swimming pool'
+    pools: 'Swimming pools'
     generic_search: "Search"
     smart_search: "'Smart' search"
     complicated_stuff: "Complicated stuff"
@@ -74,7 +76,7 @@ en:
     index_title: "Search Swimming-pools"
     details: "Details"
     reviews: "Reviews"
-    maps_link_tooltip: "Click on the map icon to go to the Google Maps site, where you can also retrieve navigation directions from your preferred position"
+    maps_link_tooltip: "Click on the map icon to go to the Google Maps site"
 
   relay_types:
     relay: "Relay"
@@ -320,9 +322,8 @@ en:
   search_rankings: "Search Rankings"
   search_results: "Search Results"
   relay_results: "Relay Results"
-  medals: "Medals"
-  search: "Search"
   search_tooltip: "Click on the title bar to toggle the filtering controls. It's also possible to narrow the search results by typing other values in the dedicated cells on the grid."
+  medals: "Medals"
   detail_show_tooltip: "Click on the title bar to toggle the details."
   no_data_found: "No data found!"
   any_date: "Date"

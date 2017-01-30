@@ -1,0 +1,21 @@
+.row.col-xs-12
+  %table.table.table-striped.table-bordered.table-hover.table-condensed
+    %tbody
+      %tr.info.text-center
+        %td
+          %b= I18n.t('general.pool')
+        %td
+          %b= I18n.t('activerecord.attributes.swimming_pool.nick_name')
+        %td
+          %b= I18n.t('activerecord.models.pool_type')
+    - @pools.each do |pool|
+      %tr
+        %td
+          = pool.get_linked_name
+        %td
+          = pool.nick_name
+        %td
+          = pool.get_pool_attributes
+
+.row.col-xs-12
+  &nbsp;
