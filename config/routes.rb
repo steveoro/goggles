@@ -87,6 +87,7 @@ Rails.application.routes.draw do
 
       # === Search ===
       get 'search/smart'
+      get 'search/smart_with_captcha'
 
       # === Records ===
       get  "records/for_season_type",           to: "records#for_season_type"

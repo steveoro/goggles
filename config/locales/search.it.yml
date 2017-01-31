@@ -6,3 +6,5 @@ it:
     team_results_explain: "(In cui il nome squadra o quello degli iscritti ricorda il termine di ricerca)"
     meeting_results_explain: "(In cui la descrizione o il nome degli iscritti ricorda il termine di ricerca)"
     no_results_found_warning: "Non ho trovato nessun riscontro per i termini di ricerca che hai specificato! Riprova con qualcosa di più corto o generico."
+    why_not_login: "Hey, il CAPTCHA ti da' fastidio? Perché non accedi così scompare?"
+    captcha_fail: "Mmmh... Siamo proprio sicuri di non essere robot?"

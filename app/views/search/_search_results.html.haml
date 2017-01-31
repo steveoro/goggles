@@ -1,5 +1,5 @@
 #search_results
-  - if @swimmers.count > 0
+  - if @swimmers && @swimmers.count > 0
     .col-xs-12.goggles-category-gap
       %p
         = image_tag('img_radiography.jpg', class: 'img-circle', style: "width: 25px;")
@@ -13,7 +13,7 @@
     #searchSwimmersResult.collapse.in
       = render( partial: 'goggles/swimmer_list' )
 
-  - if @teams.count > 0
+  - if @teams && @teams.count > 0
     .col-xs-12.goggles-category-gap
       %p
         = image_tag('user-group-128.png', class: 'img-circle', style: "width: 25px;")
@@ -30,7 +30,7 @@
     #searchTeamsResult.collapse.in
       = render( partial: 'goggles/team_list' )
 
-  - if @pools.count > 0
+  - if @pools && @pools.count > 0
     .col-xs-12.goggles-category-gap
       %p
         = image_tag('swimming-pool-128.png', class: 'img-circle', style: "width: 25px;")
@@ -44,7 +44,7 @@
     #searchPoolsResult.collapse.in
       = render( partial: 'goggles/pool_list' )
 
-  - if @meetings.count > 0
+  - if @meetings && @meetings.count > 0
     .col-xs-12.goggles-category-gap
       %p
         = image_tag('victory-stand-128.png', class: 'img-circle', style: "width: 25px;")
@@ -61,7 +61,7 @@
     #searchMeetingsResult.collapse.in
       = render( partial: 'goggles/meeting_list' )
 
-  - if @swimmers.count == 0 && @teams.count == 0 && @pools.count == 0 && @meetings.count == 0
+  - if @swimmers && (@swimmers.count == 0) && @teams && (@teams.count == 0) && @pools && (@pools.count == 0) && @meetings && (@meetings.count == 0)
     .col-xs-12.goggles-category-gap
       %i.text-center
         = I18n.t("search_view.no_results_found_warning")

@@ -15,11 +15,18 @@ require 'swimming_pool_finder'
 
   Search-dedicated controller.
 
-  - version:  6.069
+  - version:  6.070
   - author:   Steve A.
 
 =end
 class SearchController < ApplicationController
+
+  # If an unlogged user makes these much requests for a single session (cleared on the DB each night)
+  # the next one will be presented a ReCAPTCHA with the reminder to log-in to avoid it
+  MAX_FREE_REQUESTS_BEFORE_CAPTCHA = 4
+
+  before_action :count_requests, only: [:smart]
+
 
   # Collects all ranked results according to the specified query parameter ('q').
   #
@@ -29,19 +36,39 @@ class SearchController < ApplicationController
   #
   def smart
 # DEBUG
-    logger.debug "\r\n\r\n!! ------ #{self.class.name} -----"
-    logger.debug "> #{params.inspect}"
-#    logger.debug "> #{request.inspect}\r\n\r\n=====================================================\r\n\r\n"
+#    logger.debug( "\r\n\r\n!! ------ #{self.class.name} -----" )
+#    logger.debug( "> #{params.inspect}" )
     # AJAX call? Parse parameter and retrieve records range:
     if request.xhr? && params['q'].present?
-      # Get all swimmers related to the query text:
-      @swimmers = get_possible_swimmers( params['q'] )
-      # Get all teams related to the query text OR the swimmers found:
-      @teams = get_possible_teams( params['q'], @swimmers )
-      # Get all swimming pools somehow related to the query text:
-      @pools = get_possible_pools( params['q'] )
-      # Get all meetings somehow related to the query text:
-      @meetings = get_possible_meetings( params['q'] )
+      prepare_query_results( params['q'] )
+    end
+    # Respond according to requested format (GET request => .html, AJAX request => .js)
+    respond_to do |format|
+      format.html
+      format.js
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Same as #smart, but for abusing users or bots. (It uses a ReCAPTCHA verification.)
+  #
+  def smart_with_captcha
+# DEBUG
+#    logger.debug( "\r\n\r\n!! ------ #{self.class.name} -----" )
+#    logger.debug( "> #{params.inspect}" )
+    # AJAX call? Parse parameter and retrieve records range:
+    if request.xhr? && params['q'].present?
+      @captcha_ok = verify_recaptcha
+      if @captcha_ok
+        prepare_query_results( params['q'] )
+      else
+        @swimmers = []
+        @teams = []
+        @pools = []
+        @meetings = []
+      end
     end
     # Respond according to requested format (GET request => .html, AJAX request => .js)
     respond_to do |format|
@@ -54,6 +81,42 @@ class SearchController < ApplicationController
 
 
   private
+
+
+  # Count requests coming from same-IP origin.
+  #
+  def count_requests
+    # Don't count requests for legitimate and logged-in users:
+    return if user_signed_in?
+# DEBUG
+#    logger.debug( "\r\n------------------------------------------" )
+#    logger.debug( "- IP: #{ request.ip }" )
+#    logger.debug( "- Remote IP: #{ request.remote_ip }" )
+#    logger.debug( "- Headers: #{ request.headers['HTTP_USER_AGENT'].inspect }" )
+#    logger.debug( "- Session Req. count: #{ session[ request.ip ] }" )
+#    logger.debug( "------------------------------------------" )
+    # Increase request count:
+    session[ request.ip ] = session[ request.ip ] ? session[ request.ip ] + 1 : 1
+    redirect_to search_smart_with_captcha_path( q: params['q'], f: 1 ) and return if session[ request.ip ] > MAX_FREE_REQUESTS_BEFORE_CAPTCHA
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Count requests coming from same-IP origin.
+  #
+  def prepare_query_results( query )
+    # Get all swimmers related to the query text:
+    @swimmers = get_possible_swimmers( params['q'] )
+    # Get all teams related to the query text OR the swimmers found:
+    @teams = get_possible_teams( params['q'], @swimmers )
+    # Get all swimming pools somehow related to the query text:
+    @pools = get_possible_pools( params['q'] )
+    # Get all meetings somehow related to the query text:
+    @meetings = get_possible_meetings( params['q'] )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Finds all the possible Swimmer results given the query string.

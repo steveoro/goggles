@@ -6,3 +6,5 @@ en:
     team_results_explain: "(In which the team name or any team member's name is similar to the query term)"
     meeting_results_explain: "(In which the description or any attendee's name is similar to the query term)"
     no_results_found_warning: "Nothing matches the search terms you've specified! Try again with something shorter or more generic."
+    why_not_login: "Hey, the CAPTCHA is annoying you? Why not log-in to make it disappear?"
+    captcha_fail: "Mmmh... Are you sure you're not a robot?"

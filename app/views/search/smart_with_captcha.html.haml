@@ -1,0 +1,13 @@
+%p
+  %h3.text-center= I18n.t('general.smart_search')
+
+.well
+  %p.text-center
+    %i= I18n.t('search_view.why_not_login')
+  - unless user_signed_in?
+    %p.text-center
+      %a.btn.btn-primary.goggles-margin-bottom(href="#{ new_user_session_path() }")= t(:login)
+      = t(:or)
+      %a.btn.btn-primary.goggles-margin-bottom(href="#{ new_user_registration_path() }")= t(:sign_up)
+
+= render( partial: 'goggles/search_box_with_captcha' )

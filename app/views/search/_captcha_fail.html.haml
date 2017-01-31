@@ -1,0 +1,8 @@
+#search_results
+  .col-xs-12.goggles-category-gap
+    %p.text-center
+      %b
+        %i= I18n.t('search_view.captcha_fail')
+        &nbsp;
+        %a.btn.btn-default(href="#{ search_smart_with_captcha_path() }")
+          = image_tag('arrow_refresh.png', class: 'img-circle', style: "width: 25px;")

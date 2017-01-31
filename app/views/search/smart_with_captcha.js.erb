@@ -1,0 +1,9 @@
+$('#loadingIndicator').hide();
+if (<%= params['f'].to_i > 0 ? 'true' : 'false'  %>) {
+    document.location = "/search/smart_with_captcha";
+}
+else {
+    $('#search_results').replaceWith('<%=
+        escape_javascript( @captcha_ok ? render(partial: 'search_results') : render(partial: 'captcha_fail') )
+    %>');
+}
