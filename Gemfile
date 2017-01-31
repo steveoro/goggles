@@ -80,7 +80,7 @@ gem 'zip'
 gem 'rubyzip', require: 'zip/zip'
 
 gem 'rubocop', require: false                       # [Steve] For style checking
-
+gem "recaptcha", require: "recaptcha/rails"
 
 group :development do
   gem "better_errors" #, '~> 1.1.0'

@@ -28,6 +28,8 @@ namespace :app do
       on roles(:app) do |host|
         use_sendfile_header_for_apache = true
         secret_key_base      = fetch( :secret_key_base )
+        recaptcha_site_key   = fetch( :recaptcha_site_key )
+        recaptcha_secret_key = fetch( :recaptcha_secret_key )
         serve_static_assets  = false
         debug_assets         = false
         mail_delivery_method = fetch(:mail_delivery_method)
