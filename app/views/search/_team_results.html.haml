@@ -3,6 +3,8 @@
     .col-xs-12.goggles-category-gap
       %p
         = image_tag('user-group-128.png', class: 'img-circle', style: "width: 25px;")
+        %b= I18n.t('general.team')
+        = " - "
         %i
           = I18n.t('search_view.tot_results')
           = @teams.count

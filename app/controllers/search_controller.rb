@@ -15,7 +15,7 @@ require 'swimming_pool_finder'
 
   Search-dedicated controller.
 
-  - version:  6.071
+  - version:  6.072
   - author:   Steve A.
 
 =end
@@ -27,7 +27,7 @@ class SearchController < ApplicationController
 
   # Max returned results per group. If more than this are found, another request
   # should be made manually.
-  RESULTS_LIMIT = 5
+  RESULTS_LIMIT = 8
 
   before_action :count_requests, only: [:smart]
 
@@ -223,10 +223,10 @@ class SearchController < ApplicationController
   def get_possible_meetings( query, no_limit = false )
     result = []
     meetings = MeetingFinder.new( query, no_limit ? nil : RESULTS_LIMIT ).search()
-    meetings.uniq!
+    meetings.distinct!
     result += meetings.map{|m| m.decorate }
     # Re-sort the modified array:
-    result.sort!{ |ma, mb| ma.header_date <=> mb.header_date }
+    result.sort!{ |ma, mb| mb.header_date <=> ma.header_date }
     result
   end
   #-- -------------------------------------------------------------------------
