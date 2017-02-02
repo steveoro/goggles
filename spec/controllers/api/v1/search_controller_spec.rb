@@ -16,19 +16,18 @@ describe Api::V1::SearchController, type: :controller, api: true do
       end
       it_behaves_like( "(Ap1-V1-Controllers, success returning an Array of Hash)" )
 
-      it "returns at least more than 3 matches with the existing seeds" do
+      it "returns at least a couple of results with the existing seeds and an appropriate query" do
         result_array = JSON.parse(response.body)
-        expect( result_array.size ).to be > 3
+        expect( result_array.size ).to be > 1
       end
       it "returns an array of Hash with the required fields" do
         result_array = JSON.parse(response.body)
         expect( result_array ).to all include( 'class', 'id', 'description', 'date' )
       end
-      it "returns at least 1 Swimmer, 1 Team rows and >2 Meetings (with the existing seeds)" do
+      it "returns at least 1 Swimmer & 1 Team rows (with the existing seeds and an appropriate query)" do
         result_array = JSON.parse(response.body)
         expect( result_array.any?{ |hash| hash['class'] == 'Swimmer' } ).to be true
         expect( result_array.any?{ |hash| hash['class'] == 'Team' } ).to be true
-        expect( result_array.find_all{ |hash| hash['class'] == 'Meeting' }.size ).to be > 2
 # DEBUG
 #        puts "\r\n- teams found: #{teams.inspect}"
       end
