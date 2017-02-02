@@ -1,0 +1,22 @@
+#swimmer_results
+  - if @swimmers && @swimmers.count > 0
+    .col-xs-12.goggles-category-gap
+      %p
+        = image_tag('img_radiography.jpg', class: 'img-circle', style: "width: 25px;")
+        %i
+          = I18n.t('search_view.tot_results')
+          = @swimmers.count
+        %span.btn{ "type"=>"button", "data-toggle"=>"collapse", "data-target"=>"#searchSwimmersResult", |
+            "aria-expanded"=>"true", "aria-controls"=>"searchSwimmersResult" }                          |
+          %span{"data-toggle"=>"tooltip", "title"=>I18n.t('search_view.toggle_collapse_expand_tooltip')}
+            = image_tag('bullet_plus_minus.png')
+        - unless @limitless || @swimmers.count < SearchController::RESULTS_LIMIT
+          &nbsp;
+          = link_to( I18n.t('search_view.give_me_more'), search_smart_path(q: @query, u: '1', e: 's'),  |
+              { remote: true, class: 'btn btn-default', "data-toggle"=>"tooltip",                       |
+                "title"=>I18n.t('search_view.give_me_more_tooltip'),                                    |
+                onclick: "$('#swimmerSearchLoadIndicator').show();" } )                                 |
+          %span(id='swimmerSearchLoadIndicator' hidden='true')
+            = image_tag( 'indicator.gif' )
+    #searchSwimmersResult.collapse.in
+      = render( partial: 'goggles/swimmer_list' )

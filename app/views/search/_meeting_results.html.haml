@@ -1,0 +1,25 @@
+#meeting_results
+  - if @meetings && @meetings.count > 0
+    .col-xs-12.goggles-category-gap
+      %p
+        = image_tag('victory-stand-128.png', class: 'img-circle', style: "width: 25px;")
+        %i
+          = I18n.t('search_view.tot_results')
+          = @meetings.count
+        %span.btn{ "type"=>"button", "data-toggle"=>"collapse", "data-target"=>"#searchMeetingsResult", |
+            "aria-expanded"=>"true", "aria-controls"=>"searchMeetingsResult" }                          |
+          %span{"data-toggle"=>"tooltip", "title"=>I18n.t('search_view.toggle_collapse_expand_tooltip')}
+            = image_tag('bullet_plus_minus.png')
+        %br/
+        %i
+          %small= I18n.t('search_view.meeting_results_explain')
+        - unless @limitless || @meetings.count < SearchController::RESULTS_LIMIT
+          &nbsp;
+          = link_to( I18n.t('search_view.give_me_more'), search_smart_path(q: @query, u: '1', e: 'm'),  |
+              { remote: true, class: 'btn btn-default', "data-toggle"=>"tooltip",                       |
+                "title"=>I18n.t('search_view.give_me_more_tooltip'),                                    |
+                onclick: "$('#meetingSearchLoadIndicator').show();" } )                                 |
+          %span(id='meetingSearchLoadIndicator' hidden='true')
+            = image_tag( 'indicator.gif' )
+    #searchMeetingsResult.collapse.in
+      = render( partial: 'goggles/meeting_list' )

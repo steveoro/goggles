@@ -1,0 +1,25 @@
+#team_results
+  - if @teams && @teams.count > 0
+    .col-xs-12.goggles-category-gap
+      %p
+        = image_tag('user-group-128.png', class: 'img-circle', style: "width: 25px;")
+        %i
+          = I18n.t('search_view.tot_results')
+          = @teams.count
+        %span.btn{ "type"=>"button", "data-toggle"=>"collapse", "data-target"=>"#searchTeamsResult",    |
+            "aria-expanded"=>"true", "aria-controls"=>"searchTeamsResult" }                             |
+          %span{"data-toggle"=>"tooltip", "title"=>I18n.t('search_view.toggle_collapse_expand_tooltip')}
+            = image_tag('bullet_plus_minus.png')
+        %br/
+        %i
+          %small= I18n.t('search_view.team_results_explain')
+        - unless @limitless || @teams.count < SearchController::RESULTS_LIMIT
+          &nbsp;
+          = link_to( I18n.t('search_view.give_me_more'), search_smart_path(q: @query, u: '1', e: 't'),  |
+              { remote: true, class: 'btn btn-default', "data-toggle"=>"tooltip",                       |
+                "title"=>I18n.t('search_view.give_me_more_tooltip'),                                    |
+                onclick: "$('#teamSearchLoadIndicator').show();" } )                                    |
+          %span(id='teamSearchLoadIndicator' hidden='true')
+            = image_tag( 'indicator.gif' )
+    #searchTeamsResult.collapse.in
+      = render( partial: 'goggles/team_list' )

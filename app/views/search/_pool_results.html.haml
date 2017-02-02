@@ -1,0 +1,22 @@
+#pool_results
+  - if @pools && @pools.count > 0
+    .col-xs-12.goggles-category-gap
+      %p
+        = image_tag('swimming-pool-128.png', class: 'img-circle', style: "width: 25px;")
+        %i
+          = I18n.t('search_view.tot_results')
+          = @pools.count
+        %span.btn{ "type"=>"button", "data-toggle"=>"collapse", "data-target"=>"#searchPoolsResult",    |
+            "aria-expanded"=>"true", "aria-controls"=>"searchPoolsResult" }                             |
+          %span{"data-toggle"=>"tooltip", "title"=>I18n.t('search_view.toggle_collapse_expand_tooltip')}
+            = image_tag('bullet_plus_minus.png')
+        - unless @limitless || @pools.count < SearchController::RESULTS_LIMIT
+          &nbsp;
+          = link_to( I18n.t('search_view.give_me_more'), search_smart_path(q: @query, u: '1', e: 'p'),  |
+              { remote: true, class: 'btn btn-default', "data-toggle"=>"tooltip",                       |
+                "title"=>I18n.t('search_view.give_me_more_tooltip'),                                    |
+                onclick: "$('#poolSearchLoadIndicator').show();" } )                                    |
+          %span(id='poolSearchLoadIndicator' hidden='true')
+            = image_tag( 'indicator.gif' )
+    #searchPoolsResult.collapse.in
+      = render( partial: 'goggles/pool_list' )
