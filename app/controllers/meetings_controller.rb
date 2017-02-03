@@ -62,7 +62,7 @@ class MeetingsController < ApplicationController
     # Add also the team-tagged browsable meetings.
     # Find the current, browsable team affiliations that may have tagged the meetings,
     # and, for each, add any tagged meeting found to the list:
-    browsable_season_ids.map{ |season_id| current_user.find_team_affiliation_id_from_team_managers_for(season_id) }
+    browsable_season_ids.map{ |season_id| current_user.find_team_affiliation_id_from_badges_for(season_id) }
         .compact.each do |tagger_team_affiliation_id|
           @meetings += Meeting.includes( :season, :season_type, :meeting_sessions, :swimming_pools )
             .joins( :season, :season_type, :meeting_sessions, :swimming_pools )
