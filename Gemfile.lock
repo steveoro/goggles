@@ -25,10 +25,10 @@ GIT
 
 GIT
   remote: https://github.com/steveoro/goggles_core
-  revision: 8e812e50a9b8e6b2db12d92a8fffcd5b8e23e8f1
+  revision: fcfd33ee2c8af969f93299ef4e257b83c6f964dc
   branch: rails5
   specs:
-    goggles_core (1.1.30.1)
+    goggles_core (1.1.31.1)
       active_hash_relation
       active_model_serializers (~> 0.10.0)
       activemodel-serializers-xml
