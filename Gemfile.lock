@@ -25,7 +25,7 @@ GIT
 
 GIT
   remote: https://github.com/steveoro/goggles_core
-  revision: 0dfdaf8a43142d4bb4a9a29ec86059faa7f52222
+  revision: 098319effd2502a756ff395dc6991b753a7958da
   branch: rails5
   specs:
     goggles_core (1.1.31.3)
