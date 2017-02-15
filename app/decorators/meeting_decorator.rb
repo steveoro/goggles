@@ -5,7 +5,7 @@ require 'team_manager_validator'
 
 = MeetingDecorator
 
-  - version:  6.062
+  - version:  6.081
   - author:   Steve A.
 
   Decorator for the Meeting model.
@@ -100,6 +100,8 @@ class MeetingDecorator < Draper::Decorator
     else
       if has_start_list
           linked_name = h.link_to( object.send(name_method), meeting_show_start_list_path(id: object.id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.start_list_tooltip') } )
+      elsif is_cancelled?
+        linked_name = h.content_tag( :s, object.send(name_method) )
       else
         if invitation
           linked_name = h.link_to( object.send(name_method), meeting_show_invitation_path(id: object.id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.manifest_tooltip') } )

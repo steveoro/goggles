@@ -2,7 +2,7 @@
 %span
   = meeting.decorate.get_linked_name( :get_full_name )
   -# Avoid user-generated cruft on ended seasons:
-  - if current_user && !meeting.season.is_season_ended_at()
+  - if current_user && !meeting.season.is_season_ended_at() && !meeting.is_cancelled?
     - is_user_starred = meeting.tags_by_user_list.include?( "u#{ current_user.id }" )
     - can_manage = TeamManagerValidator.can_manage?( current_user, meeting )
     - team_affiliation_id = nil
