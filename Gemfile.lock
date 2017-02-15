@@ -25,10 +25,10 @@ GIT
 
 GIT
   remote: https://github.com/steveoro/goggles_core
-  revision: 098319effd2502a756ff395dc6991b753a7958da
+  revision: 3adbaa745883479a0248e0d0e0da1e3a61ae433e
   branch: rails5
   specs:
-    goggles_core (1.1.31.3)
+    goggles_core (1.1.33.0)
       active_hash_relation
       active_model_serializers (~> 0.10.0)
       activemodel-serializers-xml
@@ -72,7 +72,8 @@ GEM
       erubis (~> 2.7.0)
       rails-dom-testing (~> 2.0)
       rails-html-sanitizer (~> 1.0, >= 1.0.2)
-    active_hash_relation (1.1.0)
+    active_hash_relation (1.4.0)
+      activerecord
     active_model_serializers (0.10.4)
       actionpack (>= 4.1, < 6)
       activemodel (>= 4.1, < 6)
