@@ -46,7 +46,7 @@ gem "haml-rails"
 
 # XXX When using ssh key use the protocol below:
 #gem "goggles_core", git: "git@github.com:steveoro/goggles_core", branch: "rails5"
-gem "goggles_core", git: "https://github.com/steveoro/goggles_core", branch: "rails5"
+gem "goggles_core", git: "https://github.com/steveoro/goggles_core"
 
 # XXX [Steve, 20160920] DO NOT USE SafeYAML. Too many issues w/ ActiveRecord,
 # Guard & DelayedJob (See https://github.com/dtao/safe_yaml#known-issues).
