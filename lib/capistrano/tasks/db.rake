@@ -3,7 +3,7 @@
 # == Capistrano helper tasks ==
 #
 # - author: Steve A.
-# - vers. : 4.00.785
+# - vers. : 6.083
 #
 # This requires Capistrano v. >= 3.1
 require "erb"
@@ -364,7 +364,7 @@ Options:
         end
 
       end
-      puts "      > db:remote:sql_dump done."
+      puts "      > db:remote:sql_diff_dump done."
     end
     #-- -----------------------------------------------------------------------
     #++

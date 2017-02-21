@@ -10,6 +10,7 @@
 
 namespace :remote do
   GOGGLES_ADMIN_PATH = File.absolute_path( File.join(Dir.pwd, File.join('..', 'goggles_admin')) ) unless defined? GOGGLES_ADMIN_PATH
+  DB_DUMP_LOCAL_PATH = File.join( GOGGLES_ADMIN_PATH, 'db', 'dump' ) unless defined? DB_DUMP_LOCAL_PATH
   DB_DIFFS_NEW_PATH  = File.join( GOGGLES_ADMIN_PATH, 'db', 'diff.new' ) unless defined? DB_DIFFS_NEW_PATH
   DB_DIFFS_APPLIED_PATH = File.join( GOGGLES_ADMIN_PATH, 'db', 'diff.applied' ) unless defined? DB_DIFFS_APPLIED_PATH
   #-- -------------------------------------------------------------------------
@@ -30,7 +31,7 @@ namespace :remote do
   # Remote DB:Diff_apply task
   #
   desc <<-DESC
-  This performs a remote "db:diff_apply" of all the DB-Diff files stored under
+  This performs a custom "db:diff_apply" of all the DB-Diff files stored under
   'goggles_admin/db/diff.new', staging first the changes locally then applying them
   remotely only in case of no-errors.
 
@@ -45,10 +46,17 @@ namespace :remote do
   - [LOCAL -> REMOTE] The file is copied to the destination server (typically, under '/tmp')
   - [REMOTE] the file is applied (executed) and tested for errors (again)
   - [REMOTE] (On success) The file is then removed from the remote server
-  - [LOCAL] (On success) The file is also moved to 'goggles_admin/db/diff.applied'
+
+- At the end, on success:
+  - [LOCAL]  All DB-diff files are also moved to 'goggles_admin/db/diff.applied'
+  - [LOCAL]  The DEV DB dump is updated
+  - [REMOTE] A new PROD DB dump is downloaded, ALWAYS (even if the local prod DB
+             has not been modified by any of the diff files)
 
 
-All the successfully applied diffs will be moved under 'goggles_admin/db/diff.applied',
+If the web app is in need of a restart after all of this, use a 'deploy:restart'.
+
+All the successfully applied diffs are moved under 'goggles_admin/db/diff.applied'
 waiting to be historicized locally (and then manually removed from the repository).
 
 Each DB-Diff filename is assumed to be in the format:
@@ -77,34 +85,38 @@ at the end to ensure that also the test DB is up-to-date.
 
     [rebuild=<0>|1]
 
-When rebuild is set to '1' the rebuild phase for the DBs is executed at the beginning
-of the task. The default is to skip it, assuming both DBs are currently ready for the
+When rebuild is set to '1' the rake task 'db:rebuild_from_dump' is lanched at the
+beginning for any DB that has to be modified.
+The default is to skip this phase, assuming local DBs are currently ready for the
 execution of the task.
+
+No migrations are run.
+It's up to you to have local and remote DB structures up-to-date.
 
   DESC
   task :db_diff_apply do
-    run_locally do
-      require 'rails'
-      # Environment setup
-      rails_config    = Rails.configuration           # Prepare & check configuration:
-      diff_src_path   = DB_DIFFS_NEW_PATH
-      diff_dest_path  = DB_DIFFS_APPLIED_PATH
-      db_user         = rails_config.database_configuration[Rails.env]['username']
-      db_pwd          = rails_config.database_configuration[Rails.env]['password']
-      db_host         = rails_config.database_configuration[Rails.env]['host']
+    # Environment setup
+    db_config       = YAML.load_file( File.join(Dir.pwd, 'config', 'database.yml') )
+    diff_src_path   = DB_DIFFS_NEW_PATH
+    diff_dest_path  = DB_DIFFS_APPLIED_PATH
+    # XXX ASSUMING development configuration for localhost has same access credentials as production (@localhost)
+    db_user         = db_config['development']['username']
+    db_pwd          = db_config['development']['password']
+    db_host         = db_config['development']['host']
                                                     # Get which files are for which destination DB:
-      diff_filenames = Dir.glob( [ File.join( diff_src_path, '*.sql') ] ).sort
-      prod_filenames = diff_filenames.select{ |subpathname| subpathname =~ /\d{12}prod_/ }
-      dev_filenames  = diff_filenames.select{ |subpathname| subpathname =~ /\d{12}dev_/ }
-      any_filenames  = diff_filenames.reject{ |subpathname| prod_filenames.include?( subpathname ) || dev_filenames.include?( subpathname ) }
-      rebuild        = ENV.include?("rebuild") && (ENV["rebuild"].to_i > 0)
+    diff_filenames = Dir.glob( [ File.join( diff_src_path, '*.sql') ] ).sort
+    prod_filenames = diff_filenames.select{ |subpathname| subpathname =~ /\d{12}prod_/ }
+    dev_filenames  = diff_filenames.select{ |subpathname| subpathname =~ /\d{12}dev_/ }
+    any_filenames  = diff_filenames.reject{ |subpathname| prod_filenames.include?( subpathname ) || dev_filenames.include?( subpathname ) }
+    rebuild        = ENV.include?("rebuild") && (ENV["rebuild"].to_i > 0)
 
+    run_locally do
       puts "\r\n*** remote:db_diff_apply ***"
       puts "\r\nLOCAL staging preparation. If everything we'll be successful, 'prod' files will be also applied remotely."
       # Display some info:
-      puts "DB host: #{db_host}"
-      puts "DB user: #{db_user}"
-      puts "Rebuild phase: #{rebuild ? 'ENABLED' : '(skipped)'}"
+      puts "DB host (@localhost): #{db_host}"
+      puts "DB user (@localhost): #{db_user}"
+      puts "Rebuild phase.......: #{rebuild ? 'ENABLED' : '(skipped)'}"
       # Note that these arrays of names are used just to detect which destination
       # DBs are involved in the update. The original sorted list of files must be
       # used instead, if we want to honour the file order based on the timestamp
@@ -118,31 +130,38 @@ execution of the task.
       end
       puts "\r\nThe process, once started cannot be easily stopped. Please verify the above info or press CTRL-C to abort.\r\n==> Press Enter to continue <=="
       dummy = STDIN.gets
+
+      # === On-demand Rebuild phase: ===
                                                     # Force db:rebuild_from_dump for each involved DB:
-      if rebuild && (prod_filenames.size > 0 || any_filenames.size > 0)
-        db_name = rails_config.database_configuration[ 'production' ]['database']
-        rebuild_from_dump( 'production', db_name, db_host, db_user, db_pwd )
-      end
       if rebuild && (dev_filenames.size > 0 || any_filenames.size > 0)
-        db_name = rails_config.database_configuration[ 'development' ]['database']
-        rebuild_from_dump( 'development', db_name, db_host, db_user, db_pwd )
+        local_rebuild_from_dump( DB_DUMP_LOCAL_PATH, 'development', db_config['development']['database'], db_host, db_user, db_pwd )
       end
-                                                    # Apply diffs, respecting order of execution:
-      diff_filenames.each do |filename|
+      if rebuild && (prod_filenames.size > 0 || any_filenames.size > 0)
+        # XXX Using dev env allows us to skip lots of config variables needed to
+        # launch a working, running prod env locally. Besides, it doesn't matter
+        # for the 'db:rebuild_from_dump' rake task.
+        local_rebuild_from_dump( DB_DUMP_LOCAL_PATH, 'production', db_config['production']['database'], db_host, db_user, db_pwd )
+      end
+
+      # === LOCAL DB-Diff Apply phase: ===
+
+      diff_filenames.each do |filename|             # Apply diffs, respecting order of execution:
         if filename =~ /\d{12}prod_/
-          apply_locally_diff_files_on_db( [filename], db_host, db_user, db_pwd, 'production',  'PRODUCTION-only', diff_dest_path )
+          apply_locally_diff_files_on_db( [filename], db_host, db_user, db_pwd, db_config['production']['database'], 'PRODUCTION-only' )
         elsif filename =~ /\d{12}dev_/
-          apply_locally_diff_files_on_db( [filename],  db_host, db_user, db_pwd, 'development', 'DEVELOPMENT-only', diff_dest_path )
+          apply_locally_diff_files_on_db( [filename],  db_host, db_user, db_pwd, db_config['development']['database'], 'DEVELOPMENT-only' )
         else
-          apply_locally_diff_files_on_db( [filename],  db_host, db_user, db_pwd,  ['production', 'development'], 'GENERIC', diff_dest_path )
+          apply_locally_diff_files_on_db( [filename],  db_host, db_user, db_pwd, [ db_config['production']['database'], db_config['development']['database'] ], 'GENERIC' )
         end
       end
       puts "\r\nLOCAL db:diff_apply phase ended."
     end
 
+    # === REMOTE DB-Diff Apply phase: ===
+
     # Get all the production-related DB-Diffs:
-    all_prod_filenames  = diff_filenames.reject{ |subpathname| dev_filenames.include?( subpathname ) }
-    error_file_name = '/tmp/errors.txt'
+    all_prod_filenames = diff_filenames.reject{ |subpathname| dev_filenames.include?( subpathname ) }
+    stderr_file_name   = '/tmp/std_err_log.txt'
 
     # For each production-related DB-diff...
     if all_prod_filenames.size > 0
@@ -155,24 +174,43 @@ execution of the task.
       on roles(:app) do
         all_prod_filenames.each_with_index do |filename, index|
           info "\r\nUploading file #{ index + 1 }/#{ all_prod_filenames.size }: #{ filename } ..."
+          # Upload the SQL DB-Diff file:
           upload! filename, '/tmp/db_diff_upload.sql'
+          # Apply the DB-diff on the remote server:
           within release_path do
-            execute :mysql, "-h#{ fetch(:db_name_for_config) } -u#{ fetch(:db_user) } --password=\"#{ fetch(:db_password) }\" --database=#{ fetch(:application) } -e \"\\. /tmp/db_diff_upload.sql\" 2> #{ error_file_name }"
-            if test("[ -s #{ error_file_name } ]")
-              puts "\r\nError(s) intercepted! Aborting..."
-              puts "---------8<----------"
-              execute :cat, error_file_name
-              puts "---------8<----------"
-              execute :rm, error_file_name
-              exit(1)
+            execute :mysql, "-h#{ fetch(:db_name_for_config) } -u#{ fetch(:db_user) } --password=\"#{ fetch(:db_password) }\" --database=#{ fetch(:application) } -e \"\\. /tmp/db_diff_upload.sql\" 2> #{ stderr_file_name }"
+            # Intercept errors or warnings on the std_err output:
+            if test("[ -s #{ stderr_file_name } ]")
+              file_lines = capture( :cat, stderr_file_name ).split("\n")
+              errors   = file_lines.select{ |line| line =~ /ERROR/i }
+              warnings = file_lines.select{ |line| line =~ /Warning/i }
+              if errors.size > 0
+                puts "\r\nError(s) intercepted!"
+                puts "---------8<----------"
+                errors.each{ |e| puts e }
+                puts "---------8<----------"
+                puts "\r\nAborting..."
+                exit(1)
+              end
+              if warnings.size > 0
+                puts "\r\nWarning(s) intercepted:"
+                puts "---------8<----------"
+                warnings.each{ |w| puts w }
+                puts "---------8<----------"
+                puts "\r\nIgnoring..."
+              end
             end
           end
-          info "Removing remote temp file..."
-          execute :rm, '/tmp/db_diff_upload.sql'  # After execution remove temp file on dest host
+          # After execution remove temp files on dest host:
+          info "Removing remote temp files..."
+          execute :rm, stderr_file_name
+          execute :rm, '/tmp/db_diff_upload.sql'
         end
       end
       puts "\r\nREMOTE diff_apply phase ended."
     end
+
+    # === DB-Diff archival phase: ===
 
     # At the end of everything, when we can be quite sure there have been no errors, move ALL the new but tested and applied diff files:
     if diff_filenames.size > 0
@@ -181,19 +219,24 @@ execution of the task.
       diff_filenames.each{ |filename| FileUtils.mv( filename, diff_dest_path ) }
     end
 
+    # === DB dump update phase: ===
                                                     # Force a db:dump update for each involved DB:
-#    if prod_filenames.size > 0 || any_filenames.size > 0
-#      db_dump( db_host, db_user, db_pwd, rails_config.database_configuration[ 'production' ]['database'], 'production' )
-#    end
-#    if dev_filenames.size > 0 || any_filenames.size > 0
-#      db_dump( db_host, db_user, db_pwd, rails_config.database_configuration[ 'development' ]['database'], 'development' )
-#    end
-                                                    # Force db:clone_to_test at the end when Dev DB is modified:
-    # ( Assuming current RAILS_ENV == development )
-#    Rake::Task['db:clone_to_test'].invoke if dev_filenames.size > 0 || any_filenames.size > 0
+    if dev_filenames.size > 0 || any_filenames.size > 0
+      # Update local dev DB dump:
+      local_db_dump( DB_DUMP_LOCAL_PATH, db_host, db_user, db_pwd, db_config['development']['database'], 'development' )
+      # Update local test DB dump by cloning dev DB on test DB:
+      local_rebuild_from_dump( DB_DUMP_LOCAL_PATH, 'development', db_config['test']['database'], db_host, db_user, db_pwd )
+    end
 
-    puts "\r\nDone."
+    puts "\r\nAlmost done: getting an updated remote PRODUCTION dump...\r\n"
   end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  after "remote:db_diff_apply", "db:remote:sql_dump"
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Dumps each filename string in a verbose format for display purposes.
@@ -206,54 +249,135 @@ execution of the task.
   end
 
 
-  # Executes the SQL diff files on the specified db_config_dest.
+  # Executes the SQL diff files on the specified db_dest_names.
   #
-  # If db_config_dest is an Array, each file will be executed on each item found in the
+  # If db_dest_names is an Array, each file will be executed on each item found in the
   # array.
   #
-  def apply_locally_diff_files_on_db( filenames, db_host, db_user, db_pwd, db_config_dest, dest_verbose_name )
+  def apply_locally_diff_files_on_db( filenames, db_host, db_user, db_pwd, db_dest_names, dest_verbose_name )
     if filenames.size > 0
-      puts "\r\n\r\n\t** #{ dest_verbose_name } diffs: **"
-      error_file_name = File.join(DB_DIFFS_NEW_PATH, 'errors.txt')
+      puts "\r\n\r\n\t** LOCAL Staging DB-DIFF APPLY: #{ dest_verbose_name } **"
       filenames.each do |filename|
-        if db_config_dest.instance_of?( Array )            # Multi DB apply:
-          db_config_dest.each do |config_name|
-            db_name = Rails.configuration.database_configuration[ config_name ]['database']
-            execute_file_or_exit( filename, config_name, db_host, db_user, db_pwd, db_name, error_file_name )
+        if db_dest_names.instance_of?( Array )      # Multi DB apply:
+          db_dest_names.each do |db_name|
+            execute_file_or_exit( filename, config_name, db_host, db_user, db_pwd, db_name )
           end
                                                     # Single DB apply:
         else
-          db_name = Rails.configuration.database_configuration[ db_config_dest ]['database']
-          execute_file_or_exit( filename, db_config_dest, db_host, db_user, db_pwd, db_name, error_file_name )
+          execute_file_or_exit( filename, db_dest_names, db_host, db_user, db_pwd, db_dest_names )
         end
       end
     end
   end
 
 
-  # Execute the specified SQL file given the parameters and create an error log using
-  # error_file_name to check standard error for any result.
+  # Execute the specified SQL file given the parameters and create an error log
+  # in order to check at the end the standard error output for any result.
   #
-  def execute_file_or_exit( filename, config_name, db_host, db_user, db_pwd, db_name, error_file_name )
+  def execute_file_or_exit( filename, config_name, db_host, db_user, db_pwd, db_name )
     puts "\r\nExecuting '#{filename}' on #{config_name} DB (#{db_name})..."
-    # Execute the file, creating an error log:
-    sh "mysql --host=#{ db_host } --user=#{ db_user } --password=\"#{db_pwd}\" --database=#{ db_name } --execute=\"\\. #{ filename }\" 2> #{ error_file_name }"
-    test_locally_error_log_file_for_size_and_abort( error_file_name )
+    stderr_file_name  = File.join(DB_DIFFS_NEW_PATH, 'std_err_log.txt')
+    run_locally do
+      # Execute the file, creating an error log:
+      execute :mysql, "--host=#{ db_host } --user=#{ db_user } --password=\"#{db_pwd}\" --database=#{ db_name } --execute=\"\\. #{ filename }\" 2> #{ stderr_file_name }"
+    end
+    test_locally_error_log_file_for_size_and_abort( stderr_file_name )
   end
 
 
-  # Tests locally the file size of error_file_name. Halts in case of non-zero error log file.
+  # Tests locally the file size of stderr_file_name. Halts in case of non-zero error log file.
   #
-  def test_locally_error_log_file_for_size_and_abort( error_file_name )
-    # If file size of "errors.txt" > 0, display it, remove it and the abort procedure
-    if File.size?( error_file_name )
-      puts "\r\nError(s) intercepted! Aborting..."
-      puts "---------8<----------"
-      sh "cat #{ error_file_name }"
-      puts "---------8<----------"
-      FileUtils.rm( error_file_name )
-      exit(1)
+  def test_locally_error_log_file_for_size_and_abort( stderr_file_name )
+    run_locally do
+      # If file size of stderr_file_name > 0, extract actual errors and warnings,
+      # display them, remove the files and abort the procedure in case of errors:
+      if File.size?( stderr_file_name )
+        puts "\r\nStderr not clear, checking output..."
+        file_lines = File.open( stderr_file_name ).read.split("\n")
+        errors   = file_lines.select{ |line| line =~ /ERROR/i }
+        warnings = file_lines.select{ |line| line =~ /Warning/i }
+        if errors.size > 0
+          puts "\r\nError(s) intercepted!"
+          puts "---------8<----------"
+          errors.each{ |e| puts e }
+          puts "---------8<----------"
+          puts "\r\nAborting..."
+          # Before exit, remove the created temp log file:
+          FileUtils.rm( stderr_file_name )
+          exit(1)
+        end
+        if warnings.size > 0
+          puts "\r\nWarning(s) intercepted:"
+          puts "---------8<----------"
+          warnings.each{ |w| puts w }
+          puts "---------8<----------"
+          puts "\r\nIgnoring..."
+        end
+      end
+      # At the end, remove the created temp log file:
+      FileUtils.rm( stderr_file_name )
     end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Performs the actual operations required for a DB dump update given the specified
+  # parameters but only LOCALLY, in the context of Capistrano.
+  #
+  # Note that the dump takes the name of the Environment configuration section.
+  #
+  def local_db_dump( db_dump_dir, db_host, db_user, db_pwd, db_name, dump_basename )
+    puts "\r\nUpdating recovery dump '#{ dump_basename }' (from #{db_name} DB)..."
+    zip_pipe = ' | bzip2 -c'
+    file_ext = '.sql.bz2'                           # Display some info:
+    puts "DB name: #{ db_name }"
+    puts "DB user: #{ db_user }"
+    file_name = File.join( db_dump_dir, "#{ dump_basename }#{ file_ext }" )
+    puts "\r\nProcessing #{ db_name } => #{ file_name } ...\r\n"
+    # To disable extended inserts, add this option: --skip-extended-insert
+    # (The Resulting SQL file will be much longer, though -- but the bzipped
+    #  version can result more compressed due to the replicated strings, and it is
+    #  indeed much more readable and editable...)
+    run_locally do
+      execute :mysqldump, "--host=#{ db_host } -u #{ db_user } --password=\"#{db_pwd}\" -l --triggers --routines -i --skip-extended-insert --no-autocommit --single-transaction #{ db_name } #{ zip_pipe } > #{ file_name }"
+    end
+    puts "\r\nRecovery dump created.\r\n\r\n"
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Performs the actual sequence of operations required by a single db:rebuild_from_dump
+  # task, given the specified parameters but only LOCALLY, in the context of Capistrano.
+  #
+  # The source_basename comes from the name of the file dump.
+  # Note that the dump takes the name of the Environment configuration section.
+  #
+  def local_rebuild_from_dump( db_dump_dir, source_basename, output_db, db_host, db_user, db_pwd, file_ext = '.sql.bz2' )
+    puts "\r\nRebuilding..."
+    puts "DB name: #{ source_basename } (dump) => #{ output_db } (DEST)"
+    puts "DB user: #{ db_user }"
+
+    file_name = File.join( db_dump_dir, "#{ source_basename }#{ file_ext }" )
+    sql_file_name = File.join( 'tmp', "#{ source_basename }.sql" )
+
+    run_locally do
+      puts "\r\nUncompressing dump file '#{ file_name }' => '#{ sql_file_name }'..."
+      execute :bunzip2, "-ck #{ file_name } > #{ sql_file_name }"
+
+      puts "\r\nDropping destination DB '#{ output_db }'..."
+      execute :mysql, "--host=#{ db_host } --user=#{ db_user } --password=\"#{db_pwd}\" --execute=\"drop database if exists #{ output_db }\""
+      puts "\r\nRecreating destination DB..."
+      execute :mysql, "--host=#{ db_host } --user=#{ db_user } --password=\"#{db_pwd}\" --execute=\"create database #{ output_db }\""
+
+      puts "\r\nExecuting '#{ file_name }' on #{ output_db }..."
+      execute :mysql, "--host=#{ db_host } --user=#{ db_user } --password=\"#{db_pwd}\" --database=#{ output_db } --execute=\"\\. #{ sql_file_name }\""
+      puts "Deleting uncompressed file '#{ sql_file_name }'..."
+      FileUtils.rm( sql_file_name )
+    end
+
+    puts "Rebuild from dump for '#{ source_basename }', done.\r\n\r\n"
   end
   #-- -------------------------------------------------------------------------
   #++
