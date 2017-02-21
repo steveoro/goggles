@@ -239,7 +239,7 @@ Options:
             info "DB dump retrieved."
           end
           info "Shutting down Apache during the rebuild..."
-          execute '/etc/init.d/apache2 stop'
+          execute 'service apache2 stop'
 
           info "Clearing tmp dir with cache..."
           # [Steve, 20160203] This is the same as invoking "cap remote:tmp_clear"
@@ -256,8 +256,8 @@ Options:
             end
           end
 
-          info "Restarting Apache..."
-          execute '/etc/init.d/apache2 start'
+          info "Restarting Web server..."
+          execute fetch(:cmd_web_restart)
         end
       end
       puts "\r\nDone."
