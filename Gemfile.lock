@@ -25,9 +25,9 @@ GIT
 
 GIT
   remote: https://github.com/steveoro/goggles_core
-  revision: aaa117594039632abd9f21182b37c826e42d5619
+  revision: 06f9227bf2df35cee67661d39ae14b54ead5ff51
   specs:
-    goggles_core (1.1.35.0)
+    goggles_core (1.1.36.0)
       active_hash_relation
       active_model_serializers (~> 0.10.0)
       activemodel-serializers-xml
@@ -241,7 +241,7 @@ GEM
       haml (~> 4.0.0)
       nokogiri (~> 1.6.0)
       ruby_parser (~> 3.5)
-    i18n (0.8.0)
+    i18n (0.8.1)
     i18n_data (0.7.0)
     jbuilder (2.6.0)
       activesupport (>= 3.0.0, < 5.1)
