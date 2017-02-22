@@ -80,9 +80,6 @@ EOF
 
 
   namespace :remote do
-    set :ask_src_sql_file_path, ask( "\r\nEnter the local (source) full pathname to the SQL file to be uploaded and executed remotely: ", nil )
-    set :ask_dest_sql_path,     ask( "\r\nEnter the destination PATH (no filename) for the SQL dump file: ", File.join("#{Dir.pwd}.docs", 'backup.db', 'history.gold') )
-
 
     # Remote Production DB data upload tool.
     #
@@ -300,6 +297,11 @@ Options:
         download! "/tmp/#{file_name}", File.join(dest_path, file_name)
         info "Removing remote temp file..."
         execute :rm, "/tmp/#{file_name}"
+      end
+      # Copy the downloaded db dump into its rightful destination:
+      run_locally do
+        info "Copying the downloaded dump also into dump dir (ready to be committed & pushed to the repo)..."
+        execute :cp, "#{ File.join(dest_path, file_name) } #{ File.join(DB_DUMP_LOCAL_PATH, 'production.sql.bz2') }"
       end
       puts "      db:remote:sql_dump done."
     end

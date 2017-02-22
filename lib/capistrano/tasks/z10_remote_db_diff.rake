@@ -9,23 +9,6 @@
 
 
 namespace :remote do
-  GOGGLES_ADMIN_PATH = File.absolute_path( File.join(Dir.pwd, File.join('..', 'goggles_admin')) ) unless defined? GOGGLES_ADMIN_PATH
-  DB_DUMP_LOCAL_PATH = File.join( GOGGLES_ADMIN_PATH, 'db', 'dump' ) unless defined? DB_DUMP_LOCAL_PATH
-  DB_DIFFS_NEW_PATH  = File.join( GOGGLES_ADMIN_PATH, 'db', 'diff.new' ) unless defined? DB_DIFFS_NEW_PATH
-  DB_DIFFS_APPLIED_PATH = File.join( GOGGLES_ADMIN_PATH, 'db', 'diff.applied' ) unless defined? DB_DIFFS_APPLIED_PATH
-  #-- -------------------------------------------------------------------------
-  #++
-
-
-  set(
-    :ask_src_dbdiff_file_path,
-    ask(
-      "\r\nEnter the local (source) directory to the SQL DB-Diff files to be uploaded and executed remotely: ",
-      DB_DIFFS_NEW_PATH
-    )
-  )
-  #-- -------------------------------------------------------------------------
-  #++
 
 
   # Remote DB:Diff_apply task
