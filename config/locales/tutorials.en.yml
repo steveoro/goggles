@@ -27,6 +27,10 @@ en:
     next_argument: 'Skip to next topic'
     back_to_start: "Back to the beginning"
     argument_index: 'Topics'
+    disclaimer_title: "A bunch of friendly disclaimers to keep on your mind..."
+    disclaimer_1: "Remember to check out periodically the official web sites of the Federations or the meetings in which you are interested, just to know the actual and current Meeting dates and to get informed about any possible last minute changes."
+    disclaimer_2: "We cannot guarantee (yet) a real-time update for both the dates and the actual places of all the registered Meetings. In other words: don't blame us if you ever miss a Meeting just because you thought it would be at a certain date, while the official web site published the re-scheduling and we didn't. It's your responsability to be correctly informed."
+    disclaimer_3: "The data and the instruments that we give to our users are to be considered for 'personal use', with no claims of 'officiality', because although the data is acquired from the official results published by each federation, they could still contain mistakes. If something seems plainly wrong or 'it does not compute' for you, just tell us and we'll try to fix it as soon as we can."
 
     index:
       title: "Overview"

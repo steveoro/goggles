@@ -10,7 +10,28 @@
       =link_to( I18n.t('tutorials_title'), tutorials_index_path() )
 
 .col-xs-12
-  %hr
+  .row
+    &nbsp;
+
+.col-xs-12
+  .row
+    .panel.panel-info
+      .panel-heading
+        %h3.panel-title
+          = I18n.t('tutorial.disclaimer_title')
+      .panel-body
+        %ul
+          %li= I18n.t('tutorial.disclaimer_1')
+          %br/
+          %li= I18n.t('tutorial.disclaimer_2')
+          %br/
+          %li= I18n.t('tutorial.disclaimer_3')
+  .row
+    &nbsp;
+
+.col-xs-12
+  .row
+    &nbsp;
 
 .accordion
   .accordion-group

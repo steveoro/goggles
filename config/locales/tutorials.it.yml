@@ -27,6 +27,10 @@ it:
     next_argument: 'Passa al prossimo argomento'
     back_to_start: "Torna all'inizio"
     argument_index: 'Indice argomenti'
+    disclaimer_title: "Alcune cose da tenere a mente..."
+    disclaimer_1: "Ricordate di consultare i siti ufficiali delle federazioni e delle manifestazioni a cui siete interessati, per conoscere le date ufficiali e le eventuali variazioni dell'ultimo minuto."
+    disclaimer_2: "Non possiamo (ancora) garantire l'aggiornamento in tempo reale sia delle date che dei luoghi delle manifestazioni. Detto in altre parole: non dateci la colpa, doveste mai perdere un Meeting perché pensavate si tenesse un determinato giorno, mentre i siti web ufficiali pubblicano lo spostamento e noi potremmo non fare in tempo. E' vostra responsabilità informarvi correttamente presso gli organizzatori degli eventi."
+    disclaimer_3: "Gli strumenti ed i dati che mettiamo a disposizione degli utenti sono da considerarsi ad 'uso personale', senza pretese di 'ufficialità', perchè anche se ricavati dai risultati pubblici divulgati ufficialmente dalle federazioni, potrebbero comunque contenere errori. Se qualcosa non vi torna, segnalatecelo che cercheremo di correggerlo al più presto."
 
     index:
       title: "Panoramica"

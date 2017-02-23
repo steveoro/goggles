@@ -501,7 +501,7 @@ class MeetingReservationsController < ApplicationController
   # is in production mode.
   #
   def serialize_and_deliver_diff_file( sql_convertable, mail_title, full_diff_pathname )
-    sql_convertablesave_diff_file( full_diff_pathname )
+    sql_convertable.save_diff_file( full_diff_pathname )
     base_filename = File.basename( full_diff_pathname )
     logger.info( "\r\nLog file '#{ base_filename }' created" )
     if Rails.env == 'production'
