@@ -178,3 +178,10 @@ td#goggles-border-rx-thick {
     border-right-width: 3px;
     border-right-color: darkgrey;
 }
+
+
+
+/* ----- Styles for social media buttons: ----- */
+#social_fb_btn_find_us {
+    margin-top: -3px;
+}

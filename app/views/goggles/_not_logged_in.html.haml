@@ -1,21 +1,22 @@
-.col-xs-12
-  .jumbotron
-    .container
-      .col-xs-12.col-sm-4
-        %h3= t(:welcome)
-      .col-xs-12.col-sm-8
-        %a.btn.btn-primary.goggles-margin-bottom(href="#{ new_user_session_path() }")= t(:login)
-        = t(:or)
-        %a.btn.btn-primary.goggles-margin-bottom(href="#{ new_user_registration_path() }")= t(:sign_up)
+.col-xs-offset-1.col-xs-10
+  .panel.panel-info
+    .panel-heading
+      %h3.panel-title
+        = I18n.t('welcome')
+    .panel-body.text-center
+      .col-xs-12
+        %a.btn.btn-primary.goggles-margin-bottom(href="#{ new_user_session_path() }")= I18n.t('login')
+        = I18n.t('or')
+        %a.btn.btn-primary.goggles-margin-bottom(href="#{ new_user_registration_path() }")= I18n.t('sign_up')
+
 .col-xs-12
   &nbsp;
-.col-xs-12
+.col-xs-offset-1.col-xs-10.text-center
   %a.btn.btn-default.goggles-margin-bottom(href="#{ home_about_path() }")= t(:more_info)
   &nbsp;
   %a.btn.btn-default.goggles-margin-bottom(href="#{ tutorials_index_path() }")= t('tutorials_title')
   &nbsp;
-  %a.btn.btn-default(href="https://www.facebook.com/MasterGoggles/")
+  %a.btn.btn-default(id="social_fb_btn_find_us" href="https://www.facebook.com/MasterGoggles/")
     = image_tag('fb-find-us-online-100.png')
-.col-xs-12
-  %a.btn.twitter-follow-button(href="https://twitter.com/master_goggles" data-size="large" data-show-count="false" data-show-screen-name="false")
-    = t('follow_us')
+  &nbsp;
+  %iframe( src="https://platform.twitter.com/widgets/follow_button.html?screen_name=master_goggles&show_screen_name=false&show_count=false&size=s" title="#{ t('follow_us') }" width="80" height="26" style="border: 0; padding-top: 6px; overflow: hidden;" )
