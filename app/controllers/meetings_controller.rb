@@ -10,7 +10,7 @@ require 'passages_batch_updater'
 
 = MeetingsController
 
-  - version:  6.002
+  - version:  6.083
   - author:   Steve A.
 
 =end
@@ -647,7 +647,7 @@ class MeetingsController < ApplicationController
                 "#{ Rails.env == 'production' ? 'dev' : 'prod' }" <<
                 "_update_passages_#{ @meeting.code }.diff.sql"
     full_sql_diff_path = File.join( output_dir, file_name )
-    File.open( full_sql_diff_path, 'w' ) { |f| f.puts batch_updater.sql_diff_text_log }
+    batch_updater.save_diff_file( full_sql_diff_path )
     logger.info( "\r\nLog file " + file_name + " created" )
     if Rails.env == 'production'
       AgexMailer.action_notify_mail(
