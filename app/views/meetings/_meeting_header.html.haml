@@ -6,6 +6,8 @@
           %h3#headerShw{'data-toggle' => 'tooltip', 'title' => I18n.t(:detail_show_tooltip)}= @meeting.get_verbose_name
       - if TeamManagerValidator.any_reservations_for?( current_user, @meeting )
         = link_to_event_sheet_printout( current_user, @meeting )
+        &nbsp;
+        = link_to_reservation_csv_data_export( current_user, @meeting )
         .row
           &nbsp;
     .accordion-body.collapse#collapseShw
