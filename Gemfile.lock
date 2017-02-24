@@ -25,9 +25,9 @@ GIT
 
 GIT
   remote: https://github.com/steveoro/goggles_core
-  revision: 06f9227bf2df35cee67661d39ae14b54ead5ff51
+  revision: 19b912e52977c100ea452d45bdb254534ffe047e
   specs:
-    goggles_core (1.1.36.0)
+    goggles_core (1.1.38.2)
       active_hash_relation
       active_model_serializers (~> 0.10.0)
       activemodel-serializers-xml
@@ -447,7 +447,7 @@ GEM
       libv8 (~> 3.16.14.15)
       ref
     thor (0.19.4)
-    thread_safe (0.3.5)
+    thread_safe (0.3.6)
     tilt (2.0.6)
     tins (1.12.0)
     transaction-simple (1.4.0.2)
