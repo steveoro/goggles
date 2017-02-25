@@ -96,19 +96,27 @@ class MeetingDecorator < Draper::Decorator
   #
   def get_linked_name( name_method = :get_short_name )
     if are_results_acquired
-      linked_name = h.link_to( object.send(name_method), meeting_show_full_path(id: object.id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.show_results_tooltip') } )
+      linked_name = h.link_to(
+        object.send(name_method),
+        meeting_show_full_path(id: object.id),
+        { 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.show_results_tooltip') }
+      )
+    elsif has_start_list
+      linked_name = h.link_to(
+        object.send(name_method),
+        meeting_show_start_list_path(id: object.id),
+        { 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.start_list_tooltip') }
+      )
+    elsif is_cancelled?
+      linked_name = h.content_tag( :s, object.send(name_method) )
+    elsif invitation
+      linked_name = h.link_to(
+        object.send(name_method),
+        meeting_show_invitation_path(id: object.id),
+        { 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.manifest_tooltip') }
+      )
     else
-      if has_start_list
-          linked_name = h.link_to( object.send(name_method), meeting_show_start_list_path(id: object.id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.start_list_tooltip') } )
-      elsif is_cancelled?
-        linked_name = h.content_tag( :s, object.send(name_method) )
-      else
-        if invitation
-          linked_name = h.link_to( object.send(name_method), meeting_show_invitation_path(id: object.id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.manifest_tooltip') } )
-        else
-          linked_name = object.send(name_method)
-        end
-      end
+      linked_name = object.send(name_method)
     end
     linked_name.html_safe
   end
