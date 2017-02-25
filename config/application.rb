@@ -13,7 +13,14 @@ module Goggles
     # -- all .rb files in that directory are automatically loaded.
 
     # Custom directories with classes and modules you want to be autoloadable.
-    config.autoload_paths += %W(#{config.root}/app/reports #{config.root}/app/dao #{config.root}/app/strategies)
+    config.autoload_paths += [
+      "#{config.root}/app/reports",
+      "#{config.root}/app/dao",
+      "#{config.root}/app/strategies",
+      # We need to add the non-standard directories, also:
+      "#{ GogglesCore::Engine.root }/app/strategies)",
+      "#{ GogglesCore::Engine.root }/app/dao)"
+    ]
 
     # Only load the plugins named here, in the order given (default is alphabetical).
     # :all can be used as a placeholder for all plugins not explicitly named.

@@ -1,6 +1,11 @@
 &nbsp;
 %span
-  = meeting.decorate.get_linked_name( :get_full_name )
+  - if current_user && TeamManagerValidator.any_reservations_for?( current_user, meeting ) && !meeting.are_results_acquired && !meeting.has_start_list && !meeting.is_cancelled? && !meeting.invitation
+    = link_to( meeting.get_full_name, meeting_reservations_show_path(id: meeting.id),     |
+        { 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.show_data_detail_tooltip') } |
+      )                                                                                   |
+  - else
+    = meeting.decorate.get_linked_name( :get_full_name )
   -# Avoid user-generated cruft on ended seasons:
   - if current_user && !meeting.season.is_season_ended_at() && !meeting.is_cancelled?
     - is_user_starred = meeting.tags_by_user_list.include?( "u#{ current_user.id }" )

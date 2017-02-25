@@ -2,7 +2,10 @@
   .row
     %a.btn.btn-block.btn-primary.img-thumbnail{ :href => swimmer_radio_path(id: current_user.swimmer_id), 'data-toggle'=>'tooltip', 'title'=>I18n.t('radiography.id_card_button_tooltip') }
       = image_tag( 'img_radiography.jpg', class: 'img-circle', style: "width: 50%;" )
-    .text-center= I18n.t('radiography.id_card_button')
+      %br/
+      %small
+        %br/
+      .text-center= I18n.t('radiography.id_card_button')
 
 - @teams.each do |team|
   .row
@@ -13,7 +16,7 @@
       %br/
       %i
         %small= I18n.t('general.team')
-    .text-center= team.get_full_name
+      .text-center= team.get_full_name
 
 - @goggle_cups.each do |goggle_cup|
   .row
@@ -24,4 +27,4 @@
       %br/
       %i
         %small= I18n.t('goggle_cup.default_name')
-    .text-center= goggle_cup.get_full_name
+      .text-center= goggle_cup.get_full_name

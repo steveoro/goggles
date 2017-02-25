@@ -1,11 +1,19 @@
 .row
   %a.btn.btn-block.btn-primary.img-thumbnail{ href:meetings_my_path(), 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.my.title') }
     = image_tag( 'shape-star2-128.png', class: 'img-circle', style: "width: 50%;" )
-  .text-center= I18n.t('meeting.my.title')
+    %br/
+    %small
+      %br/
+    .text-center= I18n.t('meeting.my.title')
+.row
+  &nbsp;
 .row
   %a.btn.btn-block.btn-info.img-thumbnail{ href: misc_fin_score_calculation_path(), 'data-toggle'=>'tooltip', 'title'=>I18n.t('misc.fin_score_calculation_tooltip') }
     = image_tag( 'abacus-128.png', class: 'img-circle', style: "width: 50%;" )
-  .text-center= I18n.t('misc.fin_score_calculation')
+    %br/
+    %small
+      %br/
+    .text-center= I18n.t('misc.fin_score_calculation')
 
 - @seasons.each do |season|
   - # Only for CSI Regional ER at this time
@@ -18,7 +26,7 @@
         %br/
         %i
           %small= I18n.t('championships.championship')
-      .text-center= season.get_season_type # was: get_full_name
+        .text-center= season.get_season_type # was: get_full_name
 
 - @results.each do |meeting|
   .row
@@ -29,7 +37,7 @@
       %br/
       %i
         %small= I18n.t('results')
-    .text-center= meeting.get_full_name
+      .text-center= meeting.get_full_name
 
 - @start_lists.each do |meeting|
   .row
@@ -40,7 +48,7 @@
       %br/
       %i
         %small= I18n.t('meeting.start_list')
-    .text-center= meeting.get_full_name
+      .text-center= meeting.get_full_name
 
 - @invitations.each do |meeting|
   .row
@@ -51,4 +59,4 @@
       %br/
       %i
         %small= I18n.t('meeting.invitation')
-    .text-center= meeting.get_full_name
+      .text-center= meeting.get_full_name

@@ -4,13 +4,14 @@ require 'wrappers/timing'
 require 'meeting_event_reservation_matrix_creator'
 require 'meeting_relay_reservation_matrix_creator'
 require 'team_manager_validator'
+require 'reservations_csi_2_csv'
 
 
 =begin
 
 = MeetingReservationsController
 
-  - version:  6.083
+  - version:  6.084
   - author:   Steve A.
 
 =end
@@ -279,6 +280,38 @@ class MeetingReservationsController < ApplicationController
         PassagesCollectSheetLayout.render( options ),
         type: 'application/pdf',
         filename: filename
+    )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Collects the reservation data for the specified Meeting ID and outputs a
+  # custom CSV text file, used as exchange data format in between C.S.I. regional organizations.
+  #
+  # This is a Team-manager restricted action.
+  #
+  def export_csi_csv
+    unless TeamManagerValidator.can_manage?( current_user, @meeting )
+      flash[:error] = I18n.t('meeting.errors.invalid_team_manager_or_no_swimmer')
+      redirect_to( meetings_current_path() ) and return
+    end
+    unless ReservationsCsi2Csv.is_a_csi_meeting( @meeting )
+      flash[:error] = I18n.t('meeting_reservation.export_csi_csv_invalid_meeting_error')
+      redirect_to( meetings_current_path() ) and return
+    end
+    csi_2_csv = ReservationsCsi2Csv.new(@meeting)
+    csi_2_csv.collect()
+
+    if csi_2_csv.csi_data_rows.size < 1
+      flash[:warning] = I18n.t('meeting_reservation.export_csi_csv_no_reservations_found_error')
+      redirect_to( meetings_current_path() ) and return
+    end
+
+    send_data(                                      # == Send the collected data:
+        csi_2_csv.output_text,
+        type: 'text/csv',
+        filename: @meeting.get_data_import_file_name('isc', 'csv')
     )
   end
   #-- -------------------------------------------------------------------------
