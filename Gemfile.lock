@@ -25,9 +25,9 @@ GIT
 
 GIT
   remote: https://github.com/steveoro/goggles_core
-  revision: 8338a0edc3947e62085579c449cb027eb3eafaec
+  revision: b99d8db43c1fe46aa6688ec7c156fa5d9b8e937b
   specs:
-    goggles_core (1.1.38.5)
+    goggles_core (1.1.39.0)
       active_hash_relation
       active_model_serializers (~> 0.10.0)
       activemodel-serializers-xml
@@ -164,7 +164,7 @@ GEM
       execjs
     coffee-script-source (1.10.0)
     color (1.8)
-    concurrent-ruby (1.0.4)
+    concurrent-ruby (1.0.5)
     countries (1.2.5)
       currencies (~> 0.4.2)
       i18n_data (~> 0.7.0)
