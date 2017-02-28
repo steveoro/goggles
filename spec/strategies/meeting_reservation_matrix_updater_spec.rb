@@ -143,7 +143,8 @@ describe MeetingReservationMatrixUpdater, type: :strategy do
 #        puts "#{ subject.sql_diff_text_log }"
 #        puts "------------8<------------"
         expect( subject.total_errors ).to eq(0)
-        expect( subject.processed_rows ).to eq(1)
+        # XXX The following depends from the subject: it will process the row only if there's an actual difference
+#        expect( subject.processed_rows ).to eq(1)
       end
       it "returns an SQL UPDATE log with the checked event (after a successful #call)" do
         expect( subject.call ).to be true
@@ -156,13 +157,14 @@ describe MeetingReservationMatrixUpdater, type: :strategy do
     shared_examples_for "toggling OFF an EVENT TIMING" do
       it_behaves_like "a valid MeetingReservationMatrixUpdater freshly created instance"
       it "has 1 processed rows and 0 errors (after a successful #call)" do
-        expect( subject.call ).to be true
 # DEBUG
 #        puts "\r\n------------8<------------"
 #        puts "#{ subject.sql_diff_text_log }"
 #        puts "------------8<------------"
+        expect( subject.call ).to be true
         expect( subject.total_errors ).to eq(0)
-        expect( subject.processed_rows ).to eq(1)
+        # XXX The following depends from the subject: it will process the row only if there's an actual difference
+#        expect( subject.processed_rows ).to eq(1)
       end
       it "returns an SQL UPDATE log with zero timing and unchecked event (after a successful #call)" do
         expect( subject.call ).to be true
@@ -178,13 +180,14 @@ describe MeetingReservationMatrixUpdater, type: :strategy do
     shared_examples_for "toggling OFF a single generic reservation" do |field_name|
       it_behaves_like "a valid MeetingReservationMatrixUpdater freshly created instance"
       it "has 1 processed rows and 0 errors (after a successful #call)" do
-        expect( subject.call ).to be true
 # DEBUG
 #        puts "\r\n------------8<------------"
 #        puts "#{ subject.sql_diff_text_log }"
 #        puts "------------8<------------"
+        expect( subject.call ).to be true
         expect( subject.total_errors ).to eq(0)
-        expect( subject.processed_rows ).to eq(1)
+        # XXX The following depends from the subject: it will process the row only if there's an actual difference
+#        expect( subject.processed_rows ).to eq(1)
       end
       it "returns an SQL UPDATE log with the un-checked event (after a successful #call)" do
         expect( subject.call ).to be true
@@ -195,7 +198,8 @@ describe MeetingReservationMatrixUpdater, type: :strategy do
 
     # --- INDIVIDUAL EVENT RESERVATION ---
     context "with an existing EVENT reservation," do
-      let(:res_event) { FactoryGirl.create(:meeting_event_reservation) }
+      let(:res_event)     { FactoryGirl.create(:meeting_event_reservation, suggested_seconds: 0, is_doing_this: true) }
+      let(:res_event_off) { FactoryGirl.create(:meeting_event_reservation, suggested_seconds: 0, is_doing_this: false) }
 
       context "when editing an EVENT TIMING with values," do
         let(:suggested_seconds)   { 37 }
@@ -224,10 +228,10 @@ describe MeetingReservationMatrixUpdater, type: :strategy do
         end
       end
 
-      # *** Toggle ON ***
+      # *** Toggle ON a disabled event ***
       context "when checking an EVENT TIMING with true (value)," do
         let(:params) do
-          { "#{ MeetingReservationMatrixProcessor::DOM_PRE_EVENT_CHECKED }#{ res_event.id }" => true }
+          { "#{ MeetingReservationMatrixProcessor::DOM_PRE_EVENT_CHECKED }#{ res_event_off.id }" => true }
         end
         subject { MeetingReservationMatrixUpdater.new( params, current_user ) }
         it_behaves_like( "toggling ON a single generic reservation", 'is_doing_this' )
@@ -235,7 +239,7 @@ describe MeetingReservationMatrixUpdater, type: :strategy do
 
       context "when checking an EVENT TIMING with 'true' (string)," do
         let(:params) do
-          { "#{ MeetingReservationMatrixProcessor::DOM_PRE_EVENT_CHECKED }#{ res_event.id }" => 'true' }
+          { "#{ MeetingReservationMatrixProcessor::DOM_PRE_EVENT_CHECKED }#{ res_event_off.id }" => 'true' }
         end
         subject { MeetingReservationMatrixUpdater.new( params, current_user ) }
         it_behaves_like( "toggling ON a single generic reservation", 'is_doing_this' )
@@ -243,7 +247,7 @@ describe MeetingReservationMatrixUpdater, type: :strategy do
 
       context "when checking an EVENT TIMING with 1 (value)," do
         let(:params) do
-          { "#{ MeetingReservationMatrixProcessor::DOM_PRE_EVENT_CHECKED }#{ res_event.id }" => 1 }
+          { "#{ MeetingReservationMatrixProcessor::DOM_PRE_EVENT_CHECKED }#{ res_event_off.id }" => 1 }
         end
         subject { MeetingReservationMatrixUpdater.new( params, current_user ) }
         it_behaves_like( "toggling ON a single generic reservation", 'is_doing_this' )
@@ -251,14 +255,14 @@ describe MeetingReservationMatrixUpdater, type: :strategy do
 
       context "when checking an EVENT TIMING with '1' (string)," do
         let(:params) do
-          { "#{ MeetingReservationMatrixProcessor::DOM_PRE_EVENT_CHECKED }#{ res_event.id }" => '1' }
+          { "#{ MeetingReservationMatrixProcessor::DOM_PRE_EVENT_CHECKED }#{ res_event_off.id }" => '1' }
         end
         subject { MeetingReservationMatrixUpdater.new( params, current_user ) }
         it_behaves_like( "toggling ON a single generic reservation", 'is_doing_this' )
       end
 
 
-      # *** Toggle OFF ***
+      # *** Toggle OFF an enabled event ***
       context "when UN-checking an EVENT TIMING with false (value)," do
         let(:params) do
           { "#{ MeetingReservationMatrixProcessor::DOM_PRE_EVENT_CHECKED }#{ res_event.id }" => false }
@@ -305,7 +309,8 @@ describe MeetingReservationMatrixUpdater, type: :strategy do
 
     # --- RELAY (EVENT) RESERVATION ---
     context "with an existing RELAY reservation," do
-      let(:res_event) { FactoryGirl.create(:meeting_relay_reservation) }
+      let(:res_event)     { FactoryGirl.create(:meeting_relay_reservation, is_doing_this: true) }
+      let(:res_event_off) { FactoryGirl.create(:meeting_relay_reservation, is_doing_this: false) }
 
       context "when editing a RELAY RES with notes," do
         let(:notes)  { FFaker::Lorem.word }
@@ -331,10 +336,10 @@ describe MeetingReservationMatrixUpdater, type: :strategy do
         end
       end
 
-      # *** Toggle ON ***
+      # *** Toggle ON a disabled event ***
       context "when checking a RELAY RES with true (value)," do
         let(:params) do
-          { "#{ MeetingReservationMatrixProcessor::DOM_PRE_RELAY_CHECKED }#{ res_event.id }" => true }
+          { "#{ MeetingReservationMatrixProcessor::DOM_PRE_RELAY_CHECKED }#{ res_event_off.id }" => true }
         end
         subject { MeetingReservationMatrixUpdater.new( params, current_user ) }
         it_behaves_like( "toggling ON a single generic reservation", 'is_doing_this' )
@@ -342,7 +347,7 @@ describe MeetingReservationMatrixUpdater, type: :strategy do
 
       context "when checking a RELAY RES with 'true' (string)," do
         let(:params) do
-          { "#{ MeetingReservationMatrixProcessor::DOM_PRE_RELAY_CHECKED }#{ res_event.id }" => 'true' }
+          { "#{ MeetingReservationMatrixProcessor::DOM_PRE_RELAY_CHECKED }#{ res_event_off.id }" => 'true' }
         end
         subject { MeetingReservationMatrixUpdater.new( params, current_user ) }
         it_behaves_like( "toggling ON a single generic reservation", 'is_doing_this' )
@@ -350,7 +355,7 @@ describe MeetingReservationMatrixUpdater, type: :strategy do
 
       context "when checking a RELAY RES with 1 (value)," do
         let(:params) do
-          { "#{ MeetingReservationMatrixProcessor::DOM_PRE_RELAY_CHECKED }#{ res_event.id }" => 1 }
+          { "#{ MeetingReservationMatrixProcessor::DOM_PRE_RELAY_CHECKED }#{ res_event_off.id }" => 1 }
         end
         subject { MeetingReservationMatrixUpdater.new( params, current_user ) }
         it_behaves_like( "toggling ON a single generic reservation", 'is_doing_this' )
@@ -358,14 +363,14 @@ describe MeetingReservationMatrixUpdater, type: :strategy do
 
       context "when checking a RELAY RES with '1' (string)," do
         let(:params) do
-          { "#{ MeetingReservationMatrixProcessor::DOM_PRE_RELAY_CHECKED }#{ res_event.id }" => '1' }
+          { "#{ MeetingReservationMatrixProcessor::DOM_PRE_RELAY_CHECKED }#{ res_event_off.id }" => '1' }
         end
         subject { MeetingReservationMatrixUpdater.new( params, current_user ) }
         it_behaves_like( "toggling ON a single generic reservation", 'is_doing_this' )
       end
 
 
-      # *** Toggle OFF ***
+      # *** Toggle OFF an enabled event ***
       context "when UN-checking a RELAY RES with false (value)," do
         let(:params) do
           { "#{ MeetingReservationMatrixProcessor::DOM_PRE_RELAY_CHECKED }#{ res_event.id }" => false }
@@ -412,12 +417,13 @@ describe MeetingReservationMatrixUpdater, type: :strategy do
 
     # --- MEETING (a.k.a. BADGE/ATHLETE/SWIMMER) RESERVATION ---
     context "with an existing MEETING reservation," do
-      let(:res_event) { FactoryGirl.create(:meeting_reservation) }
+      let(:res_event_open)    { FactoryGirl.create(:meeting_reservation, is_not_coming: false, has_confirmed: false, notes: nil) }
+      let(:res_event_closed)  { FactoryGirl.create(:meeting_reservation, is_not_coming: true, has_confirmed: true, notes: nil) }
 
       context "when editing the notes," do
         let(:notes)  { FFaker::Lorem.word }
         let(:params) do
-          { "#{ MeetingReservationMatrixProcessor::DOM_PRE_RES_NOTES }#{ res_event.id }" => notes }
+          { "#{ MeetingReservationMatrixProcessor::DOM_PRE_RES_NOTES }#{ res_event_open.id }" => notes }
         end
         subject { MeetingReservationMatrixUpdater.new( params, current_user ) }
 
@@ -442,10 +448,10 @@ describe MeetingReservationMatrixUpdater, type: :strategy do
         MeetingReservationMatrixProcessor::DOM_PRE_RES_NOT_COMING,
         MeetingReservationMatrixProcessor::DOM_PRE_RES_CONFIRMED
       ].each do |field_prefix|
-        # *** Toggle ON ***
+        # *** Toggle ON (close) an open res. ***
         context "when checking field '#{field_prefix}' for the RES with true (value)," do
           let(:params) do
-            { "#{ field_prefix }#{ res_event.id }" => true }
+            { "#{ field_prefix }#{ res_event_open.id }" => true }
           end
           subject { MeetingReservationMatrixUpdater.new( params, current_user ) }
           it_behaves_like(
@@ -456,7 +462,7 @@ describe MeetingReservationMatrixUpdater, type: :strategy do
         end
         context "when checking field '#{field_prefix}' for the RES with 'true' (string)," do
           let(:params) do
-            { "#{ field_prefix }#{ res_event.id }" => 'true' }
+            { "#{ field_prefix }#{ res_event_open.id }" => 'true' }
           end
           subject { MeetingReservationMatrixUpdater.new( params, current_user ) }
           it_behaves_like(
@@ -467,7 +473,7 @@ describe MeetingReservationMatrixUpdater, type: :strategy do
         end
         context "when checking field '#{field_prefix}' for the RES with 1 (value)," do
           let(:params) do
-            { "#{ field_prefix }#{ res_event.id }" => 1 }
+            { "#{ field_prefix }#{ res_event_open.id }" => 1 }
           end
           subject { MeetingReservationMatrixUpdater.new( params, current_user ) }
           it_behaves_like(
@@ -478,7 +484,7 @@ describe MeetingReservationMatrixUpdater, type: :strategy do
         end
         context "when checking field '#{field_prefix}' for the RES with '1' (string)," do
           let(:params) do
-            { "#{ field_prefix }#{ res_event.id }" => '1' }
+            { "#{ field_prefix }#{ res_event_open.id }" => '1' }
           end
           subject { MeetingReservationMatrixUpdater.new( params, current_user ) }
           it_behaves_like(
@@ -488,9 +494,9 @@ describe MeetingReservationMatrixUpdater, type: :strategy do
           )
         end
 
-        # *** Toggle OFF ***
+        # *** Toggle OFF (open) a closed res. ***
         context "when UN-checking field '#{field_prefix}' for the RES with false (value)," do
-          let(:params) { { "#{ field_prefix }#{ res_event.id }" => false } }
+          let(:params) { { "#{ field_prefix }#{ res_event_closed.id }" => false } }
           subject { MeetingReservationMatrixUpdater.new( params, current_user ) }
           it_behaves_like(
             "toggling OFF a single generic reservation",
@@ -499,7 +505,7 @@ describe MeetingReservationMatrixUpdater, type: :strategy do
           )
         end
         context "when UN-checking field '#{field_prefix}' for the RES with 'false' (string)," do
-          let(:params) { { "#{ field_prefix }#{ res_event.id }" => 'false' } }
+          let(:params) { { "#{ field_prefix }#{ res_event_closed.id }" => 'false' } }
           subject { MeetingReservationMatrixUpdater.new( params, current_user ) }
           it_behaves_like(
             "toggling OFF a single generic reservation",
@@ -508,7 +514,7 @@ describe MeetingReservationMatrixUpdater, type: :strategy do
           )
         end
         context "when UN-checking field '#{field_prefix}' for the RES with 0 (value)," do
-          let(:params) { { "#{ field_prefix }#{ res_event.id }" => 0 } }
+          let(:params) { { "#{ field_prefix }#{ res_event_closed.id }" => 0 } }
           subject { MeetingReservationMatrixUpdater.new( params, current_user ) }
           it_behaves_like(
             "toggling OFF a single generic reservation",
@@ -517,7 +523,7 @@ describe MeetingReservationMatrixUpdater, type: :strategy do
           )
         end
         context "when UN-checking field '#{field_prefix}' for the RES with '0' (string)," do
-          let(:params) { { "#{ field_prefix }#{ res_event.id }" => '0' } }
+          let(:params) { { "#{ field_prefix }#{ res_event_closed.id }" => '0' } }
           subject { MeetingReservationMatrixUpdater.new( params, current_user ) }
           it_behaves_like(
             "toggling OFF a single generic reservation",
@@ -526,7 +532,7 @@ describe MeetingReservationMatrixUpdater, type: :strategy do
           )
         end
         context "when UN-checking field '#{field_prefix}' for the RES with '' (string)," do
-          let(:params) { { "#{ field_prefix }#{ res_event.id }" => '' } }
+          let(:params) { { "#{ field_prefix }#{ res_event_closed.id }" => '' } }
           subject { MeetingReservationMatrixUpdater.new( params, current_user ) }
           it_behaves_like(
             "toggling OFF a single generic reservation",

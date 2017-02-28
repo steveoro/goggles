@@ -217,21 +217,23 @@ class MeetingReservationMatrixUpdater < MeetingReservationMatrixProcessor
             record.suggested_hundreds = 0
           end
         end
-                                                    # Save the change:
-        if record.save
+                                                    # Save ONLY if there was a change:
+        if record.changed?
+          if record.save
 # DEBUG
-#          puts "save successful"
-          sql_diff_text_log << to_sql_update( record, false, record.attributes, "\r\n\r\n" )
-          @processed_rows += 1
-        else                                        # Log also in case of failure:
+#            puts "save successful"
+            sql_diff_text_log << to_sql_update( record, false, record.attributes, "\r\n\r\n" )
+            @processed_rows += 1
+          else                                        # Log also in case of failure:
 # DEBUG
-#          puts "\r\nsave FAILURE: record.invalid?: #{ record.invalid? }, validation: #{  ValidationErrorTools.recursive_error_for( record ) }"
-          sql_diff_text_log << "-- UPDATE VALIDATION FAILURE: #{ ValidationErrorTools.recursive_error_for( record ) }\r\n" if record.invalid?
-          sql_diff_text_log << "-- UPDATE FAILURE: #{ $! }\r\n" if $!
-          @total_errors += 1
+#            puts "\r\nsave FAILURE: record.invalid?: #{ record.invalid? }, validation: #{  ValidationErrorTools.recursive_error_for( record ) }"
+            sql_diff_text_log << "-- UPDATE VALIDATION FAILURE: #{ ValidationErrorTools.recursive_error_for( record ) }\r\n" if record.invalid?
+            sql_diff_text_log << "-- UPDATE FAILURE: #{ $! }\r\n" if $!
+            @total_errors += 1
+          end
         end
-      # else: we ignore (skip) null or unparsable values
-      else
+      # else: we ignore (skip) null or unparsable values or NO-OP changes
+#      else
 # DEBUG
 #        puts "ELSE (skip)"
       end
