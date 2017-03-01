@@ -143,7 +143,8 @@ class MeetingReservationMatrixUpdater < MeetingReservationMatrixProcessor
   #
   def sanitize_input( value )
     # Strip anything that could cause harm if injected with the right syntax:
-    value.gsub(/[\.\,\:\/\\\'\"\[\]\(\)\<\>\%\#\@\$\!\`\^\?\*]/, '')
+    value.to_s.gsub(/[\.\,\:\/\\\'\"\[\]\(\)\<\>\%\#\@\$\!\`\^\?\*]/, '')
+    value == '' ? nil : value
   end
   #-- --------------------------------------------------------------------------
   #++

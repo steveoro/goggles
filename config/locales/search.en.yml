@@ -1,6 +1,6 @@
 en:
   search_view:
-    query_suggestion: "Swimmer, or team, or meeting, or pool name..."
+    query_suggestion: "Search swimmer, team, meeting, or pool name..."
     tot_results: "Results found:"
     toggle_collapse_expand_tooltip: "Click to collapse or expand this block of results"
     team_results_explain: "(In which the team name or any team member's name is similar to the query term)"

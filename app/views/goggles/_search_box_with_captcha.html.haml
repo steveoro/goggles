@@ -6,7 +6,7 @@
           .input-group
             = text_field_tag( :q, nil, { class: "form-control", placeholder: I18n.t('search_view.query_suggestion') } )
             %span.input-group-btn
-              = submit_tag( I18n.t('search'), id: 'btnSearchSmart', data: { disable_with: I18n.t(:please_wait), class: 'btn disabled' }, class: 'btn btn-default' )
+              = image_submit_tag( 'search_icon.png', id: 'btnSearchSmart', data: { disable_with: I18n.t(:please_wait), class: 'btn disabled' }, class: 'btn btn-default' )
           .input-group
             %br/
             = recaptcha_tags

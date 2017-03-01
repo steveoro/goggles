@@ -1,6 +1,6 @@
 it:
   search_view:
-    query_suggestion: "Nome atleta, o squadra, o meeting o piscina..."
+    query_suggestion: "Cerca nome atleta, o squadra, o meeting o piscina..."
     tot_results: "Risultati trovati:"
     toggle_collapse_expand_tooltip: "Clicca per nascondere o espandere questo blocco di risultati"
     team_results_explain: "(In cui il nome squadra o quello degli iscritti ricorda il termine di ricerca)"

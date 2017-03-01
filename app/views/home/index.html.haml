@@ -1,15 +1,13 @@
+= render( partial: 'goggles/search_box' )
+
 - if user_signed_in?
-  .col-xs-12
-    %hr/
-  = render( partial: 'goggles/search_box' )
-  .col-xs-12
-    -# Articles/News flash list:
-    = render( partial: 'goggles/news_articles_list' )
-    -# Association request link:
-    = render( partial: 'goggles/associate_to_a_swimmer' ) unless current_user.has_associated_swimmer?
-    -# [Steve, 2016103] After 3+ years, we should indeed comment-out this one:
-    -# Be patient with this very very work in progress creature!
-    -#= render( partial: 'forgive_us' )
+  -# Articles/News flash list:
+  = render( partial: 'goggles/news_articles_list' )
+  -# Association request link:
+  = render( partial: 'goggles/associate_to_a_swimmer' ) unless current_user.has_associated_swimmer?
+  -# [Steve, 2016103] After 3+ years, we should indeed comment-out this one:
+  -# Be patient with this very very work in progress creature!
+  -#= render( partial: 'forgive_us' )
   .col-xs-12
     .col-xs-5.col-md-4
       = render( partial: 'left_shortcuts' )
@@ -24,6 +22,5 @@
   = render( partial: 'goggles/not_logged_in' )
   .col-xs-12
     &nbsp;
-  = render( partial: 'goggles/search_box' )
 
 = render( partial: 'goggles/twitter_timeline' )
