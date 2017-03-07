@@ -1,8 +1,8 @@
-= render( partial: 'meeting_header' )
-= render( partial: 'tabs_and_title' )
+= render( partial: 'meetings/meeting_header' )
+= render( partial: 'meetings/tabs_and_title' )
 
 .col-xs-12.goggles-category-gap
-  = form_tag( meeting_update_passages_path(@meeting.id), onsubmit: "$('#loadingIndicator').show();" )
+  = form_tag( meeting_results_update_passages_path(@meeting.id), onsubmit: "$('#loadingIndicator').show();" )
   %table.table.table-striped.table-bordered.table-hover.table-condensed
     %tbody
       - previous_event = nil

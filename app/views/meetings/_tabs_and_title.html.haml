@@ -18,7 +18,7 @@
     = show_tab_link( params, 'show_team_results', t('team_results'), (@team ? meeting_show_team_results_path(id: @meeting.id, team_id: @team.id) : '#') )
     = show_tab_link( params, 'show_swimmer_results', t('swimmer_results'), (@swimmer && @team ? meeting_show_swimmer_results_path(id: @meeting.id, team_id: @team.id, swimmer_id: @swimmer.id) : '#') )
     - if TeamManagerValidator.any_manageable_results_for?( current_user, @meeting )
-      = show_tab_link( params, 'edit_passages', t('meeting.passages'), meeting_edit_passages_path( id: @meeting.id ) )
+      = show_tab_link( params, 'edit_passages', t('meeting.passages'), meeting_results_edit_passages_path( id: @meeting.id ) )
 
   - if current_user && TeamManagerValidator.any_reservations_for?( current_user, @meeting ) || ( TeamManagerValidator.is_reservation_manageable?( @meeting ) && TeamManagerValidator.can_manage?( current_user, @meeting ) )
     = show_tab_link( params, 'edit_events', t('meeting_reservation.manage_button_title'), |

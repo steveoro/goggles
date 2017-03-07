@@ -72,8 +72,6 @@ Rails.application.routes.draw do
       get "meeting/show_team_results/:id",      to: "meetings#show_team_results",       as: "meeting_show_team_results"
       get "meeting/show_swimmer_results/:id",   to: "meetings#show_swimmer_results",    as: "meeting_show_swimmer_results"
       get "meeting/show_autoscroll/:id",        to: "meetings#show_autoscroll",         as: "meeting_show_autoscroll"
-      get "meeting/edit_passages/:id",          to: "meetings#edit_passages",           as: "meeting_edit_passages"
-      post "meeting/update_passages/:id",       to: "meetings#update_passages",         as: "meeting_update_passages"
 
       # === Meeting Reservations ===
       get 'meeting_reservations/edit_events'      # creates a matrix of event reservations (many events for each one of the current team's athletes)
@@ -85,6 +83,12 @@ Rails.application.routes.draw do
       get 'meeting_reservations/export_csi_csv'
       get 'meeting_reservations/relayometer'
       post 'meeting_reservations/relayometer'
+
+      # === Meeting Results ===
+      get "meeting_results/edit_passages/:id",          to: "meeting_results#edit_passages",           as: "meeting_results_edit_passages"
+      post "meeting_results/update_passages/:id",       to: "meeting_results#update_passages",         as: "meeting_results_update_passages"
+      get "meeting_results/edit_relay_swimmers/:id",    to: "meeting_results#edit_relay_swimmers",     as: "meeting_results_edit_relay_swimmers"
+      post "meeting_results/update_relay_swimmers/:id", to: "meeting_results#update_relay_swimmers",   as: "meeting_results_update_relay_swimmers"
 
       # === Search ===
       get 'search/smart'
