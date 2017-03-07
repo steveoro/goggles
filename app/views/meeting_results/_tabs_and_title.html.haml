@@ -1,0 +1,11 @@
+= render( partial: 'meetings/meeting_header' )
+= render( partial: 'meetings/tabs_and_title' )
+
+.col-xs-12.goggles-category-gap
+  %ul.nav.nav-tabs#pageTop{role: "tablist"}
+    - if TeamManagerValidator.any_manageable_results_for?( current_user, @meeting )
+      = show_tab_link( params, 'edit_passages', t('passages.passages_individual_tab_label'), meeting_results_edit_passages_path( id: @meeting.id ) )
+      - relay_count = @meeting.meeting_events.joins(:meeting_session, :event_type).includes(:meeting_session, :event_type).where('event_types.is_a_relay = 1').distinct.count
+      - if relay_count > 0
+        = show_tab_link( params, 'edit_relay_swimmers', t('passages.passages_relay_tab_label'), meeting_results_edit_relay_swimmers_path(id: @meeting.id) )
+  .goggles-category-gap

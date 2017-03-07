@@ -3,3 +3,5 @@ it:
     index_title: "Gestione passaggi gara"
     title_show: "Passaggi gara"
     passage_deleted: "Passaggio eliminato!"
+    passages_individual_tab_label: "Individuali"
+    passages_relay_tab_label: "Staffette"

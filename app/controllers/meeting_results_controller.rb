@@ -137,6 +137,28 @@ class MeetingResultsController < ApplicationController
     @managed_team_ids = @managed_teams.map{ |team| team.id }
 
     # TODO
+=begin
+    - get possible existing MeetingRelaySwimmer rows
+    - init missing rows with MeetingRelaySwimmer.new
+    - setup initial values for new rows using:
+      - MeetingRelayReservations when available
+      - Leave no default swimmer_id when not available
+
+    - User must be able to POST the form initialized so far
+    - permit the correct params
+=end
+    # Array of Array: 1 row MRR => list of many MRS:
+    existing_relay_swimmers = @meeting.meeting_relay_results
+      .includes( :team )
+      .where( ['team_id IN (?)', @managed_team_ids] )
+      .map{ |mrr| mrr.meeting_relay_swimmers.to_a }
+
+    # TODO For each MRR, add missing MRS as new instances
+    # TODO For each new MRS instance,
+    # TODO search for existing, corresponding Relay reservation
+    # TODO init new MRS instance w/ reservation found
+    # TODO else, leave empty
+
   end
   #-- -------------------------------------------------------------------------
   #++
