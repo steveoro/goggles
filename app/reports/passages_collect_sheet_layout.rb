@@ -4,7 +4,7 @@
 
 == PassagesCollectSheetLayout
 
-- version:  6.058
+- version:  6.088
 - author:   Steve A.
 
 =end
@@ -144,9 +144,19 @@ class PassagesCollectSheetLayout
         { align: :center, size: 10, inline_format: true }
       )
       pdf.move_down( 10 )
+      prev_event_is_a_relay = false
 
-      events.each do |event|
-        if ( event.event_type.is_a_relay && reservations_relays[ event.id ] && reservations_relays[ event.id ].size > 0 ) || ( reservations_events[ event.id ] && reservations_events[ event.id ].size > 0 ) 
+      events.each_with_index do |event, index|
+        # Detect change of event type between relays & individual events:
+        if index > 0
+          if event.event_type.is_a_relay != prev_event_is_a_relay
+            pdf.start_new_page
+          end
+        end
+        prev_event_is_a_relay = event.event_type.is_a_relay
+
+        if ( event.event_type.is_a_relay && reservations_relays[ event.id ] && reservations_relays[ event.id ].size > 0 ) ||
+           ( reservations_events[ event.id ] && reservations_events[ event.id ].size > 0 )
           # Get the pool type and the passage types:
           pool_type = meeting.event_types.where( id: event.event_type_id ).first
             .pool_types
@@ -154,24 +164,24 @@ class PassagesCollectSheetLayout
           possible_passage_types = team.team_passage_templates
             .for_event_type( event.event_type )
             .for_pool_type( pool_type )
-  
+
           # passage_types.count will yield the total number of columns for the current event:
           passage_types = possible_passage_types.count == 0 ?
             TeamPassageTemplate.get_default_passage_types_for( event.event_type.phase_length_in_meters, pool_type.length_in_meters ) :
             TeamPassageTemplate.get_template_passage_types_for( team, event.event_type, pool_type )
-  
+
           # Enlist all passage types for this event composing their labels:
           passage_labels = passage_types.map{ |p| "<i>#{ p.length_in_meters }</i>" }
-  
+
           # For each event:
           if event.event_type.is_a_relay
             # --- RELAYS data setup & RENDERING ---
-            self.prepare_relay_data_table( pdf, event, passage_labels, reservations_relays[ event.id ] )
+            self.prepare_relay_data_tables( pdf, event, passage_labels, reservations_relays[ event.id ] )
           else
             # --- IND.EVENTS data setup & RENDERING ---
             self.prepare_event_data_table( pdf, event, passage_labels, reservations_events[ event.id ] )
           end
-  
+
           pdf.move_down( 10 )
         end
       end
@@ -186,7 +196,7 @@ class PassagesCollectSheetLayout
   # Renders (with custom styles) a single table given the data rows specified as
   # parameter.
   #
-  def self.draw_a_single_event_table( pdf, data_table_array, is_a_long_event )
+  def self.draw_a_single_event_table( pdf, data_table_array, is_a_long_event, is_a_relay )
     # Draw the table:
     pdf.table( data_table_array, header: true, position: :left,
                row_colors: ["ffffff", "eeeeee"],
@@ -230,6 +240,11 @@ class PassagesCollectSheetLayout
         c.width = 40 if is_a_long_event && c.column > 1
       end
 
+      # Relay-only name column width:
+      if is_a_relay
+        cells.filter { |c| ( c.column == 2 ) }.style { |c| c.width = 80 }
+      end
+
       # Any data timing cell:
       cells.filter do |c|
         ( c.column > 1 ) &&
@@ -256,7 +271,7 @@ class PassagesCollectSheetLayout
   # == Returns:
   # The prepared array of array (rows of data), ready to be rendered as a table.
   #
-  def self.prepare_relay_data_table( pdf, event, passage_labels, reservation_array )
+  def self.prepare_relay_data_tables( pdf, event, passage_labels, reservation_array )
     # Detect to many columns:
     is_a_long_event = passage_labels.count > 11
 
@@ -269,6 +284,7 @@ class PassagesCollectSheetLayout
         .sort{ |rel_a, rel_b| "#{ rel_a.notes }" <=> "#{ rel_b.notes }" }
 
     prev_config_name = nil
+    swimmer_year_tot = 0
 
     # For each sorted relay reservation config:
     relay_configs.each_with_index do |res, index|
@@ -276,11 +292,16 @@ class PassagesCollectSheetLayout
       if ( prev_config_name != res.notes.to_s.split(';').first ) || (index == 0)
         # On relay change, if not at the start, add another empty line:
         if index > 0
+          # Make sure we don't start a new relay data table too near the bottom margin:
+          if pdf.cursor < 150
+            pdf.start_new_page
+          end
           # New table detected! Time to render the old data:
-          self.draw_a_single_event_table( pdf, data_table_array, is_a_long_event )
-          pdf.move_down( 10 )
+          self.draw_a_single_event_table( pdf, data_table_array, is_a_long_event, true )
+          self.add_relay_data_table_footnote( pdf, data_table_array.size, swimmer_year_tot )
           # Clear the data table afterwards:
           data_table_array = []
+          swimmer_year_tot = 0
         end
         # Repeat header row:
         data_table_array << (
@@ -293,9 +314,11 @@ class PassagesCollectSheetLayout
       end
 
       # Add the swimmer name in the front cell and add the resulting row (array):
+      swimmer_age = Date::today.year - res.swimmer.year_of_birth
+      swimmer_year_tot += swimmer_age
       data_table_array << [
           res.swimmer.complete_name,
-          "#{ res.swimmer.year_of_birth } / #{ Date::today.year - res.swimmer.year_of_birth }",
+          "#{ res.swimmer.year_of_birth } / #{ swimmer_age }",
           "##{ res.notes.to_s.split(';').last.to_i }" # relay fraction order
       ] + passage_labels.map{ |cell| '' }           # Empty space to insert timing
       # Update the previous config name before another loop:
@@ -304,8 +327,21 @@ class PassagesCollectSheetLayout
 
     # Draw the residual table data:
     if data_table_array.size > 0
-      self.draw_a_single_event_table( pdf, data_table_array, is_a_long_event )
+      self.draw_a_single_event_table( pdf, data_table_array, is_a_long_event, true )
+      self.add_relay_data_table_footnote( pdf, data_table_array.size, swimmer_year_tot )
     end
+  end
+
+
+  # Adds a line of text regarding the total age of swimmers for a relay data table
+  def self.add_relay_data_table_footnote( pdf, data_table_array_size, swimmer_year_tot )
+    pdf.move_down( 5 )
+    table_note = "#{ I18n.t('meeting_relay.config.total_age') } = #{ swimmer_year_tot }"
+    if data_table_array_size < 5
+      table_note << " #{ I18n.t('meeting_relay.config.not_enough_swimmers_note') }"
+    end
+    pdf.text( table_note )
+    pdf.move_down( 15 )
   end
 
 
@@ -365,7 +401,7 @@ class PassagesCollectSheetLayout
 
     # Draw the residual table data:
     if data_table_array.size > 0
-      self.draw_a_single_event_table( pdf, data_table_array, is_a_long_event )
+      self.draw_a_single_event_table( pdf, data_table_array, is_a_long_event, false )
     end
   end
   #-- -------------------------------------------------------------------------

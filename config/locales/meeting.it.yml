@@ -84,6 +84,9 @@ it:
 
   meeting_relay:
     unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sulle Staffette Meeting'! (tab: 'meeting_relays')"
+    config:
+      not_enough_swimmers_note: "(MANCANO ATLETI)"
+      total_age: "Anni tot."
 
   meeting_relay_result:
     unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sui Risultati Staff. Meeting'! (tab: 'meeting_relay_results')"
