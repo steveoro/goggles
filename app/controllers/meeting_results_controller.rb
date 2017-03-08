@@ -9,7 +9,7 @@ require 'passages_batch_updater'
 
 = MeetingsController
 
-  - version:  6.089
+  - version:  6.090
   - author:   Steve A.
 
 =end
@@ -135,30 +135,31 @@ class MeetingResultsController < ApplicationController
     # Collect the list of managed Teams:
     @managed_teams = current_user.team_managers.map{ |tm| tm.team }.uniq
     @managed_team_ids = @managed_teams.map{ |team| team.id }
-
-    # TODO
-=begin
-    - get possible existing MeetingRelaySwimmer rows
-    - init missing rows with MeetingRelaySwimmer.new
-    - setup initial values for new rows using:
-      - MeetingRelayReservations when available
-      - Leave no default swimmer_id when not available
-
-    - User must be able to POST the form initialized so far
-    - permit the correct params
-=end
-    # Array of Array: 1 row MRR => list of many MRS:
-    existing_relay_swimmers = @meeting.meeting_relay_results
-      .includes( :team )
+    @mrrs = @meeting.meeting_relay_results
+      .includes(:team, :meeting_event, :event_type, :pool_type)
+      .joins(:team, :meeting_event, :event_type, :pool_type)
       .where( ['team_id IN (?)', @managed_team_ids] )
-      .map{ |mrr| mrr.meeting_relay_swimmers.to_a }
+    @relay_swimmer_hash = {}
 
-    # TODO For each MRR, add missing MRS as new instances
-    # TODO For each new MRS instance,
-    # TODO search for existing, corresponding Relay reservation
-    # TODO init new MRS instance w/ reservation found
-    # TODO else, leave empty
-
+    @mrrs.each do |mrr|
+      needed_swimmer_count = mrr.event_type.partecipants
+      relay_swimmers = MeetingRelaySwimmer.where(meeting_relay_result_id: mrr.id).to_a
+      # Just fill-in the missing relay swimmers with new instances:
+      ( relay_swimmers.count .. needed_swimmer_count-1 ).each do |idx|
+        relay_swimmers << MeetingRelaySwimmer.new(
+          meeting_relay_result_id: mrr.id,
+          # XXX [Steve, 20170308] ASSUMING THAT the existing Relay Swimmer rows:
+          # - have internal ordering starting from 1;
+          # - are created sequentially;
+          # - whenever they are missing,the missing relay orders are the top-most.
+          #   (That is, if, for whatever reason, only 2 rows have been created,
+          #    the "missing ones" will be placed at positions #3 & #4.)
+          relay_order: idx + 1
+        )
+      end
+      # Add the completed list of relay swimmers to the hash, for each existing MRR:
+      @relay_swimmer_hash[ mrr.id ] = relay_swimmers
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -167,6 +168,49 @@ class MeetingResultsController < ApplicationController
   # TODO
   #
   def update_relay_swimmers
+# DEBUG
+    logger.debug( "\r\n\r\n!! ------ #{self.class.name} - update_relay_swimmers -----" )
+    logger.debug( "> #{params.inspect}\r\n" )
+
+=begin
+ SAMPLE:
+  <ActionController::Parameters {"utf8"=>"✓",
+    "authenticity_token"=>"...",
+    "swimmer_id"=>{"25566_1"=>"19099", "25566_2"=>"550", "25566_3"=>"1025", "25566_4"=>"1841",
+      "25575_1"=>"467", "25575_2"=>"142", "25575_3"=>"1788", "25575_4"=>"1843",
+      "25577_1"=>"97", "25577_2"=>"728", "25577_3"=>"1834", "25577_4"=>"28150",
+      "25580_1"=>"1777", "25580_2"=>"138", "25580_3"=>"23", "25580_4"=>"1227",
+      "25582_1"=>"98", "25582_2"=>"1279", "25582_3"=>"1160", "25582_4"=>"503"},
+
+      "swimmer_id_25566_1_name"=>"STORCHI LORENZO", "timing_25566_1"=>"28\"00",
+      "swimmer_id_25566_2_name"=>"FERRARI ALESSIA", "timing_25566_2"=>"40\"00",
+      "swimmer_id_25566_3_name"=>"VALCAVI LUCA", "timing_25566_3"=>"27\"00",
+      "swimmer_id_25566_4_name"=>"PESARE REBECCA", "timing_25566_4"=>"29\"00",
+
+      "swimmer_id_25575_1_name"=>"TARABINI MATTIA", "timing_25575_1"=>"00\"00",
+      "swimmer_id_25575_2_name"=>"ALLORO STEFANO", "timing_25575_2"=>"30\"00",
+      "swimmer_id_25575_3_name"=>"PEZZI STEFANIA", "timing_25575_3"=>"00\"00",
+      "swimmer_id_25575_4_name"=>"BUDASSI VALENTINA", "timing_25575_4"=>"00\"00",
+
+      "swimmer_id_25577_1_name"=>"BERTANI STEFANO", "timing_25577_1"=>"00\"00",
+      "swimmer_id_25577_2_name"=>"LEONCINI VALERIA", "timing_25577_2"=>"00\"00",
+      "swimmer_id_25577_3_name"=>"FERRARI SIMONE", "timing_25577_3"=>"00\"00",
+      "swimmer_id_25577_4_name"=>"BERNARDELLI NICLA", "timing_25577_4"=>"00\"00",
+
+      "swimmer_id_25580_1_name"=>"VEZZANI GIORGIA", "timing_25580_1"=>"00\"00",
+      "swimmer_id_25580_2_name"=>"BONACINI MONICA", "timing_25580_2"=>"00\"00",
+      "swimmer_id_25580_3_name"=>"LIGABUE MARCO", "timing_25580_3"=>"00\"00",
+      "swimmer_id_25580_4_name"=>"BERTOZZI ORLANDO", "timing_25580_4"=>"00\"00",
+
+      "swimmer_id_25582_1_name"=>"SESENA BARBARA (1971)", "timing_25582_1"=>"00\"00",
+      "swimmer_id_25582_2_name"=>"RONZONI ALESSANDRO (1984)", "timing_25582_2"=>"29\"50",
+      "swimmer_id_25582_3_name"=>"TARABINI RICCARDO", "timing_25582_3"=>"00\"00",
+      "swimmer_id_25582_4_name"=>"TOFFANETTI LAURA", "timing_25582_4"=>"00\"00",
+
+      "commit"=>"Salva", "controller"=>"meeting_results",
+      "action"=>"update_relay_swimmers",
+       "locale"=>"it", "id"=>"16103"} permitted: false>
+=end
     # TODO
     redirect_to( meeting_results_edit_relay_swimmers_path(@meeting.id) ) and return
   end

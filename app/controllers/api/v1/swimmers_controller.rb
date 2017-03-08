@@ -23,16 +23,33 @@ class Api::V1::SwimmersController < Api::BaseController
   # beyond the limit set.
   #
   # === Additional params:
-  # - 'q':    a matching (sub)string for the Swimmer.complete_name
+  # - 'q': filter by matching (sub)string for the Swimmer.complete_name
+  # - 't': filter by a team_id array
   #
   def index
 # DEBUG
-#    puts "\r\n**** Api::V1::SwimmersController #index ****"
-#    puts "- PARAMS: " << params.inspect
-    if params['q']
+    logger.debug( "\r\n\r\n!! ------ #{self.class.name} - index -----" )
+    logger.debug( "PARAMS => #{params.inspect}\r\n" )
+    # Filter by query name and team IDs:
+    if params['q'].present? && params['t'].present?
       filter = "%#{params['q']}%"
-      @swimmers = Swimmer.where( ["complete_name LIKE ?", filter] )
+      @swimmers = Swimmer.includes(:badges).joins(:badges)
+          .where([ "(complete_name LIKE ?) AND (badges.team_id IN (?))", filter, params['t'] ])
           .order( :complete_name )
+
+    # Filter just by query name:
+    elsif params['q'].present?
+      filter = "%#{params['q']}%"
+      @swimmers = Swimmer.where([ "complete_name LIKE ?", filter ])
+          .order( :complete_name )
+
+    # Filter just by team IDs:
+    elsif params['t'].present?
+      @swimmers = Swimmer.includes(:badges).joins(:badges)
+          .where([ "badges.team_id IN (?)", params['t'] ])
+          .order( :complete_name )
+
+    # No filters (just a limit):
     else
       @swimmers = Swimmer.order( :complete_name ).limit(20)
     end

@@ -1,81 +1,68 @@
 = render( partial: 'tabs_and_title' )
 
+-# @relay_swimmer_hash
+-# @mrrs
+-# @managed_team_ids
+
 .col-xs-12.goggles-category-gap
   = form_tag( meeting_results_update_relay_swimmers_path(@meeting.id), onsubmit: "$('#loadingIndicator').show();" )
-  %table.table.table-striped.table-bordered.table-hover.table-condensed
-    %tbody
-      - previous_event = nil
-      - @editable_stuff.each do |hash_item|
-        - individual_result = hash_item.keys.first
-        - passages = hash_item.values.first
-        - has_passages = ( passages.count > 0 )
-        - mir = MeetingIndividualResultDecorator.decorate( individual_result )
-        - passage_types = mir.team.team_passage_templates.for_event_type( mir.event_type ).for_pool_type( mir.pool_type ).count == 0 ? TeamPassageTemplate.get_default_passage_types_for( mir.event_type.length_in_meters, mir.pool_type.length_in_meters ) : TeamPassageTemplate.get_template_passage_types_for( mir.team, mir.event_type, mir.pool_type )
-        - if previous_event != mir.meeting_event
-          - previous_event = mir.meeting_event
-          %th.info
-            %td.info{ colspan: passage_types.size+1 }
-              %br/
-              %h4= mir.meeting_event.get_verbose_name
+  - @mrrs.each do |mrr|
+    -# *** "PASSAGES" FOR RELAY SWIMMERS CURRENTLY NOT SUPPORTED! ***
+    -# passage_types.size will yield the total number of columns for the current event:
+    -# passage_types = []
+    -# Get the team's passage types (if any):
+    -# possible_passage_types = mrr.team.team_passage_templates.for_event_type( mrr.event_type ).for_pool_type( mrr.pool_type )
+    -# Get the first TeamPassageTemplate available for the current team or the default:
+    -# if possible_passage_types.count == 0
+    -#  - passage_types = TeamPassageTemplate.get_default_passage_types_for( mrr.event_type.phase_length_in_meters, mrr.pool_type.length_in_meters )
+    -# else
+    -#  - passage_types = TeamPassageTemplate.get_template_passage_types_for( mrr.team, mrr.event_type, mrr.pool_type )
+    .col-xs-6
+      %table.table.table-striped.table-bordered.table-hover.table-condensed
+        %tbody
           %tr.info
-            %td
-            - passage_types.each do |passage_type|
-              %td.goggles-rightalign
-                %i= "#{ passage_type.length_in_meters } #{ I18n.t('meters_short') }"
-            %td.goggles-rightalign
-              =I18n.t('meeting.timing')
-        %tr
-          %td
-            %a{ id: "swimmer#{mir.id}", href: "#{ meeting_show_swimmer_results_path(id: @meeting.id, team_id: mir.team_id, swimmer_id: mir.swimmer_id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_swimmer_results_tooltip') }
-              = mir.get_swimmer_name
-          - if has_passages
-            - passages.order(:passage_type_id).each_with_index do |passage, index|
-              %td.goggles-rightalign{'colspan'=>'1'}
-                - if passage.get_passage_distance != passage_types[index].length_in_meters
-                  %i= "#{ passage.get_passage_distance } #{ I18n.t('meters_short') }"
-                  %br/
-                = text_field_tag(                                             |
-                  "pas_#{passage.id}",                                        |
-                  passage.compute_incremental_time,                           |
-                  'class' => "input-mini text-right timing",                  |
-                  'data-mir' => mir.id,                                       |
-                  'data-passage-type' => passage.passage_type_id              |
-                )                                                             |
-                %br/
-                = passage.get_timing
-          - else
-            - count = ( passage_types.count - 1 )
-            - passage_types.each_with_index do |passage_type, index|
-              - if index < count
-                %td.goggles-rightalign{'colspan'=>'1'}
+            %th.text-center
+              %br/
+              %h4= mrr.meeting_event.get_verbose_name
+            %th.text-right
+              %br/
+              %b= mrr.get_timing
+          %tr
+            %td.text-left
+              %i= I18n.t('passages.relay_athlete')
+            %td.text-right
+              %i= "#{ mrr.event_type.phase_length_in_meters } #{ I18n.t('meters_short') }"
+          - @relay_swimmer_hash[mrr.id].each do |relay_swimmer|
+            %tr
+              %td
+                .form-group
+                  %b= relay_swimmer.relay_order
+                  &nbsp;
+                  = hidden_field( :swimmer_id, "#{ mrr.id }_#{ relay_swimmer.relay_order }", value: relay_swimmer.swimmer_id )
+                  = text_field_tag( "swimmer_id_#{ mrr.id }_#{ relay_swimmer.relay_order }_name",     |
+                      relay_swimmer.swimmer ? relay_swimmer.swimmer.get_full_name : nil,              |
+                      {autocomplete: 'off', class: "input-sm form-control typeahead",                 |
+                      "data-provide"=>"typeahead", placeholder: I18n.t('combobox_3char_tooltip')} )   |
+              %td.text-right
+                .form-group
                   = text_field_tag(                                             |
-                    "new_#{mir.id}_#{passage_type.id}",                         |
-                    nil,                                                        |
-                    'class' => "input-mini text-right timing",                  |
-                    'data-mir' => mir.id,                                       |
-                    'data-passage-type' => passage_type.id                      |
+                    "timing_#{ mrr.id }_#{ relay_swimmer.relay_order }",        |
+                    relay_swimmer.get_timing,                                   |
+                    'class' => "input-mini text-right timing"                   |
                   )                                                             |
-              - else
-                %td.goggles-rightalign{'colspan'=>'1'}
-                  = text_field_tag(                                             |
-                    "auto_#{mir.id}_#{passage_type.id}",                        |
-                    mir.get_timing,                                             |
-                    'class' => "input-mini text-right timing",                  |
-                    'data-mir' => mir.id,                                       |
-                    'data-passage-type' => passage_type.id                      |
-                  )                                                             |
-          %td.goggles-rightalign
-            %b= mir.get_timing
+      .col-xs-12.goggles-category-gap
+        &nbsp;
 
   .col-xs-12.goggles-category-gap
     .col-xs-2
-      = submit_tag( I18n.t(:save), id: 'btnSavePassages', data: {confirm: I18n.t('netzke.basepack.grid_panel.are_you_sure'), |
-          disable_with: I18n.t(:please_wait), class: 'disabled' }, class: "btn btn-primary" )         |
+      = submit_tag( I18n.t(:save), id: 'btnSaveRelaySwimmers', data: {confirm: I18n.t('netzke.basepack.grid_panel.are_you_sure'), |
+          disable_with: I18n.t(:please_wait), class: 'disabled' }, class: "btn btn-primary" ) |
       %span(id='loadingIndicator' hidden='true')
         = image_tag( 'indicator.gif' )
 
 .col-xs-12.goggles-category-gap
   &nbsp;
+
 
 :javascript
   /**
@@ -99,4 +86,124 @@
       newValue = newValue.replace( /(?=\B(\d{2})\D\d{2}$)/g, "\'" );
       targetNode.val( newValue );
   };
+  // --------------------------------------------------------------------------
+
+
+  /**
+   * AJAX response buffer.
+   * Stores the actual array of objects returned by the AJAX request.
+   */
+  var responseSwimmerNamesBuffer = [];
+
+  /**
+   * Datum tokenizer for the Bloodhound suggestion engine.
+   * Returns the datum tokenized into a comparable string.
+   */
+  function tokenizeRelaySwimmerName( datum ) {
+    // Extract just the name part:
+    // DEBUG
+    //console.log( "tokenizeRelaySwimmerName datum splitted: ", detokenizeRelaySwimmerName(datum) );
+    return Bloodhound.tokenizers.obj.whitespace( detokenizeRelaySwimmerName(datum)[0] );
+  }
+
+  /**
+   * De-tokenizer for composed results.
+   * Splits a specified datum using '|' as separator.
+   * Returns an array of string tokens, in which, allegedly, the order should be:
+   * 1. Swimmer#complete_name
+   * 2. Swimmer#year_of_birth (as a string number)
+   * 3. Swimmer#gender_type_id (as a string number)
+   * 4. remote Swimmer ID (as a string number)
+   */
+  function detokenizeRelaySwimmerName( datum ) {
+    return datum.split("|");
+  }
+
+  /**
+   * Remote response adapter for the Bloodhound suggestion engine.
+   * It is expected to return a list of tokenized names, ready to be compared/matched.
+   */
+  function transformRelaySwimmerNamesResponse( data ) {
+    // DEBUG
+    console.log( "transformRelaySwimmerNamesResponse response: ", data );
+    // Clear & rebuild the result list and the list of searchable names:
+    var responseSwimmerNamesBuffer = [];
+
+    // Since we're bound to return a list of tokenized & comparable strings,
+    // we'll store the additional data to display into the same result row,
+    // concatenated with an underscore (which is surely not used for a name).
+    for ( idx = 0; idx < data.length; idx++ ) {
+      var composedName = data[idx].complete_name  + "|" +
+                         data[idx].year_of_birth + "|" +
+                         data[idx].gender_type_id + "|" + data[idx].id;
+      responseSwimmerNamesBuffer.push( composedName );
+    };
+    // DEBUG
+    //console.log( "responseSwimmerNamesBuffer:", responseSwimmerNamesBuffer );
+    return responseSwimmerNamesBuffer;
+  }
+  // --------------------------------------------------------------------------
+
+
+  /**
+   * Bloodhound suggestion engine setup.
+   */
+  var suggestedRelaySwimmerNames = new Bloodhound({
+    datumTokenizer: tokenizeRelaySwimmerName,
+    queryTokenizer: Bloodhound.tokenizers.whitespace,
+    // Assuming datum is a JSON-ified instance of swimmer, this should return its ID:
+    //identify: function( datum ){ return datum.id; },
+    remote: {
+      url:       "#{ api_v1_swimmers_path(q:'QUERY', t: @managed_team_ids) }",
+      wildcard:  'QUERY',
+      transform: transformRelaySwimmerNamesResponse
+    }
+  });
+  // --------------------------------------------------------------------------
+
+
+  var typeAheadRelaySwimmerOptions = {
+    name:   'Swimmer-names',
+    // This is just for the displaying limit for the menu, not the actual returned results:
+    limit:  10,
+    asynch: true,
+    source: suggestedRelaySwimmerNames,
+    // Displayable value for selections:
+    display: function( datum ) {
+      // Combine the individual tokens into a displayable value:
+      var tokens = detokenizeRelaySwimmerName( datum );
+      var namePart = tokens[0];
+      var yearPart = tokens[1];
+      return namePart + ' (' + yearPart + ')';
+    },
+    templates: {
+      suggestion: function( datum ) {
+        var tokens = detokenizeRelaySwimmerName( datum );
+        // DEBUG
+        //console.log('tokens: ', tokens);
+        return '<div>' + tokens[0] + '&nbsp;<i>(' + tokens[1] + ')</i></div>'
+      }
+    }
+  };
+  // --------------------------------------------------------------------------
+
+
+  // (Wait for the page to be ready)
+  $( function() {
+    // Define the typeahead callback handlers:
+    $(".typeahead").typeahead(
+      { minLength: 3, highlight: true },
+      typeAheadRelaySwimmerOptions
+    ).bind('typeahead:select', function( ev, suggestion ) {
+        // DEBUG
+        //console.log('Selection: ', suggestion);
+        // Extract the ID part from the combined string:
+        var remote_id = detokenizeRelaySwimmerName( suggestion )[3];
+        // DEBUG
+        //console.log( "remote_id: ", remote_id );
+        // Compose the DOM ID of of the hidden form field to be updated:
+        $( '#' + ev.target.id.split("_name")[0] ).val( remote_id );
+      }
+    );
+  });
   // --------------------------------------------------------------------------
