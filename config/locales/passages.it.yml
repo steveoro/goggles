@@ -6,3 +6,7 @@ it:
     passages_individual_tab_label: "Passaggi Individuali"
     passages_relay_tab_label: "Passaggi Staffette"
     relay_athlete: "Frazionista"
+    generic_some_rows_changes_were_ignored: "Alcuni dei cambiamenti sono stati ignorati per via di alcuni errori di inserimento. Per cortesia, controlla meglio."
+    relay_some_rows_changes_were_ignored: "Alcuni cambiamenti sono stati ignorati o a causa di errori di inserimento o perché è stato selezionato un atleta non cartellinato nella stagione di questo Meeting. Per cortesia, controlla meglio le tue scelte."
+    some_relay_result_not_found: "E' stato specificato un codice staffetta non valido. Alcuni dei cambiamenti sono stati ignorati."
+    changes_saved: "Modifiche salvate!"

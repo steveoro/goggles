@@ -252,6 +252,10 @@ en:
           attributes:
             header_year:
               blank: "can't be blank"
+        meeting_relay_swimmer:
+          attributes:
+            reaction_time:
+              not_a_number: "is not a number"
         training:
           attributes:
             title:

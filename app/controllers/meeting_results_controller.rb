@@ -3,6 +3,7 @@ require 'common/format'
 require 'meeting_finder'
 require 'wrappers/timing'
 require 'passages_batch_updater'
+require 'relay_swimmer_batch_updater'
 
 
 =begin
@@ -15,11 +16,10 @@ require 'passages_batch_updater'
 =end
 class MeetingResultsController < ApplicationController
   # Require authorization before invoking any of this controller's actions:
-  before_action :authenticate_user!, only: [:my, :edit_passages]
-
+  before_action :authenticate_user!
   # Parse parameters:
   before_action :verify_meeting
-  before_action :verify_is_team_manager,  only: [:edit_passages, :edit_relay_swimmers]
+  before_action :verify_is_team_manager
   #-- -------------------------------------------------------------------------
   #++
 
@@ -79,6 +79,9 @@ class MeetingResultsController < ApplicationController
   # - id: Meeting id for which the Passages must be edited
   #
   def update_passages
+# DEBUG
+#    logger.debug( "\r\n\r\n!! ------ #{self.class.name} - update_relay_swimmers -----" )
+#    logger.debug( "> #{params.inspect}\r\n" )
     edited_rows = params.select{ |key, value| key =~ /pas/ }
     new_rows    = params.select{ |key, value| ( key =~ /new/ || key =~ /auto/ ) && value.length > 0 }
     batch_updater = PassagesBatchUpdater.new( current_user )
@@ -99,29 +102,20 @@ class MeetingResultsController < ApplicationController
       inserted_mirs << mir_id
     end
 
-    # Create the SQL diff file, and send it, when operated remotely:
-    output_dir = File.join( Rails.root, 'public', 'output' )
-    file_name = "#{DateTime.now().strftime('%Y%m%d%H%M')}" <<
-                "#{ Rails.env == 'production' ? 'dev' : 'prod' }" <<
-                "_update_passages_#{ @meeting.code }.diff.sql"
-    full_sql_diff_path = File.join( output_dir, file_name )
-    batch_updater.save_diff_file( full_sql_diff_path )
-    logger.info( "\r\nLog file " + file_name + " created" )
-    if Rails.env == 'production'
-      AgexMailer.action_notify_mail(
-        current_user,
-        "update passages",
-        "User #{current_user} has updated remotely the passages for his/hers managed affiliations, for meeting ID #{@meeting.id}.\r\nThe attached log file must be synchronized locally.",
-        file_name,
-        full_sql_diff_path
-      ).deliver
-    end
-
-    # Signal any error or a successful operation:
-    if batch_updater.total_errors > 0
-      flash[:error] = I18n.t('something_went_wrong')
-    else
-      flash[:info] = I18n.t('social.changes_saved')
+    # Serialize updater.sql_diff_text_log in a dedicated log file if there are any changes logged:
+    if batch_updater.edited_passages > 0 || batch_updater.new_passages > 0 ||
+       batch_updater.destroyed_passages > 0 || batch_updater.total_errors > 0
+      # Create the SQL diff file, and send it, when operated remotely:
+      output_dir = get_output_folder()
+      file_name = get_timestamped_env_filename( "update_passages_#{ @meeting.code }_#{ current_user.id }.diff.sql" )
+      full_sql_diff_path = File.join( output_dir, file_name )
+      serialize_and_deliver_diff_file( batch_updater, "update PASSAGES", full_sql_diff_path )
+      # Signal also locally if any error occurred:
+      if batch_updater.total_errors > 0
+        flash[:error] = I18n.t('passages.generic_some_rows_changes_were_ignored')
+      else
+        flash[:info] = I18n.t('passages.changes_saved')
+      end
     end
     redirect_to( meeting_results_edit_passages_path(@meeting.id) ) and return
   end
@@ -129,15 +123,15 @@ class MeetingResultsController < ApplicationController
   #++
 
 
-  # TODO
+  # Edit view action for the meeting relay swimmers.
   #
   def edit_relay_swimmers
     # Collect the list of managed Teams:
     @managed_teams = current_user.team_managers.map{ |tm| tm.team }.uniq
     @managed_team_ids = @managed_teams.map{ |team| team.id }
     @mrrs = @meeting.meeting_relay_results
-      .includes(:team, :meeting_event, :event_type, :pool_type)
-      .joins(:team, :meeting_event, :event_type, :pool_type)
+      .includes(:team, :meeting_event, :event_type, :pool_type, :season)
+      .joins(:team, :meeting_event, :event_type, :pool_type, :season)
       .where( ['team_id IN (?)', @managed_team_ids] )
     @relay_swimmer_hash = {}
 
@@ -154,7 +148,8 @@ class MeetingResultsController < ApplicationController
           # - whenever they are missing,the missing relay orders are the top-most.
           #   (That is, if, for whatever reason, only 2 rows have been created,
           #    the "missing ones" will be placed at positions #3 & #4.)
-          relay_order: idx + 1
+          relay_order: idx + 1,
+          stroke_type_id: RelaySwimmerBatchUpdater.get_fractionist_stroke_type_id_by( mrr.event_type.stroke_type_id, idx+1 )
         )
       end
       # Add the completed list of relay swimmers to the hash, for each existing MRR:
@@ -165,53 +160,99 @@ class MeetingResultsController < ApplicationController
   #++
 
 
-  # TODO
+  # Update action for the meeting relay swimmers as a single, scripted batch process.
+  #
+  # In order for a row to be updated, at least the swimmer ID must be specified.
+  # (That is, the user won't be able to save just the associated timing without
+  #  selecting an associated swimmer id too.)
+  #
+  # Rows set to be updated without the swimmer ID set will be considered as "errors",
+  # as well as rows with a wrongly chosen swimmer ID, which does not result as
+  # having a badge for the same season and team for the currently processed MRR.
+  # (This is to prevent data-corruption attacks with forged requests.)
+  #
+  # Rows considered as "errors" won't stop internally the batch updater and will
+  # be simply ignored.
+  #
+  # The action aborts as soon as an invalid MRR ID is specified.
+  #
+  # The action is scripted to allow synchronization with any DB server.
   #
   def update_relay_swimmers
 # DEBUG
     logger.debug( "\r\n\r\n!! ------ #{self.class.name} - update_relay_swimmers -----" )
     logger.debug( "> #{params.inspect}\r\n" )
-
 =begin
- SAMPLE:
-  <ActionController::Parameters {"utf8"=>"✓",
-    "authenticity_token"=>"...",
-    "swimmer_id"=>{"25566_1"=>"19099", "25566_2"=>"550", "25566_3"=>"1025", "25566_4"=>"1841",
-      "25575_1"=>"467", "25575_2"=>"142", "25575_3"=>"1788", "25575_4"=>"1843",
-      "25577_1"=>"97", "25577_2"=>"728", "25577_3"=>"1834", "25577_4"=>"28150",
-      "25580_1"=>"1777", "25580_2"=>"138", "25580_3"=>"23", "25580_4"=>"1227",
-      "25582_1"=>"98", "25582_2"=>"1279", "25582_3"=>"1160", "25582_4"=>"503"},
-
-      "swimmer_id_25566_1_name"=>"STORCHI LORENZO", "timing_25566_1"=>"28\"00",
-      "swimmer_id_25566_2_name"=>"FERRARI ALESSIA", "timing_25566_2"=>"40\"00",
-      "swimmer_id_25566_3_name"=>"VALCAVI LUCA", "timing_25566_3"=>"27\"00",
-      "swimmer_id_25566_4_name"=>"PESARE REBECCA", "timing_25566_4"=>"29\"00",
-
-      "swimmer_id_25575_1_name"=>"TARABINI MATTIA", "timing_25575_1"=>"00\"00",
-      "swimmer_id_25575_2_name"=>"ALLORO STEFANO", "timing_25575_2"=>"30\"00",
-      "swimmer_id_25575_3_name"=>"PEZZI STEFANIA", "timing_25575_3"=>"00\"00",
-      "swimmer_id_25575_4_name"=>"BUDASSI VALENTINA", "timing_25575_4"=>"00\"00",
-
-      "swimmer_id_25577_1_name"=>"BERTANI STEFANO", "timing_25577_1"=>"00\"00",
-      "swimmer_id_25577_2_name"=>"LEONCINI VALERIA", "timing_25577_2"=>"00\"00",
-      "swimmer_id_25577_3_name"=>"FERRARI SIMONE", "timing_25577_3"=>"00\"00",
-      "swimmer_id_25577_4_name"=>"BERNARDELLI NICLA", "timing_25577_4"=>"00\"00",
-
-      "swimmer_id_25580_1_name"=>"VEZZANI GIORGIA", "timing_25580_1"=>"00\"00",
-      "swimmer_id_25580_2_name"=>"BONACINI MONICA", "timing_25580_2"=>"00\"00",
-      "swimmer_id_25580_3_name"=>"LIGABUE MARCO", "timing_25580_3"=>"00\"00",
-      "swimmer_id_25580_4_name"=>"BERTOZZI ORLANDO", "timing_25580_4"=>"00\"00",
-
-      "swimmer_id_25582_1_name"=>"SESENA BARBARA (1971)", "timing_25582_1"=>"00\"00",
-      "swimmer_id_25582_2_name"=>"RONZONI ALESSANDRO (1984)", "timing_25582_2"=>"29\"50",
-      "swimmer_id_25582_3_name"=>"TARABINI RICCARDO", "timing_25582_3"=>"00\"00",
-      "swimmer_id_25582_4_name"=>"TOFFANETTI LAURA", "timing_25582_4"=>"00\"00",
-
-      "commit"=>"Salva", "controller"=>"meeting_results",
-      "action"=>"update_relay_swimmers",
-       "locale"=>"it", "id"=>"16103"} permitted: false>
+    PARAMS Format example:
+    <ActionController::Parameters {
+      [...]
+      "swimmer_id"=>{"25566_1"=>"19099", "25566_2"=>"550", [...]
+      },
+      "swimmer_id_25566_1_name"=>"SWIMMER NAME 1", "timing_25566_1"=>"28\"00",
+      "swimmer_id_25566_2_name"=>"SWIMMER NAME 2", "timing_25566_2"=>"40\"00",
+      [...]
+    }
 =end
-    # TODO
+    # Prepare the updater instance:
+    batch_updater = RelaySwimmerBatchUpdater.new( current_user )
+    can_continue = true
+
+    if params['swimmer_id'].present?
+      # For each selected swimmer...
+      params['swimmer_id'].each do |composed_key, swimmer_id|
+        # composed_key expected format example:
+        #       <MRR.id>_<relay_order> => <swimmer_id> ... .. "25566_1"=>"19099"
+        mrr_id, relay_order = composed_key.split('_').map{ |i| i.to_i }
+        timing_text = params["timing_#{ composed_key }"]
+        mrr = MeetingRelayResult.find_by_id( mrr_id.to_i )
+        if mrr && can_continue
+          # We need to check if the specified swimmer has a badge viable for the current MRR.
+          # (Note that this check is actually duplicated again inside the batch_updater since
+          #  there's no guaratee that the generic caller - in this case *this* action -
+          #  will comply with it. It's a safeguard against possible data corruption or
+          #  forged requests with non-empty but invalid swimmer IDs.)
+          team_id = mrr.team_id
+          season_id = mrr.season.id
+          badge = Badge.where( team_id: team_id, season_id: season_id, swimmer_id: swimmer_id.to_i ).first
+          if badge
+            # Are we editing an existing row? Or do we need to create a new one?
+            mrs = MeetingRelaySwimmer.where(meeting_relay_result_id: mrr.id, relay_order: relay_order).first
+            if mrs                                  # --- Edit existing row ---
+              batch_updater.edit_existing_row( mrr, mrs, swimmer_id, badge.id, timing_text )
+            else                                    # --- Create new row ---
+              batch_updater.create_new_row( mrr, relay_order, swimmer_id, badge.id, timing_text )
+            end
+          else
+            # Not necessarily an error: no swimmer ID chosen (yet) or no badge found for this season:
+            batch_updater.add_sql_diff_comment("Swimmer ID '#{ swimmer_id }' null or badge not found for season: #{ season_id }, team: #{ team_id } - no editing for MRR.id: #{ mrr.id }, relay_order: #{ relay_order }")
+            # Set the flash error in case the swimmer choice was non-valid (and no actual rows were processed - so, no diff file at all, no error count):
+            if swimmer_id.present? && badge.nil?
+              flash[:error] = I18n.t('passages.relay_some_rows_changes_were_ignored')
+            end
+          end
+        else
+          # MRR not found! As soon as we find an invalid DOM ID, we bail out:
+          batch_updater.add_sql_diff_comment( I18n.t('passages.some_relay_result_not_found') + " (MRR id: #{ mrr_id })" )
+          flash[:error] = I18n.t('passages.some_relay_result_not_found')
+          can_continue = false
+        end
+      end
+    end
+
+    # Serialize updater.sql_diff_text_log in a dedicated log file if there are any changes logged:
+    if batch_updater.processed_rows > 0 || batch_updater.errors_count > 0
+      # Create the SQL diff file, and send it, when operated remotely:
+      output_dir = get_output_folder()
+      file_name = get_timestamped_env_filename( "update_relay_swimmers_#{ @meeting.code }_#{ current_user.id }.diff.sql" )
+      full_sql_diff_path = File.join( output_dir, file_name )
+      serialize_and_deliver_diff_file( batch_updater, "update RELAY SWIMMERS", full_sql_diff_path )
+      # Signal also locally if any error occurred:
+      if batch_updater.errors_count > 0
+        flash[:error] = I18n.t('passages.relay_some_rows_changes_were_ignored')
+      else
+        flash[:info] = I18n.t('passages.changes_saved')
+      end
+    end
     redirect_to( meeting_results_edit_relay_swimmers_path(@meeting.id) ) and return
   end
   #-- -------------------------------------------------------------------------
@@ -264,6 +305,29 @@ class MeetingResultsController < ApplicationController
     unless ( current_user && current_user.team_managers.count > 0 )
       flash[:error] = I18n.t(:invalid_action_request) + ' - ' + I18n.t('meeting.errors.invalid_team_manager')
       redirect_to( meetings_current_path() ) and return
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Creates the SQL diff file using an SqlConvertable-compatible instance (must respond
+  # to #sql_diff_text_log) and sends the file via mail if the current environment
+  # is in production mode.
+  #
+  def serialize_and_deliver_diff_file( sql_convertable, mail_title, full_diff_pathname )
+    sql_convertable.save_diff_file( full_diff_pathname )
+    base_filename = File.basename( full_diff_pathname )
+    logger.info( "\r\nLog file '#{ base_filename }' created" )
+    if Rails.env == 'production'
+      # Send the DB diff file to the SysOp
+      AgexMailer.action_notify_mail(
+        current_user,
+        mail_title,
+        "User #{current_user}, #{ mail_title }, meeting ID: #{ @meeting.id }.\r\nThe attached log file must be synchronized locally.",
+        base_filename,
+        full_diff_pathname
+      ).deliver
     end
   end
   #-- -------------------------------------------------------------------------

@@ -268,6 +268,10 @@ it:
             header_year:
               invalid: "non valido"
               blank: "non puo' essere vuoto"
+        meeting_relay_swimmer:
+          attributes:
+            reaction_time:
+              not_a_number: "non è un numero"
         training:
           attributes:
             title:
