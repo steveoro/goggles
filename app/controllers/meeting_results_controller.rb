@@ -105,6 +105,8 @@ class MeetingResultsController < ApplicationController
     # Serialize updater.sql_diff_text_log in a dedicated log file if there are any changes logged:
     if batch_updater.edited_passages > 0 || batch_updater.new_passages > 0 ||
        batch_updater.destroyed_passages > 0 || batch_updater.total_errors > 0
+      # Update the meeting #updated_at attribute, in order to force a cache refresh:
+      @meeting.touch
       # Create the SQL diff file, and send it, when operated remotely:
       output_dir = get_output_folder()
       file_name = get_timestamped_env_filename( "update_passages_#{ @meeting.code }_#{ current_user.id }.diff.sql" )
@@ -241,6 +243,8 @@ class MeetingResultsController < ApplicationController
 
     # Serialize updater.sql_diff_text_log in a dedicated log file if there are any changes logged:
     if batch_updater.processed_rows > 0 || batch_updater.errors_count > 0
+      # Update the meeting #updated_at attribute, in order to force a cache refresh:
+      @meeting.touch
       # Create the SQL diff file, and send it, when operated remotely:
       output_dir = get_output_folder()
       file_name = get_timestamped_env_filename( "update_relay_swimmers_#{ @meeting.code }_#{ current_user.id }.diff.sql" )
