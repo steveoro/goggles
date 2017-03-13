@@ -54,7 +54,6 @@ class MeetingResultsController < ApplicationController
         .where(['meeting_individual_results.team_id = ? and event_types.length_in_meters > pool_types.length_in_meters', @managed_team_ids])
         .includes( :passages )
         .map{ |mir| { mir => mir.passages } }
-
     # TODO
     # Should order by start-list.
     # If no start-list present should use timing
