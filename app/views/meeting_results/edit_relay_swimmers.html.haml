@@ -23,7 +23,8 @@
           %tr.info
             %th.text-center
               %br/
-              %h4= mrr.meeting_event.get_verbose_name
+              %h4
+                = "#{ mrr.meeting_event.event_type.i18n_short }, #{ mrr.gender_type.code }-#{ mrr.category_type.short_name }"
             %th.text-right
               %br/
               %b= mrr.get_timing

@@ -7,9 +7,10 @@
         = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
           = image_tag('bullet_arrow_up.png')
       - @meeting_events_list.each do |me|
-        %li
-          = link_to("##{me.event_type.code}", {'data-turbolinks'=>'false'}) do
-            = me.event_type.i18n_short
+        - if me.meeting_individual_results.count > 0 || me.meeting_relay_results.count > 0
+          %li
+            = link_to("##{me.event_type.code}", {'data-turbolinks'=>'false'}) do
+              = me.event_type.i18n_short
   .row.col-xs-12
     = render( partial: 'full_results_grid' )
 
