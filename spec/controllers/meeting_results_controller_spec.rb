@@ -13,7 +13,6 @@ RSpec.describe MeetingResultsController, type: :controller do
         # - Create managed affiliations if missing
         # - Choose an existing Meeting with passages
         # - (Assert the user/manager should manage teams that have MIRs loaded for the meeting, otherwise nothing should be rendered)
-
         login_user( User.find(2) )
         get :edit_passages, params: { id: 15202 }
       end
@@ -39,10 +38,26 @@ RSpec.describe MeetingResultsController, type: :controller do
       end
     end
 
-    # TODO Test context: unlogged user
-    # TODO Test context: logged user & manager, but wrong meeting id (wrong request)
-    # TODO Test context: logged user, valid request, but not a team manager
-    # TODO Test context: logged user, but a team manager of teams without MIRs available on the Meeting
+
+    context "for an unlogged user," do
+      it "redirects to the Login page" do
+        get :edit_passages, params: { id: 15202 }
+        expect(response).to redirect_to( "/users/sign_in" )
+      end
+    end
+
+
+    context "for a logged-in generic user (NOT a team manager)," do
+      before :each do
+        login_user()
+      end
+      it "redirects to meetings/current page" do
+        get :edit_passages, params: { id: 15202 }
+        expect(response).to redirect_to( meetings_current_path )
+      end
+    end
+
+    # TODO Test context: logged user & manager, but a team manager of teams without MIRs available on the Meeting
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -57,21 +72,35 @@ RSpec.describe MeetingResultsController, type: :controller do
         # - Create managed affiliations if missing
         # - Choose an existing Meeting with passages
         # - (Assert the user/manager should manage teams that have MIRs loaded for the meeting, otherwise nothing should be rendered)
-
         login_user( User.find(2) )
         post :update_passages, params: { id: 15202 }
       end
-
       it "accepts the request" do
         expect( response.status ).to redirect_to( meeting_results_edit_passages_path(15202, locale: I18n.default_locale) )
       end
       # TODO
     end
 
-    # TODO Test context: unlogged user
-    # TODO Test context: logged user & manager, but wrong meeting id (wrong request)
-    # TODO Test context: logged user, valid request, but not a team manager
-    # TODO Test context: logged user, but a team manager of teams without MIRs available on the Meeting
+
+    context "for an unlogged user," do
+      it "redirects to the Login page" do
+        post :update_passages, params: { id: 15202 }
+        expect(response).to redirect_to( "/users/sign_in" )
+      end
+    end
+
+
+    context "for a logged-in generic user (NOT a team manager)," do
+      before :each do
+        login_user()
+      end
+      it "redirects to meetings/current page" do
+        post :update_passages, params: { id: 15202 }
+        expect(response).to redirect_to( meetings_current_path )
+      end
+    end
+
+    # TODO Test context: logged user & manager, but a team manager of teams without MIRs available on the Meeting
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -87,7 +116,6 @@ RSpec.describe MeetingResultsController, type: :controller do
         # - Create managed affiliations if missing
         # - Choose an existing Meeting with passages
         # - (Assert the user/manager should manage teams that have MIRs loaded for the meeting, otherwise nothing should be rendered)
-
         login_user( User.find(2) )
         get :edit_relay_swimmers, params: { id: 15202 }
       end
@@ -110,6 +138,27 @@ RSpec.describe MeetingResultsController, type: :controller do
 
       # TODO
     end
+
+
+    context "for an unlogged user," do
+      it "redirects to the Login page" do
+        get :edit_relay_swimmers, params: { id: 15202 }
+        expect(response).to redirect_to( "/users/sign_in" )
+      end
+    end
+
+
+    context "for a logged-in generic user (NOT a team manager)," do
+      before :each do
+        login_user()
+      end
+      it "redirects to meetings/current page" do
+        get :edit_relay_swimmers, params: { id: 15202 }
+        expect(response).to redirect_to( meetings_current_path )
+      end
+    end
+
+    # TODO Test context: logged user & manager, but a team manager of teams without MRRs available on the Meeting
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -137,10 +186,26 @@ RSpec.describe MeetingResultsController, type: :controller do
       # TODO
     end
 
-    # TODO Test context: unlogged user
-    # TODO Test context: logged user & manager, but wrong meeting id (wrong request)
-    # TODO Test context: logged user, valid request, but not a team manager
-    # TODO Test context: logged user, but a team manager of teams without MIRs available on the Meeting
+
+    context "for an unlogged user," do
+      it "redirects to the Login page" do
+        post :update_relay_swimmers, params: { id: 15202 }
+        expect(response).to redirect_to( "/users/sign_in" )
+      end
+    end
+
+
+    context "for a logged-in generic user (NOT a team manager)," do
+      before :each do
+        login_user()
+      end
+      it "redirects to meetings/current page" do
+        post :update_relay_swimmers, params: { id: 15202 }
+        expect(response).to redirect_to( meetings_current_path )
+      end
+    end
+
+    # TODO Test context: logged user & manager, but a team manager of teams without MRRs available on the Meeting
   end
   #-- -------------------------------------------------------------------------
   #++

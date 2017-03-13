@@ -1,22 +1,8 @@
 = render( partial: 'tabs_and_title' )
 
--# @relay_swimmer_hash
--# @mrrs
--# @managed_team_ids
-
 .col-xs-12.goggles-category-gap
   = form_tag( meeting_results_update_relay_swimmers_path(@meeting.id), onsubmit: "$('#loadingIndicator').show();" )
   - @mrrs.each do |mrr|
-    -# *** "PASSAGES" FOR RELAY SWIMMERS CURRENTLY NOT SUPPORTED! ***
-    -# passage_types.size will yield the total number of columns for the current event:
-    -# passage_types = []
-    -# Get the team's passage types (if any):
-    -# possible_passage_types = mrr.team.team_passage_templates.for_event_type( mrr.event_type ).for_pool_type( mrr.pool_type )
-    -# Get the first TeamPassageTemplate available for the current team or the default:
-    -# if possible_passage_types.count == 0
-    -#  - passage_types = TeamPassageTemplate.get_default_passage_types_for( mrr.event_type.phase_length_in_meters, mrr.pool_type.length_in_meters )
-    -# else
-    -#  - passage_types = TeamPassageTemplate.get_template_passage_types_for( mrr.team, mrr.event_type, mrr.pool_type )
     .col-xs-6
       %table.table.table-striped.table-bordered.table-hover.table-condensed
         %tbody
@@ -155,7 +141,7 @@
     // Assuming datum is a JSON-ified instance of swimmer, this should return its ID:
     //identify: function( datum ){ return datum.id; },
     remote: {
-      url:       "#{ api_v1_swimmers_path(q:'QUERY', t: @managed_team_ids) }",
+      url:       "#{ api_v1_swimmers_path(q:'QUERY', t: @managed_team_ids, s: @meeting.season_id) }",
       wildcard:  'QUERY',
       transform: transformRelaySwimmerNamesResponse
     }

@@ -24,31 +24,36 @@ class Api::V1::SwimmersController < Api::BaseController
   #
   # === Additional params:
   # - 'q': filter by matching (sub)string for the Swimmer.complete_name
-  # - 't': filter by a team_id array
+  # - 't': (additional) filter by a team_id array
+  # - 's': (additional) filter by a SINGLE season_id array
   #
   def index
 # DEBUG
-    logger.debug( "\r\n\r\n!! ------ #{self.class.name} - index -----" )
-    logger.debug( "PARAMS => #{params.inspect}\r\n" )
-    # Filter by query name and team IDs:
-    if params['q'].present? && params['t'].present?
-      filter = "%#{params['q']}%"
+#    logger.debug( "\r\n\r\n!! ------ #{self.class.name} - index -----" )
+#    logger.debug( "PARAMS => #{params.inspect}\r\n" )
+    where_clause = []
+    where_params = []
+    # Filter by query:
+    if params['q'].present?
+      where_clause << "(complete_name LIKE ?)"
+      where_params << "%#{params['q']}%"
+    end
+    # Filter by team IDs:
+    if params['t'].present?
+      where_clause << "(badges.team_id IN (?))"
+      where_params << params['t']
+    end
+    # Filter by season ID:
+    if params['s'].present?
+      where_clause << "(badges.season_id = ?)"
+      where_params << params['s']
+    end
+
+    # Apply filters:
+    if where_clause.size > 0
       @swimmers = Swimmer.includes(:badges).joins(:badges)
-          .where([ "(complete_name LIKE ?) AND (badges.team_id IN (?))", filter, params['t'] ])
-          .order( :complete_name )
-
-    # Filter just by query name:
-    elsif params['q'].present?
-      filter = "%#{params['q']}%"
-      @swimmers = Swimmer.where([ "complete_name LIKE ?", filter ])
-          .order( :complete_name )
-
-    # Filter just by team IDs:
-    elsif params['t'].present?
-      @swimmers = Swimmer.includes(:badges).joins(:badges)
-          .where([ "badges.team_id IN (?)", params['t'] ])
-          .order( :complete_name )
-
+        .where( [ where_clause.join(' AND ') ] + where_params )
+        .order( :complete_name )
     # No filters (just a limit):
     else
       @swimmers = Swimmer.order( :complete_name ).limit(20)

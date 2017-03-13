@@ -59,6 +59,19 @@ describe Api::V1::SwimmersController, type: :controller, api: true do
     end
 
 
+    context "with a matching :s filtering parameter," do
+      before :each do
+        # Assert: we rely on the pre-loaded seeds here
+        get :index, format: :json, params: { s: 1 }
+      end
+      it_behaves_like( "(Ap1-V1-Controllers, success returning an Array of Hash)" )
+      it "returns several matches with the existing seeds" do
+        result = JSON.parse(response.body)
+        expect( result.size ).to be > 210
+      end
+    end
+
+
     context "with both matching :q AND :t (ARRAY) filtering parameters," do
       before :each do
         # Assert: we rely on the pre-loaded seeds here
@@ -76,6 +89,62 @@ describe Api::V1::SwimmersController, type: :controller, api: true do
         expect( swimmer ).to be_a( Swimmer )
         expect( swimmer.badges.first.team_id ).to eq(1)
         expect( swimmer.badges.last.team_id ).to eq(1)
+      end
+    end
+
+
+    context "with both matching :q AND :s filtering parameters," do
+      before :each do
+        # Assert: we rely on the pre-loaded seeds here
+        get :index, format: :json, params: { q: 'liga', s: 1 }
+      end
+      it_behaves_like( "(Ap1-V1-Controllers, success returning an Array of Hash)" )
+      it "returns the exact match for the name (with the existing seeds)" do
+        result = JSON.parse(response.body)
+        expect( result.first['complete_name'] ).to match(/liga/i)
+      end
+      it "returns the exact match for the specified filters (with the existing seeds)" do
+        result = JSON.parse(response.body)
+        expect( result.size ).to eq(1)
+        id = result.first['id']
+        swimmer = Swimmer.find_by_id( id )
+        expect( swimmer ).to be_a( Swimmer )
+        expect( swimmer.badges.first.season_id ).to eq(1)
+      end
+    end
+
+
+    context "with both matching :s AND :t (ARRAY) filtering parameters," do
+      before :each do
+        # Assert: we rely on the pre-loaded seeds here
+        get :index, format: :json, params: { s: 1, t: [1] }
+      end
+      it_behaves_like( "(Ap1-V1-Controllers, success returning an Array of Hash)" )
+      it "returns all the matches for the specified season and team (with the existing seeds)" do
+        result = JSON.parse(response.body)
+        expect( result.size ).to eq(26)
+      end
+    end
+
+
+    context "with matching :q, :s AND :t (ARRAY) filtering parameters," do
+      before :each do
+        # Assert: we rely on the pre-loaded seeds here
+        get :index, format: :json, params: { q: 'liga', s: 1, t: [1] }
+      end
+      it_behaves_like( "(Ap1-V1-Controllers, success returning an Array of Hash)" )
+      it "returns the exact match for the name (with the existing seeds)" do
+        result = JSON.parse(response.body)
+        expect( result.first['complete_name'] ).to match(/liga/i)
+      end
+      it "returns the exact match for the specified filters (with the existing seeds)" do
+        result = JSON.parse(response.body)
+        expect( result.size ).to eq(1)
+        id = result.first['id']
+        swimmer = Swimmer.find_by_id( id )
+        expect( swimmer ).to be_a( Swimmer )
+        expect( swimmer.badges.first.team_id ).to eq(1)
+        expect( swimmer.badges.first.season_id ).to eq(1)
       end
     end
   end
