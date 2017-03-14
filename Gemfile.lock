@@ -25,9 +25,9 @@ GIT
 
 GIT
   remote: https://github.com/steveoro/goggles_core
-  revision: b9632f421b549fb6a9aea645453c3d3e57529616
+  revision: 033e71c632404de11ba7ba19970dcc7ca67cc172
   specs:
-    goggles_core (1.1.44.1)
+    goggles_core (1.1.46.0)
       active_hash_relation
       active_model_serializers (~> 0.10.0)
       activemodel-serializers-xml

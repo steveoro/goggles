@@ -10,7 +10,7 @@ require 'relay_swimmer_batch_updater'
 
 = MeetingsController
 
-  - version:  6.090
+  - version:  6.092
   - author:   Steve A.
 
 =end
@@ -181,8 +181,8 @@ class MeetingResultsController < ApplicationController
   #
   def update_relay_swimmers
 # DEBUG
-    logger.debug( "\r\n\r\n!! ------ #{self.class.name} - update_relay_swimmers -----" )
-    logger.debug( "> #{params.inspect}\r\n" )
+#    logger.debug( "\r\n\r\n!! ------ #{self.class.name} - update_relay_swimmers -----" )
+#    logger.debug( "> #{params.inspect}\r\n" )
 =begin
     PARAMS Format example:
     <ActionController::Parameters {
@@ -205,6 +205,9 @@ class MeetingResultsController < ApplicationController
         #       <MRR.id>_<relay_order> => <swimmer_id> ... .. "25566_1"=>"19099"
         mrr_id, relay_order = composed_key.split('_').map{ |i| i.to_i }
         timing_text = params["timing_#{ composed_key }"]
+# DEBUG
+#        puts "\r\n\r\n- composed_key: <#{ composed_key }>"
+#        puts "- mrr_id: <#{ mrr_id }>, relay_order: #{ relay_order }, timing_text: <#{ timing_text }>"
         mrr = MeetingRelayResult.find_by_id( mrr_id.to_i )
         if mrr && can_continue
           # We need to check if the specified swimmer has a badge viable for the current MRR.

@@ -1,4 +1,11 @@
+-# [Steve, 20170314] Sadly, this does not resolve the Twitter Typeahead reload issue w/ Turbolinks:
+-#- content_for :head do
+-#  %meta( name="turbolinks-cache-control" content="no-cache" )
+
 = render( partial: 'tabs_and_title' )
+
+.col-xs-12.alert.alert-warning
+  = I18n.t('passages.relay_edit_disclaimer')
 
 .col-xs-12.goggles-category-gap
   = form_tag( meeting_results_update_relay_swimmers_path(@meeting.id), onsubmit: "$('#loadingIndicator').show();" )

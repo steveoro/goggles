@@ -10,3 +10,4 @@ en:
     relay_some_rows_changes_were_ignored: "Some changes were rejected due to errors or simply because there were no badges for some of the chosen swimmers in the season for this Meeting. Please check again your edits and you choices."
     some_relay_result_not_found: "Invalid relay result code specified. Some of the edits may have been ignored."
     changes_saved: "Edits saved!"
+    relay_edit_disclaimer: "As a 'Team-manager' you are solely responsible of what you choose to edit in this page. Keep in mind that this will not alter the actual meeting result associated with the lap timings."

@@ -9,7 +9,7 @@ require 'common/validation_error_tools'
 # Strategy to log either the update or the creation of MeetingRelaySwimmer rows.
 #
 # @author   Steve A.
-# @version  6.090
+# @version  6.092
 #
 class RelaySwimmerBatchUpdater
   include SqlConvertable
@@ -84,10 +84,11 @@ class RelaySwimmerBatchUpdater
   # (Use #error_count to check the actual errors. This won't be reset in between calls.)
   # nil only in case of row skipping.
   #
-  def edit_existing_row( mrr, mrs, swimmer_id, badge_id, incremental_timing_text_value )
+  def edit_existing_row( mrr, mrs, swimmer_id, badge_id, incremental_timing_text_value, reaction_time_text = nil )
     return nil unless swimmer_id.present? && badge_id.present?
     timing = TimingParser.parse( incremental_timing_text_value )
     is_ok  = mrs.instance_of?(MeetingRelaySwimmer) && mrr.instance_of?(MeetingRelayResult)
+    reaction_time = TimingParser.parse( reaction_time_text ) if reaction_time_text
 
     if is_ok
       if is_an_actual_update_of( mrs, swimmer_id, badge_id, timing )
@@ -100,6 +101,7 @@ class RelaySwimmerBatchUpdater
         mrs.user_id    = @current_user.id
         # This should be already ok, but it depends from the external caller:
         mrs.meeting_relay_result_id = mrr.id
+        mrs.reaction_time = reaction_time if reaction_time
         if mrs.save
           sql_attributes = mrs.attributes.select do |key|
             [
@@ -143,43 +145,35 @@ class RelaySwimmerBatchUpdater
   #
   # The created instance; nil otherwise.
   #
-  def create_new_row( mrr, relay_order, swimmer_id, incremental_timing_text_value, reaction_time_text = nil )
-    return nil unless swimmer_id.present? && relay_order.present?
-    reaction_time = TimingParser.parse( reaction_time_text ) if reaction_time_text
+  def create_new_row( mrr, relay_order, swimmer_id, badge_id, incremental_timing_text_value, reaction_time_text = nil )
+    return nil unless swimmer_id.present? && badge_id.present? && relay_order.present?
     timing = TimingParser.parse( incremental_timing_text_value )
     is_ok  = mrr.instance_of?(MeetingRelayResult)
+    reaction_time = TimingParser.parse( reaction_time_text ) if reaction_time_text
     mrs = nil
 
     if is_ok
       team_id   = mrr.team_id
       season_id = mrr.season.id
-      badge = Badge.where(team_id: team_id, season_id: season_id, swimmer_id: swimmer_id.to_i).first
-      # We need to check if the specified swimmer has a badge viable for the current MRR:
-      if badge
-        mrs = MeetingRelaySwimmer.new(
-          meeting_relay_result_id: mrr.id,
-          relay_order:      relay_order.to_i,
-          stroke_type_id:   RelaySwimmerBatchUpdater.get_fractionist_stroke_type_id_by( mrr.event_type.stroke_type_id, relay_order ),
-          swimmer_id:       swimmer_id.to_i,
-          badge_id:         badge.id,
-          # Currently unsupported: (must be either a number or not null)
-#          reaction_time:    reaction_time,
-          hundreds:         timing ? timing.hundreds : 0,
-          seconds:          timing ? timing.seconds : 0,
-          minutes:          timing ? timing.minutes : 0,
-          user_id:          @current_user.id
-        )
-        if mrs.save
-          sql_diff_text_log << to_sql_insert( mrs, false, "\r\n" )
-          @created_rows_count += 1
-        else
-          sql_diff_text_log << "-- INSERT VALIDATION FAILURE: #{ ValidationErrorTools.recursive_error_for( mrs ) }\r\n" if mrs.invalid?
-          sql_diff_text_log << "-- INSERT FAILURE: #{ $! }\r\n" if $!
-          @errors_count += 1
-        end
+      mrs = MeetingRelaySwimmer.new(
+        meeting_relay_result_id: mrr.id,
+        relay_order:      relay_order.to_i,
+        stroke_type_id:   RelaySwimmerBatchUpdater.get_fractionist_stroke_type_id_by( mrr.event_type.stroke_type_id, relay_order ),
+        swimmer_id:       swimmer_id.to_i,
+        badge_id:         badge_id,
+        # Currently unsupported: (must be either a number or not null)
+#        reaction_time:    reaction_time,
+        hundreds:         timing ? timing.hundreds : 0,
+        seconds:          timing ? timing.seconds : 0,
+        minutes:          timing ? timing.minutes : 0,
+        user_id:          @current_user.id
+      )
+      if mrs.save
+        sql_diff_text_log << to_sql_insert( mrs, false, "\r\n" )
+        @created_rows_count += 1
       else
-        # Log any invalid swimmer selected and ignore edits:
-        sql_diff_text_log << "-- Not a valid swimmer choice (swimmer_id: #{ swimmer_id }): badge NOT found for season: #{ season_id }, team: #{ team_id }. Skipping invalid editing for MRR.id: #{ mrr.id }\r\n"
+        sql_diff_text_log << "-- INSERT VALIDATION FAILURE: #{ ValidationErrorTools.recursive_error_for( mrs ) }\r\n" if mrs.invalid?
+        sql_diff_text_log << "-- INSERT FAILURE: #{ $! }\r\n" if $!
         @errors_count += 1
       end
     else
