@@ -109,7 +109,11 @@ Rails.application.routes.draw do
       get  "swimmer/medals/:id",                to: "swimmers#medals",                  as: "swimmer_medals"
 # FIXME this has not been used yet: (view removed or missing) -- check it out and then remove it, if everything is ok
 #      get  "swimmer/records/:id",               to: "swimmers#records",                 as: "swimmer_records"
+
+      # XXX WIP: A-B testing Best-timings view versions:
       get  "swimmer/best_timings/:id",          to: "swimmers#best_timings",            as: "swimmer_best_timings"
+      get  "swimmer/best_timings2/:id",         to: "swimmers#best_timings2",           as: "swimmer_best_timings2"
+
       get  "swimmer/full_history_1/:id",        to: "swimmers#full_history_1",          as: "swimmer_full_history_1"
       get  "swimmer/full_history_2/:id",        to: "swimmers#full_history_2",          as: "swimmer_full_history_2"
       get  "swimmer/current_goggle_cup/:id",    to: "swimmers#current_goggle_cup",      as: "swimmer_current_goggle_cup"

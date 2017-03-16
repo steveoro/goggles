@@ -181,6 +181,8 @@ class SwimmersController < ApplicationController
 
   # Radiography for a specified swimmer id: "Best timings" tab rendering
   #
+  # Implementation using the PersonalBestCollector (older strategy class)
+  #
   # == Params:
   # id: the swimmer id to be processed
   #
@@ -211,6 +213,25 @@ class SwimmersController < ApplicationController
     end
 
     @grid_builder = PersonalBestGridBuilder.new( collector )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  # XXX WIP: A-B testing Best-timings view versions:
+  # Radiography for a specified Swimmer id: "Best timings" tab rendering
+  #
+  # Implementation using the SwimmerBestFinder (newest strategy class)
+  #
+  # == Params:
+  # id: the swimmer id to be processed
+  #
+  def best_timings2
+    @tab_title = I18n.t('radiography.best_timings_tab')
+
+    if @swimmer.meeting_individual_results.count > 0
+      @best_finder = SwimmerBestFinder.new( @swimmer )
+      @max_updated_at = find_last_updated_mir
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -647,7 +668,7 @@ class SwimmersController < ApplicationController
   #
   def verify_parameter
     set_swimmer
-    unless ( @swimmer )
+    unless @swimmer
       flash[:error] = I18n.t(:invalid_action_request)
       redirect_back( fallback_location: root_path ) and return
     end
