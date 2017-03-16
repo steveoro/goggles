@@ -68,10 +68,18 @@ at the end to ensure that also the test DB is up-to-date.
 
     [rebuild=<0>|1]
 
-When rebuild is set to '1' the rake task 'db:rebuild_from_dump' is lanched at the
+    [skip_download=<0>|1]
+
+When 'rebuild' is set to '1' the rake task 'db:rebuild_from_dump' is lanched at the
 beginning for any DB that has to be modified.
 The default is to skip this phase, assuming local DBs are currently ready for the
 execution of the task.
+
+When 'skip_download' is set to '1' the whole process will skip the remote DB dump
+download phase to lighten the bandwidth occupancy. (The remote DB dump is several
+MBs in size, so it can take a bit and it can be quite demanding for on a non-LAN
+remote connection.)
+The default is obviously NOT to skip this phase.
 
 No migrations are run.
 It's up to you to have local and remote DB structures up-to-date.
@@ -92,14 +100,16 @@ It's up to you to have local and remote DB structures up-to-date.
     dev_filenames  = diff_filenames.select{ |subpathname| subpathname =~ /\d{12}dev_/ }
     any_filenames  = diff_filenames.reject{ |subpathname| prod_filenames.include?( subpathname ) || dev_filenames.include?( subpathname ) }
     rebuild        = ENV.include?("rebuild") && (ENV["rebuild"].to_i > 0)
+    skip_download  = ENV.include?("skip_download") && (ENV["skip_download"].to_i > 0)
 
     run_locally do
       puts "\r\n*** remote:db_diff_apply ***"
       puts "\r\nLOCAL staging preparation. If everything we'll be successful, 'prod' files will be also applied remotely."
       # Display some info:
-      puts "DB host (@localhost): #{db_host}"
-      puts "DB user (@localhost): #{db_user}"
-      puts "Rebuild phase.......: #{rebuild ? 'ENABLED' : '(skipped)'}"
+      puts "DB host (@localhost).....: #{ db_host }"
+      puts "DB user (@localhost).....: #{ db_user }"
+      puts "DB Dump Download phase...: #{ skip_download ? '(skipped)' : 'ENABLED' }"
+      puts "Rebuild phase............: #{ rebuild ? 'ENABLED' : '(skipped)' }"
       # Note that these arrays of names are used just to detect which destination
       # DBs are involved in the update. The original sorted list of files must be
       # used instead, if we want to honour the file order based on the timestamp
@@ -211,13 +221,13 @@ It's up to you to have local and remote DB structures up-to-date.
       local_rebuild_from_dump( DB_DUMP_LOCAL_PATH, 'development', db_config['test']['database'], db_host, db_user, db_pwd )
     end
 
-    puts "\r\nAlmost done: getting an updated remote PRODUCTION dump...\r\n"
+    unless skip_download
+      puts "\r\nAlmost done: getting an updated remote PRODUCTION dump...\r\n"
+      invoke "db:remote:sql_dump"
+    else
+      puts "\r\nRemote PRODUCTION dump download skipped by request.\r\nDone.\r\n"
+    end
   end
-  #-- -------------------------------------------------------------------------
-  #++
-
-
-  after "remote:db_diff_apply", "db:remote:sql_dump"
   #-- -------------------------------------------------------------------------
   #++
 
