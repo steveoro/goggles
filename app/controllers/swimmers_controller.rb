@@ -8,7 +8,7 @@ require 'wrappers/timing'
 
 = SwimmersController
 
-  - version:  6.011
+  - version:  6.093
   - author:   Steve A., Leega
 
 =end
@@ -220,7 +220,7 @@ class SwimmersController < ApplicationController
   # XXX WIP: A-B testing Best-timings view versions:
   # Radiography for a specified Swimmer id: "Best timings" tab rendering
   #
-  # Implementation using the SwimmerBestFinder (newest strategy class)
+  # Implementation using the SwimmerPersonalBestFinder (newest strategy class)
   #
   # == Params:
   # id: the swimmer id to be processed
@@ -229,7 +229,7 @@ class SwimmersController < ApplicationController
     @tab_title = I18n.t('radiography.best_timings_tab')
 
     if @swimmer.meeting_individual_results.count > 0
-      @best_finder = SwimmerBestFinder.new( @swimmer )
+      @best_finder = SwimmerPersonalBestFinder.new( @swimmer )
       @max_updated_at = find_last_updated_mir
     end
   end

@@ -52,7 +52,7 @@
 
           - if @individual_result_list.size > 0
             - pool_type = @individual_result_list.first.pool_type
-            - sbf = SwimmerBestFinder.new( @swimmer )
+            - sbf = SwimmerPersonalBestFinder.new( @swimmer )
 
           - @individual_result_list.each do |individual_result|
             - mir = MeetingIndividualResultDecorator.decorate( individual_result )
@@ -115,7 +115,7 @@
                   - else
                     = ''
                 %td.goggles-rightalign
-                  - meeting_best = sbf.get_best_for_meeting_event( @meeting, event_type, pool_type )
+                  - meeting_best = sbf.get_best_timing_for_meeting( @meeting, event_type, pool_type )
                   - if meeting_best
                     - if meeting_best.to_hundreds == mir.get_timing_instance.to_hundreds
                       %b= meeting_best.to_s

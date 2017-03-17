@@ -6,7 +6,7 @@ require 'common/validation_error_tools'
 
 = MeetingEventReservationMatrixCreator
 
- - Goggles framework vers.:  6.034
+ - Goggles framework vers.:  6.093
  - author: Steve A.
 
  Strategy class used to build-up a list of reservations plus a full matrix of rows
@@ -155,7 +155,7 @@ class MeetingEventReservationMatrixCreator < MeetingReservationMatrixProcessor
   def prepare_new_event_reservation( badge, event )
     # Retrieve last MIR (when possibile), to fill-in with suggested enrollment timing:
     swimmer = badge.swimmer
-    best_finder = SwimmerBestFinder.new( swimmer )
+    best_finder = SwimmerPersonalBestFinder.new( swimmer )
     possible_best = best_finder.get_best_for_event( event.event_type, @meeting.pool_types.first )
 
     # Check a similar event result, if seasonal best is not available:

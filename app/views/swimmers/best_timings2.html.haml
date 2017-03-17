@@ -29,7 +29,7 @@
                       %b= record_type.i18n_description
                 - pool_type.event_types.each do |event_type|
                   - involved_seasons = @best_finder.get_current_seasons_involved_into()
-                  - personal_best = @best_finder.get_best_for_event_result( event_type, pool_type )
+                  - personal_best = @best_finder.get_best_mir_for_event( event_type, pool_type )
                   - seasonal_best = @best_finder.get_involved_season_best_for_event( involved_seasons, event_type, pool_type )
                   - last_result   = @best_finder.get_involved_season_last_best_for_event( involved_seasons, event_type, pool_type )
                   -# We just need to check the existance of the personal best

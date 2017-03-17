@@ -10,7 +10,7 @@ require 'relay_swimmer_batch_updater'
 
 = MeetingsController
 
-  - version:  6.092
+  - version:  6.093
   - author:   Steve A.
 
 =end
@@ -89,7 +89,7 @@ class MeetingResultsController < ApplicationController
     # Edit existing row values:
     edited_rows.each do |key, value|
       passage_id = key.split('_').last
-      batch_updater.edit_existing_passage( passage_id, value )
+      batch_updater.edit_existing_passage!( passage_id, value )
     end
     # Create new rows:
     new_rows.each do |key, value|
@@ -97,7 +97,7 @@ class MeetingResultsController < ApplicationController
       passage_mode = key.split('_')[0]
       mir_id = key.split('_')[1]
       passage_type_id = key.split('_').last
-      batch_updater.create_new_passage( mir_id, passage_type_id, value ) if passage_mode == 'new' || inserted_mirs.include?( mir_id )
+      batch_updater.create_new_passage!( mir_id, passage_type_id, value ) if passage_mode == 'new' || inserted_mirs.include?( mir_id )
       inserted_mirs << mir_id
     end
 
