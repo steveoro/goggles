@@ -471,13 +471,19 @@ class MeetingReservationsController < ApplicationController
       # Signal also locally if any error occurred during setup:
       if creator.total_errors > 0
         flash[:error] = I18n.t('meeting_reservation.error_during_creation')
-      # Everything ok?
+      # Everything OK?
       # Only upon main reservation sheet creation, signal to each possible interested
       # user that now he/she may be able to use the newly reservation sheet:
-      elsif entity_simple_description != 'relay'
+      elsif (Rails.env == 'production') && (entity_simple_description != 'relay')
+        team_swimmers = @team_affiliation.badges.map{ |badge| badge.swimmer_id }
+        # Extract all the Team's gogglers:
+        team_users = User.where("swimmer_id IN (?)", team_swimmers)
+            .select(:id).map{ |user| user.id }
+            .reject{ |e| e == current_user.id }
+        # Get only the interested gogglers from the team:
         interested_users = @meeting.tags_by_user_list
             .map{ |tag| User.find(tag.remove('u').to_i) }
-            .select{ |user| user.id != current_user.id }
+            .select{ |user| team_users.include?( user.id ) }
         interested_users.each do |user|
           NewsletterMailer.custom_mail(
             user,

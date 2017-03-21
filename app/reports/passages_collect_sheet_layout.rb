@@ -14,7 +14,6 @@ class PassagesCollectSheetLayout
 
   AUTHOR_STRING = '--=[  Goggles  -o^o-  ]=-- / (p) 2013-2017' unless defined?(AUTHOR_STRING)
 
-
   # Prepares rendering options, default values and starts the rendering
   # process.
   #
@@ -48,6 +47,7 @@ class PassagesCollectSheetLayout
   #   rows associated to the linked meeting_event_id
   #
   def self.render( options )
+    Prawn::Font::AFM.hide_m17n_warning = true
 # TODO/FIXME detect max columns in advance for passages and build a multi-page document
 #      with layout orientation change to :landscape only for events which total length is > 400 m.
 #      (the :landscape pages must contain, in order, only the long distance event)
