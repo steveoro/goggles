@@ -6,7 +6,7 @@ require 'common/format'
 
 = TeamsController
 
-  - version:  6.002
+  - version:  6.094
   - author:   Steve A.
 
 =end
@@ -79,6 +79,7 @@ class TeamsController < ApplicationController
   #-- -------------------------------------------------------------------------
   #++
 
+
   # Radiography for a specified team id: "Best timings" tab rendering
   #
   # == Params:
@@ -86,7 +87,6 @@ class TeamsController < ApplicationController
   #
   def best_timings
     @tab_title = I18n.t('radiography.best_timings_tab')
-
     if @team.meeting_individual_results.count > 0
       @team_best_finder = TeamBestFinder.new( @team )
       @team_bests = @team_best_finder.split_categories( @team_best_finder.scan_for_distinct_bests )

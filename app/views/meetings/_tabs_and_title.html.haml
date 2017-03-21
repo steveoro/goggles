@@ -22,4 +22,4 @@
 
   - if current_user && TeamManagerValidator.any_reservations_for?( current_user, @meeting ) || ( TeamManagerValidator.is_reservation_manageable?( @meeting ) && TeamManagerValidator.can_manage?( current_user, @meeting ) )
     = show_tab_link( params, 'edit_events', t('meeting_reservation.manage_button_title'), |
-                     meeting_reservations_edit_events_path(id: @meeting.id) )             |
+                     meeting_reservations_show_path(id: @meeting.id) )                    |

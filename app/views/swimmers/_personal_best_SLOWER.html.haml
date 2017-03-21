@@ -9,5 +9,5 @@
               = pool_type.i18n_short
         .ghost-divider-vertical
   - @grid_builder.pool_types.each do |pool_type|
-    = render( partial: 'personal_bests_grid', locals: { pool_type: pool_type, grid_builder: @grid_builder } )
+    = render( partial: 'personal_bests_grid_SLOWER', locals: { pool_type: pool_type, grid_builder: @grid_builder } )
 .row.goggles-category-gap

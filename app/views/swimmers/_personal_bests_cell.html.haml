@@ -1,24 +1,23 @@
-- has_passages = ( record && record.meeting_individual_result && record.meeting_individual_result.passages.count > 0 )
+- has_passages = ( mir && mir.respond_to?(:passages) && mir.passages.count > 0 )
 %td
-  - if record
+  - if mir
     - if has_passages
-      .btn-link{ id: "passages#{record.meeting_individual_result.id}#{record_type_code}", 'data-toggle' => 'popover', 'data-trigger' => 'click', 'data-placement' => "top" }
-        %b= record.get_timing
+      .btn-link{ id: "passages#{ mir.id }#{ record_type_code }", 'data-toggle' => 'popover', 'data-trigger' => 'click', 'data-placement' => "top" }
+        %b= mir.respond_to?(:get_timing) ? mir.get_timing : mir.to_s
     - else
-      %b= record.get_timing
+      %b= mir.respond_to?(:get_timing) ? mir.get_timing : mir.to_s
       %br
-    - if record.meeting_individual_result && (sched_date = record.meeting_individual_result.get_scheduled_date).kind_of?(Date)
+    - if mir.respond_to?(:get_scheduled_date) && (sched_date = mir.get_scheduled_date).kind_of?(Date)
       = Format.a_date( sched_date )
       %br
-      = record.meeting_individual_result.meeting.decorate.get_linked_full_name
+      = mir.respond_to?(:meeting) ? mir.meeting.decorate.get_linked_full_name : '-'
     - else
       = '-'
-
 - if has_passages
   %script
-    var popContent = "#{ escape_javascript( render(partial: 'result_popover_passages', locals: {individual_result: record.meeting_individual_result})) }";
-    $("#passages#{record.meeting_individual_result.id}#{record_type_code}").popover({          |
-      title: "#{ escape_javascript(record.meeting_individual_result.get_timing.html_safe) }",  |
-      html: true,                                                                              |
-      content: popContent                                                                      |
-    });                                                                                        |
+    var popContent = "#{ escape_javascript( render(partial: 'result_popover_passages', locals: {individual_result: mir})) }";
+    $("#passages#{ mir.id }#{ record_type_code }").popover({        |
+      title: "#{ escape_javascript( mir.get_timing.html_safe ) }",  |
+      html: true,                                                   |
+      content: popContent                                           |
+    });                                                             |

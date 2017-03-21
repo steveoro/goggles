@@ -8,7 +8,7 @@ require 'wrappers/timing'
 
 = SwimmersController
 
-  - version:  6.093
+  - version:  6.094
   - author:   Steve A., Leega
 
 =end
@@ -178,6 +178,9 @@ class SwimmersController < ApplicationController
   # #-- -------------------------------------------------------------------------
   # #++
 
+# *****************************************************************************
+# XXX KEPT ONLY AS REFERENCE - New implementation (below) is 10-90msec faster
+# *****************************************************************************
 
   # Radiography for a specified swimmer id: "Best timings" tab rendering
   #
@@ -186,34 +189,34 @@ class SwimmersController < ApplicationController
   # == Params:
   # id: the swimmer id to be processed
   #
-  def best_timings
-    # --- "Best Timings" tab: ---
-    @tab_title = I18n.t('radiography.best_timings_tab')
-    current_season = Season.get_last_season_by_type( 'MASFIN' )
-
-    # Leega.
-    # TODO: Delegate to an AJAX function. I've removed the prevoius AJAX call
-    collector = PersonalBestCollector.new( @swimmer )
-
-    # Collect personal bests
-    collector.full_scan do |this, events_by_pool_type|
-      this.collect_from_all_category_results_having( events_by_pool_type, 'SPB' )
-    end
-
-    # Collect last result
-    collector.full_scan do |this, events_by_pool_type|
-      this.collect_last_results_having( events_by_pool_type, 'SLP' )
-    end
-
-    # Collect seasonal bests
-    collector.set_start_date( current_season.begin_date )
-    collector.set_end_date( current_season.end_date )
-    collector.full_scan do |this, events_by_pool_type|
-      this.collect_from_all_category_results_having( events_by_pool_type, 'SSB' )
-    end
-
-    @grid_builder = PersonalBestGridBuilder.new( collector )
-  end
+  # def best_timings # XXX SLOWER than implementation below
+    # # --- "Best Timings" tab: ---
+    # @tab_title = I18n.t('radiography.best_timings_tab')
+    # current_season = Season.get_last_season_by_type( 'MASFIN' )
+#
+    # # Leega.
+    # # TODO: Delegate to an AJAX function. I've removed the prevoius AJAX call
+    # collector = PersonalBestCollector.new( @swimmer )
+#
+    # # Collect personal bests
+    # collector.full_scan do |this, events_by_pool_type|
+      # this.collect_from_all_category_results_having( events_by_pool_type, 'SPB' )
+    # end
+#
+    # # Collect last result
+    # collector.full_scan do |this, events_by_pool_type|
+      # this.collect_last_results_having( events_by_pool_type, 'SLP' )
+    # end
+#
+    # # Collect seasonal bests
+    # collector.set_start_date( current_season.begin_date )
+    # collector.set_end_date( current_season.end_date )
+    # collector.full_scan do |this, events_by_pool_type|
+      # this.collect_from_all_category_results_having( events_by_pool_type, 'SSB' )
+    # end
+#
+    # @grid_builder = PersonalBestGridBuilder.new( collector )
+  # end
   #-- -------------------------------------------------------------------------
   #++
 
@@ -225,7 +228,7 @@ class SwimmersController < ApplicationController
   # == Params:
   # id: the swimmer id to be processed
   #
-  def best_timings2
+  def best_timings
     @tab_title = I18n.t('radiography.best_timings_tab')
 
     if @swimmer.meeting_individual_results.count > 0

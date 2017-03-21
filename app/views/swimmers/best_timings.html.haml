@@ -1,3 +1,40 @@
 = render( partial: 'tabs_and_title' )
-- cache( cache_key_for_swimmer( 'best_timings', @swimmer.id, @max_updated_at ) ) do
-  = render( partial: 'personal_best' )
+- if @best_finder
+  - cache( cache_key_for_swimmer( 'best_timings', @swimmer.id, @max_updated_at ) ) do
+    .col-xs-12.goggles-category-gap#pageTop
+      -# --- Sub-legend for each gender + pool-type
+      .navbar
+        %ul.nav.nav-pills
+          - PoolType.only_for_meetings.each do |pool_type|
+            %li
+              = link_to("##{pool_type.code}", {'data-turbolinks'=>'false', class: 'goggles-nav-compact'}) do
+                = pool_type.i18n_short
+          .ghost-divider-vertical
+    - PoolType.only_for_meetings.each do |pool_type|
+      .col-xs-12.goggles-category-gap{ 'id' => "#{pool_type.code}" }
+        %h3
+          = "#{pool_type.i18n_description}"
+          = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+            = image_tag('bullet_arrow_up.png')
+      .col-xs-12
+        %table.table.table-striped.table-bordered.table-hover.table-condensed
+          %tbody
+            %tr{'class'=>'info'}
+              %td.goggles-rightalign
+              - RecordType.for_swimmers.each do |record_type|
+                %td.goggles-centeralign
+                  %b= record_type.i18n_description
+            - pool_type.event_types.each do |event_type|
+              - involved_seasons = @best_finder.get_current_seasons_involved_into()
+              - personal_best = @best_finder.get_best_mir_for_event( event_type, pool_type )
+              - seasonal_best = @best_finder.get_involved_season_best_mir_for_event( involved_seasons, event_type, pool_type )
+              - last_result   = @best_finder.get_last_mir_for_event( event_type, pool_type )
+              -# We just need to check the existance of the personal best
+              - if personal_best
+                %tr
+                  %td.goggles-rightalign
+                    %b= event_type.i18n_short
+                  = render( partial: 'personal_bests_cell', locals: { mir: personal_best, record_type_code: 'BEST' } )
+                  = render( partial: 'personal_bests_cell', locals: { mir: seasonal_best, record_type_code: 'SEA' } )
+                  = render( partial: 'personal_bests_cell', locals: { mir: last_result, record_type_code: 'LAST' } )
+    .goggles-category-gap
