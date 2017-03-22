@@ -51,8 +51,12 @@ class MeetingResultsController < ApplicationController
     @editable_stuff = @meeting.meeting_individual_results
         .sort_by_event_and_timing
         .joins( :event_type, :pool_type )
-        .where(['meeting_individual_results.team_id = ? and event_types.length_in_meters > pool_types.length_in_meters', @managed_team_ids])
+        .where( [
+          '(meeting_individual_results.team_id IN (?)) AND (event_types.length_in_meters > pool_types.length_in_meters)',
+          @managed_team_ids
+        ] )
         .includes( :passages )
+        .to_a
         .map{ |mir| { mir => mir.passages } }
     # TODO
     # Should order by start-list.

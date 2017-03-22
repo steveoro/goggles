@@ -41,7 +41,7 @@
                 .form-group
                   = text_field_tag(                                             |
                     "timing_#{ mrr.id }_#{ relay_swimmer.relay_order }",        |
-                    relay_swimmer.get_timing,                                   |
+                    relay_swimmer.get_timing != "00\"00" ? relay_swimmer.get_timing : nil, |
                     'class' => "input-mini text-right timing"                   |
                   )                                                             |
       .col-xs-12.goggles-category-gap
