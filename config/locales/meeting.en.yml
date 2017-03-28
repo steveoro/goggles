@@ -70,7 +70,7 @@ en:
       missing_swimmer_id: 'no Swimmer or invalid id selected.'
       missing_team_id: 'no Team or invalid id selected.'
       invalid_team_manager: 'you are not a valid Team manager for this season or meeting!'
-      invalid_team_manager_or_no_swimmer: 'you are not a valid Team manager for this season or meeting, or you do not have an associated swimmer that can attend this meeting! (Or, perhaps, the meeting is already closed?)'
+      invalid_team_manager_or_no_swimmer: 'you are not a valid Team manager for this season or meeting, or you do not have an associated swimmer that can attend this meeting!'
       meeting_already_closed: "The chosen meeting is closed and all results have been already acquired."
 
   meeting_session:

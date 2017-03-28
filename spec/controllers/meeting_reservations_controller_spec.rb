@@ -14,13 +14,13 @@ RSpec.describe MeetingReservationsController, type: :controller do
     # at least a meeting with a far-fetched header date:
     TeamManager.all
       .select{ |tm| tm.team_affiliation.season.meetings.where("header_date > ?", Date.today + 1).count > 0 }
-      .sort{ rand - 0.5 }.first
+      .sample
   end
 
   let(:random_manageable_meeting_id) do
     meeting = team_manager.team_affiliation.season
       .meetings.where("header_date > ?", Date.today + 1)
-      .sort{rand - 0.5}.first
+      .sample
     expect( meeting.meeting_individual_results.count ).to eq(0)
     expect( meeting.meeting_relay_results.count ).to eq(0)
     meeting.id
@@ -30,7 +30,7 @@ RSpec.describe MeetingReservationsController, type: :controller do
     meeting = team_manager.team_affiliation.season
       .meetings.where("header_date > ?", Date.today + 1)
       .select{ |m| m.meeting_reservations.count == 0 }
-      .sort{rand - 0.5}.first
+      .sample
     expect( meeting.meeting_individual_results.count ).to eq(0)
     expect( meeting.meeting_reservations.count ).to eq(0)
     meeting.id
@@ -44,25 +44,48 @@ RSpec.describe MeetingReservationsController, type: :controller do
         ( tm.team_affiliation.season.meetings.where("header_date < ?", Date.today - 30).count > 0 ) &&
         ( tm.team_affiliation.season.meetings.any?{|m| m.meeting_individual_results.count > 0 } )
       }
-      .sort{ rand - 0.5 }.first
+      .sample
   end
 
   let(:unmanageable_meeting_with_results) do
     meeting = team_manager_with_results.team_affiliation.season
       .meetings
       .select{ |m| (m.meeting_reservations.count == 0) && (m.meeting_individual_results.count > 0) }
-      .sort{rand - 0.5}
-      .first
+      .sample
     expect( meeting.meeting_individual_results.count ).to be > 0
     expect( meeting.meeting_reservations.count ).to eq(0)
     meeting
+  end
+
+  let(:team_manager_with_results_and_res) do
+    # Choose a random team manager, whose affiliation's team has
+    # at least a meeting with (some) results acquired and some reservation headers:
+    team_manager = TeamManager.all
+      .select{ |tm|
+        MeetingReservation.where( team_id: tm.team_affiliation.team_id )
+          .any?{ |res| res.meeting.meeting_individual_results.count > 0 }
+      }
+      .sample
+    expect( team_manager ).to be_a( TeamManager )
+    team_manager
+  end
+
+  let(:old_managed_meeting_with_results) do
+    reservation = MeetingReservation.where( team_id: team_manager_with_results_and_res.team_affiliation.team_id )
+      .select( :meeting_id ).distinct.to_a
+      .select{ |res| res.meeting.meeting_individual_results.count > 0 }
+      .sample
+    expect( reservation ).to be_a( MeetingReservation )
+    expect( reservation.meeting ).to be_a( Meeting )
+    expect( reservation.meeting.meeting_individual_results.count ).to be > 0
+    reservation.meeting
   end
 
   let(:random_reservation)          { MeetingEventReservation.where( is_doing_this: true ).limit(1000).sort{rand - 0.5}.first }
   let(:meeting_with_reservation_id) { random_reservation.meeting_id }
   let(:team_manager_with_resevations) do
     TeamManager.where( team_affiliation_id: random_reservation.badge.team_affiliation_id )
-      .sort{ rand - 0.5 }.first
+      .sample
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -402,9 +425,9 @@ RSpec.describe MeetingReservationsController, type: :controller do
 
     describe "GET #show" do
       context "for a logged-in user manager," do
-        it "sets the flash error to :no_detail_to_process" do
+        it "sets the flash error to :invalid_team_manager_or_no_swimmer" do
           get :show, params: { id: unmanageable_meeting_with_results.id }
-          expect(flash[:error]).to include( I18n.t('meeting.errors.meeting_already_closed') )
+          expect(flash[:error]).to include( I18n.t('meeting.errors.invalid_team_manager_or_no_swimmer') )
         end
         it "redirects to meetings/current page" do
           get :show, params: { id: unmanageable_meeting_with_results.id }
@@ -417,13 +440,75 @@ RSpec.describe MeetingReservationsController, type: :controller do
 
     describe "GET #printout_event_sheet" do
       context "for a logged-in user manager," do
-        it "sets the flash error to :no_detail_to_process" do
+        it "sets the flash error to :invalid_team_manager_or_no_swimmer" do
           get :printout_event_sheet, params: { id: unmanageable_meeting_with_results.id }
-          expect(flash[:error]).to include( I18n.t('meeting.errors.meeting_already_closed') )
+          expect(flash[:error]).to include( I18n.t('meeting.errors.invalid_team_manager_or_no_swimmer') )
         end
         it "redirects to meetings/current page" do
           get :printout_event_sheet, params: { id: unmanageable_meeting_with_results.id }
           expect(response).to redirect_to( meetings_current_path )
+        end
+      end
+    end
+    #-- -----------------------------------------------------------------------
+    #++
+  end
+
+
+  context "for any OLD, already CLOSED (but MANAGED) meeting," do
+    before :each do
+      login_user( team_manager_with_results_and_res.user )
+    end
+
+    describe "GET #edit_events" do
+      context "for a logged-in user manager," do
+        it "sets the flash error to :meeting_already_closed" do
+          get :edit_events, params: { id: old_managed_meeting_with_results.id }
+          expect(flash[:error]).to include( I18n.t('meeting.errors.meeting_already_closed') )
+        end
+        it "redirects to the #show page" do
+# DEBUG
+#          puts "\r\n--- team_manager_with_results: #{ team_manager_with_results.inspect }"
+#          puts "\r\n--- unmanageable_meeting_with_results.id: #{ unmanageable_meeting_with_results.id }"
+          get :edit_events, params: { id: old_managed_meeting_with_results.id }
+          expect(response).to redirect_to( meeting_reservations_show_path( id: old_managed_meeting_with_results.id ) )
+        end
+      end
+    end
+    #-- -----------------------------------------------------------------------
+    #++
+
+    describe "GET #edit_relays" do
+      context "for a logged-in user manager," do
+        it "sets the flash error to :meeting_already_closed" do
+          get :edit_relays, params: { id: old_managed_meeting_with_results.id }
+          expect(flash[:error]).to include( I18n.t('meeting.errors.meeting_already_closed') )
+        end
+        it "redirects to the #show page" do
+          get :edit_relays, params: { id: old_managed_meeting_with_results.id }
+          expect(response).to redirect_to( meeting_reservations_show_path( id: old_managed_meeting_with_results.id ) )
+        end
+      end
+    end
+    #-- -----------------------------------------------------------------------
+    #++
+
+    describe "GET #show" do
+      context "for a logged-in user manager," do
+        it "accepts the request" do
+          get :show, params: { id: old_managed_meeting_with_results.id }
+          expect(response).to have_http_status(:success)
+        end
+      end
+    end
+    #-- -----------------------------------------------------------------------
+    #++
+
+    describe "GET #printout_event_sheet" do
+      context "for a logged-in user manager," do
+        it "accepts the request" do
+          get :printout_event_sheet, params: { id: old_managed_meeting_with_results.id }
+          expect(response).to have_http_status(:success)
         end
       end
     end

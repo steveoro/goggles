@@ -15,8 +15,10 @@
     = show_tab_link( params, 'show_stats', t('stats'), meeting_show_stats_path( id: @meeting.id ) )
 
   - if @meeting.are_results_acquired
-    = show_tab_link( params, 'show_team_results', t('team_results'), (@team ? meeting_show_team_results_path(id: @meeting.id, team_id: @team.id) : '#') )
-    = show_tab_link( params, 'show_swimmer_results', t('swimmer_results'), (@swimmer && @team ? meeting_show_swimmer_results_path(id: @meeting.id, team_id: @team.id, swimmer_id: @swimmer.id) : '#') )
+    - can_show_team_results    = @team && ( @meeting.meeting_individual_results.where( team_id: @team.id ).count > 0 )
+    - can_show_swimmer_results = @team && @swimmer && ( @meeting.meeting_individual_results.where( swimmer_id: @swimmer.id ).count > 0 )
+    = show_tab_link( params, 'show_team_results', t('team_results'), (can_show_team_results ? meeting_show_team_results_path(id: @meeting.id, team_id: @team.id) : '#') )
+    = show_tab_link( params, 'show_swimmer_results', t('swimmer_results'), (can_show_swimmer_results ? meeting_show_swimmer_results_path(id: @meeting.id, team_id: @team.id, swimmer_id: @swimmer.id) : '#') )
     - if TeamManagerValidator.any_manageable_results_for?( current_user, @meeting )
       = show_tab_link( params, 'edit_passages', t('meeting.passages'), meeting_results_edit_passages_path( id: @meeting.id ) )
 

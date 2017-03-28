@@ -11,7 +11,7 @@ require 'reservations_csi_2_csv'
 
 = MeetingReservationsController
 
-  - version:  6.084
+  - version:  6.098
   - author:   Steve A.
 
 =end
@@ -22,6 +22,8 @@ class MeetingReservationsController < ApplicationController
 
   # Parse parameters:
   before_action :verify_meeting_and_association
+
+  before_action :redirect_to_show_if_meeting_closed, except: [:show, :printout_event_sheet, :export_csi_csv]
 
 
   # Edits the matrix of reservations for the selected meeting, for the whole team
@@ -612,14 +614,6 @@ class MeetingReservationsController < ApplicationController
     # Detect if there's a swimmer associated:
     set_swimmer_from_current_user
 
-    # Avoid creating useless new reservations for already closed meetings,
-    # by redirecting elsewhere:
-    if ( MeetingReservation.where( meeting_id: @meeting.id ).count == 0 ) &&
-       ( @meeting.meeting_individual_results.count > 0 || @meeting.are_results_acquired? )
-      flash[:error] = I18n.t(:invalid_action_request) + ' - ' + I18n.t('meeting.errors.meeting_already_closed')
-      redirect_to( meetings_current_path() ) and return
-    end
-
     # Bail out unless the user is a valid team manager, or if a swimmer is checking
     # a meeting w/ reservations that do not belong to him/her:
     unless ( @is_valid_team_manager ||
@@ -655,6 +649,22 @@ class MeetingReservationsController < ApplicationController
       @team_affiliation = enabled_badge.team_affiliation
     end
     @team = @team_affiliation.team
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Redirects to #show if the current meeting has already any results acquired.
+  # This is used to skip the useless creation of any additional reservation row
+  # for already acquired/consolidated meetings.
+  #
+  def redirect_to_show_if_meeting_closed
+    # Avoid creating useless new reservations for already closed meetings,
+    # by redirecting to #show:
+    if ( @meeting.meeting_individual_results.count > 0 || @meeting.are_results_acquired? )
+      flash[:error] = I18n.t('meeting.errors.meeting_already_closed')
+      redirect_to( meeting_reservations_show_path( id: @meeting.id ) ) and return
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
