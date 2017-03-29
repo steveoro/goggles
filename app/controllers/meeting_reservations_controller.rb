@@ -302,7 +302,7 @@ class MeetingReservationsController < ApplicationController
       flash[:error] = I18n.t('meeting_reservation.export_csi_csv_invalid_meeting_error')
       redirect_to( meetings_current_path() ) and return
     end
-    csi_2_csv = ReservationsCsi2Csv.new(@meeting)
+    csi_2_csv = ReservationsCsi2Csv.new( @meeting, @team )
     csi_2_csv.collect()
 
     if csi_2_csv.csi_data_rows.size < 1
