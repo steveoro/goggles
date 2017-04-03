@@ -61,7 +61,7 @@ class ChampionshipsController < ApplicationController
     championship_calculator = ChampionshipRankingCalculator.new( @season )
     @championship_ranking = championship_calculator.get_season_ranking
     @ranking_updated_at = if @season.meeting_individual_results.count > 0
-      @season.meeting_individual_results.select( "meeting_individual_results.updated_at" ).order(:updated_at).last.to_i
+      @season.meeting_individual_results.select( "meeting_individual_results.updated_at" ).order(:updated_at).last.updated_at.to_i
     else
       0
     end
@@ -99,7 +99,7 @@ class ChampionshipsController < ApplicationController
     @event_types = @season.event_types.are_not_relays.distinct.sort_by_style
     @category_types = @season.category_types.are_not_relays.sort_by_age
     @ranking_updated_at = @season.meeting_individual_results.count > 0 ?
-      @season.meeting_individual_results.select( "meeting_individual_results.updated_at" ).order(:updated_at).last.to_i :
+      @season.meeting_individual_results.select( "meeting_individual_results.updated_at" ).order(:updated_at).last.updated_at.to_i :
       0
 
     timing_converter = TimingCourseConverter.new( @season )
@@ -181,7 +181,7 @@ class ChampionshipsController < ApplicationController
 
     # Manage updates for cache
     @ranking_updated_at = @season.meeting_individual_results.count > 0 ?
-      @season.meeting_individual_results.select( "meeting_individual_results.updated_at" ).order(:updated_at).last.to_i :
+      @season.meeting_individual_results.select( "meeting_individual_results.updated_at" ).order(:updated_at).last.updated_at.to_i :
       0
   end
 

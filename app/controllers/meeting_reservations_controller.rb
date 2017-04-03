@@ -204,6 +204,7 @@ class MeetingReservationsController < ApplicationController
         # TODO WE NEED A DIFFERENT LAYOUT FOR THE RELAYS
         @reservations_relays[ event.id ] = MeetingRelayReservation.where(
           meeting_event_id: event.id,
+          team_id: @team.id,
           is_doing_this:    true
         ).joins(:meeting_session, :meeting_event, :event_type, :swimmer)
           .includes(:meeting_session, :meeting_event, :event_type, :swimmer)
@@ -214,6 +215,7 @@ class MeetingReservationsController < ApplicationController
       else
         @reservations_events[ event.id ] = MeetingEventReservation.where(
           meeting_event_id: event.id,
+          team_id: @team.id,
           is_doing_this:    true
         ).joins(:meeting_session, :meeting_event, :category_type, :gender_type, :event_type, :swimmer)
           .includes(:meeting_session, :meeting_event, :category_type, :gender_type, :event_type, :swimmer)
@@ -229,7 +231,7 @@ class MeetingReservationsController < ApplicationController
       .uniq
     @meeting_reservations = MeetingReservation.where(
       meeting_id:    @meeting.id,
-      team_id:       @team_affiliation.team_id,
+      team_id:       @team.id,
       is_not_coming: false,
       swimmer_id:    all_swimmer_ids
     ).joins(:swimmer).includes(:swimmer)
@@ -271,7 +273,7 @@ class MeetingReservationsController < ApplicationController
       meta_info_subject:    'passages collection model sheet printout',
       meta_info_keywords:   "Goggles, #{base_filename}'",
       meeting:              @meeting,
-      team:                 @team_affiliation.team,
+      team:                 @team,
       events:               @events,
       meeting_reservations: @meeting_reservations,
       reservations_events:  @reservations_events,
@@ -409,6 +411,7 @@ class MeetingReservationsController < ApplicationController
     @meeting_reservations.each do |reservation|
       @reservations_events[ reservation.id ] = MeetingEventReservation.where(
           meeting_id: meeting.id,
+          team_id: team_affiliation.team_id,
           swimmer_id: reservation.swimmer_id
       ).joins(:meeting_session, :meeting_event, :event_type)
         .includes(:meeting_session, :meeting_event, :event_type)
@@ -440,6 +443,7 @@ class MeetingReservationsController < ApplicationController
     @meeting_reservations.each do |reservation|
       @reservations_relays[ reservation.id ] = MeetingRelayReservation.where(
           meeting_id: meeting.id,
+          team_id: team_affiliation.team_id,
           swimmer_id: reservation.swimmer_id
       ).joins(:meeting_session, :meeting_event, :event_type)
         .includes(:meeting_session, :meeting_event, :event_type)
@@ -477,6 +481,10 @@ class MeetingReservationsController < ApplicationController
       # Only upon main reservation sheet creation, signal to each possible interested
       # user that now he/she may be able to use the newly reservation sheet:
       elsif (Rails.env == 'production') && (entity_simple_description != 'relay')
+        # Force cache update in production (generated development script doesn't really need this)
+        # by updating the meeting #updated_at attribute, in order to expire the cache key:
+        @meeting.touch
+        # Prepare a list of affiliated swimmers (then, search the gogglers):
         team_swimmers = @team_affiliation.badges.map{ |badge| badge.swimmer_id }
         # Extract all the Team's gogglers:
         team_users = User.where("swimmer_id IN (?)", team_swimmers)
@@ -530,6 +538,9 @@ class MeetingReservationsController < ApplicationController
         flash[:error] = I18n.t('meeting_reservation.error_during_save')
       else
         flash[:info] = I18n.t('meeting_reservation.changes_saved')
+        # Force cache update in production (generated development script doesn't really need this)
+        # by updating the meeting #updated_at attribute, in order to expire the cache key:
+        @meeting.touch
       end
     end
   end
