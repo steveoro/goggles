@@ -9,7 +9,7 @@ require 'wrappers/timing'
 
 = MeetingsController
 
-  - version:  6.088
+  - version:  6.099
   - author:   Steve A.
 
 =end
@@ -466,8 +466,8 @@ class MeetingsController < ApplicationController
     end
 
     # Get a timestamp for the cache key:
-    max_mir_updated_at = mir.count > 0 ? mir.select( "meeting_individual_results.updated_at" ).max.updated_at.to_i : 0
-    max_mrr_updated_at = mrr.count > 0 ? mrr.select( "meeting_relay_results.updated_at" ).max.updated_at.to_i : 0
+    max_mir_updated_at = mir.count > 0 ? mir.select( "meeting_individual_results.updated_at" ).order(:updated_at).last.to_i : 0
+    max_mrr_updated_at = mrr.count > 0 ? mrr.select( "meeting_relay_results.updated_at" ).order(:updated_at).last.to_i : 0
     @max_mir_updated_at = max_mir_updated_at >= max_mrr_updated_at ? max_mir_updated_at : max_mrr_updated_at
   end
   #-- -------------------------------------------------------------------------
@@ -494,7 +494,7 @@ class MeetingsController < ApplicationController
     end
 
     # Get a timestamp for the cache key:
-    @max_mir_updated_at = @individual_result_list.select( "meeting_individual_results.updated_at" ).max.updated_at.to_i
+    @max_mir_updated_at = @individual_result_list.select( "meeting_individual_results.updated_at" ).order(:updated_at).last.to_i
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -622,7 +622,7 @@ class MeetingsController < ApplicationController
   #
   def get_timestamp_from_relation_chain( relation_to_send = :meeting_individual_results )
     if @meeting.send( relation_to_send ).count > 0
-      timestamp = @meeting.send( relation_to_send ).select(  "#{ relation_to_send }.updated_at"  ).max.updated_at.to_i
+      timestamp = @meeting.send( relation_to_send ).select(  "#{ relation_to_send }.updated_at"  ).order(:updated_at).last.to_i
       timestamp > @meeting.updated_at.to_i ? timestamp : @meeting.updated_at.to_i
     else
       @meeting.updated_at.to_i
