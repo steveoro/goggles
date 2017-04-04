@@ -2,35 +2,30 @@ require 'rails_helper'
 
 
 RSpec.describe MeetingReservationsController, type: :controller do
-  # We rely directly on the existing seeds to speed up this test.
-  # Alternatively, we could:
-  # - Choose/Create a user
-  # - Create managed affiliations if missing
-  # - Choose an existing Meeting that can handle reservations
-  # - (Assert the user/manager should manage season with that reservations
-
   let(:team_manager) do
     # Choose the first, random team manager, whose affiliation has
     # at least a meeting with a far-fetched header date:
     TeamManager.all
-      .select{ |tm| tm.team_affiliation.season.meetings.where("header_date > ?", Date.today + 1).count > 0 }
+      .select{ |tm| tm.team_affiliation.season.end_date > Date.today + 1 }
       .sample
   end
 
-  let(:random_manageable_meeting_id) do
-    meeting = team_manager.team_affiliation.season
-      .meetings.where("header_date > ?", Date.today + 1)
-      .sample
-    expect( meeting.meeting_individual_results.count ).to eq(0)
-    expect( meeting.meeting_relay_results.count ).to eq(0)
-    meeting.id
+  let(:random_manageable_meeting) do
+    create(
+      :meeting,
+      season: team_manager.team_affiliation.season,
+      header_date: Date.today + 7
+    )
   end
 
   let(:manageable_and_unreserved_meeting_id) do
-    meeting = team_manager.team_affiliation.season
-      .meetings.where("header_date > ?", Date.today + 1)
-      .select{ |m| m.meeting_reservations.count == 0 }
-      .sample
+    meeting = random_manageable_meeting
+    meeting_session = create(
+      :meeting_session,
+      meeting: meeting,
+      scheduled_date: Date.today + 7
+    )
+    create( :meeting_event_individual, meeting_session: meeting_session )
     expect( meeting.meeting_individual_results.count ).to eq(0)
     expect( meeting.meeting_reservations.count ).to eq(0)
     meeting.id
@@ -62,7 +57,7 @@ RSpec.describe MeetingReservationsController, type: :controller do
     # at least a meeting with (some) results acquired and some reservation headers:
     team_manager = TeamManager.all
       .select{ |tm|
-        MeetingReservation.where( team_id: tm.team_affiliation.team_id )
+        MeetingEventReservation.where( team_id: tm.team_affiliation.team_id )
           .any?{ |res| res.meeting.meeting_individual_results.count > 0 }
       }
       .sample
@@ -71,11 +66,11 @@ RSpec.describe MeetingReservationsController, type: :controller do
   end
 
   let(:old_managed_meeting_with_results) do
-    reservation = MeetingReservation.where( team_id: team_manager_with_results_and_res.team_affiliation.team_id )
+    reservation = MeetingEventReservation.where( team_id: team_manager_with_results_and_res.team_affiliation.team_id )
       .select( :meeting_id ).distinct.to_a
       .select{ |res| res.meeting.meeting_individual_results.count > 0 }
       .sample
-    expect( reservation ).to be_a( MeetingReservation )
+    expect( reservation ).to be_a( MeetingEventReservation )
     expect( reservation.meeting ).to be_a( Meeting )
     expect( reservation.meeting.meeting_individual_results.count ).to be > 0
     reservation.meeting
@@ -106,7 +101,7 @@ RSpec.describe MeetingReservationsController, type: :controller do
           login_user()
         end
         it "redirects to meetings/current page" do
-          get :edit_events, params: { id: random_manageable_meeting_id }
+          get :edit_events, params: { id: manageable_and_unreserved_meeting_id }
           expect(response).to redirect_to( meetings_current_path )
         end
       end
@@ -116,7 +111,7 @@ RSpec.describe MeetingReservationsController, type: :controller do
           login_user( team_manager.user )
         end
         it "returns http success" do
-          get :edit_events, params: { id: random_manageable_meeting_id }
+          get :edit_events, params: { id: manageable_and_unreserved_meeting_id }
           expect(response).to have_http_status(:success)
         end
       end
@@ -139,7 +134,7 @@ RSpec.describe MeetingReservationsController, type: :controller do
           login_user()
         end
         it "redirects to the Login page" do
-          post :update_events, params: { id: random_manageable_meeting_id }
+          post :update_events, params: { id: manageable_and_unreserved_meeting_id }
           expect(response).to redirect_to( meetings_current_path )
         end
       end
@@ -149,8 +144,8 @@ RSpec.describe MeetingReservationsController, type: :controller do
           login_user( team_manager.user )
         end
         it "redirects to #edit_events" do
-          post :update_events, params: { id: random_manageable_meeting_id }
-          expect(response).to redirect_to( meeting_reservations_edit_events_path(id: random_manageable_meeting_id) )
+          post :update_events, params: { id: manageable_and_unreserved_meeting_id }
+          expect(response).to redirect_to( meeting_reservations_edit_events_path(id: manageable_and_unreserved_meeting_id) )
         end
       end
 
@@ -172,7 +167,7 @@ RSpec.describe MeetingReservationsController, type: :controller do
           login_user()
         end
         it "redirects to meetings/current page" do
-          get :edit_relays, params: { id: random_manageable_meeting_id }
+          get :edit_relays, params: { id: manageable_and_unreserved_meeting_id }
           expect(response).to redirect_to( meetings_current_path )
         end
       end
@@ -184,8 +179,8 @@ RSpec.describe MeetingReservationsController, type: :controller do
         it "returns http success" do
 # DEBUG
 #          puts "\r\n--- team_manager: #{ team_manager.inspect }"
-#          puts "\r\n--- random_manageable_meeting_id: #{ random_manageable_meeting_id }"
-          get :edit_relays, params: { id: random_manageable_meeting_id }
+#          puts "\r\n--- manageable_and_unreserved_meeting_id: #{ manageable_and_unreserved_meeting_id }"
+          get :edit_relays, params: { id: manageable_and_unreserved_meeting_id }
           expect(response).to have_http_status(:success)
         end
       end
@@ -208,7 +203,7 @@ RSpec.describe MeetingReservationsController, type: :controller do
           login_user()
         end
         it "redirects to the Login page" do
-          post :update_relays, params: { id: random_manageable_meeting_id }
+          post :update_relays, params: { id: manageable_and_unreserved_meeting_id }
           expect(response).to redirect_to( meetings_current_path )
         end
       end
@@ -218,8 +213,8 @@ RSpec.describe MeetingReservationsController, type: :controller do
           login_user( team_manager.user )
         end
         it "redirects to #edit_events" do
-          post :update_relays, params: { id: random_manageable_meeting_id }
-          expect(response).to redirect_to( meeting_reservations_edit_relays_path(id: random_manageable_meeting_id) )
+          post :update_relays, params: { id: manageable_and_unreserved_meeting_id }
+          expect(response).to redirect_to( meeting_reservations_edit_relays_path(id: manageable_and_unreserved_meeting_id) )
         end
       end
 
@@ -241,7 +236,7 @@ RSpec.describe MeetingReservationsController, type: :controller do
           login_user()
         end
         it "redirects to meetings#current" do
-          get :show, params: { id: random_manageable_meeting_id }
+          get :show, params: { id: manageable_and_unreserved_meeting_id }
           expect(response).to redirect_to( meetings_current_path )
         end
       end
@@ -289,7 +284,7 @@ RSpec.describe MeetingReservationsController, type: :controller do
           login_user()
         end
         it "redirects to meetings#current" do
-          get :printout_event_sheet, params: { id: random_manageable_meeting_id }
+          get :printout_event_sheet, params: { id: manageable_and_unreserved_meeting_id }
           expect(response).to redirect_to( meetings_current_path )
         end
       end
@@ -334,7 +329,7 @@ RSpec.describe MeetingReservationsController, type: :controller do
           login_user()
         end
         it "redirects to meetings/current page" do
-          get :relayometer, params: { id: random_manageable_meeting_id }
+          get :relayometer, params: { id: manageable_and_unreserved_meeting_id }
           expect(response).to redirect_to( meetings_current_path )
         end
       end
@@ -344,7 +339,7 @@ RSpec.describe MeetingReservationsController, type: :controller do
           login_user( team_manager.user )
         end
         it "returns http success" do
-          get :relayometer, params: { id: random_manageable_meeting_id }
+          get :relayometer, params: { id: manageable_and_unreserved_meeting_id }
           expect(response).to have_http_status(:success)
         end
       end
@@ -367,7 +362,7 @@ RSpec.describe MeetingReservationsController, type: :controller do
           login_user()
         end
         it "redirects to meetings/current page" do
-          post :relayometer, params: { id: random_manageable_meeting_id }
+          post :relayometer, params: { id: manageable_and_unreserved_meeting_id }
           expect(response).to redirect_to( meetings_current_path )
         end
       end
@@ -377,7 +372,7 @@ RSpec.describe MeetingReservationsController, type: :controller do
           login_user( team_manager.user )
         end
         it "returns http success" do
-          post :relayometer, params: { id: random_manageable_meeting_id }
+          post :relayometer, params: { id: manageable_and_unreserved_meeting_id }
           expect(response).to have_http_status(:success)
         end
       end
@@ -507,6 +502,7 @@ RSpec.describe MeetingReservationsController, type: :controller do
     describe "GET #printout_event_sheet" do
       context "for a logged-in user manager," do
         it "accepts the request" do
+          expect( old_managed_meeting_with_results.meeting_individual_results.count ).to be > 0
           get :printout_event_sheet, params: { id: old_managed_meeting_with_results.id }
           expect(response).to have_http_status(:success)
         end
