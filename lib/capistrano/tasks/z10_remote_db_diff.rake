@@ -3,7 +3,7 @@
 # == Capistrano helper tasks ==
 #
 # - author: Steve A.
-# - vers. : 6.083
+# - vers. : 6.099
 #
 # This requires Capistrano v. >= 3.1
 
@@ -253,11 +253,11 @@ It's up to you to have local and remote DB structures up-to-date.
       filenames.each do |filename|
         if db_dest_names.instance_of?( Array )      # Multi DB apply:
           db_dest_names.each do |db_name|
-            execute_file_or_exit( filename, config_name, db_host, db_user, db_pwd, db_name )
+            execute_file_or_exit( filename, db_host, db_user, db_pwd, db_name )
           end
                                                     # Single DB apply:
         else
-          execute_file_or_exit( filename, db_dest_names, db_host, db_user, db_pwd, db_dest_names )
+          execute_file_or_exit( filename, db_host, db_user, db_pwd, db_dest_names )
         end
       end
     end
@@ -267,8 +267,8 @@ It's up to you to have local and remote DB structures up-to-date.
   # Execute the specified SQL file given the parameters and create an error log
   # in order to check at the end the standard error output for any result.
   #
-  def execute_file_or_exit( filename, config_name, db_host, db_user, db_pwd, db_name )
-    puts "\r\nExecuting '#{filename}' on #{config_name} DB (#{db_name})..."
+  def execute_file_or_exit( filename, db_host, db_user, db_pwd, db_name )
+    puts "\r\nExecuting '#{filename}' on DB #{db_name}..."
     stderr_file_name  = File.join(DB_DIFFS_NEW_PATH, 'std_err_log.txt')
     run_locally do
       # Execute the file, creating an error log:
