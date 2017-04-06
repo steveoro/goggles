@@ -80,7 +80,30 @@ class TeamsController < ApplicationController
   #++
 
 
-  # Radiography for a specified team id: "Best timings" tab rendering
+  # Team Radiography - Pre-computed "Best timings" (RecordType: TTB)
+  #
+  # == Params:
+  # id: the team id to be processed
+  #
+  def precalc_best_timings
+    @tab_title = I18n.t('radiography.precalc_best_timings_tab')
+    if @team.meeting_individual_results.count > 0
+      @max_updated_at = find_last_updated_mir
+      @highlight_swimmer_id = find_swimmer_to_highlight
+      @highlight_swimmer = Swimmer.find_by_id( @highlight_swimmer_id )
+      @title = "#{ I18n.t('records.team_title') } (#{ @team.decorate.get_linked_name })".html_safe
+      records = IndividualRecord.for_team( @team.id )
+# DEBUG
+      logger.debug "\r\n> Tot. records found: #{records.size}\r\n\r\n"
+      # [Steve, 20140723] 'Must always specify the filtering type for the RecordCollector,
+      # especially when we pre-load the list of records:
+      collector = RecordCollector.new( list: records, record_type_code: 'TTB', team: @team )
+      @grid_builder = RecordGridBuilder.new( collector, 'TTB' )
+    end
+  end
+
+
+  # Team Radiography - Real-time "Best timings" computation (RecordType: TTB)
   #
   # == Params:
   # id: the team id to be processed

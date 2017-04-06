@@ -7,6 +7,7 @@ it:
     radio_tab_title: "La storia di {SWIMMER_NAME} secondo il Cronometro"
     id_card: "Carta d'Identità"
     medals_tab: "Medagliere"
+    precalc_best_timings_tab: "Tempi migliori"
     best_timings_tab: "Ricalcolo Tempi migliori"
     all_races_tab: "Tutte le gare di"
     total_gold_medals: "Tot. Medaglie Oro"
