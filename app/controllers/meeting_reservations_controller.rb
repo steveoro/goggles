@@ -495,6 +495,8 @@ class MeetingReservationsController < ApplicationController
             .map{ |tag| User.find(tag.remove('u').to_i) }
             .select{ |user| team_users.include?( user.id ) }
         interested_users.each do |user|
+          # [Steve, 20170412] Actually the current_user could also be any user, not just the team manager
+          # (the message has been updated accordingly)
           NewsletterMailer.custom_mail(
             user,
             I18n.t("newsletter_mailer.new_reservations.subject"),

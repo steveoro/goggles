@@ -347,6 +347,7 @@ it:
   more_info: "Info"
   maintenance_title: "Siamo in manutenzione!"
   maintenance_info: "Il server e' temporaneamente sotto manutenzione per aggiornamento dati e applicazione, sino al {DATETIME} (presumibilmente; ore italiane). Riprova piu' tardi! ;-)"
+  browser_does_not_support_iframes: "Il tuo browser non supporta gli IFRAMES. Clicca sul link qui sotto:"
 
 
   netzke:

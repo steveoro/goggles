@@ -6,10 +6,19 @@
   .col-xs-12
     - if @meeting.invitation
       .goggles-category-gap.col-xs-12
-      - html_doc = Nokogiri::HTML( @meeting.invitation )
-      .col-xs-12
-        = html_doc.css('style').to_html.html_safe
-        = html_doc.css('body').inner_html.html_safe
+      - if @meeting.invitation.to_s =~ /^(https?\:\/\/.+)/i
+        .col-xs-12.embed-responsive.embed-responsive-4by3
+          %iframe.embed-responsive-item{ :src => @meeting.invitation.to_s }
+            %p= t('browser_does_not_support_iframes')
+            %a{:href => @meeting.invitation.to_s }
+              = t('meeting.invitation')
+              &nbsp;
+              = @meeting.get_verbose_name
+      - else
+        - html_doc = Nokogiri::HTML( @meeting.invitation )
+        .col-xs-12
+          = html_doc.css('style').to_html.html_safe
+          = html_doc.css('body').inner_html.html_safe
 
   .col-xs-12
     &nbsp;

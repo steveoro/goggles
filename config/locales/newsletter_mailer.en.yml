@@ -19,4 +19,4 @@ en:
     new_reservations:
       title: "MEETING RESERVATIONS creation"
       subject: "MEETING RESERVATIONS creation"
-      contents: "Your team-manager <i>%{team_manager_name}</i> has just created the meeting reservation sheet for '<b>%{meeting_name}</b>' where you can decide in which events you'd like to enroll together with your team.<br/>You can check this out, right <a href=\"%{manage_url}\">here</a>.<br/><br/><p><i>We've sent you this e-mail as an alert, simply because you had this meeting flagged among your favourites.</i></p>"
+      contents: "Your team mate <i>%{team_manager_name}</i> has just created or updated the meeting reservation sheet for '<b>%{meeting_name}</b>' where you can decide in which events you'd like to enroll together with your team.<br/>You can check this out, right <a href=\"%{manage_url}\">here</a>.<br/><br/><p><i>We've sent you this e-mail as an alert, simply because you had this meeting flagged among your favourites.</i></p>"
