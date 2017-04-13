@@ -85,38 +85,42 @@ class TeamsController < ApplicationController
   # == Params:
   # id: the team id to be processed
   #
-  def precalc_best_timings
+  def best_timings
     @tab_title = I18n.t('radiography.precalc_best_timings_tab')
     if @team.meeting_individual_results.count > 0
+      # Setup the record collection and get the pre-calc records MIRs:
+      team_distinct_best_dao = RecordX4dDAO.new( @team, RecordType.find_by_code( 'TTB' ) )
+      records_mirs = IndividualRecord.for_team( @team.id ).map{ |record| record.meeting_individual_result }
+      # Fill the collection DAO:
+      records_mirs.each{ |mir| team_distinct_best_dao.add_record( mir ) }
+
+      @team_best_finder = TeamBestFinder.new( @team )
+      @team_bests = @team_best_finder.split_categories( team_distinct_best_dao )
       @max_updated_at = find_last_updated_mir
       @highlight_swimmer_id = find_swimmer_to_highlight
-      @highlight_swimmer = Swimmer.find_by_id( @highlight_swimmer_id )
       @title = "#{ I18n.t('records.team_title') } (#{ @team.decorate.get_linked_name })".html_safe
-      records = IndividualRecord.for_team( @team.id )
-# DEBUG
-      logger.debug "\r\n> Tot. records found: #{records.size}\r\n\r\n"
-      # [Steve, 20140723] 'Must always specify the filtering type for the RecordCollector,
-      # especially when we pre-load the list of records:
-      collector = RecordCollector.new( list: records, record_type_code: 'TTB', team: @team )
-      @grid_builder = RecordGridBuilder.new( collector, 'TTB' )
     end
   end
 
 
+  # [Steve, 20170413] (Following code, kept temporarily only for reference)
+  #
   # Team Radiography - Real-time "Best timings" computation (RecordType: TTB)
   #
   # == Params:
   # id: the team id to be processed
   #
-  def best_timings
-    @tab_title = I18n.t('radiography.best_timings_tab')
-    if @team.meeting_individual_results.count > 0
-      @team_best_finder = TeamBestFinder.new( @team )
-      @team_bests = @team_best_finder.split_categories( @team_best_finder.scan_for_distinct_bests )
-      @max_updated_at = find_last_updated_mir
-      @highlight_swimmer_id = find_swimmer_to_highlight
-    end
-  end
+  # @deprecated
+  #
+#  def best_timings_OLD_VERSION_WITH_REAL_TIME_COMPUTATION
+#    @tab_title = I18n.t('radiography.best_timings_tab')
+#    if @team.meeting_individual_results.count > 0
+#      @team_best_finder = TeamBestFinder.new( @team )
+#      @team_bests = @team_best_finder.split_categories( @team_best_finder.scan_for_distinct_bests )
+#      @max_updated_at = find_last_updated_mir
+#      @highlight_swimmer_id = find_swimmer_to_highlight
+#    end
+#  end
   #-- -------------------------------------------------------------------------
   #++
 
