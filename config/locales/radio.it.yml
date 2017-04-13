@@ -51,6 +51,13 @@ it:
     month_training: "Ultimo mese"
     week_training: "Ultima settimana"
     last_training: "Ultimo allenamento"
+    team:
+      no_data_to_process_for_this_team: "Per questa Squadra non ci sono abbastanza dati da elaborare!"
+      no_record_found_for_this_team: "Per questa Squadra non sono ancora stati precalcolati i tempi migliori!"
+      ttb_records_pdf: "&nbsp;PDF Tempi migliori di squadra"
+      ttb_records_tooltip: "Clicca per scaricare il PDF dei tempi migliori di squadra per %{team_name}, in base ai risultati correnti"
+      ttb_records_title: "Tempi migliori di squadra"
+      ttb_records_basefilename: "team_best"
 
   supermaster:
     title: "FIN SuperMaster"

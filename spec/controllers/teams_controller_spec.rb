@@ -78,27 +78,29 @@ describe TeamsController, type: :controller do
 
 
   shared_examples_for "(Teams restricted GET action as a logged-in user)" do |action_sym|
-    before(:all) { @fixture = create( :team ) }
-    before :each do
-      # We need to set this to make the redirect_to(:back) passes the tests:
-      request.env["HTTP_REFERER"] = teams_path()
-      login_user()
-    end
-
     context "as a logged-in user" do
       context "with an HTML request for a non-existing id," do
-        before(:each) { get action_sym, params: { id: 0 } }
+        before(:each) do
+          # We need to set this to make the redirect_to(:back) passes the tests:
+          request.env["HTTP_REFERER"] = teams_path()
+          login_user()
+          get action_sym, params: { id: 0 }
+        end
 
         it "handles the request with a redirect" do
           expect(response.status).to eq( 302 )
         end
         it "redirects to #index" do
-          expect( response ).to redirect_to( request.env["HTTP_REFERER"] )
+          expect( response ).to redirect_to( teams_path() )
         end
       end
 
       context "with an HTML request for a valid id," do
-        before(:each) { get action_sym, params: { id: @fixture.id } }
+        before(:all)  { @fixture = Team.all.limit(1000).sample }
+        before(:each) do
+          login_user()
+          get action_sym, params: { id: @fixture.id }
+        end
 
         it "handles successfully the request" do
           expect(response.status).to eq( 200 )
@@ -141,6 +143,77 @@ describe TeamsController, type: :controller do
   describe '[GET #best_timings/:id]' do
     it_behaves_like( "(Teams restricted GET action as an unlogged user)", :best_timings )
     it_behaves_like( "(Teams restricted GET action as a logged-in user)", :best_timings )
+
+    context "as a logged-in user" do
+      context "with an HTML request for a valid id but without results," do
+        before(:all)  { @fixture = create(:team) }
+        before(:each) do
+          login_user()
+          get :best_timings, params: { id: @fixture.id }
+        end
+
+        it "assigns the required variables" do
+          expect( assigns(:team) ).to be_an_instance_of( Team )
+        end
+        it "redirects to #radio/:id" do
+          expect( response ).to redirect_to( team_radio_path(id: @fixture.id) )
+        end
+      end
+    end
+  end
+  # ===========================================================================
+
+
+  describe '[GET #printout_best_timings/:id]' do
+    it_behaves_like( "(Teams restricted GET action as an unlogged user)", :printout_best_timings )
+
+    context "as a logged-in user" do
+      context "with an HTML request for a non-existing id," do
+        before(:each) do
+          login_user()
+          get :printout_best_timings, params: { id: 0 }
+        end
+        it "handles the request with a redirect" do
+          expect(response.status).to eq( 302 )
+        end
+        it "redirects to #index" do
+          expect( response ).to redirect_to( root_path )
+        end
+      end
+
+      context "with an HTML request for a valid id," do
+        before(:all)  { @fixture = Team.all.limit(1000).sample }
+        before(:each) do
+          login_user()
+          get :printout_best_timings, params: { id: @fixture.id }
+        end
+
+        it "assigns the required variables" do
+          expect( assigns(:team) ).to be_an_instance_of( Team )
+          expect( assigns(:team_best_finder) ).to be_an_instance_of( TeamBestFinder )
+          expect( assigns(:team_bests) ).to be_an_instance_of( RecordX4dDAO )
+        end
+        it "returns http success and receives a PDF file" do
+          expect( response ).to have_http_status(:success)
+          expect( response.body ).to include("%PDF")
+        end
+      end
+
+      context "with an HTML request for a valid id but without results," do
+        before(:all)  { @fixture = create(:team) }
+        before(:each) do
+          login_user()
+          get :printout_best_timings, params: { id: @fixture.id }
+        end
+
+        it "assigns the required variables" do
+          expect( assigns(:team) ).to be_an_instance_of( Team )
+        end
+        it "redirects to #radio/:id" do
+          expect( response ).to redirect_to( team_radio_path(id: @fixture.id) )
+        end
+      end
+    end
   end
   # ===========================================================================
 

@@ -1,7 +1,7 @@
 = render( partial: 'tabs_and_title' )
 - if @team_best_finder
   - cache( cache_key_for_team( 'best_timings', @team.id, @max_updated_at, @highlight_swimmer_id ) ) do
-    .col-xs-12#sub_legend
+    .col-xs-9#sub_legend
       -# --- Sub-legend for each gender + pool-type
       .navbar
         - @team_best_finder.gender_types.each do |gender_type|
@@ -14,6 +14,8 @@
                 = link_to("##{gender_type.code}#{pool_type.code}", {'data-turbolinks'=>'false', class: 'btn goggles-nav-compact'}) do
                   = pool_type.i18n_short
             .ghost-divider-vertical
+    .col-xs-3
+      = link_to_best_timings_printout( @team )
 
     .col-xs-12
       - @team_best_finder.gender_types.each do |gender_type|

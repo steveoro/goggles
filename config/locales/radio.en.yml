@@ -51,6 +51,11 @@ en:
     month_training: "Last month trainings"
     week_training: "Last week trainings"
     last_traininge: "Last training"
+    team:
+      ttb_records_pdf: "&nbsp;Team best-timings PDF"
+      ttb_records_tooltip: "Click to download the PDF data sheet of all the currently computed Team best-timings for %{team_name}"
+      ttb_records_title: "Team best-timings"
+      ttb_records_basefilename: "team_best"
 
   supermaster:
     title: "FIN SuperMaster"

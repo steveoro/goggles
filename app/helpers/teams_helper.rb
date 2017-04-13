@@ -13,4 +13,20 @@ module TeamsHelper
   end
   #-- -------------------------------------------------------------------------
   #++
+
+  # Returns the HTML for team#printout_best_timings
+  # action for the specified Team instance.
+  #
+  def link_to_best_timings_printout( team )
+    return nil unless team.instance_of?( Team )
+    link_to(
+      team_printout_best_timings_path(id: team.id),
+      class: 'btn btn-default',
+      'data-toggle' => 'tooltip', 'title' => I18n.t('radiography.team.ttb_records_tooltip', team_name: team.get_full_name)
+    ) do
+      image_tag('page_white_acrobat.png') << I18n.t('radiography.team.ttb_records_pdf').html_safe
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 end

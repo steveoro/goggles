@@ -130,6 +130,7 @@ Rails.application.routes.draw do
       get  "teams/radio/:id",                   to: "teams#radio",                      as: "team_radio"
       get  "teams/current_swimmers/:id",        to: "teams#current_swimmers",           as: "team_current_swimmers"
       get  "teams/best_timings/:id",            to: "teams#best_timings",               as: "team_best_timings"
+      get  "teams/printout_best_timings/:id",   to: "teams#printout_best_timings",      as: "team_printout_best_timings"
       get  "teams/count_meetings/:id",          to: "teams#count_meetings",             as: "team_count_meetings"
       get  "teams/count_results/:id",           to: "teams#count_results",              as: "team_count_results"
       get  "teams/count_details/:id",           to: "teams#count_details",              as: "team_count_details"

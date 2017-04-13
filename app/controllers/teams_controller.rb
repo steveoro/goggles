@@ -6,7 +6,7 @@ require 'common/format'
 
 = TeamsController
 
-  - version:  6.094
+  - version:  6.101
   - author:   Steve A.
 
 =end
@@ -86,20 +86,21 @@ class TeamsController < ApplicationController
   # id: the team id to be processed
   #
   def best_timings
-    @tab_title = I18n.t('radiography.precalc_best_timings_tab')
-    if @team.meeting_individual_results.count > 0
-      # Setup the record collection and get the pre-calc records MIRs:
-      team_distinct_best_dao = RecordX4dDAO.new( @team, RecordType.find_by_code( 'TTB' ) )
-      records_mirs = IndividualRecord.for_team( @team.id ).map{ |record| record.meeting_individual_result }
-      # Fill the collection DAO:
-      records_mirs.each{ |mir| team_distinct_best_dao.add_record( mir ) }
-
-      @team_best_finder = TeamBestFinder.new( @team )
-      @team_bests = @team_best_finder.split_categories( team_distinct_best_dao )
-      @max_updated_at = find_last_updated_mir
-      @highlight_swimmer_id = find_swimmer_to_highlight
-      @title = "#{ I18n.t('records.team_title') } (#{ @team.decorate.get_linked_name })".html_safe
+    # Bail out in case there are no results to process:
+    if @team.meeting_individual_results.count < 1
+      flash[:error] = I18n.t('radiography.team.no_data_to_process_for_this_team')
+      redirect_to( team_radio_path() ) and return
     end
+    @tab_title = I18n.t('radiography.precalc_best_timings_tab')
+    # Setup the record collection and get the pre-calc records MIRs:
+    team_distinct_best_dao = RecordX4dDAO.new( @team, RecordType.find_by_code( 'TTB' ) )
+    records_mirs = IndividualRecord.for_team( @team.id ).map{ |record| record.meeting_individual_result }
+    # Fill the collection DAO with each records'MIR row found:
+    records_mirs.each{ |mir| team_distinct_best_dao.add_record( mir ) }
+    @team_best_finder = TeamBestFinder.new( @team )
+    @team_bests = @team_best_finder.split_categories( team_distinct_best_dao )
+    @max_updated_at = find_last_updated_mir
+    @highlight_swimmer_id = find_swimmer_to_highlight
   end
 
 
@@ -121,6 +122,61 @@ class TeamsController < ApplicationController
 #      @highlight_swimmer_id = find_swimmer_to_highlight
 #    end
 #  end
+
+
+  # Prepares the PDF print-out for the event and relay reservations for the current
+  # meeting.
+  #
+  # == Params:
+  # id: the meeting id to be processed
+  #
+  # == Implied parameters:
+  # current_user:  user must be logged-in and either be a team-manager or have an
+  #                associated swimmer (must be a "goggler").
+  #                (when also a team-manager, the whole matrix of rows should be editable)
+  #
+  def printout_best_timings
+    # Bail out in case there are no results to process:
+    if @team.meeting_individual_results.count < 1
+      flash[:error] = I18n.t('radiography.team.no_data_to_process_for_this_team')
+      redirect_to( team_radio_path(id: @team.id) ) and return
+    end
+
+    # Setup the record collection and get the pre-calc records MIRs:
+    team_distinct_best_dao = RecordX4dDAO.new( @team, RecordType.find_by_code( 'TTB' ) )
+    records_mirs = IndividualRecord.for_team( @team.id ).map{ |record| record.meeting_individual_result }
+    # Bail out in case there are no best-timings to process:
+    if records_mirs.size < 1
+      flash[:error] = I18n.t('radiography.team.no_record_found_for_this_team')
+      redirect_to( team_radio_path(id: @team.id) ) and return
+      # TODO / FUTURE DEV [Steve, 20170413] Eventually, it could be possibile to fall-back
+      # to a real-time computation of the team's best timings, using the same
+      # (OLD) implementation from the above action:
+      #
+      #  @team_bests = @team_best_finder.split_categories( @team_best_finder.scan_for_distinct_bests )
+    end
+    # Fill the collection DAO with each records'MIR row found:
+    records_mirs.each{ |mir| team_distinct_best_dao.add_record( mir ) }
+    @team_best_finder = TeamBestFinder.new( @team )
+    @team_bests = @team_best_finder.split_categories( team_distinct_best_dao )
+                                                    # == OPTIONS setup + RENDERING phase ==
+    base_filename = "#{ I18n.t('radiography.team.ttb_records_basefilename') }_#{ @team.id }"
+    filename = create_unique_filename( base_filename ) + '.pdf'
+    options = {
+      report_title:         I18n.t('radiography.team.ttb_records_title'),
+      meta_info_subject:    'team best-timings records printout',
+      meta_info_keywords:   "Goggles, #{base_filename}'",
+      team:                 @team,
+      team_best_finder:     @team_best_finder,
+      team_bests:           @team_bests
+    }
+
+    send_data(                                      # == Render layout & send data:
+        TeamBestTimingsLayout.render( options ),
+        type: 'application/pdf',
+        filename: filename
+    )
+  end
   #-- -------------------------------------------------------------------------
   #++
 
