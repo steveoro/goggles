@@ -89,14 +89,29 @@ class TeamsController < ApplicationController
     # Bail out in case there are no results to process:
     if @team.meeting_individual_results.count < 1
       flash[:error] = I18n.t('radiography.team.no_data_to_process_for_this_team')
-      redirect_to( team_radio_path() ) and return
+      redirect_to( team_radio_path(id: @team.id) ) and return
+    end
+    # Bail out in case there are no best-timings to process:
+    if IndividualRecord.for_team( @team.id ).count < 1
+      flash[:error] = I18n.t('radiography.team.no_record_found_for_this_team')
+      redirect_to( team_radio_path(id: @team.id) ) and return
+      # TODO / FUTURE DEV [Steve, 20170413] Eventually, it could be possibile to fall-back
+      # to a real-time computation of the team's best timings, using the same
+      # (OLD) implementation from the above action:
+      #
+      #  @team_bests = @team_best_finder.split_categories( @team_best_finder.scan_for_distinct_bests )
     end
     @tab_title = I18n.t('radiography.precalc_best_timings_tab')
+
     # Setup the record collection and get the pre-calc records MIRs:
     team_distinct_best_dao = RecordX4dDAO.new( @team, RecordType.find_by_code( 'TTB' ) )
-    records_mirs = IndividualRecord.for_team( @team.id ).map{ |record| record.meeting_individual_result }
-    # Fill the collection DAO with each records'MIR row found:
-    records_mirs.each{ |mir| team_distinct_best_dao.add_record( mir ) }
+
+    # Scan the pre-computed records and fill the collection DAO with each records'MIR row found:
+    IndividualRecord.for_team( @team.id ).includes(:meeting_individual_result)
+      .joins(:meeting_individual_result).each do |record|
+        team_distinct_best_dao.add_record( record.meeting_individual_result )
+    end
+
     @team_best_finder = TeamBestFinder.new( @team )
     @team_bests = @team_best_finder.split_categories( team_distinct_best_dao )
     @max_updated_at = find_last_updated_mir
@@ -141,12 +156,8 @@ class TeamsController < ApplicationController
       flash[:error] = I18n.t('radiography.team.no_data_to_process_for_this_team')
       redirect_to( team_radio_path(id: @team.id) ) and return
     end
-
-    # Setup the record collection and get the pre-calc records MIRs:
-    team_distinct_best_dao = RecordX4dDAO.new( @team, RecordType.find_by_code( 'TTB' ) )
-    records_mirs = IndividualRecord.for_team( @team.id ).map{ |record| record.meeting_individual_result }
     # Bail out in case there are no best-timings to process:
-    if records_mirs.size < 1
+    if IndividualRecord.for_team( @team.id ).count < 1
       flash[:error] = I18n.t('radiography.team.no_record_found_for_this_team')
       redirect_to( team_radio_path(id: @team.id) ) and return
       # TODO / FUTURE DEV [Steve, 20170413] Eventually, it could be possibile to fall-back
@@ -155,8 +166,16 @@ class TeamsController < ApplicationController
       #
       #  @team_bests = @team_best_finder.split_categories( @team_best_finder.scan_for_distinct_bests )
     end
-    # Fill the collection DAO with each records'MIR row found:
-    records_mirs.each{ |mir| team_distinct_best_dao.add_record( mir ) }
+
+    # Setup the record collection and get the pre-calc records MIRs:
+    team_distinct_best_dao = RecordX4dDAO.new( @team, RecordType.find_by_code( 'TTB' ) )
+
+    # Scan the pre-computed records and fill the collection DAO with each records'MIR row found:
+    IndividualRecord.for_team( @team.id ).includes(:meeting_individual_result)
+      .joins(:meeting_individual_result).each do |record|
+        team_distinct_best_dao.add_record( record.meeting_individual_result )
+    end
+
     @team_best_finder = TeamBestFinder.new( @team )
     @team_bests = @team_best_finder.split_categories( team_distinct_best_dao )
                                                     # == OPTIONS setup + RENDERING phase ==
@@ -170,7 +189,6 @@ class TeamsController < ApplicationController
       team_best_finder:     @team_best_finder,
       team_bests:           @team_bests
     }
-
     send_data(                                      # == Render layout & send data:
         TeamBestTimingsLayout.render( options ),
         type: 'application/pdf',

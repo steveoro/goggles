@@ -4,7 +4,7 @@
 
 == TeamBestTimingsLayout
 
-- version:  6.101
+- version:  6.102
 - author:   Steve A.
 
 =end
@@ -128,12 +128,15 @@ class TeamBestTimingsLayout
       pdf.move_down( 10 )
 
       team_best_finder.gender_types.each do |gender_type|
+        # *** START Pool loop:
         team_best_finder.pool_types.each do |pool_type|
-          # Gender & pool title:
+          # *** Gender & pool title:
           pdf.text(
             "<b>#{gender_type.i18n_alternate}, #{pool_type.i18n_description}</b>",
             { align: :left, size: 10, inline_format: true }
           )
+
+          # *** Prepare data table:
           data_table_array = []
           valid_categories = team_best_finder.get_categories_with_records( pool_type, gender_type, team_bests )
           # Add header row (category_type)
@@ -160,7 +163,7 @@ class TeamBestTimingsLayout
             data_table_array << data_row
           end
 
-          # Actually render the table:
+          # *** Render table using data:
           pdf.table(
               data_table_array,
               header: true, position: :left,
@@ -169,15 +172,16 @@ class TeamBestTimingsLayout
               cell_style: {
                 inline_format: true,
                 overflow: :shrink_to_fit,
-                min_font_size: 6
+                size: 6
+#                min_font_size: 6
               }
-          ) do
+          ) do # Custom styling for each cell:
             # Header row & column:
             cells.filter do |c|
               ( c.column == 0 ) || ( c.row == 0 )
             end.style do |c|
               c.background_color = "C4E3F3"           # light cyan
-              c.size = 8
+              c.size = 6
             end
 
             # Any data timing cell:
@@ -186,7 +190,7 @@ class TeamBestTimingsLayout
             end.style do |c|
               c.align = :center
               c.valign = :center
-              c.size = 8
+              c.size = 6
             end
           end
           # Do not start a new page if we've reached the end:
@@ -200,224 +204,6 @@ class TeamBestTimingsLayout
       end
 
       # *** END Gender loop
-    end
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-
-
-#############################################à FIXME OLD STUFF: #########################à
-
-
-  # Renders (with custom styles) a single table given the data rows specified as
-  # parameter.
-  #
-  def self.draw_a_single_event_table( pdf, data_table_array, is_a_long_event, is_a_relay )
-    # Draw the table:
-    pdf.table( data_table_array, header: true, position: :left,
-               row_colors: ["ffffff", "eeeeee"],
-               width: is_a_long_event ? pdf.bounds.width - 10 : nil,
-               cell_style: { inline_format: true, overflow: :shrink_to_fit,
-                             min_font_size: 6 } ) do
-      # Swimmer name cells:
-      cells.filter do |c|
-        ( c.column == 0 ) && ( c.content.to_s =~ /^\<i\>\<b\>|\*\s\*\s\*/ ).nil?
-      end.style do |c|
-        c.background_color = "C4E3F3"           # light cyan
-        c.size = 10
-      end
-
-      # Registration-entry times cells:
-      cells.filter do |c|
-        ( c.column == 1 ) &&
-        ( c.content.to_s =~ /^\<i\>\<b\>|\*\s\*\s\*/ ).nil?
-      end.style do |c|
-        c.background_color = "D9EDF7"           # lighter cyan
-        c.align = :right
-        c.size = 8
-      end
-
-      # Header cells:
-      cells.filter do |c|
-        cells[c.row, 0].content.to_s =~ /^\<i\>\<b\>/
-      end.style do |c|
-        c.align = :center
-        c.valign = :center
-        c.background_color = "DFF0D8"           # light greenish
-        c.height = 30
-        c.size = 10
-      end
-
-      # Timing/entry column cells:
-      cells.filter do |c|
-        ( c.column > 0 ) && ( c.content.to_s =~ /^\<i\>\<b\>|\*\s\*\s\*/ ).nil?
-      end.style do |c|
-        c.width = 60 unless is_a_long_event     # all column width fixed when we have space
-        c.width = 40 if is_a_long_event && c.column > 1
-      end
-
-      # Relay-only name column width:
-      if is_a_relay
-        cells.filter { |c| ( c.column == 2 ) }.style { |c| c.width = 80 }
-      end
-
-      # Any data timing cell:
-      cells.filter do |c|
-        ( c.column > 1 ) &&
-        ( c.content.to_s =~ /^\<i\>\<b\>|\*\s\*\s\*/ ).nil?
-      end.style do |c|
-        c.align = :center
-        c.valign = :center
-      end
-    end # pdf.table
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-
-
-  # Setup for the Array of Array that holds the data for a relay-type
-  # data-sheet table.
-  #
-  # == Params:
-  # pdf: the document being rendered
-  # event: the event (MeetingEvent) to be processed
-  # passage_labels: an array of string describing the columns for the data sheet
-  # reservation_array: the Array of MeetingRelayReservation containing the reservation data associated to the event
-  #
-  # == Returns:
-  # The prepared array of array (rows of data), ready to be rendered as a table.
-  #
-  def self.prepare_relay_data_tables( pdf, event, passage_labels, reservation_array )
-    # Detect to many columns:
-    is_a_long_event = passage_labels.count > 11
-
-    # We must compose the data for the table as an Array of Arrays.
-    # We build a new table for each event:
-    data_table_array = []
-
-    # Sort by relay name (and order) all active relay reservations:
-    relay_configs = reservation_array.select{ |rel| rel.is_doing_this? }
-        .sort{ |rel_a, rel_b| "#{ rel_a.notes }" <=> "#{ rel_b.notes }" }
-
-    prev_config_name = nil
-    swimmer_year_tot = 0
-
-    # For each sorted relay reservation config:
-    relay_configs.each_with_index do |res, index|
-      # Add a custom header for each relay name change:
-      if ( prev_config_name != res.notes.to_s.split(';').first ) || (index == 0)
-        # On relay change, if not at the start, add another empty line:
-        if index > 0
-          # Make sure we don't start a new relay data table too near the bottom margin:
-          if pdf.cursor < 150
-            pdf.start_new_page
-          end
-          # New table detected! Time to render the old data:
-          self.draw_a_single_event_table( pdf, data_table_array, is_a_long_event, true )
-          self.add_relay_data_table_footnote( pdf, data_table_array.size, swimmer_year_tot )
-          # Clear the data table afterwards:
-          data_table_array = []
-          swimmer_year_tot = 0
-        end
-        # Repeat header row:
-        data_table_array << (
-          [
-            "<i><b>#{ event.get_full_name }</b></i>",
-            "<i>#{ I18n.t('swimmers.year_of_birth') } / #{ I18n.t('swimmers.age_current') }</i>",
-            "<i>#{ I18n.t('meeting_reservation.relay') } '<b>#{ res.notes.to_s.split(';').first }</b>'</i>"
-          ] + passage_labels
-        )
-      end
-
-      # Add the swimmer name in the front cell and add the resulting row (array):
-      swimmer_age = Date::today.year - res.swimmer.year_of_birth
-      swimmer_year_tot += swimmer_age
-      data_table_array << [
-          res.swimmer.complete_name,
-          "#{ res.swimmer.year_of_birth } / #{ swimmer_age }",
-          "##{ res.notes.to_s.split(';').last.to_i }" # relay fraction order
-      ] + passage_labels.map{ |cell| '' }           # Empty space to insert timing
-      # Update the previous config name before another loop:
-      prev_config_name = res.notes.to_s.split(';').first
-    end
-
-    # Draw the residual table data:
-    if data_table_array.size > 0
-      self.draw_a_single_event_table( pdf, data_table_array, is_a_long_event, true )
-      self.add_relay_data_table_footnote( pdf, data_table_array.size, swimmer_year_tot )
-    end
-  end
-
-
-  # Adds a line of text regarding the total age of swimmers for a relay data table
-  def self.add_relay_data_table_footnote( pdf, data_table_array_size, swimmer_year_tot )
-    pdf.move_down( 5 )
-    table_note = "#{ I18n.t('meeting_relay.config.total_age') } = #{ swimmer_year_tot }"
-    if data_table_array_size < 5
-      table_note << " #{ I18n.t('meeting_relay.config.not_enough_swimmers_note') }"
-    end
-    pdf.text( table_note )
-    pdf.move_down( 15 )
-  end
-
-
-  # Setup for the Array of Array that holds the data for the ind.event-type
-  # data-sheet table.
-  #
-  # == Params:
-  # pdf: the document being rendered
-  # event: the event (MeetingEvent) to be processed
-  # passage_labels: an array of string describing the columns for the data sheet
-  # reservation_array: the Array of MeetingEventReservation containing the reservation data associated to the event
-  #
-  # == Returns:
-  # The prepared array of array (rows of data), ready to be rendered as a table.
-  #
-  def self.prepare_event_data_table( pdf, event, passage_labels, reservation_array )
-    # Detect to many columns:
-    is_a_long_event = passage_labels.count > 11
-
-    # We must compose the data for the table as an Array of Arrays.
-    # We build a new table for each event:
-    data_table_array = []
-
-    # Add a custom header for the event:
-    data_table_array << (
-      [
-        "<i><b>#{ event.get_full_name }</b></i>",
-        "<i>#{ I18n.t('meeting_reservation.entry_time') }</i>"
-      ] + passage_labels
-    )
-
-    # Sort reservation events by entry timing in descending order, according to current
-    # event configuration:
-    sorted_events = self.get_sorted_reservation_events( event, reservation_array )
-    previous_res = nil
-
-    # Map all reservations for this event as individual rows, add eventually a
-    # separator row, if required:
-    sorted_events.each do |res|
-      # Do we need to add a separator row?
-      data_table_array << ['* * *'] if self.is_row_separator_required( event, res, previous_res )
-
-      # Compute the entry timing:
-      entry_timing = Timing.new(res.suggested_hundreds, res.suggested_seconds, res.suggested_minutes )
-      # Add the swimmer name as column #0, the entry timing as column #1
-      # and add the remaining columns as empty cells so that we can have
-      # enough blank cells write each passage timing:
-      data_table_array << (
-        [
-          res.swimmer.complete_name,
-          "<i>#{ entry_timing.to_s }</i>"
-        ] +
-        passage_labels.map{ |cell| '' }
-      )
-      previous_res = res
-    end
-
-    # Draw the residual table data:
-    if data_table_array.size > 0
-      self.draw_a_single_event_table( pdf, data_table_array, is_a_long_event, false )
     end
   end
   #-- -------------------------------------------------------------------------
