@@ -25,9 +25,9 @@ GIT
 
 GIT
   remote: https://github.com/steveoro/goggles_core
-  revision: 026f66a41d5ac32e85e6dd5172c6de0de44886ba
+  revision: 325357e41f1309fe078fa0fd8ef2251eed363ff0
   specs:
-    goggles_core (1.1.59.0)
+    goggles_core (1.1.60.0)
       active_hash_relation
       active_model_serializers (~> 0.10.0)
       activemodel-serializers-xml
@@ -209,8 +209,8 @@ GEM
     formatador (0.2.5)
     fuzzy-string-match_pure (0.9.5)
     generator (0.0.1)
-    globalid (0.3.7)
-      activesupport (>= 4.1.0)
+    globalid (0.4.0)
+      activesupport (>= 4.2.0)
     guard (2.14.0)
       formatador (>= 0.2.4)
       listen (>= 2.7, < 4.0)

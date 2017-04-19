@@ -153,18 +153,16 @@ class MeetingEventReservationMatrixCreator < MeetingReservationMatrixProcessor
   # Prepares the members for a new MeetingEventReservation row.
   #
   def prepare_new_event_reservation( badge, event )
-    # Retrieve last MIR (when possibile), to fill-in with suggested enrollment timing:
+    # Retrieve possible best-timing, to fill-in the reservation field for the suggested enrollment timing:
     swimmer = badge.swimmer
     best_finder = SwimmerPersonalBestFinder.new( swimmer )
-    possible_best = best_finder.get_best_for_event( event.event_type, @meeting.pool_types.first )
-
-    # Check a similar event result, if seasonal best is not available:
-    # [Steve] Old ugly method (does not consider same event in different pool type):
-#    if possible_best.nil?
-#      possible_best = swimmer.meeting_individual_results
-#        .joins(:meeting_event).where(['event_type_id = ?', event.event_type_id])
-#        .last
-#    end
+    possible_best = best_finder.get_entry_best_timing(
+      badge,
+      @meeting,
+      event.event_type,
+      @meeting.pool_types.first,
+      true # convert_pool_type
+    )
 
     MeetingEventReservation.new(
       meeting_id:       @meeting.id,

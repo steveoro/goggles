@@ -2,7 +2,9 @@
 %ul.nav.nav-tabs{role: "tablist"}
   = show_tab_link( params, 'radio', t('radiography.radio_tab'), swimmer_radio_path(id: @swimmer.id) )
   = show_tab_link( params, 'supermaster', t('supermaster.title'), swimmer_supermaster_path(id: @swimmer.id) )
-  = show_tab_link( params, 'regionalercsi', t('regionalercsi.title'), swimmer_regionalercsi_path(id: @swimmer.id) )
+  - badge = @swimmer.badges.for_season_type( SeasonType.find_by_code('MASCSI') ).for_year( Season.build_header_year_from_date() ).first
+  - if badge
+    = show_tab_link( params, 'regionalercsi', t('regionalercsi.title'), swimmer_regionalercsi_path(id: @swimmer.id) )
   = show_tab_link( params, 'current_goggle_cup', @goggle_cups_tab_title, swimmer_current_goggle_cup_path(id: @swimmer.id) )
   = show_tab_link( params, 'medals', t('radiography.medals_tab'), swimmer_medals_path(id: @swimmer.id) )
   = show_tab_link( params, 'best_timings', t('radiography.best_timings_tab'), swimmer_best_timings_path(id: @swimmer.id) )

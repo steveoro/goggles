@@ -20,7 +20,7 @@ describe NewsletterMailer, type: :mailer do
     end
     it 'renders for each specified meeting its description and header_year' do
       meeting_array.each do |meeting|
-        expect( subject.body.encoded ).to include( meeting.description )
+        expect( subject.body.encoded ).to include( ERB::Util.h(meeting.description) )
         expect( subject.body.encoded ).to include( meeting.header_year )
       end
     end
@@ -59,7 +59,7 @@ describe NewsletterMailer, type: :mailer do
       expect( subject.body.encoded ).to include( mail_title )
     end
     it 'renders the specified contents in its body' do
-      expect( subject.body.encoded ).to include( contents )
+      expect( subject.body.encoded ).to include( ERB::Util.h(contents) )
     end
 
     describe "#deliver" do
