@@ -1,0 +1,31 @@
+.col-xs-12
+  %h2= I18n.t(:contact_us) + ':'
+  %p
+    Main Developer, Author: Steve A. -
+    \#{mail_to( "fasar.software@email.it" , "FASAR Software" , subject: I18n.t(:questions_about) + ' ' + GogglesCore::AppConstants::WEB_APP_NAME, encode: "javascript" )}
+  %p
+    DB / Domain Architect:
+    \#{mail_to( "leegaweb@gmail.com" , "Leega" , subject: I18n.t(:questions_about) + ' ' + GogglesCore::AppConstants::WEB_APP_NAME, encode: "javascript" )}
+  %hr/
+  %ul
+    %li
+      = I18n.t(:title_wrong_meeting_result)
+      = mail_to( "leegaweb@gmail.com" , "Leega" ,                                                       |
+        subject: "[#{GogglesCore::AppConstants::WEB_APP_NAME}] #{I18n.t(:title_wrong_meeting_result)}", |
+        encode: "javascript" )                                                                          |
+      %p
+    %li
+      = I18n.t(:title_feature_request)
+      = mail_to( "fasar.software@email.it" , "Steve" ,                                             |
+        subject: "[#{GogglesCore::AppConstants::WEB_APP_NAME}] #{I18n.t(:title_feature_request)}", |
+        encode: "javascript" )                                                                     |
+      %p
+    %li
+      = I18n.t(:title_enable_passages_editing)
+      = mail_to( "leegaweb@gmail.com" , "Leega" ,                                                          |
+        subject: "[#{GogglesCore::AppConstants::WEB_APP_NAME}] #{I18n.t(:title_enable_passages_editing)}", |
+        encode: "javascript" )                                                                             |
+      %p
+    %ul
+
+= render( partial: 'goggles/social_media_contacts' )
