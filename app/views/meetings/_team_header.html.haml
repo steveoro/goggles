@@ -99,7 +99,7 @@
                     %td.goggles-noborder.goggles-rightalign
                       - event_type = mir.meeting_event.event_type
                       %a{href: "\##{event_type.code}", 'data-turbolinks'=>'false'}= event_type.i18n_short
-                    %td.goggles-noborder.goggles-rightalign.col-xs-1
+                    %td.goggles-noborder.goggles-rightalign.col-xs-1{ 'class' => mir.is_personal_best ? 'success' : '' }
                       = mir.get_timing
                     %td.goggles-noborder.goggles-rightalign
                       = mir.show_any_rank_medal

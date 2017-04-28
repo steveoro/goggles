@@ -18,7 +18,7 @@
                 - if event_list.include?( mir.event_type.code )
                   %td
                     %b= mir.get_event_type
-                  %td.goggles-rightalign
+                  %td.goggles-rightalign{ 'class' => mir.is_personal_best ? 'success' : '' }
                     %b= mir.get_timing
                 - else
                   %td

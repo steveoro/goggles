@@ -64,7 +64,7 @@
                 = mir.get_rank_description
               %td
                 = mir.show_any_rank_medal()
-              %td.goggles-rightalign
+              %td.goggles-rightalign{ 'class' => mir.is_personal_best ? 'success' : '' }
                 %b= mir.get_timing
               %td.goggles-rightalign
                 = mir.get_formatted_standard_points(true)
