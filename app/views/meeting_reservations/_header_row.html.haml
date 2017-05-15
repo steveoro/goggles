@@ -37,13 +37,14 @@
       %i= I18n.t('meeting_stats.swimmers')
     - curr_session_order = 1
     - first_reservation.each do |event_reservation|
+      - out_of_race = event_reservation.meeting_event.is_out_of_race ? ' (FG)' : ''
       - if event_reservation.meeting_session.session_order > curr_session_order
         - curr_session_order = event_reservation.meeting_session.session_order
         %td#goggles-border-lx-thick
-          %b= event_reservation.event_type.i18n_short
+          %b= event_reservation.event_type.i18n_short + out_of_race 
       - else
-        %td
-          %b= event_reservation.event_type.i18n_short
+        %td{ class: event_reservation.meeting_event.is_out_of_race ? 'warning' : '' }
+          %b= event_reservation.event_type.i18n_short + out_of_race
     - if add_notes_column
       %td
         %i= I18n.t('meeting_reservation.free_notes')
