@@ -15,13 +15,18 @@
           %li
             &nbsp;
           %li
-            = link_to("#team_ranking", {class: 'btn', 'data-turbolinks'=>'false'}) do
+            = link_to("#team_ranking", {class: 'btn btn-default', 'data-turbolinks'=>'false'}) do
               = t('championships.team_ranking')
           %li
             &nbsp;
           %li
-            = link_to("#team_stats", {class: 'btn', 'data-turbolinks'=>'false'}) do
+            = link_to("#team_stats", {class: 'btn btn-default', 'data-turbolinks'=>'false'}) do
               = t('championships.team_stats')
+          %li
+            &nbsp;
+          %li
+            = link_to_csi_team_rankings_printout( @season )
+
           .ghost-divider-vertical
       .goggles-category-gap
       %br/

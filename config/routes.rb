@@ -146,6 +146,8 @@ Rails.application.routes.draw do
       # === Championships ===
       get  "championships/calendar_regional_er_csi(/:id)",  to: "championships#calendar_regional_er_csi",  as: "championships_calendar_regional_er_csi"
       get  "championships/ranking_regional_er_csi(/:id)",   to: "championships#ranking_regional_er_csi",   as: "championships_ranking_regional_er_csi"
+      get  "championships/printout_ranking_regional_csi(/:id)",   to: "championships#printout_ranking_regional_csi",   as: "championships_printout_ranking_regional_csi"
+
       get  "championships/event_ranking_regional_er_csi(/:id)", to: "championships#event_ranking_regional_er_csi", as: "championships_event_ranking_regional_er_csi"
       get  "championships/individual_rank_regional_er_csi(/:id)", to: "championships#individual_rank_regional_er_csi", as: "championships_individual_rank_regional_er_csi"
       get  "championships/rules_regional_er_csi(/:id)",     to: "championships#rules_regional_er_csi",     as: "championships_rules_regional_er_csi"

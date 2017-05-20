@@ -2,7 +2,7 @@
 
 = MeetingsHelper
 
-  - Goggles framework vers.:  4.00.562
+  - Goggles framework vers.:  6.109
   - author: Leega
 
 =end
@@ -19,6 +19,21 @@ module ChampionshipsHelper
       I18n.locale.to_s,
       team_id,
     ].compact.join('-')
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  # Returns the HTML for championship#printout_ranking_regional_csi
+  # action for the specified Season instance.
+  #
+  def link_to_csi_team_rankings_printout( season )
+    return nil unless season.instance_of?( Season )
+    link_to(
+      championships_printout_ranking_regional_csi_path(id: season.id),
+      class: 'btn btn-default'
+    ) do
+      image_tag('page_white_acrobat.png') << "&nbsp;#{ I18n.t('championships.team_ranking') }".html_safe
+    end
   end
   #-- -------------------------------------------------------------------------
   #++

@@ -13,7 +13,8 @@ require 'common/format'
 class ChampionshipsController < ApplicationController
   # Parse parameters according to current user *BEFORE* everything else:
   before_action :verify_parameter_regional_er_csi, only: [
-      :ranking_regional_er_csi, :calendar_regional_er_csi, :event_ranking_regional_er_csi,
+      :ranking_regional_er_csi, :printout_ranking_regional_csi,
+      :calendar_regional_er_csi, :event_ranking_regional_er_csi,
       :individual_rank_regional_er_csi, :rules_regional_er_csi, :history_regional_er_csi
   ]
   before_action :verify_parameter_regional_er_uisp, only: [
@@ -27,7 +28,8 @@ class ChampionshipsController < ApplicationController
   # At this point, we assume the basic parameter are set and we can impose the
   # setting of the Team ID also:
   before_action :set_team, only: [
-      :ranking_regional_er_csi, :event_ranking_regional_er_csi,
+      :ranking_regional_er_csi,
+      :event_ranking_regional_er_csi,
       :individual_rank_regional_er_csi
   ]
   #-- -------------------------------------------------------------------------
@@ -54,10 +56,11 @@ class ChampionshipsController < ApplicationController
   #-- -------------------------------------------------------------------------
   #++
 
+
   # CSI Regional Emilia Romagna championship ranking data display manager
   #
   def ranking_regional_er_csi
-    @title = I18n.t('championships.team_ranking') + ' ' + @season.get_full_name
+    @title = "#{ I18n.t('championships.team_ranking') } #{ @season.get_full_name }"
     championship_calculator = ChampionshipRankingCalculator.new( @season )
     @championship_ranking = championship_calculator.get_season_ranking
     @ranking_updated_at = if @season.meeting_individual_results.count > 0
@@ -66,8 +69,32 @@ class ChampionshipsController < ApplicationController
       0
     end
   end
+
+
+  # Prepares the PDF report using the ChampionshipRankingRegionalCSILayout for the
+  # current CSI Championship.
+  #
+  def printout_ranking_regional_csi
+    championship_calculator = ChampionshipRankingCalculator.new( @season )
+    @championship_dao = championship_calculator.get_season_ranking
+                                                    # == OPTIONS setup + RENDERING phase ==
+    base_filename = "champ_ranking_#{ @season.id }"
+    filename = create_unique_filename( base_filename ) + '.pdf'
+    options = {
+      report_title:         "#{ I18n.t('championships.team_ranking') } #{ @season.get_full_name }",
+      meta_info_subject:    'CSI regional championship ranking report',
+      meta_info_keywords:   "Goggles, #{base_filename}'",
+      championship_dao:     @championship_dao
+    }
+    send_data(                                      # == Render layout & send data:
+        ChampionshipRankingRegionalCSILayout.render( options ),
+        type: 'application/pdf',
+        filename: filename
+    )
+  end
   #-- -------------------------------------------------------------------------
   #++
+
 
   # Season rules viewer for a given regonal er CSI season
   #
@@ -76,6 +103,7 @@ class ChampionshipsController < ApplicationController
   end
   #-- -------------------------------------------------------------------------
   #++
+
 
   # Past seasons championships ranking data display manager
   # for CSI regional ER championships (closed seasons)
@@ -88,6 +116,7 @@ class ChampionshipsController < ApplicationController
     @seasons_hall_of_fame = championship_history_manager.get_season_hall_of_fame
     @history_updated_at = @championship_history_manager.max{ |n,p| n[:max_updated_at] <=> p[:max_updated_at] }[:max_updated_at]
   end
+
 
   # Seasonal event ranking (gender, category, evet_type)
   # for CSI regional ER championships
@@ -156,6 +185,7 @@ class ChampionshipsController < ApplicationController
       @season_ranking << gender_ranking
     end
   end
+
 
   # Seasonal individual ranking
   # for CSI regional ER championships
