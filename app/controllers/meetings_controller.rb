@@ -19,7 +19,8 @@ class MeetingsController < ApplicationController
 
   # Parse parameters:
   before_action :verify_meeting, only: [
-      :show_full, :show_autoscroll, :show_ranking, :show_stats,
+      :show_full, :show_autoscroll, :show_autoscroll_start_list,
+      :show_ranking, :show_stats,
       :show_team_results, :show_swimmer_results, :show_invitation,
       :show_start_list, :show_start_list_by_category, :show_team_entries
   ]
@@ -527,6 +528,20 @@ class MeetingsController < ApplicationController
 
     # Get a timestamp for the cache key:
     @max_entry_updated_at = get_timestamp_from_relation_chain(:meeting_entries)
+  end
+
+
+  # Meeting start list viewer, w/ autoscroll
+  #
+  def show_autoscroll_start_list
+    # TODO
+    # Prepare the start-list according to the meeting specs
+    # male/female joined and so on
+    # Need specific flags on meeting events
+    @meeting_events_list = @meeting.meeting_events
+      .joins(:event_type, :stroke_type)
+      .includes(:event_type, :stroke_type)
+      .order('meeting_events.event_order')
   end
   #-- -------------------------------------------------------------------------
   #++
