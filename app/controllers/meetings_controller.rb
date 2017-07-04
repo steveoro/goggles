@@ -54,7 +54,7 @@ class MeetingsController < ApplicationController
       .joins( :season, :season_type, :meeting_sessions, :swimming_pools )
       .where( "meetings.season_id IN (?)", browsable_season_ids )
       .tagged_with( "u#{ current_user.id }", on: :tags_by_users )
-      .order( "meetings.header_date" )
+      .order( "meetings.header_date DESC" )
       .to_a
 
     # Add also the team-tagged browsable meetings.
@@ -66,7 +66,7 @@ class MeetingsController < ApplicationController
             .joins( :season, :season_type, :meeting_sessions, :swimming_pools )
             .where( "meetings.season_id IN (?)", browsable_season_ids )
             .tagged_with( "ta#{ tagger_team_affiliation_id }", on: :tags_by_teams )
-            .order( "meetings.header_date" )
+            .order( "meetings.header_date DESC" )
             .to_a
         end
 
@@ -82,14 +82,14 @@ class MeetingsController < ApplicationController
         @meetings += Meeting.includes( :season, :season_type, :meeting_sessions, :swimming_pools )
           .joins( :season, :season_type, :meeting_sessions, :swimming_pools )
           .where( "meetings.id IN (?)", attended_ids )
-          .order( "meetings.header_date" )
+          .order( "meetings.header_date DESC" )
           .to_a
       end
     end
 
-    # Re-sort the modified array:
+    # Re-sort the modified array, *descending* order (that is: B <=> A):
     @meetings.uniq!
-    @meetings.sort!{ |ma, mb| ma.header_date <=> mb.header_date }
+    @meetings.sort!{ |ma, mb| mb.header_date <=> ma.header_date }
   end
   #-- -------------------------------------------------------------------------
   #++
