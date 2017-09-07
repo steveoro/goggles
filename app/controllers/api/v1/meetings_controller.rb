@@ -233,6 +233,47 @@ class Api::V1::MeetingsController < Api::BaseController
   #++
 
 
+  require 'net/http'
+  require 'uri'
+
+  # Downloads a remote data page given its URL.
+  #
+  # === Params:
+  # - url:        the URL tp be downloaded as plain text.
+  # - body_id:    the selector DIV ID(s) to be extracted as main "body".
+  # - strip_id:   the selector DIV ID(s) to be stripped from the "body" extracted
+  #               with the "body_id" parameter.
+  #
+  # === Returns:
+  # The plain text payload of the page, extracted and stripped as specifed.
+  #
+  def download
+    if params[:url].present?
+      uri = URI( URI.escape( params[:url] ) )
+# DEBUG
+#      puts "\r\nURI..........: #{ uri.inspect }"
+      response = Net::HTTP.get_response( uri )
+# DEBUG
+#      puts "response.....: #{ response.inspect }"
+#      puts "response body: #{ response.body }"
+
+      if response.body.present?
+        body_id   = params[:body_id].present?  ? params[:body_id]   : "#content"
+        strip_id  = params[:strip_id].present? ? params[:strip_id]  : ".stampa-loca"
+        html_doc = Nokogiri::HTML( response.body ).css( body_id )
+        html_doc.css( strip_id ).unlink             # Remove non-working external href to PDF print preview or other specified DIV IDs
+        render( status: :ok, json: { success: true, data: html_doc.to_html } )
+      else
+        render( status: 422, json: { success: false, error: "HTTP GET failed!" } )
+      end
+    else
+      render( status: 422, json: { success: false, error: "Invalid parameters!" } )
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
   protected
 
 

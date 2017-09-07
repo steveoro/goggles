@@ -233,9 +233,11 @@ Rails.application.routes.draw do
       # === Meetings ===
       get    "meetings/index",                to: "meetings#index",         as: "meetings"
       get    "meetings/show/:id",             to: "meetings#show",          as: "meeting_show"
+      # TODO meeting details w/ subentities in dedicated controllers? => No: use decorators to return custom-tailored meeting rows for API usage
       put    "meetings/tag_for_user/:id",     to: "meetings#tag_for_user",  as: "meeting_tag_for_user"
       put    "meetings/tag_for_team/:id",     to: "meetings#tag_for_team",  as: "meeting_tag_for_team"
-      # TODO meeting details w/ subentities in dedicated controllers? => No: use decorators to return custom-tailored meeting rows for API usage
+      # The following is used for info/manifest remote download & enbedding into the page:
+      get    "meetings/download",             to: "meetings#download",      as: "meeting_download"
 
       # === News Feeds ===
       get    "news_feed/for_user/:id",        to: "news_feeds#for_user",    as: "news_feed_for_user"

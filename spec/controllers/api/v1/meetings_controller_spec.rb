@@ -207,4 +207,43 @@ describe Api::V1::MeetingsController, type: :controller, api: true do
   end
   #-- -------------------------------------------------------------------------
   #++
+
+
+  describe '[GET download]' do
+    before(:each) do
+      @request.env["devise.mapping"] = Devise.mappings[:user]
+    end
+    let( :test_addr ) { "https://www.google.com/" }
+
+    context "with a non-JSON request," do
+      it "redirects the request" do
+        get :download, params: { url: test_addr }
+        expect( response ).to be_a_redirect
+      end
+    end
+
+    context "with a JSON request and nil or invalid credentials," do
+      it "handles the request with 'anauthorized' error result (401)" do
+        get :download, format: :json, params: { url: test_addr }
+        expect(response.status).to eq( 401 )
+      end
+    end
+
+    context "with a JSON request and valid credentials," do
+      it "handles successfully the request" do
+        get :download, format: :json, params: { url: test_addr, body_id: "body", user_email: user.email, user_token: user.authentication_token }
+        expect(response.status).to eq( 200 )
+      end
+      it "returns a JSON result of 'success' as true and the request payload as 'data'" do
+        get :download, format: :json, params: { url: test_addr, body_id: "body", user_email: user.email, user_token: user.authentication_token }
+        result = JSON.parse( response.body )
+# DEBUG
+#        puts "\r\n------------8<-----------\r\n#{ result.inspect }\r\n------------8<-----------"
+        expect( result['success'] ).to eq( true )
+        expect( result['data'] ).to be_present
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 end
