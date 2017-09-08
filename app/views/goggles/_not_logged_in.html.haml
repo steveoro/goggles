@@ -5,9 +5,7 @@
         = I18n.t('welcome')
     .panel-body.text-center
       .col-xs-12
-        %a.btn.btn-primary.goggles-margin-bottom(href="#{ new_user_session_path() }")= I18n.t('login')
-        = I18n.t('or')
-        %a.btn.btn-primary.goggles-margin-bottom(href="#{ new_user_registration_path() }")= I18n.t('sign_up')
+        = render( partial: 'goggles/login_or_signup_buttons' )
       .col-xs-12
         &nbsp;
       .col-xs-offset-1.col-xs-10.text-center

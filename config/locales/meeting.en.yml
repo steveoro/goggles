@@ -60,6 +60,7 @@ en:
     previous_editions: 'Previuos editions'
     passages: 'Passages'
     disqualified: 'DSQ'
+    download_disclaimer: "These data have not been input in our database yet and are shown as published by the Federation."
     my:
       menu_title: "My Meetings"
       title: "My current Meetings"

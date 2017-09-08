@@ -60,6 +60,7 @@ it:
     previous_editions: 'Precedenti edizioni'
     passages: 'Passaggi'
     disqualified: 'SQ.'
+    download_disclaimer: "Questi dati non sono ancora stati acquisiti nel nostro database e compaiono così come pubblicati dalla Federazione in origine."
     my:
       menu_title: "Le mie gare"
       title: "Le mie gare correnti"

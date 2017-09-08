@@ -1,15 +1,46 @@
 = render( partial: 'meeting_header' )
 = render( partial: 'tabs_and_title' )
-- cache( cache_key_for_meeting( 'show_start_list', @meeting.id, @max_entry_updated_at, @team ? @team.id : 0 ) ) do
-  .row
-    %ul.col-xs-offset-10.col-xs-2.col-sm-offset-11.col-sm-1.col-md-offset-11.col-md-1.nav.nav-pills.nav-stacked.navbar-fixed-bottom.goggles-divlist-odd.navpill_side
-      %li
-        = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
-          = image_tag('bullet_arrow_up.png')
-      - @meeting_events_list.each do |me|
+- if @calendar_row && @calendar_row.startlist_link.present?
+  .goggles-category-gap.col-xs-12
+    -# Downloadable starting-list?
+    - if user_signed_in?
+      .col-xs-12.text-center
+        %i= I18n.t('meeting.download_disclaimer')
+      .goggles-category-gap.col-xs-12
+        &nbsp;
+      .col-xs-12
+        #downloaded_startlist
+          %span(id='loadingIndicator')
+            = image_tag( 'indicator.gif' )
+    - else
+      .panel-body.text-center
+        .col-xs-12
+          = render( partial: 'goggles/login_or_signup_buttons' )
+- else
+  - cache( cache_key_for_meeting( 'show_start_list', @meeting.id, @max_entry_updated_at, @team ? @team.id : 0 ) ) do
+    .row
+      %ul.col-xs-offset-10.col-xs-2.col-sm-offset-11.col-sm-1.col-md-offset-11.col-md-1.nav.nav-pills.nav-stacked.navbar-fixed-bottom.goggles-divlist-odd.navpill_side
         %li
-          = link_to("##{me.event_type.code}", {'data-turbolinks'=>'false'}) do
-            = me.event_type.i18n_short
-  .row
-    .col-xs-12
-      = render( partial: 'start_list_grid' )
+          = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+            = image_tag('bullet_arrow_up.png')
+        - @meeting_events_list.each do |me|
+          %li
+            = link_to("##{me.event_type.code}", {'data-turbolinks'=>'false'}) do
+              = me.event_type.i18n_short
+    .row
+      .col-xs-12
+        = render( partial: 'start_list_grid' )
+
+:javascript
+  // (Wait for the page to be ready)
+  $( function() {
+    // Do we have a retrievable link?
+    if ( #{ @calendar_row.startlist_link.present? } ) {
+      // Get the page via AJAX:
+      $.get({
+        url: "#{ api_v1_meeting_download_path( url: 'http://www.federnuoto.it' + @calendar_row.startlist_link.to_s ) }",
+      }).done( function( result ) {
+        $('#downloaded_startlist').replaceWith( result.data );
+      });
+    }
+  });

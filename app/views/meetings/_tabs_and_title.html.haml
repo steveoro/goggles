@@ -2,13 +2,18 @@
   - if @meeting.invitation
     = show_tab_link( params, 'show_invitation', t('meeting.invitation'), meeting_show_invitation_path( id: @meeting.id ) )
 
-  - if @meeting.has_start_list && (!@meeting.are_results_acquired || Date.current() <= @meeting.header_date + 1)
+  - @calendar_row = FinCalendar.find_by_meeting_id( @meeting.id )
+  - if ( @meeting.has_start_list && |
+         (!@meeting.are_results_acquired || Date.current() <= @meeting.header_date + 1) ) || |
+       ( @calendar_row && @calendar_row.startlist_link.present? ) |
     = show_tab_link( params, 'show_start_list', t('meeting.start_list'), meeting_show_start_list_path( id: @meeting.id ) )
+  - if @meeting.has_start_list && (!@meeting.are_results_acquired || Date.current() <= @meeting.header_date + 1)
     = show_tab_link( params, 'show_start_list_by_category', t('meeting.start_list_by_category'), meeting_show_start_list_by_category_path( id: @meeting.id ) )
     = show_tab_link( params, 'show_team_entries', t('meeting.team_entries'), (@team ? meeting_show_team_entries_path(id: @meeting.id, team_id: @team.id) : '#') )
 
-  - if @meeting.are_results_acquired
+  - if @meeting.are_results_acquired || ( @calendar_row && @calendar_row.results_link.present? )
     = show_tab_link( params, 'show_full', t('results'), meeting_show_full_path( id: @meeting.id ) )
+  - if @meeting.are_results_acquired
     = show_tab_link( params, 'show_ranking', t('ranking'), meeting_show_ranking_path( id: @meeting.id ) )
 
   - if @meeting.are_results_acquired || @meeting.has_start_list

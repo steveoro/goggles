@@ -10,15 +10,18 @@
         -# Downloadable manifest?
         - if @meeting.invitation.to_s =~ /www.federnuoto.it/ui
           - if user_signed_in?
-            #downloaded_manifest
-              %span(id='loadingIndicator')
-                = image_tag( 'indicator.gif' )
+            .col-xs-12.text-center
+              %i= I18n.t('meeting.download_disclaimer')
+            .goggles-category-gap.col-xs-12
+              &nbsp;
+            .col-xs-12
+              #downloaded_manifest
+                %span(id='loadingIndicator')
+                  = image_tag( 'indicator.gif' )
           - else
             .panel-body.text-center
               .col-xs-12
-                %a.btn.btn-primary.goggles-margin-bottom(href="#{ new_user_session_path() }")= I18n.t('login')
-                = I18n.t('or')
-                %a.btn.btn-primary.goggles-margin-bottom(href="#{ new_user_registration_path() }")= I18n.t('sign_up')
+                = render( partial: 'goggles/login_or_signup_buttons' )
         - else
           .col-xs-12.embed-responsive.embed-responsive-4by3
             %iframe.embed-responsive-item{ :src => @meeting.invitation.to_s }
