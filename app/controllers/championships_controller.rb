@@ -6,7 +6,7 @@ require 'common/format'
 
 = ChampionshipsController
 
-  - version:  6.003
+  - version:  6.135
   - author:   Leega, Steve A.
 
 =end
@@ -123,10 +123,11 @@ class ChampionshipsController < ApplicationController
   #
   def event_ranking_regional_er_csi
     @title = I18n.t('championships.event_ranking') + ' ' + @season_type.get_full_name
+    # Check for different event types and categories for the season and manage updates for the cache:
 
-    # Check for different event types and categories for the season and manage updates for the cache
-    @event_types = @season.event_types.are_not_relays.distinct.sort_by_style
+    @event_types    = EventType.for_season( @season.id ).are_not_relays.sort_by_style
     @category_types = @season.category_types.are_not_relays.sort_by_age
+
     @ranking_updated_at = @season.meeting_individual_results.count > 0 ?
       @season.meeting_individual_results.select( "meeting_individual_results.updated_at" ).order(:updated_at).last.updated_at.to_i :
       0
@@ -149,8 +150,11 @@ class ChampionshipsController < ApplicationController
           event_ranking[:mirs] = []
 
           # Find out total events in championship (season), count and swam
-          event_ranking[:event_count] = @season.event_types.where(['event_types.code = ?', event_type.code]).count
-          event_ranking[:event_swam]  = @season.event_types.where(['event_types.code = ? and meetings.are_results_acquired', event_type.code]).count
+          # [Steve, 20170912] *** See note above *** Old implementation was:
+          # event_ranking[:event_count] = @season.event_types.where(['event_types.code = ?', event_type.code]).count
+          # event_ranking[:event_swam]  = @season.event_types.where(['event_types.code = ? and meetings.are_results_acquired', event_type.code]).count
+          event_ranking[:event_count] = EventType.for_season( @season.id ).where(['event_types.code = ?', event_type.code]).count
+          event_ranking[:event_swam]  = EventType.for_season( @season.id ).where(['event_types.code = ? and meetings.are_results_acquired', event_type.code]).count
 
           #best_result = @season.meeting_individual_results.is_valid.for_gender_type(gender_type).for_category_type(category_type).for_event_type(event_type).sort_by_timing.first
           #top_timing = Timing.new(best_result.minutes, best_result.seconds, best_result.hundreds) if best_result
@@ -204,7 +208,7 @@ class ChampionshipsController < ApplicationController
     when 151 # CSI 2015/2016
       # Enhance individual ranking
       @individual_ranking = EnhanceIndividualRankingDAO.new( @season )
-    when 161 # CSI 2016/2017
+    else # 161.. and over (CSI 2016/2017, ...)
       # Enhance individual ranking
       @individual_ranking = EnhanceIndividualRankingDAO.new( @season )
     end
@@ -395,6 +399,8 @@ class ChampionshipsController < ApplicationController
   #
   def set_season( season_id )
     @season = Season.find_by_id( season_id )
+    # Verify coherent season_type:
+    ( @season && (@season.season_type_id == @season_type.id) ? @season : nil )
   end
   #-- -------------------------------------------------------------------------
   #++
