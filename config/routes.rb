@@ -1,4 +1,22 @@
 Rails.application.routes.draw do
+  namespace :api do
+    namespace :v2 do
+      get 'data_import_controller/start'
+    end
+  end
+
+  namespace :api do
+    namespace :v2 do
+      get 'data_import_controller/edit'
+    end
+  end
+
+  namespace :api do
+    namespace :v2 do
+      get 'data_import_controller/commit'
+    end
+  end
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

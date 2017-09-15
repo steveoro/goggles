@@ -44,7 +44,7 @@ class Api::V1::PassagesController < Api::BaseController
   #-- -------------------------------------------------------------------------
   #++
 
-  # Creates a news-feed row for a specific user.
+  # Creates a new Passage row.
   # (JSON format) POST-only action.
   #
   # === Params:
