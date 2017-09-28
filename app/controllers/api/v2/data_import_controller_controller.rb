@@ -12,22 +12,34 @@ class Api::V2::DataImportControllerController < Api::BaseController
   #++
 
 
-  # POST #start, { u: <user_id>, m: <meeting_id>, e: <entity_name> }
+  # POST #start, { u: <user_id>, t: <user_auth_token>, m: <meeting_id>, e: <entity_name> }
   #
   # Starts or continues a data-import microtransaction session, given:
   # the user_id, the current meeting_id and the entity name to be processed for
   # a create/update/delete micro-transaction.
   #
-  # Supported entity names so far:
+  # If the transaction for the specified (user, meeting) tuple is found, no changes
+  # are made and the transaction session ID is returned. Otherwise, a new transaction
+  # is created, returning the resulting ID.
   #
-  # - "passages", "relay_swimmers", "reservations"
+  #
+  # === Supported entity "names" (linked to the specified Meeting):
+  #
+  # - "p" ..... DataImportPassage
+  # - "rsw" ... DataImportRelaySwimmer
+  #
+  # === Future Dev.:
+  # - "mr" (DataImportMeetingReservation)
+  # - "mer" (DataImportMeetingEventReservation)
+  # - "mer" (DataImportMeetingRelayReservation)
   #
   # === Returns:
   #
-  # A JSON response code.
+  # A JSON response with the transaction session ID.
   #
   def start
     # TODO
+    render status: 200, json: "ok"
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -43,14 +55,18 @@ class Api::V2::DataImportControllerController < Api::BaseController
   #
   def edit
     # TODO
+    render status: 200, json: "ok"
   end
   #-- -------------------------------------------------------------------------
   #++
 
 
-  # POST #edit, { u: <user_id>, s: <data_import_session_id>, f: <field_name>, v: <value_for_field> }
+  # POST #commit, { u: <user_id>, s: <data_import_session_id> }
   #
-  # Sends an edit/update value for a data-import microtransaction session.
+  # Sends the request to close and commit the microtransaction session specified
+  # with its current ID.
+  #
+  # The session is then processed by the strategy and "resolved" where possible.
   #
   # === Returns:
   #
@@ -58,6 +74,7 @@ class Api::V2::DataImportControllerController < Api::BaseController
   #
   def commit
     # TODO
+    render status: 200, json: "ok"
   end
   #-- -------------------------------------------------------------------------
   #++

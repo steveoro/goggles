@@ -64,20 +64,6 @@ class Api::V1::SearchController < Api::BaseController
   #++
 
 
-  protected
-
-
-  # Makes sure that the format for the request is an accepted one.
-  def ensure_format
-    unless request.xhr? || request.format.json?
-      render( status: 406, json: { success: false, message: I18n.t(:api_request_must_be_json) } )
-      return
-    end
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-
-
   private
 
 

@@ -30,29 +30,6 @@ end
 # =============================================================================
 
 
-shared_examples_for "(Ap1-V1-Controllers, get actions that requires logged user who's a confirmed swimmer)" do |action_name_array|
-  context "unlogged user" do
-    action_name_array.each do |action_name|
-      it '[GET #{action_name}] displays always the Login page' do
-        get_action_and_check_it_redirects_to_login_for( action_name.to_sym )
-      end
-    end
-  end
-
-  context "as a logged-in user who's NOT a confirmed goggler" do
-    before(:each) { login_user() }
-
-    action_name_array.each do |action_name|
-      it '[GET #{action_name}] refuses the request and redirects to app root' do
-        get action_name.to_sym
-        expect( response ).to redirect_to( controller: :home, action: :index )
-      end
-    end
-  end
-end
-# =============================================================================
-
-
 shared_examples_for "(Ap1-V1-Controllers, #index & #show actions)" do |controller_name|
 
   describe '[GET #{controller_name}/index]' do

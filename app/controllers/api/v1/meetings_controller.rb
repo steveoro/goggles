@@ -277,17 +277,6 @@ class Api::V1::MeetingsController < Api::BaseController
   protected
 
 
-  # Makes sure that the format for the request is an accepted one.
-  def ensure_format
-    unless request.xhr? || request.format.json?
-      render( status: 406, json: { success: false, message: I18n.t(:api_request_must_be_json) } )
-      return
-    end
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-
-
   # Prepares the result list for the result hash of #show() given the list of
   # Meeting Events +mevs_list+.
   #

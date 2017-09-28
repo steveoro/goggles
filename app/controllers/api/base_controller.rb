@@ -5,7 +5,7 @@
 
 = Api::BaseController
 
-  - version:  6.001
+  - version:  6.137
   - author:   Steve A.
 
   Main Application controller.
@@ -19,6 +19,17 @@ class Api::BaseController < ActionController::API
 
 
   protected
+
+
+  # Makes sure that the format for the request is an accepted one.
+  def ensure_format
+    unless request.format.json?
+      render( status: 406, json: { success: false, message: I18n.t(:api_request_must_be_json) } )
+      return
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Returns true if  and  does:
