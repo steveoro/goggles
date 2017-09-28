@@ -1,6 +1,6 @@
 = render( partial: 'meeting_header' )
 = render( partial: 'tabs_and_title' )
-- if @calendar_row && @calendar_row.startlist_link.present?
+- if (!@meeting.has_start_list) && @calendar_row && @calendar_row.startlist_link.present?
   .goggles-category-gap.col-xs-12
     -# Downloadable starting-list?
     - if user_signed_in?
@@ -35,10 +35,10 @@
   // (Wait for the page to be ready)
   $( function() {
     // Do we have a retrievable link?
-    if ( #{ @calendar_row.startlist_link.present? } ) {
+    if ( #{ @calendar_row && @calendar_row.startlist_link.present? ? 'true' : 'false' } ) {
       // Get the page via AJAX:
       $.get({
-        url: "#{ api_v1_meeting_download_path( url: 'http://www.federnuoto.it' + @calendar_row.startlist_link.to_s ) }",
+        url: "#{ api_v1_meeting_download_path( url: 'http://www.federnuoto.it' + (@calendar_row && @calendar_row.startlist_link.present? ? @calendar_row.startlist_link.to_s : '') ) }",
       }).done( function( result ) {
         $('#downloaded_startlist').replaceWith( result.data );
       });

@@ -2,7 +2,6 @@
   - if @meeting.invitation
     = show_tab_link( params, 'show_invitation', t('meeting.invitation'), meeting_show_invitation_path( id: @meeting.id ) )
 
-  - @calendar_row = FinCalendar.find_by_meeting_id( @meeting.id )
   - if ( @meeting.has_start_list && |
          (!@meeting.are_results_acquired || Date.current() <= @meeting.header_date + 1) ) || |
        ( @calendar_row && @calendar_row.startlist_link.present? ) |

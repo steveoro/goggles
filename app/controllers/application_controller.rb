@@ -69,12 +69,14 @@ class ApplicationController < ActionController::Base
   #++
 
 
-  # Sets a @meeting instance if params[:id] corresponds to a valid Meeting Id.
-  # It clears to +nil+ the instance otherwise.
+  # Sets the @meeting instance if params[:id] corresponds to a valid Meeting Id
+  # Sets also the corresponding @calendar_row if available.
+  # It clears to +nil+ the instances otherwise.
   #
   def set_meeting_from_id
     meeting_id = params[:id].to_i
     @meeting = meeting_id > 0 ? Meeting.find_by_id( meeting_id ) : nil
+    @calendar_row = @meeting ? FinCalendar.find_by_meeting_id( @meeting.id ) : nil
   end
 
 
