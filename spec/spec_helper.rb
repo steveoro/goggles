@@ -101,4 +101,14 @@ RSpec.configure do |config|
   # test failures related to randomization by passing the same `--seed` value
   # as the one that triggered the failure.
   Kernel.srand config.seed
+
+  # Test suite speed-up - Defer-garbage collection during all tests
+  # check-out specs/support/deferred_garbage_collector.rb in core project
+  config.before(:all) do
+    DeferredGarbageCollector.start
+  end
+
+  config.after(:all) do
+    DeferredGarbageCollector.reconsider
+  end
 end
