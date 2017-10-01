@@ -90,9 +90,9 @@ RSpec.describe MeetingReservationsController, type: :controller do
       .select{ |res| res.meeting.meeting_individual_results.count > 0 }
       .sample
 # DEBUG
-#    puts "\r\n** old_managed_meeting_with_results **\r\n- team manager: #{ team_manager_with_results_and_res.inspect }"
-#    puts "- chosen reservation: #{ reservation.inspect }"
-#    puts "- meeting: #{ reservation.meeting.inspect }"
+    puts "\r\n** old_managed_meeting_with_results **\r\n- team manager: #{ team_manager_with_results_and_res.inspect }"
+    puts "- chosen reservation: #{ reservation.inspect }"
+    puts "- meeting: #{ reservation.meeting.inspect }"
     expect( reservation ).to be_a( MeetingEventReservation )
     expect( reservation.meeting ).to be_a( Meeting )
     expect( reservation.meeting.meeting_individual_results.count ).to be > 0
