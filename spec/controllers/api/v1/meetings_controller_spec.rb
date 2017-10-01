@@ -69,34 +69,49 @@ describe Api::V1::MeetingsController, type: :controller, api: true do
   #++
 
 
-  let(:team_manager) do
-    # Choose the first, random team manager, whose affiliation has
-    # at least a meeting with a far-fetched header date:
-    TeamManager.all
-      .select{ |tm| tm.team_affiliation.season.end_date > Date.today + 1 }
-      .sample
-  end
-
-  let(:created_always_taggable_meeting) do
-    create(
-      :meeting,
-      season: team_manager.team_affiliation.season,
-      header_date: Date.today + 7
+  let(:future_ending_season) do
+    season = create( :season,
+      begin_date: Date.parse("#{ DateTime.now.year }-10-01"),
+      end_date:   Date.parse("#{ DateTime.now.year+1 }-09-01")
     )
+    expect( season ).to be_a( Season )
+    season
   end
-
-  let(:created_meeting) do
-    meeting = created_always_taggable_meeting
-    meeting_session = create(
-      :meeting_session,
-      meeting: meeting,
-      scheduled_date: Date.today + 7
+  let(:future_ending_ta) do
+    ta = create( :team_affiliation,
+      season: future_ending_season
     )
-    create( :meeting_event_individual, meeting_session: meeting_session )
-    expect( meeting.meeting_individual_results.count ).to eq(0)
-    expect( meeting.meeting_reservations.count ).to eq(0)
+    expect( ta ).to be_a( TeamAffiliation )
+    ta
+  end
+  let(:future_manageable_meeting) do
+    meeting = create( :meeting,
+      season: future_ending_season
+    )
+    expect( meeting ).to be_a( Meeting )
     meeting
   end
+  let(:team_manager) do
+    team_manager = create( :team_manager,
+      team_affiliation: future_ending_ta
+    )
+    expect( team_manager ).to be_a( TeamManager )
+    team_manager
+  end
+
+  let( :untagged_meeting ) do
+    meeting_session = create(
+      :meeting_session,
+      meeting: future_manageable_meeting,
+      scheduled_date: future_manageable_meeting.header_date
+    )
+    expect( meeting_session ).to be_a( MeetingSession )
+    create( :meeting_event_individual, meeting_session: meeting_session )
+    expect( future_manageable_meeting.meeting_individual_results.count ).to eq(0)
+    expect( future_manageable_meeting.meeting_reservations.count ).to eq(0)
+    future_manageable_meeting
+  end
+
 
   let(:user) { FactoryGirl.create(:user) }
   #-- -------------------------------------------------------------------------
@@ -110,14 +125,14 @@ describe Api::V1::MeetingsController, type: :controller, api: true do
 
     context "with a non-JSON request," do
       it "refuses the request" do
-        put :tag_for_user, params: { id: created_meeting.id, user_email: user.email, user_token: user.authentication_token }
+        put :tag_for_user, params: { id: untagged_meeting.id, user_email: user.email, user_token: user.authentication_token }
         expect(response.status).to eq( 406 )
       end
       it "doesn't changes the list of tags by users" do
         expect {
-          put :tag_for_user, params: { id: created_meeting.id, user_email: user.email, user_token: user.authentication_token }
-          created_meeting.reload
-        }.not_to change{ created_meeting.tags_by_user_list.count }
+          put :tag_for_user, params: { id: untagged_meeting.id, user_email: user.email, user_token: user.authentication_token }
+          untagged_meeting.reload
+        }.not_to change{ untagged_meeting.tags_by_user_list.count }
       end
     end
 
@@ -135,20 +150,20 @@ describe Api::V1::MeetingsController, type: :controller, api: true do
 
     context "with a JSON request, an existing id and valid credentials," do
       it "handles successfully the request" do
-        put :tag_for_user, format: :json, params: { id: created_meeting.id, user_email: user.email, user_token: user.authentication_token }
+        put :tag_for_user, format: :json, params: { id: untagged_meeting.id, user_email: user.email, user_token: user.authentication_token }
         expect(response.status).to eq( 200 )
       end
       it "returns a JSON result of 'success' as true" do
-        put :tag_for_user, format: :json, params: { id: created_meeting.id, user_email: user.email, user_token: user.authentication_token }
+        put :tag_for_user, format: :json, params: { id: untagged_meeting.id, user_email: user.email, user_token: user.authentication_token }
         result = JSON.parse(response.body)
         expect( result['success'] ).to eq( true )
       end
       it "updates the list of tags_by_user for the specified meeting" do
-        expect( created_meeting.tags_by_user_list.include?("u#{ user.id }") ).to be false
+        expect( untagged_meeting.tags_by_user_list.include?("u#{ user.id }") ).to be false
         expect {
-          put :tag_for_user, format: :json, params: { id: created_meeting.id, user_email: user.email, user_token: user.authentication_token }
-          created_meeting.reload
-        }.to change{ created_meeting.tags_by_user_list.count }.by(1)
+          put :tag_for_user, format: :json, params: { id: untagged_meeting.id, user_email: user.email, user_token: user.authentication_token }
+          untagged_meeting.reload
+        }.to change{ untagged_meeting.tags_by_user_list.count }.by(1)
       end
     end
   end
@@ -163,14 +178,14 @@ describe Api::V1::MeetingsController, type: :controller, api: true do
 
     context "with a non-JSON request," do
       it "refuses the request" do
-        put :tag_for_team, params: { id: created_meeting.id, t: team_manager.team_affiliation_id, user_email: user.email, user_token: user.authentication_token }
+        put :tag_for_team, params: { id: untagged_meeting.id, t: team_manager.team_affiliation_id, user_email: user.email, user_token: user.authentication_token }
         expect(response.status).to eq( 406 )
       end
       it "doesn't changes the list of tags by users" do
         expect {
-          put :tag_for_team, params: { id: created_meeting.id, t: team_manager.team_affiliation_id, user_email: user.email, user_token: user.authentication_token }
-          created_meeting.reload
-        }.not_to change{ created_meeting.tags_by_team_list.count }
+          put :tag_for_team, params: { id: untagged_meeting.id, t: team_manager.team_affiliation_id, user_email: user.email, user_token: user.authentication_token }
+          untagged_meeting.reload
+        }.not_to change{ untagged_meeting.tags_by_team_list.count }
       end
     end
 
@@ -188,20 +203,20 @@ describe Api::V1::MeetingsController, type: :controller, api: true do
 
     context "with a JSON request, an existing id and valid credentials," do
       it "handles successfully the request" do
-        put :tag_for_team, format: :json, params: { id: created_meeting.id, t: team_manager.team_affiliation_id, user_email: user.email, user_token: user.authentication_token }
+        put :tag_for_team, format: :json, params: { id: untagged_meeting.id, t: team_manager.team_affiliation_id, user_email: user.email, user_token: user.authentication_token }
         expect(response.status).to eq( 200 )
       end
       it "returns a JSON result of 'success' as true" do
-        put :tag_for_team, format: :json, params: { id: created_meeting.id, t: team_manager.team_affiliation_id, user_email: user.email, user_token: user.authentication_token }
+        put :tag_for_team, format: :json, params: { id: untagged_meeting.id, t: team_manager.team_affiliation_id, user_email: user.email, user_token: user.authentication_token }
         result = JSON.parse(response.body)
         expect( result['success'] ).to eq( true )
       end
       it "updates the list of tags_by_team for the specified meeting" do
-        expect( created_meeting.tags_by_team_list.include?("ta#{ team_manager.team_affiliation_id }") ).to be false
+        expect( untagged_meeting.tags_by_team_list.include?("ta#{ team_manager.team_affiliation_id }") ).to be false
         expect {
-          put :tag_for_team, format: :json, params: { id: created_meeting.id, t: team_manager.team_affiliation_id, user_email: user.email, user_token: user.authentication_token }
-          created_meeting.reload
-        }.to change{ created_meeting.tags_by_team_list.count }.by(1)
+          put :tag_for_team, format: :json, params: { id: untagged_meeting.id, t: team_manager.team_affiliation_id, user_email: user.email, user_token: user.authentication_token }
+          untagged_meeting.reload
+        }.to change{ untagged_meeting.tags_by_team_list.count }.by(1)
       end
     end
   end

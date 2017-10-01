@@ -2,44 +2,62 @@ require 'rails_helper'
 
 
 RSpec.describe MeetingReservationsController, type: :controller do
-  let(:team_manager) do
-    # Choose the first, random team manager, whose affiliation has
-    # at least a meeting with a far-fetched header date:
-    TeamManager.all
-      .select{ |tm| tm.team_affiliation.season.end_date > Date.today + 1 }
-      .sample
-  end
-
-  let(:random_manageable_meeting) do
-    create(
-      :meeting,
-      season: team_manager.team_affiliation.season,
-      header_date: Date.today + 7
+  let(:future_ending_season) do
+    season = create( :season,
+      begin_date: Date.parse("#{ DateTime.now.year }-10-01"),
+      end_date:   Date.parse("#{ DateTime.now.year+1 }-09-01")
     )
+    expect( season ).to be_a( Season )
+    season
+  end
+  let(:future_ending_ta) do
+    ta = create( :team_affiliation,
+      season: future_ending_season
+    )
+    expect( ta ).to be_a( TeamAffiliation )
+    ta
+  end
+  let(:future_manageable_meeting) do
+    meeting = create( :meeting,
+      season: future_ending_season
+    )
+    expect( meeting ).to be_a( Meeting )
+    meeting
+  end
+  let(:team_manager) do
+    team_manager = create( :team_manager,
+      team_affiliation: future_ending_ta
+    )
+    expect( team_manager ).to be_a( TeamManager )
+    team_manager
   end
 
   let(:manageable_and_unreserved_meeting_id) do
-    meeting = random_manageable_meeting
     meeting_session = create(
       :meeting_session,
-      meeting: meeting,
+      meeting: future_manageable_meeting,
       scheduled_date: Date.today + 7
     )
+    expect( meeting_session ).to be_a( MeetingSession )
     create( :meeting_event_individual, meeting_session: meeting_session )
-    expect( meeting.meeting_individual_results.count ).to eq(0)
-    expect( meeting.meeting_reservations.count ).to eq(0)
-    meeting.id
+    expect( future_manageable_meeting.meeting_individual_results.count ).to eq(0)
+    expect( future_manageable_meeting.meeting_reservations.count ).to eq(0)
+    future_manageable_meeting.id
   end
+  #-- -------------------------------------------------------------------------
+  #++
 
   let(:team_manager_with_results) do
     # Choose the first, random team manager, whose affiliation has
     # at least a meeting with an old header date and some results:
-    TeamManager.all
+    team_manager = TeamManager.all
       .select{ |tm|
         ( tm.team_affiliation.season.meetings.where("header_date < ?", Date.today - 30).count > 0 ) &&
         ( tm.team_affiliation.season.meetings.any?{|m| m.meeting_individual_results.count > 0 } )
       }
       .sample
+    expect( team_manager ).to be_a( TeamManager )
+    team_manager
   end
 
   let(:unmanageable_meeting_with_results) do
@@ -47,6 +65,7 @@ RSpec.describe MeetingReservationsController, type: :controller do
       .meetings
       .select{ |m| (m.meeting_reservations.count == 0) && (m.meeting_individual_results.count > 0) }
       .sample
+    expect( meeting ).to be_a( Meeting )
     expect( meeting.meeting_individual_results.count ).to be > 0
     expect( meeting.meeting_reservations.count ).to eq(0)
     meeting
@@ -71,9 +90,9 @@ RSpec.describe MeetingReservationsController, type: :controller do
       .select{ |res| res.meeting.meeting_individual_results.count > 0 }
       .sample
 # DEBUG
-    puts "\r\n** old_managed_meeting_with_results **\r\n- team manager: #{ team_manager_with_results_and_res.inspect }"
-    puts "- chosen reservation: #{ reservation.inspect }"
-    puts "- meeting: #{ reservation.meeting.inspect }"
+#    puts "\r\n** old_managed_meeting_with_results **\r\n- team manager: #{ team_manager_with_results_and_res.inspect }"
+#    puts "- chosen reservation: #{ reservation.inspect }"
+#    puts "- meeting: #{ reservation.meeting.inspect }"
     expect( reservation ).to be_a( MeetingEventReservation )
     expect( reservation.meeting ).to be_a( Meeting )
     expect( reservation.meeting.meeting_individual_results.count ).to be > 0
