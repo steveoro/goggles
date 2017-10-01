@@ -1,8 +1,6 @@
 = render( partial: 'meeting_header' )
 = render( partial: 'tabs_and_title' )
 .goggles-category-gap.col-xs-12
-
-- cache( cache_key_for_meeting( 'show_invitation', @meeting.id, @max_mir_updated_at ) ) do
   .col-xs-12
     - if @meeting.invitation
       .goggles-category-gap.col-xs-12
@@ -31,10 +29,11 @@
                 &nbsp;
                 = @meeting.get_verbose_name
       - else
-        - html_doc = Nokogiri::HTML( @meeting.invitation )
-        .col-xs-12
-          = html_doc.css('style').to_html.html_safe
-          = html_doc.css('body').inner_html.html_safe
+        - cache( cache_key_for_meeting( 'show_invitation', @meeting.id, @max_mir_updated_at ) ) do
+          - html_doc = Nokogiri::HTML( @meeting.invitation )
+          .col-xs-12
+            = html_doc.css('style').to_html.html_safe
+            = html_doc.css('body').inner_html.html_safe
   .col-xs-12
     &nbsp;
 

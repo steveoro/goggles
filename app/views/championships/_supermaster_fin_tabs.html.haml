@@ -1,0 +1,15 @@
+%ul.nav.nav-tabs#pageTop{role: "tablist"}
+  = show_tab_link( params, 'calendar_supermaster_fin', t('championships.calendar'), championships_calendar_supermaster_fin_path( id: @season.id ) )
+
+  -#- if @season.meeting_individual_results.count > 0
+  -#  = show_tab_link( params, 'ranking_supermaster_fin', t('championships.team_ranking'), championships_ranking_supermaster_fin_path( id: @season.id ) )
+
+  -#  - if @season.id == 162 || @season.id == 172
+  -#    = show_tab_link( params, 'individual_rank_supermaster_fin', t('championships.individual_rank'), championships_individual_rank_supermaster_fin_path( id: @season.id ) )
+
+  -#  = show_tab_link( params, 'event_ranking_supermaster_fin', t('championships.event_ranking'), championships_event_ranking_supermaster_fin_path( id: @season.id ) )
+
+  -#- if @season.rules
+  -#  = show_tab_link( params, 'rules_supermaster_fin', t('championships.rules'), championships_rules_supermaster_fin_path( id: @season.id ) )
+
+  -#= show_tab_link( params, 'history_supermaster_fin', t('championships.history'), championships_history_supermaster_fin_path( id: @season.id ) )
