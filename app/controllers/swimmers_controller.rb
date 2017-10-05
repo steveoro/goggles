@@ -707,30 +707,6 @@ class SwimmersController < ApplicationController
     end
     @goggle_cups_tab_title = @goggle_cups.size == 1 ? @goggle_cups.first.description : I18n.t('radiography.goggle_cup_current')
   end
-
-
-  # Strong parameters checking.
-  # Returns the whitelisted, filtered params Hash.
-  def passage_params
-    params
-      .permit(
-        :user_id,
-        :passage_type_id,
-        :swimmer_id,
-        :team_id,
-        :meeting_program_id,
-        :meeting_entry_id,
-        :meeting_individual_result_id,
-        :minutes_from_start, :seconds_from_start, :hundreds_from_start,
-        :is_native_from_start,
-        :reaction_time, :position,
-        :minutes, :seconds, :hundreds,
-        :breath_number, :stroke_cycles,
-        :not_swam_part_seconds,
-        :not_swam_part_hundreds,
-        :not_swam_kick_number
-      )
-  end
   #-- -------------------------------------------------------------------------
   #++
 end
