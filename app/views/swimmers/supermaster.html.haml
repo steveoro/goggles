@@ -10,11 +10,12 @@
     -#= render( partial: 'supermaster_jqplot_gauge', locals: { supermaster_score: supermaster_score, ironmaster_score: ironmaster_score, team_ranking_score: team_ranking_score } )
     -#= render( partial: 'supermaster_plain_charts', locals: { supermaster_score: supermaster_score, ironmaster_score: ironmaster_score, team_ranking_score: team_ranking_score } )
 
-  = render( partial: 'supermaster_rankings_table', locals: { supermaster_score: supermaster_score, ironmaster_score: ironmaster_score, team_ranking_score: team_ranking_score } )
-  = render( partial: 'supermaster_medals_scores_tables' )
-  = render( partial: 'supermaster_meetings_table' )
-  = render( partial: 'supermaster_results_table', locals: { supermaster_score: supermaster_score, ironmaster_score: ironmaster_score, team_ranking_score: team_ranking_score } )
-  = render( partial: 'supermaster_rules' )
-
+  - if @meeting_individual_results.count > 0
+    = render( partial: 'supermaster_rankings_table', locals: { supermaster_score: supermaster_score, ironmaster_score: ironmaster_score, team_ranking_score: team_ranking_score } )
+    = render( partial: 'supermaster_medals_scores_tables' )
+    = render( partial: 'supermaster_meetings_table' )
+    = render( partial: 'supermaster_results_table', locals: { supermaster_score: supermaster_score, ironmaster_score: ironmaster_score, team_ranking_score: team_ranking_score } )
+    = render( partial: 'supermaster_rules' )
+  
   .col-xs-12.goggles-category-gap#bottom_of_page
     &nbsp;
