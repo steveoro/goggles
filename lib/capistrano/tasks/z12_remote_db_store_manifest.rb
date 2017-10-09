@@ -77,7 +77,6 @@ option is used.
 
       # After execution remove temp files on dest host:
       info "Removing remote temp files..."
-      execute :rm, stderr_file_name
       execute :rm, '/tmp/temp_manifest.html'
     end
 
