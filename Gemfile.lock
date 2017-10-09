@@ -25,9 +25,9 @@ GIT
 
 GIT
   remote: https://github.com/steveoro/goggles_core
-  revision: e784d69656a286ba765f2b616e1cddfbeb552b78
+  revision: d50d8f8e6ce60f0ee5fca0c19633575a2a3bb3c0
   specs:
-    goggles_core (1.1.70.5)
+    goggles_core (1.1.71.0)
       active_hash_relation
       active_model_serializers (~> 0.10.0)
       activemodel-serializers-xml
@@ -106,7 +106,7 @@ GEM
       activerecord (>= 4.0)
     acts_as_reportable (1.1.1)
       ruport (>= 1.6.0)
-    acts_as_votable (0.10.0)
+    acts_as_votable (0.11.0)
     addressable (2.4.0)
     airbrussh (1.1.1)
       sshkit (>= 1.6.1, != 1.7.0)

@@ -3,9 +3,9 @@
 # == Capistrano helper tasks ==
 #
 # - author: Steve A.
-# - vers. : 6.099
+# - vers. : 6.145
 #
-# This requires Capistrano v. >= 3.1
+# This requires Capistrano v. >= 3.4
 
 
 namespace :remote do
@@ -37,12 +37,13 @@ option is used.
     meeting_id    = ENV["meeting_id"].to_i
     full_pathname = ENV["file"]
     skip_download = ENV.include?("skip_download") && (ENV["skip_download"].to_i > 0)
+    warm_up_time  = ENV.include?("warm_up") ? ENV["warm_up"] : nil
+    begin_time    = ENV.include?("begin") ? ENV["begin"] : nil
+    day_part_type_code = ENV.include?("day_part") ? ENV["day_part"] : 'P'
 
     run_locally do
       puts "\r\n*** remote:db_store_manifest ***"
-      unless Meeting.find_by_id( meeting_id ).instance_of?( Meeting ) &&
-             ENV.include?("file") &&
-             File.exists?( full_pathname )
+      unless meeting_id > 0 && ENV.include?("file") && File.exists?( full_pathname )
         puts("This task needs at least a valid 'meeting_id' and 'file' parameters.")
         exit
       end
@@ -50,6 +51,9 @@ option is used.
 
       # Display some info:
       puts "Meeting ID...............: #{ meeting_id }"
+      puts "warm_up_time.............: #{ warm_up_time }"
+      puts "begin_time...............: #{ begin_time }"
+      puts "day_part_type_code ......: #{ day_part_type_code }"
       puts "Processed Manifest.......: #{ full_pathname } (size: #{ text_file_contents.size })"
       puts "DB Dump Download phase...: #{ skip_download ? 'OFF' : '(enabled)' }"
     end
@@ -57,36 +61,17 @@ option is used.
     # === UPLOAD phase: ===
 
     on roles(:app) do
-      stderr_file_name = '/tmp/std_err_log.txt'         # Store STDERR on this temp file
       info "\r\nUploading file #{ full_pathname } ..."
       # Upload the SQL DB-Diff file:
       upload! full_pathname, '/tmp/temp_manifest.html'
       # Run the rake task to store the manifest:
       within release_path do
         with rails_env: :production do
-          rake "db:store_meeting_invitation meeting_id=#{ meeting_id } file=\"/tmp/temp_manifest.html\" 2> #{ stderr_file_name }"
-        end
-      end
-
-      # Intercept errors or warnings on the std_err output:
-      if test("[ -s #{ stderr_file_name } ]")
-        file_lines = capture( :cat, stderr_file_name ).split("\n")
-        errors   = file_lines.select{ |line| line =~ /Error/i }
-        warnings = file_lines.select{ |line| line =~ /Warning/i }
-        if errors.size > 0
-          puts "\r\nError(s) intercepted!"
-          puts "---------8<----------"
-          errors.each{ |e| puts e }
-          puts "---------8<----------"
-          puts "\r\nAborting..."
-          exit(1)
-        end
-        if warnings.size > 0
-          puts "\r\nWarning(s) intercepted:"
-          puts "---------8<----------"
-          warnings.each{ |w| puts w }
-          puts "---------8<----------"
-          puts "\r\nIgnoring..."
+          options = "db:store_meeting_manifest meeting_id=#{ meeting_id } file=\"/tmp/temp_manifest.html\""
+          options << " warm_up=\"#{ warm_up_time }\"" if warm_up_time.to_s.size > 0
+          options << " begin=\"#{ begin_time }\"" if begin_time.to_s.size > 0
+          options << " day_part=\"#{ day_part_type_code }\"" if day_part_type_code.to_s.size > 0
+          rake options
         end
       end
 
