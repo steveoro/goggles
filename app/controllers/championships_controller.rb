@@ -125,7 +125,7 @@ class ChampionshipsController < ApplicationController
     @title = I18n.t('championships.event_ranking') + ' ' + @season_type.get_full_name
     # Check for different event types and categories for the season and manage updates for the cache:
 
-    @event_types    = EventType.for_season( @season.id ).are_not_relays.sort_by_style
+    @event_types    = EventType.for_season( @season.id ).are_not_relays.uniq.sort_by_style
     @category_types = @season.category_types.are_not_relays.sort_by_age
 
     @ranking_updated_at = @season.meeting_individual_results.count > 0 ?
