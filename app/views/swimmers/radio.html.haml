@@ -15,11 +15,6 @@
           = social_edit_badge( @swimmer )
       .row.goggles-category-gap
         .col-xs-3
-          = I18n.t('swimmers.affiliated_in_teams') +':'
-        .col-xs-9
-          = @swimmer.get_linked_team_names.html_safe
-      .row
-        .col-xs-3
           = I18n.t('swimmers.year_of_birth') +':'
         .col-xs-9
           = @swimmer.year_of_birth
@@ -33,6 +28,11 @@
           - category = @swimmer.get_current_category_type_from_badges
           = category ? category.code : '?'
           = ')'
+      .row.goggles-category-gap
+        .col-xs-3
+          = I18n.t('swimmers.affiliated_in_teams') +':'
+        .col-xs-9
+          = @swimmer.get_linked_current_team_names.html_safe
       .row.goggles-category-gap
         .col-xs-3
           = I18n.t('swimmers.meeting_presence') +':'
@@ -118,6 +118,12 @@
             = count_with_bomb( dsq_count )
           - else
             = I18n.t('swimmers.no_disqualifications')
+      .row.goggles-category-gap
+        .col-xs-3
+          = I18n.t('swimmers.all_teams') +':'
+        .col-xs-9
+          = @swimmer.get_linked_team_names.html_safe
+
     .col-xs-3
       .text-center
         - if ( @swimmer.associated_user == current_user )

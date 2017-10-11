@@ -319,6 +319,26 @@ class SwimmerDecorator < Draper::Decorator
     linked_list
   end
   #-- -------------------------------------------------------------------------
+
+  # Retrieves a comma-separated string containing all the distinct team
+  # names associated with this instance for current seasons only.
+  #
+  def get_linked_current_team_names
+    linked_list = ""
+    list = []
+    if badges
+      badges.each do |badge|
+        if !badge.season.is_season_ended_at
+          list.append( badge.team.decorate.get_linked_name )
+        end
+      end
+      linked_list = list.uniq.join(', ')
+    else
+      linked_list = I18n.t('none')
+    end
+    linked_list
+  end
+  #-- -------------------------------------------------------------------------
   #++
 
   # Returns the Array of all the MeetingIndividualResult(s) that are crowned by a
