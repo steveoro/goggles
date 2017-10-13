@@ -1,9 +1,11 @@
 .col-xs-12.goggles-category-gap#pageTop
 %ul.nav.nav-tabs{role: "tablist"}
   = show_tab_link( params, 'radio', t('radiography.radio_tab'), swimmer_radio_path(id: @swimmer.id) )
-  = show_tab_link( params, 'supermaster', t('supermaster.title'), swimmer_supermaster_path(id: @swimmer.id) )
-  - badge = @swimmer.badges.for_season_type( SeasonType.find_by_code('MASCSI') ).for_year( Season.build_header_year_from_date() ).first
-  - if badge
+  - badgeFIN = @swimmer.badges.for_season_type( SeasonType.find_by_code('MASFIN') ).first
+  - if badgeFIN
+    = show_tab_link( params, 'supermaster', t('supermaster.title'), swimmer_supermaster_path(id: @swimmer.id) )
+  - badgeCSI = @swimmer.badges.for_season_type( SeasonType.find_by_code('MASCSI') ).first
+  - if badgeCSI
     = show_tab_link( params, 'regionalercsi', t('regionalercsi.title'), swimmer_regionalercsi_path(id: @swimmer.id) )
   = show_tab_link( params, 'current_goggle_cup', @goggle_cups_tab_title, swimmer_current_goggle_cup_path(id: @swimmer.id) )
   = show_tab_link( params, 'medals', t('radiography.medals_tab'), swimmer_medals_path(id: @swimmer.id) )
@@ -18,3 +20,5 @@
     = "#{@tab_title} -- "
     = I18n.t('radiography.radio_tab_title').gsub('{SWIMMER_NAME}', @swimmer.get_full_name)
     %i= "(#{ @header_year })" unless @header_year.nil?
+    - if @errore
+      %p= @errore

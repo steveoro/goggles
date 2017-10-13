@@ -471,22 +471,23 @@ class SwimmersController < ApplicationController
   #      to test a couple of edge conditions)
   #
   def supermaster
+    # --- "Supermaster" tab: ---
+    @tab_title   = I18n.t('supermaster.supermaster')
+    @season_type = SeasonType.find_by_code('MASFIN')
+
     params.permit! # (No unsafe params can be passed)
-    has_badge = if params['header_year'].nil?
-      @swimmer.has_badge_for_season_and_year?
-    else
-      @swimmer.has_badge_for_season_and_year?( params['header_year'].to_i )
-    end
-    unless has_badge
-      flash[:error] = I18n.t('swimmers.no_associated_badge_found')
-      redirect_back( fallback_location: swimmers_path ) and return
+    @header_year = params['header_year'].nil? ? Season.build_header_year_from_date : params['header_year'].to_i
+    @badge       = @swimmer.badges.for_season_type( @season_type ).for_year( @header_year ).first
+    if @badge.nil?
+      #flash[:error] = I18n.t('swimmers.no_associated_badge_found')
+      @errore = I18n.t('swimmers.no_associated_badge_found')
+      @badge = @swimmer.badges.for_season_type( @season_type ).sort_by_season('DESC').first
+      @header_year = @badge.season.header_year
+      if @badge.nil?
+        redirect_back( fallback_location: swimmers_path ) and return
+      end
     end
 
-    # --- "Supermaster" tab: ---
-    @tab_title        = I18n.t('supermaster.supermaster')
-    @season_type      = SeasonType.find_by_code('MASFIN')
-    @header_year      = params['header_year'].nil? ? Season.build_header_year_from_date : params['header_year'].to_i
-    @badge            = @swimmer.badges.for_season_type( @season_type ).for_year( @header_year ).first
     @season           = @badge.season
     @team             = @badge.team
     # Check for overrides
@@ -512,17 +513,23 @@ class SwimmersController < ApplicationController
   #      to test a couple of edge conditions)
   #
   def regionalercsi
-    params.permit! # (No unsafe params can be passed)
+    # --- "Regional ER CSI" tab: ---
+    @tab_title   = I18n.t('regionalercsi.title')
     @season_type = SeasonType.find_by_code('MASCSI')
+
+    params.permit! # (No unsafe params can be passed)
     @header_year = params['header_year'].nil? ? Season.build_header_year_from_date : params['header_year'].to_i
     @badge       = @swimmer.badges.for_season_type( @season_type ).for_year( @header_year ).first
     if @badge.nil?
-      flash[:error] = I18n.t('swimmers.no_associated_badge_found')
-      redirect_back( fallback_location: swimmer_radio_path ) and return
+      #flash[:error] = I18n.t('swimmers.no_associated_badge_found')
+      @errore = I18n.t('swimmers.no_associated_badge_found')
+      @badge = @swimmer.badges.for_season_type( @season_type ).sort_by_season('DESC').first
+      @header_year = @badge.season.header_year
+      if @badge.nil?
+        redirect_back( fallback_location: swimmer_radio_path ) and return
+      end
     end
 
-    # --- "Regional ER CSI" tab: ---
-    @tab_title        = I18n.t('regionalercsi.title')
     @season           = @badge.season
     @team             = @badge.team
     # Check for overrides
@@ -538,7 +545,7 @@ class SwimmersController < ApplicationController
     EventsByPoolType.not_relays.for_pool_type_code( '25' ).distance_more_than(50).distance_less_than(800).sort_by_event.each do |events_by_pool_type|
       @events_list << events_by_pool_type.event_type
     end
-    @events_list = @events_list.delete_if{|e| e.code == '200FA' || e.code == '200RA' || e.code == '200DO' || e.code == '400MI' }
+    @events_list = @events_list.delete_if{|e| e.code == '1500SL' || e.code == '200FA' || e.code == '200RA' || e.code == '200DO' || e.code == '400MI' }
 
   end
 
