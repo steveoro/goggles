@@ -531,7 +531,7 @@ class SwimmersController < ApplicationController
     EventsByPoolType.not_relays.for_pool_type_code( '25' ).distance_more_than(50).distance_less_than(800).sort_by_event.each do |events_by_pool_type|
       @events_list << events_by_pool_type.event_type
     end
-    @events_list = @events_list.delete_if{|e| e.code == '1500SL' || e.code == '200FA' || e.code == '200RA' || e.code == '200DO' || e.code == '400MI' }
+    @events_list = @events_list.delete_if{|e| e.code == '200FA' || e.code == '200RA' || e.code == '200DO' || e.code == '400MI' }
 
   end
 
