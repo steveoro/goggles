@@ -55,6 +55,14 @@
           = @swimmer.get_total_time_swam.to_s
       .row
         .col-xs-3
+          = I18n.t('swimmers.ironmaster') +':'
+        .col-xs-9
+          - ironmaster = 0
+          - @swimmer.badges.for_season_type(SeasonType.find_by_code('MASFIN')).each do |badge|
+            - ironmaster = ironmaster + 1 if badge.has_ironmaster?
+          = count_with_award_star(ironmaster, 1)
+      .row
+        .col-xs-3
           = I18n.t('swimmers.first_attended_meeting') +':'
         .col-xs-9
           - m = @swimmer.get_first_meeting

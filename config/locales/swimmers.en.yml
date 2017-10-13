@@ -29,6 +29,7 @@ en:
     no_associated_goggler_found: "This swimmer does not have any associated Goggles user. Thus we don't have enough data to complete the request!"
     no_associated_badge_found: "This swimmer does not have any badge or registration for the current year of this type of Championship"
     all_teams: "Swam in Teams"
+    ironmaster: "Completed Ironmasters"    
 
   swimmer:
     unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'swimmers'!"
