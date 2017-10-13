@@ -27,9 +27,10 @@ it:
     search_swimmers: "Cerca Nuotatori"
     age_current: "Età al 31/12"
     no_associated_goggler_found: "Questo atleta non ha ancora nessun utente associato a Goggles. Non abbiamo altri dati per poter completare la richiesta!"
-    no_associated_badge_found: "Questo atleta non sembra avere alcun cartellino per l'anno in corso di questo Campionato!"
+    no_associated_badge_found: "Questo atleta non sembra avere alcun cartellino per la stagione in corso di questo Campionato!"
     all_teams: "Società in cui ha nuotato"
     ironmaster: "Ironmaster completati"
+    no_associated_goggle_cup_found: "Questo atleta non sembra partecipare a nessuna Goggle cup per la stagione in corso!"
     
   swimmer:
     unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sui Nuotatori! (tab: 'swimmers')"

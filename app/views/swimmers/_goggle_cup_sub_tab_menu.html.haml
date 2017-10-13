@@ -1,0 +1,16 @@
+%ul.nav.nav-tabs#season_list{role: "seasonlist"}
+  - teams = []
+  - @swimmer.goggle_cups.sort_goggle_cup_by_year('DESC').each do |goggle_cup|
+    - teams << goggle_cup.team if !teams.include?( goggle_cup.team )
+  - teams.each_with_index do |team,index|
+    - goggle_cups = @swimmer.goggle_cups.for_team(team).uniq.sort_goggle_cup_by_year('DESC')
+    - sub_menu_title = team.get_full_name
+    - is_active = index == 0 ? true : false
+    = content_tag( :li, class: "dropdown" + (is_active ? ' active' : ''), role: "presentation" ) do
+      = link_to( "#", class: "dropdown-toggle", "data-turbolinks"=>"false", "data-toggle"=>"dropdown", role: "button", "aria-haspopup"=>"true", "aria-expanded"=>"false" ) do
+        = sub_menu_title
+        = content_tag( :span, '', class: "caret" )
+      %ul.dropdown-menu
+        - goggle_cups.each do |goggle_cup|
+          %li= link_to( goggle_cup.get_full_name, swimmer_closed_goggle_cup_path(id: @swimmer.id, goggle_cup_id: goggle_cup.id) )
+.col-xs-12.goggles-category-gap

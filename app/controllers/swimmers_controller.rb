@@ -442,20 +442,6 @@ class SwimmersController < ApplicationController
   #++
 
 
-  # Radiography for a specified swimmer id: "Goggle cup" tab rendering.
-  # Show results which concurrs in current goggle cup score, if any
-  # For each result, ordered by goggle cup points show google cup point
-  # and event datas
-  #
-  # == Params:
-  # id: the swimmer id to be processed
-  #
-  def current_goggle_cup
-    # --- "Goggle cup" tab: ---
-    @tab_title = @goggle_cups_tab_title
-  end
-
-
   # Radiography for a specified swimmer id: "Supermaster" tab rendering.
   # Show FIN supermaster results and main rankings
   # Main rankings are:
@@ -547,6 +533,30 @@ class SwimmersController < ApplicationController
     end
     @events_list = @events_list.delete_if{|e| e.code == '1500SL' || e.code == '200FA' || e.code == '200RA' || e.code == '200DO' || e.code == '400MI' }
 
+  end
+
+
+  # Radiography for a specified swimmer id: "Goggle cup" tab rendering.
+  # Show results which concurrs in current goggle cup score, if any
+  # For each result, ordered by goggle cup points show google cup point
+  # and event datas
+  #
+  # == Params:
+  # id: the swimmer id to be processed
+  #
+  def current_goggle_cup
+    # --- "Goggle cup" tab: ---
+    @tab_title = @goggle_cups_tab_title
+
+    # Verify if present current goggle cup or some closed editions 
+    if @goggle_cups.size == 0 and @swimmer.goggle_cups.size > 0
+      @errore = I18n.t('swimmers.no_associated_goggle_cup_found')
+      year = @swimmer.goggle_cups.sort_goggle_cup_by_year('DESC').first.season_year
+      @swimmer.goggle_cups.each do |goggle_cup|
+        @goggle_cups << goggle_cup if ( goggle_cup.season_year == year && !@goggle_cups.include?(goggle_cup) )
+      end
+      @tab_title = I18n.t('radiography.goggle_cup_closed')
+    end
   end
 
 
@@ -712,7 +722,7 @@ class SwimmersController < ApplicationController
     @swimmer.goggle_cups.is_current.each do |goggle_cup|
       @goggle_cups << goggle_cup if !@goggle_cups.include?(goggle_cup)
     end
-    @goggle_cups_tab_title = @goggle_cups.size == 1 ? @goggle_cups.first.description : I18n.t('radiography.goggle_cup_current')
+    @goggle_cups_tab_title = @goggle_cups.size == 1 ? @goggle_cups.first.description : I18n.t('radiography.goggle_cup_tab')
   end
   #-- -------------------------------------------------------------------------
   #++
