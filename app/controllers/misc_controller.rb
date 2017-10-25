@@ -341,6 +341,40 @@ class MiscController < ApplicationController
   #-- -------------------------------------------------------------------------
   #++
 
+  # #GET pace_test_2000
+  # Swimmer training pace calculation by testing 2000 meter continued swim 
+  #
+  def pace_test_2000
+    @tab_title = I18n.t('misc.pace_test_2000')
+    @stp2000  = nil
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  # #AJAX POST-only pace_test_2000
+  #
+  # Calculate and show swimmer training paces
+  #
+  def show_pace_test_2000
+# DEBUG
+#    puts "\r\n*********** show_pace_test_2000 ***********"
+#    puts params.inspect
+    if request.xhr? && request.post?                   # === AJAX POST: ===
+      minutes_swam_2000 = params['minutes_swam_2000'] ? params['minutes_swam_2000'].to_i : 0
+      seconds_swam_2000 = params['seconds_swam_2000'] ? params['seconds_swam_2000'].to_i : 0
+
+      unless ( ( minutes_swam_2000 * 60 ) + seconds_swam_2000 > 0 )
+        flash[:error] = I18n.t(:missing_request_parameter)
+        return
+      end
+
+      stpc = SwimmerTrainingPaceCalculator.new( '2000', minutes_swam_2000, seconds_swam_2000 )
+      
+      #puts "\r\n- stpc2000 (before visitor set): " << @stpc2000.inspect
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 
   private
 
