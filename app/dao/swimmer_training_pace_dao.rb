@@ -66,6 +66,14 @@ class SwimmerTrainingPaceDAO
   #-- -------------------------------------------------------------------------
   #++
 
+  # Counts paces calclated
+  #
+  def count_paces
+    @paces.count
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
   # Describe test type using parameter
   # TODO This function shoud be refactored using test_types entity
   #

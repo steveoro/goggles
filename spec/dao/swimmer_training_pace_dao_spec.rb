@@ -31,7 +31,8 @@ describe SwimmerTrainingPaceDAO, type: :model do
     ])
 
     it_behaves_like( "(the existance of a method returning numeric values)", [
-      :get_pace
+      :get_pace,
+      :count_paces
     ])
 
     it_behaves_like( "(the existance of a method returning strings)", [
@@ -83,6 +84,18 @@ describe SwimmerTrainingPaceDAO, type: :model do
       expect( subject.get_pace( fix_pace_type, fix_distance ) ).to eq( 0 )
       given_time = subject.set_pace( fix_pace_type, fix_distance, fix_minutes, fix_seconds )
       expect( subject.get_pace( fix_pace_type, fix_distance ) ).to eq( given_time )      
+    end   
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  describe "#count_paces" do
+    it "returns 0 if not pace set" do
+      expect( subject.count_paces ).to eq( 0 )
+    end
+    it "returns 1 if 1 pace set" do
+      subject.set_pace( fix_pace_type, fix_distance, fix_minutes, fix_seconds )
+      expect( subject.count_paces ).to eq( 1 )      
     end   
   end
   #-- -------------------------------------------------------------------------

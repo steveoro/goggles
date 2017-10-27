@@ -346,7 +346,8 @@ class MiscController < ApplicationController
   #
   def pace_test_2000
     @tab_title = I18n.t('misc.pace_test_2000')
-    @stp2000  = nil
+    @base_pace = Timing.new( 0 )
+    @stp       = nil
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -368,9 +369,12 @@ class MiscController < ApplicationController
         return
       end
 
-      stpc = SwimmerTrainingPaceCalculator.new( '2000', minutes_swam_2000, seconds_swam_2000 )
+      time_swam = Timing.new( minutes_swam_2000 * 60 + seconds_swam_2000 )
+      stpc = SwimmerTrainingPaceCalculator.new( '2000', time_swam )
+      @base_pace = stpc.calculate_paces
+      @stp = stpc.calculated_swimmer_paces
       
-      #puts "\r\n- stpc2000 (before visitor set): " << @stpc2000.inspect
+      #puts "\r\n- stp: " << @stp.inspect
     end
   end
   #-- -------------------------------------------------------------------------
