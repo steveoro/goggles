@@ -13,6 +13,7 @@ describe SwimmerTrainingPaceDAO, type: :model do
 
   let(:fix_minutes )      { (rand * 5).to_i + 1 }
   let(:fix_seconds )      { (rand * 59).to_i + 1 }
+  let(:fix_time_swam )    { Timing.new( 0, fix_seconds, fix_minutes ) }  
   
   subject { SwimmerTrainingPaceDAO.new() }
 
@@ -62,14 +63,14 @@ describe SwimmerTrainingPaceDAO, type: :model do
 
   describe "#set_pace" do
     it "returns a number" do
-      expect( subject.set_pace( fix_pace_type, fix_distance, fix_minutes, fix_seconds ) ).to be > 0
+      expect( subject.set_pace( fix_pace_type, fix_distance, fix_time_swam ) ).to be > 0
     end
-    it "returns the time in seconds" do
-      expect( subject.set_pace( fix_pace_type, fix_distance, fix_minutes, fix_seconds ) ).to eq( (fix_minutes * 60) + fix_seconds )
+    it "returns the time in hundreds" do
+      expect( subject.set_pace( fix_pace_type, fix_distance, fix_time_swam ) ).to eq( fix_time_swam.to_hundreds )
     end
-    it "sets the time in seconds in the specified pace and distance" do
+    it "sets the time in hundreds in the specified pace and distance" do
       expect( subject.get_pace( fix_pace_type, fix_distance ) ).to eq( 0 )
-      given_time = subject.set_pace( fix_pace_type, fix_distance, fix_minutes, fix_seconds )
+      given_time = subject.set_pace( fix_pace_type, fix_distance, fix_time_swam )
       expect( subject.get_pace( fix_pace_type, fix_distance ) ).to eq( given_time )
     end   
   end
@@ -80,9 +81,9 @@ describe SwimmerTrainingPaceDAO, type: :model do
     it "returns 0 if not pace set" do
       expect( subject.get_pace( fix_pace_type, fix_distance ) ).to eq( 0 )
     end
-    it "returns the time in seconds of the specified pace and distance" do
+    it "returns the time in hundreds of the specified pace and distance" do
       expect( subject.get_pace( fix_pace_type, fix_distance ) ).to eq( 0 )
-      given_time = subject.set_pace( fix_pace_type, fix_distance, fix_minutes, fix_seconds )
+      given_time = subject.set_pace( fix_pace_type, fix_distance, fix_time_swam )
       expect( subject.get_pace( fix_pace_type, fix_distance ) ).to eq( given_time )      
     end   
   end
@@ -94,7 +95,7 @@ describe SwimmerTrainingPaceDAO, type: :model do
       expect( subject.count_paces ).to eq( 0 )
     end
     it "returns 1 if 1 pace set" do
-      subject.set_pace( fix_pace_type, fix_distance, fix_minutes, fix_seconds )
+      subject.set_pace( fix_pace_type, fix_distance, fix_time_swam )
       expect( subject.count_paces ).to eq( 1 )      
     end   
   end

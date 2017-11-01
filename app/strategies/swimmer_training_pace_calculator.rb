@@ -71,13 +71,20 @@ class SwimmerTrainingPaceCalculator
   # Calculate paces for 2000 meters continuous swimming
   # The total amount should be devided by 20. The result is the A2 paces for 100 meters
   #
+  def calculate_base_pace_2000
+    @base_pace = Timing.new( (@time_swam.to_hundreds / 20 + 0.49).to_i )
+  end
+  #-- --------------------------------------------------------------------------
+  #++
+  
+  # Calculate paces for 2000 meters continuous swimming
+  # The total amount should be devided by 20. The result is the A2 paces for 100 meters
+  #
   def calculate_paces_2000
-    time_in_seconds = @time_swam.to_hundreds
-    @base_pace = Timing.new( (time_in_seconds / 20 + 0.49).to_i )
-    
+    @base_pace = calculate_base_pace_2000
     @parameters.each do |parameter|
       calculated_pace = compute_pace_timing(parameter[:percentage], parameter[:distance] / 100)
-      @calculated_swimmer_paces.set_pace(parameter[:pace_type], parameter[:distance].to_s, calculated_pace.minutes, calculated_pace.seconds)
+      @calculated_swimmer_paces.set_pace(parameter[:pace_type], parameter[:distance].to_s, calculated_pace)
     end
     
     @calculated_swimmer_paces

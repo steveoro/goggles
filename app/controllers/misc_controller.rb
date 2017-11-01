@@ -369,7 +369,7 @@ class MiscController < ApplicationController
         return
       end
 
-      time_swam = Timing.new( minutes_swam_2000 * 60 + seconds_swam_2000 )
+      time_swam = Timing.new( 0, seconds_swam_2000, minutes_swam_2000 )
       stpc = SwimmerTrainingPaceCalculator.new( '2000', time_swam )
       @base_pace = stpc.calculate_paces
       @stp = stpc.calculated_swimmer_paces

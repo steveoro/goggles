@@ -48,20 +48,20 @@ class SwimmerTrainingPaceDAO
 
   # Sets a given pace
   #
-  def set_pace( pace_type, distance, minutes, seconds )
-    time_in_seconds = (minutes * 60) + seconds
-    @paces[ get_pace_code( pace_type, distance ) ] = time_in_seconds  
-    time_in_seconds
+  def set_pace( pace_type, distance, time_swam )
+    time_in_hundreds = time_swam.to_hundreds
+    @paces[ get_pace_code( pace_type, distance ) ] = time_in_hundreds  
+    time_in_hundreds
   end
   #-- -------------------------------------------------------------------------
   #++
 
-  # Gets a given pace (in seconds)
+  # Gets a given pace (in hundreds)
   # If given pace not set returns 0
   #
   def get_pace( pace_type = @pace_types[0], distance = @distances[0] )
-    time_in_seconds = @paces[ get_pace_code( pace_type, distance ) ]
-    time_in_seconds ? time_in_seconds : 0
+    time_in_hundreds = @paces[ get_pace_code( pace_type, distance ) ]
+    time_in_hundreds ? time_in_hundreds : 0
   end
   #-- -------------------------------------------------------------------------
   #++
