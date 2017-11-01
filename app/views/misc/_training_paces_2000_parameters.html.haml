@@ -13,11 +13,11 @@
       .form-group
         = label_tag( :timing, t('misc.test_time_swam'), for: :timing, class: 'control-label' )
         .controls
-          = text_field_tag( :minutes_swam_2000, default_minutes, class: 'form-control input-micro' )
+          = text_field_tag( :minutes_swam, default_minutes, class: 'form-control input-micro' )
           '
-          = text_field_tag( :seconds_swam_2000, default_seconds, class: 'form-control input-micro' )
+          = text_field_tag( :seconds_swam, default_seconds, class: 'form-control input-micro' )
           "
-          = text_field_tag( :hundreds_swam_2000, default_hundreds, class: 'form-control input-micro' )
+          = text_field_tag( :hundreds_swam, default_hundreds, class: 'form-control input-micro' )
   .row.col-xs-12
     .col-xs-12.col-sm-4
       .form-group

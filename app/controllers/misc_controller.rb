@@ -361,18 +361,19 @@ class MiscController < ApplicationController
 #    puts "\r\n*********** show_pace_test_2000 ***********"
 #    puts params.inspect
     if request.xhr? && request.post?                   # === AJAX POST: ===
-      minutes_swam_2000  = params['minutes_swam_2000'] ? params['minutes_swam_2000'].to_i : 0
-      seconds_swam_2000  = params['seconds_swam_2000'] ? params['seconds_swam_2000'].to_i : 0
-      hundreds_swam_2000 = params['hundreds_swam_2000'] ? params['hundreds_swam_2000'].to_i : 0
+      test_type_code = params['test_type_code'] ? params['test_type_code'] : nil      
+      minutes_swam   = params['minutes_swam'] ? params['minutes_swam'].to_i : 0
+      seconds_swam   = params['seconds_swam'] ? params['seconds_swam'].to_i : 0
+      hundreds_swam  = params['hundreds_swam'] ? params['hundreds_swam'].to_i : 0
 
-      time_swam = Timing.new( hundreds_swam_2000, seconds_swam_2000, minutes_swam_2000 )
+      time_swam = Timing.new( hundreds_swam, seconds_swam, minutes_swam )
 
-      unless ( time_swam.to_hundreds > 0 )
+      unless test_type_code && ( time_swam.to_hundreds > 0 )
         flash[:error] = I18n.t(:missing_request_parameter)
         return
       end
 
-      stpc = SwimmerTrainingPaceCalculator.new( '2000', time_swam )
+      stpc = SwimmerTrainingPaceCalculator.new( test_type_code, time_swam )
       @base_pace = stpc.calculate_paces
       @stp = stpc.calculated_swimmer_paces
       
