@@ -169,6 +169,8 @@ Rails.application.routes.draw do
       post "misc/compute_fin_timing",           to: "misc#compute_fin_timing",        as: "misc_compute_fin_timing"
       get  "misc/swimmer_matches",              to: "misc#swimmer_matches",           as: "misc_swimmer_matches"
       post "misc/show_swimmer_matches",         to: "misc#show_swimmer_matches",      as: "misc_show_swimmer_matches"
+      get  "misc/training_paces_2000",          to: "misc#training_paces_2000",       as: "misc_training_paces_2000"
+      post "misc/show_training_paces_2000",     to: "misc#show_training_paces_2000",  as: "misc_show_training_paces_2000"
 
       # === Swimming Pool Reviews ===
       resources :swimming_pool_reviews do

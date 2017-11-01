@@ -1,0 +1,29 @@
+- default_minutes = @timing ? @timing.minutes : 0
+- default_seconds = @timing ? @timing.seconds : 0
+- default_hundreds = @timing ? @timing.hundreds : 0
+
+= form_tag( :misc_show_training_paces_2000, class: 'form-horizontal', remote: true, onsubmit: "$('#loadingIndicator').show(); $('#training_paces_2000_result').hide()" ) do
+  .row.col-xs-12
+    .col-xs-12.col-sm-5
+      .form-group
+        = label_tag( :test_type, t('misc.test_type'), for: :test_type, class: 'control-label' )
+        = text_field_tag( :test_type_code, ( '2000' ), class: 'form-control input-small' )
+    .col-sm-1
+    .col-xs-12.col-sm-6
+      .form-group
+        = label_tag( :timing, t('misc.test_time_swam'), for: :timing, class: 'control-label' )
+        .controls
+          = text_field_tag( :minutes_swam_2000, default_minutes, class: 'form-control input-micro' )
+          '
+          = text_field_tag( :seconds_swam_2000, default_seconds, class: 'form-control input-micro' )
+          "
+          = text_field_tag( :hundreds_swam_2000, default_hundreds, class: 'form-control input-micro' )
+  .row.col-xs-12
+    .col-xs-12.col-sm-4
+      .form-group
+        = submit_tag( I18n.t('misc.calculate_training_paces'), id: "btn_submit", data: {disable_with: I18n.t(:please_wait), class: 'btn disabled'}, class: 'btn btn-primary' )
+        %span( id='loadingIndicator' hidden='true' )
+          = image_tag( 'indicator.gif' )
+
+
+

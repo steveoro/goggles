@@ -341,11 +341,11 @@ class MiscController < ApplicationController
   #-- -------------------------------------------------------------------------
   #++
 
-  # #GET pace_test_2000
+  # #GET training_paces_2000
   # Swimmer training pace calculation by testing 2000 meter continued swim 
   #
-  def pace_test_2000
-    @tab_title = I18n.t('misc.pace_test_2000')
+  def training_paces_2000
+    @tab_title = I18n.t('misc.training_paces_2000')
     @base_pace = Timing.new( 0 )
     @stp       = nil
   end
@@ -356,20 +356,22 @@ class MiscController < ApplicationController
   #
   # Calculate and show swimmer training paces
   #
-  def show_pace_test_2000
+  def show_training_paces_2000
 # DEBUG
 #    puts "\r\n*********** show_pace_test_2000 ***********"
 #    puts params.inspect
     if request.xhr? && request.post?                   # === AJAX POST: ===
-      minutes_swam_2000 = params['minutes_swam_2000'] ? params['minutes_swam_2000'].to_i : 0
-      seconds_swam_2000 = params['seconds_swam_2000'] ? params['seconds_swam_2000'].to_i : 0
+      minutes_swam_2000  = params['minutes_swam_2000'] ? params['minutes_swam_2000'].to_i : 0
+      seconds_swam_2000  = params['seconds_swam_2000'] ? params['seconds_swam_2000'].to_i : 0
+      hundreds_swam_2000 = params['hundreds_swam_2000'] ? params['hundreds_swam_2000'].to_i : 0
 
-      unless ( ( minutes_swam_2000 * 60 ) + seconds_swam_2000 > 0 )
+      time_swam = Timing.new( hundreds_swam_2000, seconds_swam_2000, minutes_swam_2000 )
+
+      unless ( time_swam.to_hundreds > 0 )
         flash[:error] = I18n.t(:missing_request_parameter)
         return
       end
 
-      time_swam = Timing.new( 0, seconds_swam_2000, minutes_swam_2000 )
       stpc = SwimmerTrainingPaceCalculator.new( '2000', time_swam )
       @base_pace = stpc.calculate_paces
       @stp = stpc.calculated_swimmer_paces

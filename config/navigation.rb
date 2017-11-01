@@ -130,24 +130,26 @@ SimpleNavigation::Configuration.run do |navigation|
 #    end
 #    primary.item( :key_separator0_4, '<hr/>', '#', class: 'disabled', 'data-turbolinks'=>'false' )
 
-    primary.item( :key_misc,                  t('misc_main_menu.title'), '#', 'data-turbolinks'=>'false' ) do |lev2_nav|
-      lev2_nav.item( :key_tutorial,           t('tutorials_title'),                       tutorials_index_path() )
-      lev2_nav.item( :key_separator4_0,       content_tag(:span, ''), class: 'divider' )
-      lev2_nav.item( :key_pools,              t('swimming_pool.pools'),                   swimming_pools_path() )
-      lev2_nav.item( :key_pool_reviews,       t('swimming_pool_review.navigation_title'), swimming_pool_reviews_path() )
-      lev2_nav.item( :key_separator4_1,       content_tag(:span, ''), class: 'divider' )
-      lev2_nav.item( :key_fin_score_calc,     t('misc.fin_score_calculation'),            misc_fin_score_calculation_path() )
-      lev2_nav.item( :key_fin_timing_calc,    t('misc.fin_timing_calculation'),           misc_fin_timing_calculation_path() )
-      lev2_nav.item( :key_swimmer_matches,    t('misc.swimmer_matches'),                  misc_swimmer_matches_path() )
+    primary.item( :key_misc,                   t('misc_main_menu.title'), '#', 'data-turbolinks'=>'false' ) do |lev2_nav|
+      lev2_nav.item( :key_tutorial,            t('tutorials_title'),                       tutorials_index_path() )
+      lev2_nav.item( :key_separator4_0,        content_tag(:span, ''), class: 'divider' )
+      lev2_nav.item( :key_pools,               t('swimming_pool.pools'),                   swimming_pools_path() )
+      lev2_nav.item( :key_pool_reviews,        t('swimming_pool_review.navigation_title'), swimming_pool_reviews_path() )
+      lev2_nav.item( :key_separator4_1,        content_tag(:span, ''), class: 'divider' )
+      lev2_nav.item( :key_fin_score_calc,      t('misc.fin_score_calculation'),            misc_fin_score_calculation_path() )
+      lev2_nav.item( :key_fin_timing_calc,     t('misc.fin_timing_calculation'),           misc_fin_timing_calculation_path() )
+      lev2_nav.item( :key_swimmer_matches,     t('misc.swimmer_matches'),                  misc_swimmer_matches_path() )
+      lev2_nav.item( :key_separator4_2,        content_tag(:span, ''), class: 'divider' )
+      lev2_nav.item( :key_training_paces_2000, t('misc.training_paces_2000'),              misc_training_paces_2000_path() )
     end
-    primary.item( :key_misc_complicated,      t('general.complicated_stuff'), '#', 'data-turbolinks'=>'false' ) do |lev2_nav|
-      lev2_nav.item( :key_search_meetings,    t('meeting.search_meeting'), meetings_custom_search_path(), highlights_on: %r(custom_search) )
-      lev2_nav.item( :key_search_swimmers,    t('swimmers.search_swimmers'), swimmers_path(), highlights_on: %r(/swimmers) )
-      lev2_nav.item( :key_search_teams,       t('team.search_title'), teams_path(), highlights_on: %r(/teams) )
-      lev2_nav.item( :key_separator4_2,       content_tag(:span, ''), class: 'divider' )
-      lev2_nav.item( :key_trainings,          t('misc_main_menu.trainings'),              trainings_path() )
-      lev2_nav.item( :key_user_trainings,     t('misc_main_menu.user_trainings'),         user_trainings_path() )
-      lev2_nav.item( :key_user_tr_stories,    t('misc_main_menu.user_training_stories'),  user_training_stories_path() )
+    primary.item( :key_misc_complicated,       t('general.complicated_stuff'), '#', 'data-turbolinks'=>'false' ) do |lev2_nav|
+      lev2_nav.item( :key_search_meetings,     t('meeting.search_meeting'), meetings_custom_search_path(), highlights_on: %r(custom_search) )
+      lev2_nav.item( :key_search_swimmers,     t('swimmers.search_swimmers'), swimmers_path(), highlights_on: %r(/swimmers) )
+      lev2_nav.item( :key_search_teams,        t('team.search_title'), teams_path(), highlights_on: %r(/teams) )
+      lev2_nav.item( :key_separator4_2,        content_tag(:span, ''), class: 'divider' )
+      lev2_nav.item( :key_trainings,           t('misc_main_menu.trainings'),              trainings_path() )
+      lev2_nav.item( :key_user_trainings,      t('misc_main_menu.user_trainings'),         user_trainings_path() )
+      lev2_nav.item( :key_user_tr_stories,     t('misc_main_menu.user_training_stories'),  user_training_stories_path() )
     end
 
     # you can also specify a css id or class to attach to this particular level
