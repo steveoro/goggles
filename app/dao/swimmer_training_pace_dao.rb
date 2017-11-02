@@ -58,10 +58,19 @@ class SwimmerTrainingPaceDAO
 
   # Gets a given pace (in hundreds)
   # If given pace not set returns 0
+  # If in_second is true the pace is returned in second (rounded) 
   #
-  def get_pace( pace_type = @pace_types[0], distance = @distances[0] )
-    time_in_hundreds = @paces[ get_pace_code( pace_type, distance ) ]
-    time_in_hundreds ? time_in_hundreds : 0
+  def get_pace( pace_type = @pace_types[0], distance = @distances[0], in_second = false )
+    pace_in_hundreds = @paces[ get_pace_code( pace_type, distance ) ]
+
+    if in_second && pace_in_hundreds && pace_in_hundreds > 0
+      timing = Timing.new( pace_in_hundreds )
+      pace_in_seconds = timing.minutes * 60 + timing.seconds
+      pace_in_seconds = pace_in_seconds + 1 if timing.hundreds > 0
+      pace_in_seconds 
+    else
+      pace_in_hundreds ? pace_in_hundreds : 0
+    end       
   end
   #-- -------------------------------------------------------------------------
   #++

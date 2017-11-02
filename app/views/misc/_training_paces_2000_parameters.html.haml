@@ -1,28 +1,30 @@
+- default_pool = @current_pool.id if @current_pool
 - default_minutes = @timing ? @timing.minutes : 0
 - default_seconds = @timing ? @timing.seconds : 0
 - default_hundreds = @timing ? @timing.hundreds : 0
 
 = form_tag( :misc_show_training_paces_2000, class: 'form-horizontal', remote: true, onsubmit: "$('#loadingIndicator').show(); $('#training_paces_2000_result').hide()" ) do
   .row.col-xs-12
-    .col-xs-12.col-sm-5
+    .col-xs-12.col-sm-3
       .form-group
-        = label_tag( :test_type, t('misc.test_type'), for: :test_type, class: 'control-label' )
-        = text_field_tag( :test_type_code, ( '2000' ), class: 'form-control input-small' )
-    .col-sm-1
+        = label_tag( :test_type, I18n.t('misc.test_type'), for: :test_type, class: 'control-label' )
+        = select_tag( :test_type_code, options_for_select(['2000']), { disabled: false, class: 'input-small' })
     .col-xs-12.col-sm-2
       .form-group
-        = label_tag( :pool, t('misc.pool_length'), for: :pool, class: 'control-label' )
-        = text_field_tag( :pool_length, ( '50' ), class: 'form-control input-small' )
-    .col-sm-1
+        = label_tag( :pool_type, I18n.t('misc.pool_length'), for: :pool_type, class: 'control-label' )
+        = button_option_group( :pool_type_id, default_pool, PoolType.only_for_meetings.to_dropdown, true )
     .col-xs-12.col-sm-3
       .form-group
         = label_tag( :timing, t('misc.test_time_swam'), for: :timing, class: 'control-label' )
-        .controls
-          = text_field_tag( :minutes_swam, default_minutes, class: 'form-control input-micro' )
-          '
-          = text_field_tag( :seconds_swam, default_seconds, class: 'form-control input-micro' )
-          "
-          = text_field_tag( :hundreds_swam, default_hundreds, class: 'form-control input-micro' )
+        = text_field_tag( :minutes_swam, default_minutes, class: 'form-control input-micro' )
+        '
+        = text_field_tag( :seconds_swam, default_seconds, class: 'form-control input-micro' )
+        "
+        = text_field_tag( :hundreds_swam, default_hundreds, class: 'form-control input-micro' )
+    .col-xs-12.col-sm-4
+      .form-group
+        = label_tag( :date, t('misc.test_date'), for: :date, class: 'control-label' )
+        = date_field_tag( :test_date, default_minutes, class: 'form-control input-small' )
   .row.col-xs-12
     .col-xs-12.col-sm-4
       .form-group
