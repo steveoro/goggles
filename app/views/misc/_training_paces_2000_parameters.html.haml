@@ -9,7 +9,12 @@
         = label_tag( :test_type, t('misc.test_type'), for: :test_type, class: 'control-label' )
         = text_field_tag( :test_type_code, ( '2000' ), class: 'form-control input-small' )
     .col-sm-1
-    .col-xs-12.col-sm-6
+    .col-xs-12.col-sm-2
+      .form-group
+        = label_tag( :pool, t('misc.pool_length'), for: :pool, class: 'control-label' )
+        = text_field_tag( :pool_length, ( '50' ), class: 'form-control input-small' )
+    .col-sm-1
+    .col-xs-12.col-sm-3
       .form-group
         = label_tag( :timing, t('misc.test_time_swam'), for: :timing, class: 'control-label' )
         .controls

@@ -1,30 +1,41 @@
--#.row
+-#.row.col-xs-6
 -#  %p
 -#    = "Swimmer training pace DAO: " < @stp.inspect
-.row
+.row.col-xs-12
+  %p
+.row.col-xs-12
   .col-xs-12.goggles-div-centeralign#training_paces
+    %h3= t('misc.training_paces_based_on_2000')
+.row.col-xs-12
+  .col-xs-12.goggles-div-centeralign
     %table.table.table-striped.table-bordered.table-hover.table-condensed
       %tbody
         %tr{'class'=>'info'}
-          %td.goggles-centeralign{'colspan' => '9'}
-            %h3= t('misc.training_paces_based_on_2000')
+          %td.goggles-centeralign{ 'rowspan' => '2' }
+            %b= t('misc.pace')
+          %td.goggles-centeralign{ 'colspan' => '3' }
+            %b= t('misc.distance')
+          %td.goggles-centeralign{ 'rowspan' => '2' }
+            %b= t('misc.distance_explanation')
+
         %tr{'class'=>'info'}
           - @stp.distances.each do |distance|
-            %td.goggles-centeralign{'colspan' => '3'}
-              %b= distance
-        %tr{'class'=>'info'}
-          - @stp.distances.each do |distance|
-            - @stp.pace_types.each do |pace_type|
-              %td.goggles-centeralign
-                %b= pace_type
-        %tr
-          - @stp.distances.each do |distance|
-            - @stp.pace_types.each do |pace_type|
+            %td.goggles-centeralign
+              %b= distance          
+            
+        - @stp.pace_types.each do |pace_type|
+          %tr
+            %td.goggles-centeralign{'class'=>'info'}
+              %b= pace_type
+            - @stp.distances.each do |distance|
               - pace = Timing.new( @stp.get_pace( pace_type, distance ) )
               - pace_in_seconds = pace.minutes * 60 + pace.seconds
               - pace_in_seconds = pace_in_seconds + 1 if pace.hundreds > 0 
               %td.goggles-centeralign
                 = Timing.to_minute_string( pace_in_seconds )
+            %td.goggles
+              - tmt = TrainingModeType.find_by_code(pace_type)
+              = tmt.i18n_description
 
   
 
