@@ -1,36 +1,43 @@
-- default_pool = @current_pool.id if @current_pool
+- default_pool    = PoolType.find_by_code('25')
+- default_date    = Date.today
 - default_minutes = @timing ? @timing.minutes : 0
 - default_seconds = @timing ? @timing.seconds : 0
-- default_hundreds = @timing ? @timing.hundreds : 0
 
 = form_tag( :misc_show_training_paces_2000, class: 'form-horizontal', remote: true, onsubmit: "$('#loadingIndicator').show(); $('#training_paces_2000_result').hide()" ) do
   .row.col-xs-12
-    .col-xs-12.col-sm-3
+    .col-xs-12.col-sm-2
       .form-group
         = label_tag( :test_type, I18n.t('misc.test_type'), for: :test_type, class: 'control-label' )
+      .control-group
         = select_tag( :test_type_code, options_for_select(['2000']), { disabled: false, class: 'input-small' })
     .col-xs-12.col-sm-2
       .form-group
         = label_tag( :pool_type, I18n.t('misc.pool_length'), for: :pool_type, class: 'control-label' )
-        = button_option_group( :pool_type_id, default_pool, PoolType.only_for_meetings.to_dropdown, true )
-    .col-xs-12.col-sm-3
+      .control-group
+        = select_tag( :pool_type_id, options_for_select(PoolType.only_for_meetings.to_dropdown) )
+    .col-xs-12.col-sm-2
+      .form-group
+        = label_tag( :date, t('misc.test_date'), for: :date, class: 'control-label' )
+      .control-group
+        = date_field_tag( :test_date, default_date, class: 'form-control input-small' )
+    .col-xs-12.col-sm-1
+    .col-xs-12.col-sm-2
       .form-group
         = label_tag( :timing, t('misc.test_time_swam'), for: :timing, class: 'control-label' )
+      .control-group
         = text_field_tag( :minutes_swam, default_minutes, class: 'form-control input-micro' )
         '
         = text_field_tag( :seconds_swam, default_seconds, class: 'form-control input-micro' )
         "
-        = text_field_tag( :hundreds_swam, default_hundreds, class: 'form-control input-micro' )
-    .col-xs-12.col-sm-4
+        = text_field_tag( :hundreds_swam, 0, class: 'form-control input-micro', disabled: true )
+    .col-xs-12.col-sm-3
       .form-group
-        = label_tag( :date, t('misc.test_date'), for: :date, class: 'control-label' )
-        = date_field_tag( :test_date, default_minutes, class: 'form-control input-small' )
-  .row.col-xs-12
-    .col-xs-12.col-sm-4
-      .form-group
+        = label_tag( :command, '', for: :command, class: 'control-label' )
+      .control-group
         = submit_tag( I18n.t('misc.calculate_training_paces'), id: "btn_submit", data: {disable_with: I18n.t(:please_wait), class: 'btn disabled'}, class: 'btn btn-primary' )
         %span( id='loadingIndicator' hidden='true' )
           = image_tag( 'indicator.gif' )
-
+  .row.col-xs-12
+    %p
 
 

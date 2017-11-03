@@ -1,10 +1,17 @@
 -#.row.col-xs-6
 -#  %p
 -#    = "Swimmer training pace DAO: " < @stp.inspect
+.row.col-xs-12
+  %p
 - if @stp && @stp.count_paces > 0
   .row.col-xs-12
-    %p
+    .col-xs-12.goggles-div-centeralign#coac_is_better
+      = t('misc.coach_is_better_1')
+    .col-xs-12.goggles-div-centeralign
+      = t('misc.coach_is_better_2')
   .row.col-xs-12
+    .col-xs-12.goggles-div-centeralign
+      %p
     .col-xs-12.goggles-div-centeralign#training_paces
       %h3= t('misc.training_paces_based_on_2000')
   .row.col-xs-12
@@ -34,6 +41,43 @@
               %td
                 - tmt = TrainingModeType.find_by_code(pace_type)
                 = tmt.i18n_description
+  .row.col-xs-12
+    .col-xs-12.goggles-div-centeralign
+      %p
+    .col-xs-12.goggles-div-centeralign
+      %p
+    .col-xs-12.goggles-div-centeralign#train_explanation
+      %b= t('misc.train_explanation_tit')
+    .col-xs-12.goggles-div-centeralign
+      = t('misc.train_explanation_1')
+    .col-xs-12.goggles-div-centeralign
+      = t('misc.train_explanation_2').gsub('{B1_100}', Timing.to_minute_string( @stp.get_pace( 'B1', '100', true ) ))
+    .col-xs-12.goggles-div-centeralign
+      %b= t('misc.train_explanation_3').gsub('{B1_100_SR}', Timing.to_minute_string( @stp.get_pace( 'B1', '100', true ) + 10 ))
+      = t('misc.train_explanation_4').gsub('{B1_100}', Timing.to_minute_string( @stp.get_pace( 'B1', '100', true ) )).gsub('{B1_100_SR}', Timing.to_minute_string( @stp.get_pace( 'B1', '100', true ) + 10 ))
+    .col-xs-12.goggles-div-centeralign
+      = t('misc.train_explanation_5')
+    .col-xs-12.goggles-div-centeralign
+      %p
+    .col-xs-12.goggles-div-centeralign
+      %p
+  .row.col-xs-12.alert-warning
+    .col-xs-12.goggles-div-centeralign
+      = t('misc.train_disclaimer_1')
+    .col-xs-12.goggles-div-centeralign
+      = t('misc.train_disclaimer_2')
+    .col-xs-12.goggles-div-centeralign
+      %b= t('misc.have_a_nice_training')
+  
+- else
+  - if @error_message
+    .row.col-xs-offset-2.col-xs-8.alert-warning#error_message
+      .col-xs-12.goggles-div-centeralign
+        %p
+        = image_tag( 'mmh.jpg', class: "img_thumbnail" )
+      .col-xs-12.goggles-div-centeralign
+        %p
+        %h3= @error_message
 
   
 
