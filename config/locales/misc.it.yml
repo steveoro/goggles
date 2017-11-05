@@ -39,7 +39,6 @@ it:
     match_last: "L'ultima volta che lo ha sfidato risale al"
     match_none: "Bah, per quanto ne sa Goggles {local_swimmer} e {VISITOR_SWIMMER} non hanno ancora mai incrociato le cuffie"
     how_to_find_matches: "Seleziona il 'Campione' e lo 'Sfidante' per vedere tutte le gare in cui si sono confrontati"
-
     how_to_claculate_training_paces_1: "Dopo un breve riscaldamento nuota 2000 metri a stile libero di buon passo senza fermarti. Cerca di nuotare il più veloce possibile ed annota il tempo totale ottenuto."
     how_to_claculate_training_paces_2: "Inserisci i dati del test per conoscere le andature ipotetiche che dovresti tenere nei tuoi allenamenti aerobici (A2, B1 e B2)"
     training_paces_2000: "Il test dei 2000"

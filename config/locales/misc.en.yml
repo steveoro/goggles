@@ -39,7 +39,6 @@ en:
     match_last: "Their last fight has been on"
     match_none: "Bah, as Goggles knows {local_swimmer} and {VISITOR_SWIMMER} had never taken their marks together"
     how_to_find_matches: "Select 'Local' and 'Visitor' to know all about their swimming battles"
-
     how_to_claculate_training_paces_1: "After a quick warm-up, swim for 2000 meters in free style, at a well-substained & steady pace, without stopping. Try to make it through the end as quickly as possible and write down the overall timing it took you."
     how_to_claculate_training_paces_2: "Input the test results to compute the training paces needed for an aerobic workout ('A2', 'B1' & 'B2')."
     training_paces_2000: "The 2K meters test"
@@ -62,6 +61,6 @@ en:
     train_explanation_5: "Keep this result and repeat this test periodically to see if your workout is working, in order to keep up with your actual physical state."
     coach_is_better_1: "Also, keep in mind that currently there's no Software better than a good Coach. If you have one, trust him. ;-)"
     coach_is_better_2: "But if you're a thirsty water rhabdomantist seeker, condamned be adverse logistics to a lonely life at the pools, then we surely hope to give you some help with this table, that gives you the needed paces for different aerobic workouts."
-    train_disclaimer_1: "This table is computed using a 'medium-trained' subject as parameter.
+    train_disclaimer_1: "This table is computed using a 'medium-trained' subject as parameter."
     train_disclaimer_2: "Be sure to be in good health and have a periodic medical check-up before jumping into intense workout sessions."
     have_a_nice_training: "Have a nice Training!!"
