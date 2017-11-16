@@ -233,7 +233,8 @@ class Api::V1::MeetingsController < Api::BaseController
   #++
 
 
-  require 'net/http'
+  require 'rest_client'
+#  require 'net/http' (not used anymore)
   require 'uri'
 
   # Downloads a remote data page given its URL.
@@ -252,15 +253,41 @@ class Api::V1::MeetingsController < Api::BaseController
       uri = URI( URI.escape( params[:url] ) )
 # DEBUG
 #      puts "\r\nURI..........: #{ uri.inspect }"
-      response = Net::HTTP.get_response( uri )
-# DEBUG
-#      puts "response.....: #{ response.inspect }"
-#      puts "response body: #{ response.body }"
 
-      if response.body.present?
+      # Old method: DOES NOT WORK WITH Proxy/Load-balancers redirects:
+#      web_response = Net::HTTP.get_response( uri )
+
+      logger.info("------[ api/v1/meetings#download ]------")
+      logger.info("Requesting download for '#{ uri }'...")
+
+      # Method #1
+#      web_response = RestClient::Request.execute( url: uri, method: :get, verify_ssl: false) do |response, request, result, &block|
+#        case response.code
+#        when 200..207
+#          response
+#        else
+#          logger.error("Response error: #{ response.code }")
+#          nil
+#        end
+#      end
+
+      # Method #2
+      web_response = begin
+        RestClient::Request.execute( url: uri, method: :get, verify_ssl: false)
+      rescue
+        logger.error("Response error: #{ response.code }")
+        nil
+      end
+
+# DEBUG
+      puts "response.....: #{ web_response.inspect }"
+#      puts "response body: #{ web_response.body }"
+
+      if web_response && web_response.respond_to?(:body) && web_response.body.present?
+        logger.error("Response ok. Processing data with Nokogiri...")
         body_id   = params[:body_id].present?  ? params[:body_id]   : "#content"
         strip_id  = params[:strip_id].present? ? params[:strip_id]  : ".stampa-loca"
-        html_doc = Nokogiri::HTML( response.body ).css( body_id )
+        html_doc = Nokogiri::HTML( web_response.body ).css( body_id )
         html_doc.css( strip_id ).unlink             # Remove non-working external href to PDF print preview or other specified DIV IDs
         render( status: :ok, json: { success: true, data: html_doc.to_html } )
       else

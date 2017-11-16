@@ -81,6 +81,7 @@ gem 'rubyzip', require: 'zip/zip'
 
 gem 'rubocop', require: false                       # [Steve] For style checking
 gem "recaptcha", require: "recaptcha/rails"
+gem "rest-client"                                   # For api/v1/meetings/download
 
 group :development do
   gem "better_errors" #, '~> 1.1.0'
