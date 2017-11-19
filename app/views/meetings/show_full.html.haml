@@ -40,7 +40,7 @@
     if ( #{ @calendar_row && @calendar_row.results_link.present? ? 'true' : 'false' } ) {
       // Get the page via AJAX:
       $.get({
-        url: "#{ api_v1_meeting_download_path( url: 'http://www.federnuoto.it' + (@calendar_row && @calendar_row.results_link.present? ? @calendar_row.results_link.to_s : '') ) }",
+        url: "#{ api_v1_meeting_download_path( url: 'https://www.federnuoto.it' + (@calendar_row && @calendar_row.results_link.present? ? @calendar_row.results_link.to_s : '') ) }",
       }).done( function( result ) {
         $('#downloaded_results').replaceWith( result.data );
       });

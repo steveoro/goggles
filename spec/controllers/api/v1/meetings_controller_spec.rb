@@ -228,7 +228,7 @@ describe Api::V1::MeetingsController, type: :controller, api: true do
     before(:each) do
       @request.env["devise.mapping"] = Devise.mappings[:user]
     end
-    let( :test_addr ) { "https://www.google.com/" }
+    let( :test_addr ) { "https://news.ycombinator.com/news" }
 
     context "with a non-JSON request," do
       it "redirects the request" do
@@ -244,17 +244,16 @@ describe Api::V1::MeetingsController, type: :controller, api: true do
       end
     end
 
-# FIXME
     context "with a JSON request and valid credentials," do
-      xit "handles successfully the request" do
+      it "handles successfully the request" do
         get :download, format: :json, params: { url: test_addr, body_id: "body", user_email: user.email, user_token: user.authentication_token }
         expect(response.status).to eq( 200 )
       end
-      xit "returns a JSON result of 'success' as true and the request payload as 'data'" do
+      it "returns a JSON result of 'success' as true and the request payload as 'data'" do
         get :download, format: :json, params: { url: test_addr, body_id: "body", user_email: user.email, user_token: user.authentication_token }
         result = JSON.parse( response.body )
 # DEBUG
-        puts "\r\n------------8<-----------\r\n#{ result.inspect }\r\n------------8<-----------"
+#        puts "\r\n------------8<-----------\r\n#{ result.inspect }\r\n------------8<-----------"
         expect( result['success'] ).to eq( true )
         expect( result['data'] ).to be_present
       end

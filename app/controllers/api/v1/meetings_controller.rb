@@ -236,6 +236,7 @@ class Api::V1::MeetingsController < Api::BaseController
   require 'rest_client'
 #  require 'net/http' (not used anymore)
   require 'uri'
+  require 'open3'
 
   # Downloads a remote data page given its URL.
   #
@@ -260,7 +261,7 @@ class Api::V1::MeetingsController < Api::BaseController
       logger.info("------[ api/v1/meetings#download ]------")
       logger.info("Requesting download for '#{ uri }'...")
 
-      # Method #1
+      # Method #1: RestClient w/o SSL verify but response.code checking
 #      web_response = RestClient::Request.execute( url: uri, method: :get, verify_ssl: false) do |response, request, result, &block|
 #        case response.code
 #        when 200..207
@@ -271,29 +272,39 @@ class Api::V1::MeetingsController < Api::BaseController
 #        end
 #      end
 
-      # Method #2
-      web_response = begin
-        RestClient::Request.execute( url: uri, method: :get, verify_ssl: false)
-      rescue
-        logger.error("Response error: #{ response.code }")
-        nil
-      end
+      # Method #2: RestClient w SSL verify & begin..rescue block to avoid errors
+#      web_response = begin
+#        RestClient::Request.execute( url: uri, method: :get, verify_ssl: true)
+#      rescue
+#        logger.error("Response error: #{ response.code }")
+#        nil
+#      end
+
+      # Method #3: Spawn a system thread for curl usage, w/ output capture
+      # (with this method we don't have a class response with a body, but plain text that has to be converted to UTF-8 for safety)
+      # [Steve, 20171119] Sometimes the SSL certificate may be invalid or expired, so we turn off the check with "-k"
+      web_response, s = ::Open3.capture2( "curl -k #{ uri }", stdin_data: nil, binmode: true )
+
 
 # DEBUG
-      puts "response.....: #{ web_response.inspect }"
+#      puts "response.....: #{ web_response.inspect }"
 #      puts "response body: #{ web_response.body }"
 
-      if web_response && web_response.respond_to?(:body) && web_response.body.present?
-        logger.error("Response ok. Processing data with Nokogiri...")
+#      if web_response && web_response.respond_to?(:body) && web_response.body.present?
+      if web_response && web_response.present?
+        logger.info("Response ok. Processing data with Nokogiri...")
         body_id   = params[:body_id].present?  ? params[:body_id]   : "#content"
         strip_id  = params[:strip_id].present? ? params[:strip_id]  : ".stampa-loca"
-        html_doc = Nokogiri::HTML( web_response.body ).css( body_id )
+#        html_doc = Nokogiri::HTML( web_response.body ).css( body_id )
+        html_doc = Nokogiri::HTML( web_response ).css( body_id )
         html_doc.css( strip_id ).unlink             # Remove non-working external href to PDF print preview or other specified DIV IDs
-        render( status: :ok, json: { success: true, data: html_doc.to_html } )
+        render( status: :ok, json: { success: true, data: html_doc.to_html.force_encoding("UTF-8") } )
       else
+        logger.error("Response not-ok. Returning 422 as status code.")
         render( status: 422, json: { success: false, error: "HTTP GET failed!" } )
       end
     else
+      logger.error("Response not-ok. Returning 422 as status code.")
       render( status: 422, json: { success: false, error: "Invalid parameters!" } )
     end
   end

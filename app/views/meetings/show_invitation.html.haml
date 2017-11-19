@@ -44,7 +44,7 @@
     if ( #{ @meeting.invitation.to_s =~ /www.federnuoto.it/ui } ) {
       // Get the page via AJAX:
       $.get({
-        url: "#{ api_v1_meeting_download_path( url: @meeting.invitation.to_s ) }",
+        url: "#{ api_v1_meeting_download_path( url: @meeting.invitation.to_s.gsub('http:', 'https:') ) }",
       }).done( function( result ) {
         $('#downloaded_manifest').replaceWith( result.data );
       });
