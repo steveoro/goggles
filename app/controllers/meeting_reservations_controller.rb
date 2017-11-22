@@ -11,7 +11,7 @@ require 'reservations_csi_2_csv'
 
 = MeetingReservationsController
 
-  - version:  6.098
+  - version:  6.160
   - author:   Steve A.
 
 =end
@@ -499,7 +499,7 @@ class MeetingReservationsController < ApplicationController
           # (the message has been updated accordingly)
           NewsletterMailer.custom_mail(
             user,
-            I18n.t("newsletter_mailer.new_reservations.subject") + @meeting.get_full_name,
+            I18n.t("newsletter_mailer.new_reservations.subject", meeting_name: @meeting.get_full_name),
             I18n.t("newsletter_mailer.new_reservations.title"),
             I18n.t(
               "newsletter_mailer.new_reservations.contents",
@@ -573,7 +573,7 @@ class MeetingReservationsController < ApplicationController
       filtered_managers.each do |team_manager|
         NewsletterMailer.custom_mail(
           team_manager.user,
-          I18n.t("newsletter_mailer.reservations.subject") + @meeting.get_full_name,
+          I18n.t("newsletter_mailer.reservations.subject", meeting_name: @meeting.get_full_name),
           I18n.t("newsletter_mailer.reservations.title"),
           I18n.t(
             "newsletter_mailer.reservations.contents",
