@@ -347,7 +347,7 @@ class MeetingsController < ApplicationController
     }
 
     # Get a timestamp for the cache key:
-    @max_mir_updated_at = get_timestamp_from_relation_chain() # default: MIR
+    @max_updated_at = get_timestamp_from_relation_chain() # default: MIR
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -370,7 +370,7 @@ class MeetingsController < ApplicationController
     @preselected_team_id = params[:team_id]
 
     # Get a timestamp for the cache key:
-    @max_mir_updated_at = get_timestamp_from_relation_chain() # default: MIR
+    @max_updated_at = get_timestamp_from_relation_chain() # default: MIR
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -469,7 +469,7 @@ class MeetingsController < ApplicationController
     # Get a timestamp for the cache key:
     max_mir_updated_at = mir.count > 0 ? mir.select( "meeting_individual_results.updated_at" ).order(:updated_at).last.updated_at.to_i : 0
     max_mrr_updated_at = mrr.count > 0 ? mrr.select( "meeting_relay_results.updated_at" ).order(:updated_at).last.updated_at.to_i : 0
-    @max_mir_updated_at = max_mir_updated_at >= max_mrr_updated_at ? max_mir_updated_at : max_mrr_updated_at
+    @max_updated_at = max_mir_updated_at >= max_mrr_updated_at ? max_mir_updated_at : max_mrr_updated_at
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -495,7 +495,7 @@ class MeetingsController < ApplicationController
     end
 
     # Get a timestamp for the cache key:
-    @max_mir_updated_at = @individual_result_list.select( "meeting_individual_results.updated_at" ).order(:updated_at).last.updated_at.to_i
+    @max_updated_at = @individual_result_list.select( "meeting_individual_results.updated_at" ).order(:updated_at).last.updated_at.to_i
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -505,7 +505,7 @@ class MeetingsController < ApplicationController
   #
   def show_invitation
     # Get a timestamp for the cache key:
-    @max_mir_updated_at = get_timestamp_from_relation_chain() # default: MIR
+    @max_updated_at = get_timestamp_from_relation_chain() # default: MIR
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -627,8 +627,16 @@ class MeetingsController < ApplicationController
       .includes( :meeting_session, :event_type, :stroke_type )
       .order( 'meeting_sessions.session_order, meeting_events.event_order' )
 
-    # Get a timestamp for the cache key:
-    @max_mir_updated_at = get_timestamp_from_relation_chain() # default: MIR
+    # Get a timestamp for the cache key, either from last MIR, last MRR (when existing),
+    # last Passage (when existing) or last Relay Swimmer (when existing).
+    last_mir_updated_at       = get_timestamp_from_relation_chain() # default: MIR
+    last_mrr_updated_at       = get_timestamp_from_relation_chain( :meeting_relay_results )
+    last_passage_updated_at   = get_timestamp_from_relation_chain( :passages )
+    last_rswimmer_updated_at  = get_timestamp_from_relation_chain( :meeting_relay_swimmers )
+    @max_updated_at = [
+      last_mir_updated_at, last_mrr_updated_at,
+      last_passage_updated_at, last_rswimmer_updated_at
+    ].max
   end
 
 

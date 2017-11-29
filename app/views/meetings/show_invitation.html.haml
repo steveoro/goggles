@@ -29,7 +29,7 @@
                 &nbsp;
                 = @meeting.get_verbose_name
       - else
-        - cache( cache_key_for_meeting( 'show_invitation', @meeting.id, @max_mir_updated_at ) ) do
+        - cache( cache_key_for_meeting( 'show_invitation', @meeting.id, @max_updated_at ) ) do
           - html_doc = Nokogiri::HTML( @meeting.invitation )
           .col-xs-12
             = html_doc.css('style').to_html.html_safe

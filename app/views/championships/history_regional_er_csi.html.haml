@@ -3,7 +3,7 @@
     = render( partial: 'regional_er_csi_tabs' )
   .goggles-category-gap
     = render( partial: 'title' )
-    - cache( cache_key_for_meeting( 'history', @season.season_type_id, @history_updated_at, @team ? @team.id : 0 ) ) do
+    - cache( cache_key_for_championship_history( 'history', @season.season_type_id, @history_updated_at, @team ? @team.id : 0 ) ) do
 
       -# --- Sub-legend for each gender + pool-type
       .navbar

@@ -17,7 +17,7 @@
         .col-xs-12
           = render( partial: 'goggles/login_or_signup_buttons' )
 - else
-  - cache( cache_key_for_meeting( 'show_full', @meeting.id, @max_mir_updated_at, @team ? @team.id : 0 ) ) do
+  - cache( cache_key_for_meeting( 'show_full', @meeting.id, @max_updated_at, @team ? @team.id : 0 ) ) do
     .row
       %ul.col-xs-offset-10.col-xs-2.col-sm-offset-11.col-sm-1.col-md-offset-11.col-md-1.nav.nav-pills.nav-stacked.navbar-fixed-bottom.goggles-divlist-odd.navpill_side
         %li

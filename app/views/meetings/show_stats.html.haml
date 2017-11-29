@@ -1,6 +1,6 @@
 = render( partial: 'meeting_header' )
 = render( partial: 'tabs_and_title' )
-- cache( cache_key_for_meeting( 'show_stats', @meeting.id, @max_mir_updated_at, @team ? @team.id : 0 ) ) do
+- cache( cache_key_for_meeting( 'show_stats', @meeting.id, @max_updated_at, @team ? @team.id : 0 ) ) do
   - if @meeting_stat_calculator.has_results?
     .col-xs-12.goggles-category-gap#meeting_stats_numbers
       = render( partial: 'meeting_stats_numbers' )
