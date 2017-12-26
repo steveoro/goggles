@@ -25,9 +25,9 @@ GIT
 
 GIT
   remote: https://github.com/steveoro/goggles_core
-  revision: cdf271a8c290dc53a1d3be17839894aecf1fe3d7
+  revision: 9c95c1a26f9d7eee1f5e6d747634f1f58620bc2a
   specs:
-    goggles_core (1.2.0)
+    goggles_core (1.2.3)
       active_hash_relation
       active_model_serializers (~> 0.10.0)
       activemodel-serializers-xml
@@ -185,8 +185,8 @@ GEM
       railties (>= 4.1.0, < 5.2)
       responders
       warden (~> 1.2.3)
-    devise-i18n (1.4.0)
-      devise (>= 3.1)
+    devise-i18n (1.5.0)
+      devise (>= 3.4)
     diff-lcs (1.2.5)
     docile (1.1.5)
     domain_name (0.5.20160826)
