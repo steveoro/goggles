@@ -86,8 +86,8 @@ describe Api::V1::PassagesController, type: :controller, api: true do
 
   describe 'POST #create/:passage' do
     before(:all) do # Force the creation of the required rows:
-      mir_1 = FactoryGirl.create( :meeting_individual_result_with_passages )
-      mir_2 = FactoryGirl.create( :meeting_individual_result_with_passages )
+      mir_1 = FactoryBot.create( :meeting_individual_result_with_passages )
+      mir_2 = FactoryBot.create( :meeting_individual_result_with_passages )
       @post_attributes = mir_1.passages.first.attributes.reject{ |k,v| ['id'].include?(k.to_s) }
       # Let's create invalid update attributes by rejecting required attributes:
       @invalid_post_attributes = @post_attributes.reject{ |k,v| ['id', 'seconds', 'minutes'].include?(k.to_s) }
@@ -205,8 +205,8 @@ describe Api::V1::PassagesController, type: :controller, api: true do
 
   describe 'PUT #update/:id' do
     before(:each) do # Force the creation of the required rows:
-      mir_1 = FactoryGirl.create( :meeting_individual_result_with_passages )
-      mir_2 = FactoryGirl.create( :meeting_individual_result_with_passages )
+      mir_1 = FactoryBot.create( :meeting_individual_result_with_passages )
+      mir_2 = FactoryBot.create( :meeting_individual_result_with_passages )
       @updatable_row = mir_1.passages.first
       @put_attributes = mir_2.passages.first.attributes.reject{ |k,v| ['id'].include?(k.to_s) }
       # Make sure the update attributes are at least a little bit different:
@@ -296,7 +296,7 @@ describe Api::V1::PassagesController, type: :controller, api: true do
 
   describe '[DELETE destroy/:id]' do
     before :each do
-      mir = FactoryGirl.create( :meeting_individual_result_with_passages )
+      mir = FactoryBot.create( :meeting_individual_result_with_passages )
       @deletable_row = mir.passages.first
     end
 

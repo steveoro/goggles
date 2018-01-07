@@ -97,7 +97,7 @@ describe MeetingsController, type: :controller do
     end
 
     context "as a logged but not-associated user," do
-      let(:user) { FactoryGirl.create(:user) }
+      let(:user) { FactoryBot.create(:user) }
       before(:each) do
         login_user( user )
         expect( subject.current_user ).to be_an_instance_of( User )
@@ -111,7 +111,7 @@ describe MeetingsController, type: :controller do
     end
 
     context "as a logged and swimmer-associated user," do
-      let(:user) { FactoryGirl.create(:user, swimmer: create(:swimmer)) }
+      let(:user) { FactoryBot.create(:user, swimmer: create(:swimmer)) }
       before(:each) do
         login_user( user )
         expect( subject.current_user ).to be_an_instance_of( User )

@@ -6,7 +6,7 @@ require 'meeting_reservation_matrix_updater'
 describe MeetingReservationMatrixUpdater, type: :strategy do
   # [Steve] We don't need to save the random user instance created, since we
   # won't use any of its associations, nor its ID, so "build" is enough.
-  subject { MeetingReservationMatrixUpdater.new( {}, current_user: FactoryGirl.build(:user) ) }
+  subject { MeetingReservationMatrixUpdater.new( {}, current_user: FactoryBot.build(:user) ) }
 
   it_behaves_like( "(the existance of a method)", [
     :reservation_keys,
@@ -26,7 +26,7 @@ describe MeetingReservationMatrixUpdater, type: :strategy do
 
 
   context "when created with nil params and a valid current_user," do
-    let(:current_user)  { FactoryGirl.build(:user) }
+    let(:current_user)  { FactoryBot.build(:user) }
 
     it "throws an Argument error" do
       expect{ MeetingReservationMatrixUpdater.new( nil, current_user ) }.to raise_error{ ArgumentError }
@@ -38,7 +38,7 @@ describe MeetingReservationMatrixUpdater, type: :strategy do
 
   context "when created with empty params but a valid current_user," do
     let(:params)        { {} }
-    let(:current_user)  { FactoryGirl.build(:user) }
+    let(:current_user)  { FactoryBot.build(:user) }
     subject { MeetingReservationMatrixUpdater.new( params, current_user ) }
 
     it "is a valid instance" do
@@ -69,7 +69,7 @@ describe MeetingReservationMatrixUpdater, type: :strategy do
         "not-a-key-indeed_1" => "1"
       }
     end
-    let(:current_user)  { FactoryGirl.build(:user) }
+    let(:current_user)  { FactoryBot.build(:user) }
     subject { MeetingReservationMatrixUpdater.new( params, current_user ) }
 
     it "is a valid instance" do
@@ -109,7 +109,7 @@ describe MeetingReservationMatrixUpdater, type: :strategy do
 
 
   context "when created with valid params and valid current_user," do
-    let(:current_user)  { FactoryGirl.build(:user) }
+    let(:current_user)  { FactoryBot.build(:user) }
 
     context "with some MISSING but edited meeting reservations," do
       let(:missing_res_id) { MeetingReservation.count > 0 ? MeetingReservation.last.id + 10000 : 100 }
@@ -198,8 +198,8 @@ describe MeetingReservationMatrixUpdater, type: :strategy do
 
     # --- INDIVIDUAL EVENT RESERVATION ---
     context "with an existing EVENT reservation," do
-      let(:res_event)     { FactoryGirl.create(:meeting_event_reservation, suggested_seconds: 0, is_doing_this: true) }
-      let(:res_event_off) { FactoryGirl.create(:meeting_event_reservation, suggested_seconds: 0, is_doing_this: false) }
+      let(:res_event)     { FactoryBot.create(:meeting_event_reservation, suggested_seconds: 0, is_doing_this: true) }
+      let(:res_event_off) { FactoryBot.create(:meeting_event_reservation, suggested_seconds: 0, is_doing_this: false) }
 
       context "when editing an EVENT TIMING with values," do
         let(:suggested_seconds)   { 37 }
@@ -309,8 +309,8 @@ describe MeetingReservationMatrixUpdater, type: :strategy do
 
     # --- RELAY (EVENT) RESERVATION ---
     context "with an existing RELAY reservation," do
-      let(:res_event)     { FactoryGirl.create(:meeting_relay_reservation, is_doing_this: true) }
-      let(:res_event_off) { FactoryGirl.create(:meeting_relay_reservation, is_doing_this: false) }
+      let(:res_event)     { FactoryBot.create(:meeting_relay_reservation, is_doing_this: true) }
+      let(:res_event_off) { FactoryBot.create(:meeting_relay_reservation, is_doing_this: false) }
 
       context "when editing a RELAY RES with notes," do
         let(:notes)  { FFaker::Lorem.word }
@@ -417,8 +417,8 @@ describe MeetingReservationMatrixUpdater, type: :strategy do
 
     # --- MEETING (a.k.a. BADGE/ATHLETE/SWIMMER) RESERVATION ---
     context "with an existing MEETING reservation," do
-      let(:res_event_open)    { FactoryGirl.create(:meeting_reservation, is_not_coming: false, has_confirmed: false, notes: nil) }
-      let(:res_event_closed)  { FactoryGirl.create(:meeting_reservation, is_not_coming: true, has_confirmed: true, notes: nil) }
+      let(:res_event_open)    { FactoryBot.create(:meeting_reservation, is_not_coming: false, has_confirmed: false, notes: nil) }
+      let(:res_event_closed)  { FactoryBot.create(:meeting_reservation, is_not_coming: true, has_confirmed: true, notes: nil) }
 
       context "when editing the notes," do
         let(:notes)  { FFaker::Lorem.word }

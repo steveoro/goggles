@@ -1,17 +1,12 @@
-# [Steve, 20160731] Surely having 3 different test-coverage reporters is overkill.
-# But, for the moment, I've still have to decide which is my favourite. :-P
-
-# [Steve] Test coverage integrated on CodeClimate, with local HTML-file reports
+# [Steve] Test coverage integrated on SimpleCov, with local HTML-file reports
 # (Remember to exclude /coverage sub-dir from git repo)
-  require "codeclimate-test-reporter"
   require 'simplecov'
   require 'pullreview/coverage_reporter'
   require 'pullreview/coverage'
 
-  CodeClimate::TestReporter.start
   SimpleCov.start 'rails'
   PullReview::CoverageReporter.start
-  puts "SimpleCov required and started."
+  puts "SimpleCov+PullReview required and started."
 
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 ENV['RAILS_ENV'] ||= 'test'
@@ -23,14 +18,14 @@ require 'rspec/rails'
 
 # Add additional requires below this line. Rails is not loaded until this point!
 require 'devise' # note: require 'devise' after require 'rspec/rails' (this allows to use devise test helpers)
-require 'factory_girl_rails'
+require 'factory_bot_rails'
 require 'capybara/rails'
 require 'capybara/rspec'
 
 
 # Add factories directly from core engine:
-FactoryGirl.definition_file_paths << "#{ GogglesCore::Engine.root }/spec/factories"
-FactoryGirl.reload
+FactoryBot.definition_file_paths << "#{ GogglesCore::Engine.root }/spec/factories"
+FactoryBot.reload
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
@@ -72,8 +67,8 @@ RSpec.configure do |config|
   config.extend( ControllerMacros, type: :controller )
   config.extend( CustomMatchers::Routing, type: :controller )
 
-  # [Steve, 20140226] Configure FactoryGirl to work with RSpec without prefixing them with "FactoryGirl"
-  config.include( FactoryGirl::Syntax::Methods )
+  # [Steve, 20140226] Configure FactoryBot to work with RSpec without prefixing them with "FactoryBot"
+  config.include( FactoryBot::Syntax::Methods )
 
   # ## Mock Framework
   #

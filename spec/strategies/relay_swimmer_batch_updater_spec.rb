@@ -15,7 +15,7 @@ describe RelaySwimmerBatchUpdater, type: :strategy do
 
   context "for a logged-in generic current user (which is NOT a team manager)," do
     it "raises an ArgumentError" do
-      expect{ RelaySwimmerBatchUpdater.new( FactoryGirl.build(:user) ) }.to raise_error( ArgumentError )
+      expect{ RelaySwimmerBatchUpdater.new( FactoryBot.build(:user) ) }.to raise_error( ArgumentError )
     end
   end
   #-- -------------------------------------------------------------------------

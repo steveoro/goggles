@@ -4,7 +4,7 @@ require 'json'
 
 describe Api::V1::NewsFeedsController, type: :controller, api: true do
   before(:all) do # Force the creation of the required rows:
-    @user = FactoryGirl.create( :user )
+    @user = FactoryBot.create( :user )
   end
 
   before(:each) do
@@ -50,7 +50,7 @@ describe Api::V1::NewsFeedsController, type: :controller, api: true do
 
   describe '[PUT read/:id]' do
     before(:each) do # Force the creation of the required row:
-      @updatable_row = FactoryGirl.create( :news_feed, user_id: @user.id )
+      @updatable_row = FactoryBot.create( :news_feed, user_id: @user.id )
     end
 
     context "with a non-JSON request" do
@@ -102,7 +102,7 @@ describe Api::V1::NewsFeedsController, type: :controller, api: true do
 
   describe '[DELETE destroy/:id]' do
     before(:each) do
-      @deletable_row = FactoryGirl.create( :news_feed, user_id: @user.id )
+      @deletable_row = FactoryBot.create( :news_feed, user_id: @user.id )
     end
 
     context "with a non-JSON request" do

@@ -4,8 +4,8 @@ require 'common/format'
 
 describe Api::V1::UserTrainingsController, type: :controller, api: true do
   before(:all) do # Force the creation of the required rows:
-    @user = FactoryGirl.create( :user )
-    @fixture_row = FactoryGirl.create( :user_training, user_id: @user.id )
+    @user = FactoryBot.create( :user )
+    @fixture_row = FactoryBot.create( :user_training, user_id: @user.id )
   end
 
   before(:each) do
@@ -54,7 +54,7 @@ describe Api::V1::UserTrainingsController, type: :controller, api: true do
 
 
   describe 'POST #create/:user_training' do
-    let(:post_attributes) { FactoryGirl.attributes_for(:user_training, user_id: @user.id) }
+    let(:post_attributes) { FactoryBot.attributes_for(:user_training, user_id: @user.id) }
 
     context "with a non-JSON request," do
       it "refuses the request" do
@@ -83,7 +83,7 @@ describe Api::V1::UserTrainingsController, type: :controller, api: true do
     end
 
     context "with non-valid attributes," do
-      let(:invalid_post_attributes) { FactoryGirl.attributes_for(:invalid_user_training) }
+      let(:invalid_post_attributes) { FactoryBot.attributes_for(:invalid_user_training) }
 
       it "refuses the request" do
         post :create, format: :json, params: { user_training: invalid_post_attributes, user_email: @user.email, user_token: @user.authentication_token }
@@ -165,9 +165,9 @@ describe Api::V1::UserTrainingsController, type: :controller, api: true do
 
   describe 'PUT #update/:id' do
     before(:all) do # Force the creation of the required rows:
-      @updatable_row = FactoryGirl.create( :user_training, user_id: @user.id )
-      @put_attributes = FactoryGirl.attributes_for(:user_training, user_id: @user.id, description: "Another description (UPDATED)")
-      @invalid_put_attributes = FactoryGirl.attributes_for(:invalid_user_training)
+      @updatable_row = FactoryBot.create( :user_training, user_id: @user.id )
+      @put_attributes = FactoryBot.attributes_for(:user_training, user_id: @user.id, description: "Another description (UPDATED)")
+      @invalid_put_attributes = FactoryBot.attributes_for(:invalid_user_training)
     end
 
     context "with a non-JSON request," do
@@ -244,7 +244,7 @@ describe Api::V1::UserTrainingsController, type: :controller, api: true do
 
   describe '[DELETE destroy/:id]' do
     before :each do
-      @deletable_row = FactoryGirl.create( :user_training, user_id: @user.id )
+      @deletable_row = FactoryBot.create( :user_training, user_id: @user.id )
     end
 
     context "with a non-JSON request" do

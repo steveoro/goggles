@@ -5,7 +5,7 @@ require 'json'
 RSpec.describe Api::V2::SessionsController, type: :controller do
   include ControllerMacros
 
-  let(:user) { FactoryGirl.create(:user) }
+  let(:user) { FactoryBot.create(:user) }
 
   before(:each) do
     @request.env["devise.mapping"] = Devise.mappings[:user]
@@ -45,7 +45,7 @@ RSpec.describe Api::V2::SessionsController, type: :controller do
     # A "SIGN-UP" request made with SIGN-IN must return error.
     context "with valid non-existing (yet) credentials" do
       before :each do
-        @new_fixture_email    = FactoryGirl.build(:user).email
+        @new_fixture_email    = FactoryBot.build(:user).email
         @new_fixture_password = "password"
         @user_count_before    = User.count
         post( :create, format: :json, params: { u: @new_fixture_email, p: @new_fixture_password } )

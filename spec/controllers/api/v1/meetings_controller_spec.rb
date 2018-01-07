@@ -113,7 +113,7 @@ describe Api::V1::MeetingsController, type: :controller, api: true do
   end
 
 
-  let(:user) { FactoryGirl.create(:user) }
+  let(:user) { FactoryBot.create(:user) }
   #-- -------------------------------------------------------------------------
   #++
 

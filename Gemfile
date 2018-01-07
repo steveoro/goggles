@@ -5,7 +5,7 @@ end
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 5.0.0', '>= 5.0.0.1'
+gem 'rails', '~> 5'
 
 gem 'mysql2'
 gem 'activerecord-session_store' # Needed to include a DB-based session store in Rails 4+
@@ -13,7 +13,7 @@ gem 'activerecord-session_store' # Needed to include a DB-based session store in
 # Use Puma as the app server
 gem 'puma', '~> 3.0'
 # Use SCSS for stylesheets
-gem 'sass-rails', '~> 5.0'
+gem 'sass-rails', '~> 5'
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
 # Use CoffeeScript for .coffee assets and views
@@ -21,7 +21,6 @@ gem 'coffee-rails', '~> 4.2'
 # See https://github.com/rails/execjs#readme for more supported runtimes
 gem 'execjs'
 gem 'therubyracer', platforms: :ruby
-# gem 'therubyrhino', platforms: :ruby
 
 # [Steve, 20161005] Font Awesome is used by WiceGrid instead of the old icons:
 gem 'font-awesome-rails'
@@ -99,7 +98,7 @@ group :development do
   # including them into the test environment also allows Semaphore CI to
   # perform automated deployment from a test build without changing the current
   # Rails environment.
-  gem 'capistrano',  '~> 3.6'
+  gem 'capistrano'
   gem 'capistrano-rvm'
   gem 'capistrano-bundler'
   gem 'capistrano-rails'
@@ -121,7 +120,7 @@ end
 group :development, :test do
   gem "rspec"
   gem "rspec-rails"
-  gem "factory_girl_rails"
+  gem "factory_bot_rails"
   gem "ffaker"                                      # Adds dummy names & fixture generator
   # The driver for browser testing may be switched back to the default (:rack_test,
   # without Javascript support) with: > Capybara.use_default_driver
@@ -136,7 +135,8 @@ end
 
 
 group :test do
-  gem "zeus", require: false
+  # This seems to be required by rubygems integration w/ pry used by guard
+#  gem "zeus", require: false
   # FIXME (Low-pri) This is required by Draper inside the core engine, probably due to some wrong setting:
   gem "test-unit"
   gem "capybara"                                    # [Steve, 20140226] Used only in Feature Specs
@@ -159,4 +159,4 @@ end
 # gem 'ruby-debug'
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+#gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]

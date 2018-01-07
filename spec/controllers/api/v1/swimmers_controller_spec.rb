@@ -173,8 +173,8 @@ describe Api::V1::SwimmersController, type: :controller, api: true do
   #++
 
 
-  let(:user)    { FactoryGirl.create(:user) }
-  let(:swimmer) { FactoryGirl.create(:swimmer) }
+  let(:user)    { FactoryBot.create(:user) }
+  let(:swimmer) { FactoryBot.create(:swimmer) }
   #-- -------------------------------------------------------------------------
   #++
 

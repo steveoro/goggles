@@ -30,7 +30,7 @@ describe MeetingEventReservationMatrixCreator, type: :strategy do
       MeetingEventReservationMatrixCreator.new(
         meeting: meeting,
         team_affiliation: team_affiliation,
-        current_user: FactoryGirl.build(:user)
+        current_user: FactoryBot.build(:user)
       )
     end
 
@@ -65,7 +65,7 @@ describe MeetingEventReservationMatrixCreator, type: :strategy do
       MeetingEventReservationMatrixCreator.new(
         meeting: meeting,
         team_affiliation: team_affiliation,
-        current_user: FactoryGirl.build(:user)
+        current_user: FactoryBot.build(:user)
       )
     end
 

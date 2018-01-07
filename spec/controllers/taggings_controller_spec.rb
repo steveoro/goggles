@@ -3,8 +3,8 @@ require 'rails_helper'
 
 RSpec.describe TaggingsController, type: :controller do
 
-  let(:meeting) { FactoryGirl.create(:meeting) }
-  let(:swimmer) { FactoryGirl.create(:swimmer) }
+  let(:meeting) { FactoryBot.create(:meeting) }
+  let(:swimmer) { FactoryBot.create(:swimmer) }
 
   before :each do
     @request.env["devise.mapping"] = Devise.mappings[:user]
@@ -22,7 +22,7 @@ RSpec.describe TaggingsController, type: :controller do
     end
 
     context "as a logged but not-associated user," do
-      let(:user) { FactoryGirl.create(:user) }
+      let(:user) { FactoryBot.create(:user) }
       before(:each) do
         login_user( user )
         expect( subject.current_user ).to be_an_instance_of( User )
@@ -39,7 +39,7 @@ RSpec.describe TaggingsController, type: :controller do
     end
 
     context "as a logged and swimmer-associated user," do
-      let(:user) { FactoryGirl.create(:user, swimmer: create(:swimmer)) }
+      let(:user) { FactoryBot.create(:user, swimmer: create(:swimmer)) }
       before(:each) do
         login_user( user )
         expect( subject.current_user ).to be_an_instance_of( User )
@@ -68,7 +68,7 @@ RSpec.describe TaggingsController, type: :controller do
     end
 
     context "as a logged but not-associated user," do
-      let(:user) { FactoryGirl.create(:user) }
+      let(:user) { FactoryBot.create(:user) }
       before(:each) do
         login_user( user )
         expect( subject.current_user ).to be_an_instance_of( User )
@@ -85,7 +85,7 @@ RSpec.describe TaggingsController, type: :controller do
     end
 
     context "as a logged and swimmer-associated user," do
-      let(:user) { FactoryGirl.create(:user, swimmer: create(:swimmer)) }
+      let(:user) { FactoryBot.create(:user, swimmer: create(:swimmer)) }
       before(:each) do
         login_user( user )
         expect( subject.current_user ).to be_an_instance_of( User )
@@ -114,7 +114,7 @@ RSpec.describe TaggingsController, type: :controller do
     end
 
     context "as a logged but not-associated user," do
-      let(:user) { FactoryGirl.create(:user) }
+      let(:user) { FactoryBot.create(:user) }
       before(:each) do
         login_user( user )
         expect( subject.current_user ).to be_an_instance_of( User )
@@ -131,7 +131,7 @@ RSpec.describe TaggingsController, type: :controller do
     end
 
     context "as a logged and swimmer-associated user," do
-      let(:user) { FactoryGirl.create(:user, swimmer: create(:swimmer)) }
+      let(:user) { FactoryBot.create(:user, swimmer: create(:swimmer)) }
       before(:each) do
         login_user( user )
         expect( subject.current_user ).to be_an_instance_of( User )
@@ -160,7 +160,7 @@ RSpec.describe TaggingsController, type: :controller do
     end
 
     context "as a logged but not-associated user," do
-      let(:user) { FactoryGirl.create(:user) }
+      let(:user) { FactoryBot.create(:user) }
       before(:each) do
         login_user( user )
         expect( subject.current_user ).to be_an_instance_of( User )
@@ -174,7 +174,7 @@ RSpec.describe TaggingsController, type: :controller do
     end
 
     context "as a logged and swimmer-associated user (but NOT a team manager)," do
-      let(:user) { FactoryGirl.create(:user, swimmer: create(:swimmer)) }
+      let(:user) { FactoryBot.create(:user, swimmer: create(:swimmer)) }
       before(:each) do
         login_user( user )
         expect( subject.current_user ).to be_an_instance_of( User )
@@ -188,7 +188,7 @@ RSpec.describe TaggingsController, type: :controller do
     end
 
     context "as a logged team manager," do
-      let(:user) { FactoryGirl.create(:team_manager).user }
+      let(:user) { FactoryBot.create(:team_manager).user }
       before(:each) do
         login_user( user )
         expect( subject.current_user ).to be_an_instance_of( User )

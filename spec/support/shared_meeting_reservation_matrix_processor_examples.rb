@@ -5,7 +5,7 @@ require 'rails_helper'
 shared_examples_for "MeetingReservationMatrixProcessor (not checking results after #call)" do |subject_class|
   # [Steve] We don't need to save the random user instance created, since we
   # won't use any of its associations, nor its ID, so "build" is enough.
-  subject { subject_class.new( current_user: FactoryGirl.build(:user) ) }
+  subject { subject_class.new( current_user: FactoryBot.build(:user) ) }
 
   it_behaves_like( "(the existance of a method)", [
     :meeting, :team_affiliation, :current_user,
@@ -29,7 +29,7 @@ shared_examples_for "MeetingReservationMatrixProcessor (not checking results aft
     subject do
       subject_class.new(
         team_affiliation: team_affiliation,
-        current_user: FactoryGirl.build(:user)
+        current_user: FactoryBot.build(:user)
       )
     end
 
@@ -66,7 +66,7 @@ shared_examples_for "MeetingReservationMatrixProcessor (not checking results aft
     subject do
       subject_class.new(
         meeting: meeting,
-        current_user: FactoryGirl.build(:user)
+        current_user: FactoryBot.build(:user)
       )
     end
 
@@ -112,7 +112,7 @@ shared_examples_for "MeetingReservationMatrixProcessor (not checking results aft
       subject_class.new(
         meeting: meeting,
         team_affiliation: team_affiliation,
-        current_user: FactoryGirl.build(:user)
+        current_user: FactoryBot.build(:user)
       )
     end
 
