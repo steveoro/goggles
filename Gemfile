@@ -5,13 +5,13 @@ end
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 5'
+gem 'rails', '~> 5.1.4'
 
 gem 'mysql2'
 gem 'activerecord-session_store' # Needed to include a DB-based session store in Rails 4+
 
 # Use Puma as the app server
-gem 'puma', '~> 3.0'
+gem 'puma', '~> 3.7'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5'
 # Use Uglifier as compressor for JavaScript assets
@@ -54,7 +54,8 @@ gem "goggles_core", git: "https://github.com/steveoro/goggles_core"
 gem "simple-navigation"
 gem 'simple-navigation-bootstrap'
 
-gem "wice_grid", git: "https://github.com/fasar-sw/wice_grid", branch: "rails5"
+# [Steve A., 20180107] WiceGrid is no longer compatible with Rails 5.1
+#gem "wice_grid", git: "https://github.com/fasar-sw/wice_grid", branch: "rails5"
 # (original master is located at /leikind/wice_grid)
 
 # [Steve] Customized version. For Facebook-like friendship management
@@ -82,6 +83,8 @@ gem 'rubyzip', '~> 1.2.1', require: 'zip/zip'
 gem 'rubocop', '~> 0.49.0', require: false                       # [Steve] For style checking
 
 gem "recaptcha", require: "recaptcha/rails"
+gem 'kaminari'
+gem 'bootstrap-kaminari-views'
 gem "rest-client"                                   # For api/v1/meetings/download
 
 group :development do
@@ -130,7 +133,10 @@ group :development, :test do
   gem "letter_opener"
 
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem 'byebug', platform: :mri
+  gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
+  # Adds support for Capybara system testing and selenium driver
+  gem 'capybara', '~> 2.13'
+  gem 'selenium-webdriver'
 end
 
 
@@ -139,16 +145,12 @@ group :test do
 #  gem "zeus", require: false
   # FIXME (Low-pri) This is required by Draper inside the core engine, probably due to some wrong setting:
   gem "test-unit"
-  gem "capybara"                                    # [Steve, 20140226] Used only in Feature Specs
   # The driver for browser testing may be switched back to the default (:rack_test,
   # without Javascript support) with: > Capybara.use_default_driver
   #gem 'selenium-webdriver'                          # Full browser simulation => Capybara.current_driver = :selenium
-  # FIXME not working on Leega workstation:
-#  gem 'capybara-webkit'                             # Headless browser simulation (faster) => Capybara.current_driver = :webkit
                                                     # [Steve, 20140312] Added these to build test coverage stats reports (open: /goggles/coverage/index.html)
   gem 'simplecov', require: false
   gem "codeclimate-test-reporter", require: false   # [Steve, 20140321] CI/Test coverage via local test run
-  gem 'coveralls', require: false                   # [Steve, 20140312] Uses simplecov to obtain test-coverage badge
   gem 'pullreview-coverage', require: false         # [Steve, 20160801] Updated coverage by PullReview
 
   # FIXME High-priority: remove usage of 'assigns' & 'render_template' in tests

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Api::V2::DataImportControllerController, type: :controller, api: true do
+RSpec.describe Api::V2::DataImportController, type: :controller, api: true do
 
   before :each do
     @request.env["devise.mapping"] = Devise.mappings[:user]

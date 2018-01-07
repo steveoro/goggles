@@ -44,7 +44,7 @@
     .row
       &nbsp;
     .row.text-center
-      = link_to( t('team.all_races'), meetings_custom_search_path( text: @team.get_full_name, team_id: @team.id ), {class: "btn btn-default"} )
+      = link_to( t('team.all_races'), search_meetings_path( t: @team.id ), {class: "btn btn-default"} )
 
 .col-xs-12
   &nbsp;

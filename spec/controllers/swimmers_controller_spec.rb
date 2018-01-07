@@ -1,33 +1,33 @@
 require 'rails_helper'
-require 'wice_grid'
+#require 'wice_grid'
 
 
 describe SwimmersController, type: :controller do
 
-  describe '[GET #index]' do
-    context "with an HTML request," do
-      it "handles successfully the request" do
-        get :index
-        expect(response.status).to eq( 200 )
-      end
-      it "assigns the required variables" do
-        get :index
-        expect( assigns(:title) ).to be_an_instance_of( String )
-        expect( assigns(:swimmers_grid) ).to be_an_instance_of( Wice::WiceGrid )
-      end
-      it "renders the search template" do
-        get :index
-        expect(response).to render_template(:index)
-      end
-    end
-  end
+  # describe '[GET #index]' do
+    # context "with an HTML request," do
+      # it "handles successfully the request" do
+        # get :index
+        # expect(response.status).to eq( 200 )
+      # end
+      # it "assigns the required variables" do
+        # get :index
+        # expect( assigns(:title) ).to be_an_instance_of( String )
+# #        expect( assigns(:swimmers_grid) ).to be_an_instance_of( Wice::WiceGrid )
+      # end
+      # it "renders the search template" do
+        # get :index
+        # expect(response).to render_template(:index)
+      # end
+    # end
+  # end
   #-- -------------------------------------------------------------------------
   #++
 
 
   describe '[GET #radio/:id]' do
     # We need to set this to make the redirect_to(:back) pass the tests:
-    before(:each) { request.env["HTTP_REFERER"] = swimmers_path() }
+    before(:each) { request.env["HTTP_REFERER"] = root_path() }
 
     context "with an HTML request for a non-existing id," do
       it "handles the request with a redirect" do
@@ -86,7 +86,7 @@ describe SwimmersController, type: :controller do
     before :each do
       @fixture = create( :swimmer )
       # We need to set this to make the redirect_to(:back) pass the tests:
-      request.env["HTTP_REFERER"] = swimmers_path()
+      request.env["HTTP_REFERER"] = root_path()
       login_user()
     end
 
@@ -591,7 +591,7 @@ describe SwimmersController, type: :controller do
       let(:swimmer) { team.swimmers[ ((rand * team.swimmers.count) % team.swimmers.count).to_i ] }
 
       before(:each) do
-        request.env["HTTP_REFERER"] = swimmers_path()
+        request.env["HTTP_REFERER"] = root_path()
         login_user()
         get :current_goggle_cup, params: { id: swimmer.id }
       end
@@ -615,7 +615,7 @@ describe SwimmersController, type: :controller do
       let(:goggle_cup) { swimmer.goggle_cups.for_team( team )[ ((rand * swimmer.goggle_cups.for_team( team ).count) % swimmer.goggle_cups.for_team( team ).count).to_i ] }
 
       before(:each) do
-        request.env["HTTP_REFERER"] = swimmers_path()
+        request.env["HTTP_REFERER"] = root_path()
         login_user()
         get :closed_goggle_cup, params: { id: swimmer.id, goggle_cup_id: goggle_cup.id }
       end
@@ -653,7 +653,7 @@ describe SwimmersController, type: :controller do
         end
 
         before(:each) do
-          request.env["HTTP_REFERER"] = swimmers_path()
+          request.env["HTTP_REFERER"] = root_path()
           login_user()
           # We will force the header_year upon the action (when not present, header_year
           # will default to nil, using the current season which may well be still without
@@ -688,7 +688,7 @@ describe SwimmersController, type: :controller do
     context "as a logged-in user" do
       before(:each) do
         # We need to set this to make the redirect_to(:back) pass the tests:
-        request.env["HTTP_REFERER"] = swimmers_path()
+        request.env["HTTP_REFERER"] = root_path()
         login_user()
         # FIXME This action requires "full goggler" (swimmer associated with user)
         #@swimmer = create(:swimmer)

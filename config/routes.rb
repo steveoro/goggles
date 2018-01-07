@@ -57,11 +57,11 @@ Rails.application.routes.draw do
       # === Meetings ===
       get "meetings/my",                        to: "meetings#my"
       get "meetings/current",                   to: "meetings#current"
-      get "meetings/custom_search",             to: "meetings#custom_search"
-      get "meetings/simple_search",             to: "meetings#simple_search"
+#      get "meetings/custom_search",             to: "meetings#custom_search"
+#      get "meetings/simple_search",             to: "meetings#simple_search"
 
-      get "meetings/search_swimmer",            to: "meetings#search_swimmer"
-      get "meetings/search_team",               to: "meetings#search_team"
+#      get "meetings/search_swimmer",            to: "meetings#search_swimmer"
+#      get "meetings/search_team",               to: "meetings#search_team"
       get "meeting/show_invitation/:id",        to: "meetings#show_invitation",         as: "meeting_show_invitation"
       get "meeting/show_start_list/:id",        to: "meetings#show_start_list",         as: "meeting_show_start_list"
       get "meeting/show_start_list_by_category/:id", to: "meetings#show_start_list_by_category", as: "meeting_show_start_list_by_category"
@@ -94,6 +94,7 @@ Rails.application.routes.draw do
       # === Search ===
       get 'search/smart'
       get 'search/smart_with_captcha'
+      get 'search/meetings'
 
       # === Records ===
       get  "records/for_season_type",           to: "records#for_season_type"
@@ -105,7 +106,7 @@ Rails.application.routes.draw do
 #      get  "records/for_personal_best",         to: "records#for_personal_best"
 
       # === Swimmers ===
-      get  "swimmers/index",                    as: "swimmers"
+#      get  "swimmers/index",                    as: "swimmers"
       get  "swimmer/radio/:id",                 to: "swimmers#radio",                   as: "swimmer_radio"
       get  "swimmer/medals/:id",                to: "swimmers#medals",                  as: "swimmer_medals"
 # FIXME this has not been used yet: (view removed or missing) -- check it out and then remove it, if everything is ok
@@ -127,7 +128,7 @@ Rails.application.routes.draw do
       get  'taggings/starred_meetings',         to: "taggings#starred_meetings",        as: "taggings_starred_meetings"
 
       # === Teams ===
-      get  "teams/index",                       to: "teams#index",                      as: "teams"
+#      get  "teams/index",                       to: "teams#index",                      as: "teams"
       get  "teams/radio/:id",                   to: "teams#radio",                      as: "team_radio"
       get  "teams/current_swimmers/:id",        to: "teams#current_swimmers",           as: "team_current_swimmers"
       get  "teams/best_timings/:id",            to: "teams#best_timings",               as: "team_best_timings"
@@ -141,7 +142,7 @@ Rails.application.routes.draw do
       get  "teams/closed_goggle_cup/:id",       to: "teams#closed_goggle_cup",          as: "team_closed_goggle_cup"
 
       # === Swimming Pools ===
-      get "swimming_pools/index",               as: "swimming_pools"
+#      get "swimming_pools/index",               as: "swimming_pools"
       get "swimming_pool/:id",                  to: "swimming_pools#show",              as: "swimming_pool"
 
       # === Championships ===
@@ -190,21 +191,21 @@ Rails.application.routes.draw do
       get  "exercise/json_list/:id",            to: "exercises#json_list",              as: "exercise_json_list"
 
       # === Trainings ===
-      resources :trainings
-      get  "training/printout/:id",             to: "trainings#printout",               as: "training_printout"
-      post "training/duplicate/:id",            to: "trainings#duplicate",              as: "training_duplicate"
-      post "training/create_user_training/:id", to: "trainings#create_user_training",   as: "training_create_user_training"
+#      resources :trainings
+#      get  "training/printout/:id",             to: "trainings#printout",               as: "training_printout"
+#      post "training/duplicate/:id",            to: "trainings#duplicate",              as: "training_duplicate"
+#      post "training/create_user_training/:id", to: "trainings#create_user_training",   as: "training_create_user_training"
 
       # === User Trainings ===
-      resources :user_trainings
-      get  "user_trainings/json_list",          to: "user_trainings#json_list"
-      get  "user_training/json_list/:id",       to: "user_trainings#json_list",           as: "user_training_json_list"
-      get  "user_training/printout/:id",        to: "user_trainings#printout",            as: "user_training_printout"
-      post "user_training/duplicate/:id",       to: "user_trainings#duplicate",           as: "user_training_duplicate"
-      post "user_training/create_user_story/:id", to: "user_trainings#create_user_story", as: "user_training_create_user_story"
+#      resources :user_trainings
+#      get  "user_trainings/json_list",          to: "user_trainings#json_list"
+#      get  "user_training/json_list/:id",       to: "user_trainings#json_list",           as: "user_training_json_list"
+#      get  "user_training/printout/:id",        to: "user_trainings#printout",            as: "user_training_printout"
+#      post "user_training/duplicate/:id",       to: "user_trainings#duplicate",           as: "user_training_duplicate"
+#      post "user_training/create_user_story/:id", to: "user_trainings#create_user_story", as: "user_training_create_user_story"
 
       # === User Training Stories: ===
-      resources :user_training_stories
+#      resources :user_training_stories
     end
   end
 
@@ -217,9 +218,9 @@ Rails.application.routes.draw do
       end
 
       # === Data-Import Microtransactions ===
-      post 'data_import_controller/start'
-      post 'data_import_controller/edit'
-      post 'data_import_controller/commit'
+      post 'data_import/start'
+      post 'data_import/edit'
+      post 'data_import/commit'
     end
 
     namespace :v1 do
@@ -282,8 +283,8 @@ Rails.application.routes.draw do
 
 # FIXME NOT REALLY USED:
       # TODO extract and enlist only the actual routes used:
-      resources :user_trainings, except: [:new]
-      resources :user_training_stories, except: [:new]
+#      resources :user_trainings, except: [:new]
+#      resources :user_training_stories, except: [:new]
       resources :passages, except: [:new]
 #      match "passages/create", to: "passages#create", via: :post
     end

@@ -15,7 +15,7 @@ require 'swimming_pool_finder'
 
   Search-dedicated controller.
 
-  - version:  6.072
+  - version:  6.200
   - author:   Steve A.
 
 =end
@@ -48,12 +48,14 @@ class SearchController < ApplicationController
 # DEBUG
 #    logger.debug( "\r\n\r\n!! ------ #{self.class.name} -----" )
 #    logger.debug( "> #{params.inspect}" )
-    # AJAX call? Parse parameter and retrieve records range:
+    # AJAX request? Parse parameter and retrieve records range:
     if request.xhr? && params['q'].present?
       @query = params['q']
       @limitless = ( params['u'] == '1' )
       prepare_query_results( params['q'], params['e'] )
     end
+
+    @title = I18n.t('general.smart_search')
     # Respond according to requested format (GET request => .html, AJAX request => .js)
     respond_to do |format|
       format.html
@@ -78,7 +80,7 @@ class SearchController < ApplicationController
 # DEBUG
 #    logger.debug( "\r\n\r\n!! ------ #{self.class.name} -----" )
 #    logger.debug( "> #{params.inspect}" )
-    # AJAX call? Parse parameter and retrieve records range:
+    # AJAX request? Parse parameter and retrieve records range:
     if request.xhr? && params['q'].present?
       @captcha_ok = verify_recaptcha
       @query = params['q']
@@ -93,11 +95,52 @@ class SearchController < ApplicationController
         @meetings = []
       end
     end
+
+    @title = I18n.t('general.smart_search')
     # Respond according to requested format (GET request => .html, AJAX request => .js)
     respond_to do |format|
       format.html
       format.js
     end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Collects all meetings for a swimmer ('s') or a team ID ('t').
+  # This search is not limited.
+  # (It re-uses the 'smart' view, but the "get more result" button would not work
+  # as expected since it's custom-tailored for the 'smart' action - which is mainly
+  # an AJAX/remote action)
+  #
+  # === Params
+  # - 's': a swimmer id
+  # - 't': a team id
+  # - 'q': a meeting name
+  #
+  def meetings
+# DEBUG
+#    logger.debug( "\r\n\r\n!! ------ #{self.class.name} -----" )
+#    logger.debug( "> #{params.inspect}" )
+    # Parse parameter and retrieve records range:
+    @limitless = true
+    if params['s'].present? && (params['s'].to_i > 0)
+      @swimmers = [ Swimmer.find_by_id(params['s'].to_i) ]
+      if @swimmers.count >= 1
+        @query = @swimmers.first.get_full_name
+        @meetings = @swimmers.first.meetings.distinct.order("header_date DESC")
+      end
+    elsif params['t'].present? && (params['t'].to_i > 0)
+      @teams = [ Team.find_by_id(params['t'].to_i) ]
+      if @teams.count >= 1
+        @query = @teams.first.get_full_name
+        @meetings =@teams.first.meetings.distinct.order("header_date DESC")
+      end
+    else
+      prepare_query_results( params['q'], 'm' )
+    end
+    @title = I18n.t('meeting_search.title')
+    render 'smart'
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -136,12 +179,16 @@ class SearchController < ApplicationController
   def prepare_query_results( query, entity )
     # Get all swimmers related to the query text:
     @swimmers = (entity.nil? || entity == 's') ? get_possible_swimmers( params['q'], @limitless ) : []
+    logger.debug("Found #{ @swimmers.count } swimmers")
     # Get all teams related to the query text OR the swimmers found:
     @teams    = (entity.nil? || entity == 't') ? get_possible_teams( params['q'], @swimmers, @limitless ) : []
+    logger.debug("Found #{ @teams.count } teams")
     # Get all swimming pools somehow related to the query text:
     @pools    = (entity.nil? || entity == 'p') ? get_possible_pools( params['q'], @limitless ) : []
+    logger.debug("Found #{ @pools.count } pools")
     # Get all meetings somehow related to the query text:
     @meetings = (entity.nil? || entity == 'm') ? get_possible_meetings( params['q'], @limitless ) : []
+    logger.debug("Found #{ @meetings.count } meetings")
   end
   #-- -------------------------------------------------------------------------
   #++

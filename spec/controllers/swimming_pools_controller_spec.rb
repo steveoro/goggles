@@ -3,30 +3,30 @@ require 'rails_helper'
 
 describe SwimmingPoolsController, type: :controller do
 
-  describe '[GET #index]' do
-    context "with a JSON request," do
-      it "redirects to the root path" do
-        get :index, format: :json
-        expect( response ).to redirect_to( root_path )
-      end
-    end
-
-    context "with an HTML request," do
-      it "handles successfully the request" do
-        get :index
-        expect(response.status).to eq( 200 )
-      end
-      it "assigns the required variables" do
-        get :index
-        expect( assigns(:title) ).to be_an_instance_of( String )
-        expect( assigns(:pools_grid) ).to be_an_instance_of( Wice::WiceGrid )
-      end
-      it "renders the search template" do
-        get :index
-        expect(response).to render_template(:index)
-      end
-    end
-  end
+  # describe '[GET #index]' do
+    # context "with a JSON request," do
+      # it "redirects to the root path" do
+        # get :index, format: :json
+        # expect( response ).to redirect_to( root_path )
+      # end
+    # end
+#
+    # context "with an HTML request," do
+      # it "handles successfully the request" do
+        # get :index
+        # expect(response.status).to eq( 200 )
+      # end
+      # it "assigns the required variables" do
+        # get :index
+        # expect( assigns(:title) ).to be_an_instance_of( String )
+        # expect( assigns(:pools_grid) ).to be_an_instance_of( Wice::WiceGrid )
+      # end
+      # it "renders the search template" do
+        # get :index
+        # expect(response).to render_template(:index)
+      # end
+    # end
+  # end
   #-- -------------------------------------------------------------------------
   #++
 

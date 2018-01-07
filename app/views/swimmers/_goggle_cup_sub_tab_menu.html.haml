@@ -3,7 +3,7 @@
   - @swimmer.goggle_cups.sort_goggle_cup_by_year('DESC').each do |goggle_cup|
     - teams << goggle_cup.team if !teams.include?( goggle_cup.team )
   - teams.each_with_index do |team,index|
-    - goggle_cups = @swimmer.goggle_cups.for_team(team).uniq.sort_goggle_cup_by_year('DESC')
+    - goggle_cups = @swimmer.goggle_cups.for_team(team).distinct.sort_goggle_cup_by_year('DESC')
     - sub_menu_title = team.get_full_name
     - is_active = index == 0 ? true : false
     = content_tag( :li, class: "dropdown" + (is_active ? ' active' : ''), role: "presentation" ) do

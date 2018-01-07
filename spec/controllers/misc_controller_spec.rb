@@ -1,5 +1,5 @@
 require 'rails_helper'
-require 'wice_grid'
+#require 'wice_grid'
 
 
 describe MiscController, type: :controller do

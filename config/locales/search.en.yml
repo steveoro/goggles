@@ -1,4 +1,6 @@
 en:
+  meeting_search:
+    title: "Search meeting"
   search_view:
     query_suggestion: "Search swimmer, team, meeting, or pool name..."
     tot_results: "Results found:"

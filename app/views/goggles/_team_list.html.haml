@@ -11,11 +11,11 @@
     - @teams.each do |team|
       %tr
         %td
-          = team.get_linked_name
+          = team.decorate.get_linked_name
         %td
-          = team.get_season_type_list
+          = team.decorate.get_season_type_list
         %td
-          = team.get_last_meeting_name.html_safe
+          = team.decorate.get_last_meeting_name.html_safe
 
 .row.col-xs-12
   &nbsp;

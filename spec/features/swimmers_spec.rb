@@ -1,19 +1,19 @@
 require 'rails_helper'
 
 
-describe "Swimmers index/search", type: :feature, wip: true do
-  include ControllerMacros
-
-  context "as an anonymous user," do
-    before(:each) do
-      visit swimmers_path()
-    end
-
-    it "shows successfully the search grid" do
-      expect( page ).to have_content( I18n.t('swimmers.complete_name') )
-    end
-  end
-end
+#describe "Swimmers index/search", type: :feature, wip: true do
+#  include ControllerMacros
+#
+#  context "as an anonymous user," do
+#    before(:each) do
+#      visit swimmers_path()
+#    end
+#
+#    it "shows successfully the search grid" do
+#      expect( page ).to have_content( I18n.t('swimmers.complete_name') )
+#    end
+#  end
+#end
 #-- ----------------------------------------------------------------------------
 #++
 

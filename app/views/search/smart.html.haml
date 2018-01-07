@@ -1,4 +1,11 @@
 %p
-  %h3.text-center= I18n.t('general.smart_search')
+  %h3.text-center= @title
 
 = render( partial: 'goggles/search_box' )
+
+- if ( @swimmers || @teams || @pools || @meetings )
+  :javascript
+    $('#search_results').remove();
+  #search_results
+  .col-xs-12.goggles-category-gap
+    = render(partial: 'search_results')

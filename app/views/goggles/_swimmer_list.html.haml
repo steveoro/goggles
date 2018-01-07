@@ -13,13 +13,13 @@
     - @swimmers.each do |swimmer|
       %tr
         %td
-          = swimmer.get_linked_swimmer_name.html_safe
+          = swimmer.decorate.get_linked_swimmer_name.html_safe
         %td
-          = swimmer.get_linked_team_names.html_safe
+          = swimmer.decorate.get_linked_team_names.html_safe
         %td.text-right
-          = swimmer.year_of_birth
+          = swimmer.decorate.year_of_birth
         %td.text-right
-          = swimmer.get_current_category_type_codes.join(' / ')
+          = swimmer.decorate.get_current_category_type_codes.join(' / ')
 
 .row.col-xs-12
   &nbsp;

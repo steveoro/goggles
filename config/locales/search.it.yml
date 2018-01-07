@@ -1,4 +1,6 @@
 it:
+  meeting_search:
+    title: "Cerca meeting"
   search_view:
     query_suggestion: "Cerca nome atleta, o squadra, o meeting o piscina..."
     tot_results: "Risultati trovati:"

@@ -51,4 +51,14 @@ RSpec.describe SearchController, type: :controller do
   end
   #-- -------------------------------------------------------------------------
   #++
+
+
+  describe "[GET #meetings]" do
+    it "returns http success" do
+      get :meetings
+      expect(response).to have_http_status(:success)
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 end

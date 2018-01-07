@@ -1,0 +1,17 @@
+it:
+  views:
+    pagination:
+      first: "&laquo; Inizio"
+      last: "Fine &raquo;"
+      previous: "&lsaquo; Prec"
+      next: "Succ &rsaquo;"
+      truncate: "&hellip;"
+  helpers:
+    page_entries_info:
+      one_page:
+        display_entries:
+          zero: "Nessun %{entry_name} trovato"
+          one: "Visualizza <b>1</b> %{entry_name}"
+          other: "Visualizza <b>tutti i %{count}</b> %{entry_name}"
+      more_pages:
+        display_entries: "Visualizzati <b>%{first}&nbsp;-&nbsp;%{last}</b> di <b>%{total}</b> %{entry_name} in totale"

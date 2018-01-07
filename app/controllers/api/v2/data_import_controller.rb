@@ -1,7 +1,7 @@
 #
 # API V2 controller
 #
-class Api::V2::DataImportControllerController < Api::BaseController
+class Api::V2::DataImportController < Api::BaseController
 
   respond_to :json
 

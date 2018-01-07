@@ -1,6 +1,6 @@
 # encoding: utf-8
 require 'common/format'
-require 'extensions/wice_grid_column_string_regexped' # Used to generate simple_search query condition
+#require 'extensions/wice_grid_column_string_regexped' # Used to generate simple_search query condition
 require 'meeting_finder'
 require 'wrappers/timing'
 
@@ -9,7 +9,7 @@ require 'wrappers/timing'
 
 = MeetingsController
 
-  - version:  6.099
+  - version:  6.200
   - author:   Steve A.
 
 =end
@@ -105,31 +105,22 @@ class MeetingsController < ApplicationController
   def current
     # [Steve, 20161001] We need to whitelist all parameters for the search query:
     params.permit!()
+    @start_date = "#{Date.today.prev_day(19)}"
+    @end_date   = "#{Date.today.next_month(10)}"
     @title = if params[:text].to_s.size > 0
-      I18n.t('meeting.current_title') + " ('#{ params[:text] }')"
+      I18n.t('meeting.current_title') + " ('#{ params[:text] }', #{ Format.a_date(@start_date) } ... #{ Format.a_date(@end_date) })"
     else
-      I18n.t('meeting.current_title')
+      I18n.t('meeting.current_title') + " (#{ Format.a_date(@start_date) } ... #{ Format.a_date(@end_date) })"
     end
     @preselected_swimmer_id = params[:swimmer_id].to_i if params[:swimmer_id]
     @preselected_team_id    = params[:team_id].to_i if params[:team_id]
-    #@start_date, @end_date = if Date.today.month < 10
-    #  [ "#{Date.today.year-1}-10-01", "#{Date.today.year}-09-30" ]
-    #else
-    #  [ "#{Date.today.year}-10-01", "#{Date.today.year+1}-09-30" ]
-    #end
 
-    @start_date = "#{Date.today.prev_day(19)}"
-    @end_date   = "#{Date.today.next_month(10)}"
+    # TODO Filter by season type (1,2,3 & 7,8)
 
-    # Initialize the grid:
-    @meetings_grid = initialize_grid(
-      Meeting,
-      include: [:season, :season_type, :meeting_sessions, :swimming_pools],
-      conditions: "(NOT is_cancelled) AND (header_date >= '#{@start_date}') AND (header_date <= '#{@end_date}')",
-      order: 'meetings.header_date',
-      order_direction: 'asc',
-      per_page: 25
-    )
+    @meetings = Meeting.includes( :season, :season_type, :meeting_sessions, :swimming_pools )
+        .where( "(NOT is_cancelled) AND (header_date >= '#{@start_date}') AND (header_date <= '#{@end_date}')" )
+        .order( "meetings.header_date ASC" )
+        .page( params[:page] || 1 )
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -171,54 +162,54 @@ class MeetingsController < ApplicationController
   # - swimmer_id: a Swimmer id to be highlighted among the results;
   # - team_id:    a Team id to be highlighted among the results.
   #
-  def simple_search
-    # [Steve, 20161001] We need to whitelist all parameters for the search query:
-    params.permit!()
-    # Clear the saved text search when request with special code:
-    session[:text] = params[:text] = nil if params[:text] == '*'
-    # Store the search text when it changes to something:
-    session[:text] = params[:text] if params[:text].to_s.size > 0
-    search_text = session[:text]
-    query_swimmers_condition = nil
-    query_teams_condition    = nil
-
-    # Build-up title:
-    @title = if search_text.to_s.size > 0
-      I18n.t('meeting.simple_title') + " ('#{ search_text }')"
-    else
-      I18n.t('meeting.simple_title')
-    end
-    if search_text
-      query_swimmers_condition = ConditionsGeneratorColumnStringRegexped.generate_query_conditions( 'swimmers', 'complete_name', search_text )
-      query_teams_condition    = ConditionsGeneratorColumnStringRegexped.generate_query_conditions( 'teams', 'name', search_text )
-    end
-
-    # Assign ID highlighters based on search text (when not provided):
-    if params[:swimmer_id]
-      @preselected_swimmer_id = params[:swimmer_id].to_i
-    elsif search_text
-      serched_swimmer = Swimmer.where( query_swimmers_condition ).first
-      @preselected_swimmer_id = serched_swimmer.id if serched_swimmer
-    end
-    if params[:team_id]
-      @preselected_team_id = params[:team_id].to_i
-    elsif search_text
-      serched_team = Team.where( query_teams_condition ).first
-      @preselected_team_id = serched_team.id if serched_team
-    end
-
-    ids = MeetingFinder.new( search_text ).search_ids()
-
-    # Initialize the grid:
-    @meetings_grid = initialize_grid(
-      Meeting,
-      include: [:season, :season_type, :meeting_sessions, :swimming_pools],
-      conditions: { id: ids },
-      order: 'meetings.header_date',
-      order_direction: 'asc',
-      per_page: 20
-    )
-  end
+  # def simple_search
+    # # [Steve, 20161001] We need to whitelist all parameters for the search query:
+    # params.permit!()
+    # # Clear the saved text search when request with special code:
+    # session[:text] = params[:text] = nil if params[:text] == '*'
+    # # Store the search text when it changes to something:
+    # session[:text] = params[:text] if params[:text].to_s.size > 0
+    # search_text = session[:text]
+    # query_swimmers_condition = nil
+    # query_teams_condition    = nil
+#
+    # # Build-up title:
+    # @title = if search_text.to_s.size > 0
+      # I18n.t('meeting.simple_title') + " ('#{ search_text }')"
+    # else
+      # I18n.t('meeting.simple_title')
+    # end
+    # if search_text
+      # query_swimmers_condition = ConditionsGeneratorColumnStringRegexped.generate_query_conditions( 'swimmers', 'complete_name', search_text )
+      # query_teams_condition    = ConditionsGeneratorColumnStringRegexped.generate_query_conditions( 'teams', 'name', search_text )
+    # end
+#
+    # # Assign ID highlighters based on search text (when not provided):
+    # if params[:swimmer_id]
+      # @preselected_swimmer_id = params[:swimmer_id].to_i
+    # elsif search_text
+      # serched_swimmer = Swimmer.where( query_swimmers_condition ).first
+      # @preselected_swimmer_id = serched_swimmer.id if serched_swimmer
+    # end
+    # if params[:team_id]
+      # @preselected_team_id = params[:team_id].to_i
+    # elsif search_text
+      # serched_team = Team.where( query_teams_condition ).first
+      # @preselected_team_id = serched_team.id if serched_team
+    # end
+#
+    # ids = MeetingFinder.new( search_text ).search_ids()
+#
+    # # Initialize the grid:
+    # @meetings_grid = initialize_grid(
+      # Meeting,
+      # include: [:season, :season_type, :meeting_sessions, :swimming_pools],
+      # conditions: { id: ids },
+      # order: 'meetings.header_date',
+      # order_direction: 'asc',
+      # per_page: 20
+    # )
+  # end
   #-- -------------------------------------------------------------------------
   #++
 
@@ -234,39 +225,39 @@ class MeetingsController < ApplicationController
   # - swimmer_id: a Swimmer id to be used as a pre-filter for domain passed to the grid;
   # - team_id:    a Team id to be used as a pre-filter for domain passed to the grid;
   #
-  def custom_search
-    # [Steve, 20161001] We need to whitelist all parameters for the search query:
-    params.permit!()
-    @title = if params[:text].to_s.size > 0
-      I18n.t('meeting.index_title') + " ('#{ params[:text] }')"
-    else
-      I18n.t('meeting.index_title')
-    end
-    @preselected_swimmer_id = params[:swimmer_id].to_i if params[:swimmer_id]
-    @preselected_team_id    = params[:team_id].to_i if params[:team_id]
-    ids = nil
-    # Prepare pre-selection parameters:
-    if @preselected_swimmer_id
-      swimmer = Swimmer.find_by_id( @preselected_swimmer_id )
-      ids = swimmer.meetings.joins(:season, :season_type)
-        .includes(:season, :season_type)
-        .map{ |row| row.id }.uniq
-    elsif @preselected_team_id
-      team = Team.find_by_id( @preselected_team_id )
-      ids = team.meetings.joins(:season, :season_type)
-        .includes(:season, :season_type)
-        .map{ |row| row.id }.uniq
-    end
-    # Initialize the grid:
-    @meetings_grid = initialize_grid(
-      Meeting,
-      include: [:season, :season_type, :meeting_sessions, :swimming_pools],
-      conditions: ids ? { id: ids } : nil,
-      order: 'meetings.header_date',
-      order_direction: 'asc',
-      per_page: 20
-    )
-  end
+  # def custom_search
+    # # [Steve, 20161001] We need to whitelist all parameters for the search query:
+    # params.permit!()
+    # @title = if params[:text].to_s.size > 0
+      # I18n.t('meeting.index_title') + " ('#{ params[:text] }')"
+    # else
+      # I18n.t('meeting.index_title')
+    # end
+    # @preselected_swimmer_id = params[:swimmer_id].to_i if params[:swimmer_id]
+    # @preselected_team_id    = params[:team_id].to_i if params[:team_id]
+    # ids = nil
+    # # Prepare pre-selection parameters:
+    # if @preselected_swimmer_id
+      # swimmer = Swimmer.find_by_id( @preselected_swimmer_id )
+      # ids = swimmer.meetings.joins(:season, :season_type)
+        # .includes(:season, :season_type)
+        # .map{ |row| row.id }.uniq
+    # elsif @preselected_team_id
+      # team = Team.find_by_id( @preselected_team_id )
+      # ids = team.meetings.joins(:season, :season_type)
+        # .includes(:season, :season_type)
+        # .map{ |row| row.id }.uniq
+    # end
+    # # Initialize the grid:
+    # @meetings_grid = initialize_grid(
+      # Meeting,
+      # include: [:season, :season_type, :meeting_sessions, :swimming_pools],
+      # conditions: ids ? { id: ids } : nil,
+      # order: 'meetings.header_date',
+      # order_direction: 'asc',
+      # per_page: 20
+    # )
+  # end
   #-- -------------------------------------------------------------------------
   #++
 

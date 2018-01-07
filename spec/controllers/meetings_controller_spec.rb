@@ -1,6 +1,6 @@
 require 'rails_helper'
 require 'ffaker'
-require 'wice_grid'
+#require 'wice_grid'
 
 
 describe MeetingsController, type: :controller do
@@ -11,7 +11,7 @@ describe MeetingsController, type: :controller do
     end
     it "assigns the required variables" do
       expect( assigns(:title) ).to be_an_instance_of( String )
-      expect( assigns(:meetings_grid) ).to be_an_instance_of( Wice::WiceGrid )
+      #expect( assigns(:meetings_grid) ).to be_an_instance_of( Wice::WiceGrid )
     end
     it "renders the search template" do
       expect(response).to render_template( action_sym )
@@ -147,40 +147,40 @@ describe MeetingsController, type: :controller do
   #++
 
 
-  describe 'GET #simple_search' do
-    context "without parameters," do
-      before(:each) { get :simple_search }
-      it_behaves_like( "(response ok with index grid rendering)", :simple_search )
-    end
-
-    context "with valid parameters," do
-      it_behaves_like( "(GET search index with a preselected swimmer_id)", :simple_search )
-      it_behaves_like( "(GET search index with a preselected team_id)", :simple_search )
-      it_behaves_like( "(GET search index with a text added to the title)", :simple_search )
-
-      it "stores the search text in the session" do
-        @text = FFaker::Lorem.paragraph[0..99]
-        get :simple_search, params: { text: @text, team_id: 1, swimmer_id: 142 }
-        expect( session[:text] ).to include( @text )
-      end
-    end
-  end
+  # describe 'GET #simple_search' do
+    # context "without parameters," do
+      # before(:each) { get :simple_search }
+      # it_behaves_like( "(response ok with index grid rendering)", :simple_search )
+    # end
+#
+    # context "with valid parameters," do
+      # it_behaves_like( "(GET search index with a preselected swimmer_id)", :simple_search )
+      # it_behaves_like( "(GET search index with a preselected team_id)", :simple_search )
+      # it_behaves_like( "(GET search index with a text added to the title)", :simple_search )
+#
+      # it "stores the search text in the session" do
+        # @text = FFaker::Lorem.paragraph[0..99]
+        # get :simple_search, params: { text: @text, team_id: 1, swimmer_id: 142 }
+        # expect( session[:text] ).to include( @text )
+      # end
+    # end
+  # end
   #-- -------------------------------------------------------------------------
   #++
 
 
-  describe 'GET #custom_search' do
-    context "without parameters," do
-      before(:each) { get :custom_search }
-      it_behaves_like( "(response ok with index grid rendering)", :custom_search )
-    end
-
-    context "with valid parameters," do
-      it_behaves_like( "(GET search index with a preselected swimmer_id)", :custom_search )
-      it_behaves_like( "(GET search index with a preselected team_id)", :custom_search )
-      it_behaves_like( "(GET search index with a text added to the title)", :custom_search )
-    end
-  end
+  # describe 'GET #custom_search' do
+    # context "without parameters," do
+      # before(:each) { get :custom_search }
+      # it_behaves_like( "(response ok with index grid rendering)", :custom_search )
+    # end
+#
+    # context "with valid parameters," do
+      # it_behaves_like( "(GET search index with a preselected swimmer_id)", :custom_search )
+      # it_behaves_like( "(GET search index with a preselected team_id)", :custom_search )
+      # it_behaves_like( "(GET search index with a text added to the title)", :custom_search )
+    # end
+  # end
   #-- =========================================================================
   #++
 

@@ -1,46 +1,74 @@
-= render partial: 'current_meetings_grid'
-.accordion#accordionFlt
-  .accordion-group
-    .accordion-inner
-      .accordion-heading
-        %h3= @title
-    .accordion-body
-      .accordion-inner
-        .row.col-xs-12
-          .col-xs-4.col-sm-2
-            = I18n.t('meeting_calendar.meeting')
-          .col-xs-8.col-sm-10.col-lg-6
-            = grid_filter @meetings_grid, :flt_description
-        .row.col-xs-12
-          .col-xs-4.col-sm-2
-            = I18n.t('meeting_calendar.season')
-          .col-xs-8.col-sm-7.col-lg-5
-            = grid_filter @meetings_grid, :flt_season_id
-        .row.col-xs-12
-          .col-xs-4.col-sm-2
-            = I18n.t('meeting_calendar.pool_type')
-          .col-xs-6.col-sm-2
-            = grid_filter @meetings_grid, :flt_pool_type
-        -# Currently we disable the following filtering feature (it messes up too much the UI):
-        -#.row.col-xs-12
-        -#  .col-xs-2
-        -#    = I18n.t('meeting_calendar.meeting_program')
-        -#  .col-xs-10
-        -#    .ui-widget
-        -#      = grid_filter @meetings_grid, :flt_events_list
-        .row.col-xs-12
-          &nbsp;
-        .row.col-xs-12
-          .external-buttons
-            %button.btn.btn-primary.wg-external-submit-button{'data-grid-name' => 'grid'}
-              = I18n.t(:submit)
-            %button.btn.btn-default.wg-external-reset-button{'data-grid-name' => 'grid'}
-              = I18n.t(:reset)
-        .row.col-xs-12
-          &nbsp;
+.row
+  %h3= @title
+  = paginate( @meetings, theme: 'twitter-bootstrap-3' )
 
-.row.col-xs-12
-  = render_grid( @meetings_grid )
+.row.goggles-category-gap#calendar_supermaster_fin
+  %table.table.table-striped.table-bordered.table-hover.table-condensed#history
+    %tbody
+      %tr{'class'=>'info'}
+        %td
+          &nbsp;
+        %td
+          %b= t('calendars.meeting')
+        %td.goggles-rightalign
+          %b= t('calendars.date')
+        %td.goggles-rightalign
+          %b= t('calendars.warm_up')
+        %td.goggles-rightalign
+          %b= t('calendars.begin')
+        %td
+          %b= t('calendars.events')
+        %td
+          %b= t('calendars.pool')
+      - @meetings.each do |meeting|
+        - session_number = meeting.meeting_sessions.count
+        - if session_number == 0
+          %tr
+            %td.goggles-centeralign
+              = meeting.decorate.get_logo_for_season_type
+            %td
+              = render( partial: 'goggles/taggable_meeting_name', locals: {meeting: meeting} )
+            - if meeting.header_date
+              %td.goggles-rightalign
+                - if meeting.is_confirmed
+                  = meeting.header_date
+                - else
+                  = meeting.header_date.to_s + ' (*)'
+              %td{ colspan: 4 }
+                = t('to_be_defined')
+            - else
+              %td{ colspan: 5 }
+                = t('to_be_defined')
+        - else
+          - meeting.meeting_sessions.each_with_index do |meeting_session, index|
+            %tr
+              - if index == 0
+                %td{ rowspan: session_number, class: "goggles-centeralign" }
+                  = meeting.decorate.get_logo_for_season_type
+                %td{ rowspan: session_number }
+                  = render( partial: 'goggles/taggable_meeting_name', locals: {meeting: meeting} )
+              - if index == 0
+                %td.goggles-rightalign{ rowspan: session_number }
+                  - if meeting.is_confirmed
+                    = meeting_session.scheduled_date
+                  - else
+                    = meeting_session.scheduled_date.to_s + ' (*)'
+              %td.goggles-rightalign
+                = Format.a_time( meeting_session.warm_up_time )
+              %td.goggles-rightalign
+                = Format.a_time( meeting_session.begin_time )
+              %td
+                = meeting_session.get_short_events
+              - if index == 0
+                %td{ rowspan: session_number }
+                  = meeting_session.swimming_pool.decorate.get_linked_name( :get_city_and_attributes )
 
-.row.col-xs-12
-  &nbsp;
+.row.goggles-category-gap
+  = paginate( @meetings, theme: 'twitter-bootstrap-3' )
+  %br/
+  = page_entries_info( @meetings, entry_name: 'meeting' )
+
+.row.goggles-category-gap#Remark
+  %b= t('calendars.remark')
+
+.row.goggles-category-gap

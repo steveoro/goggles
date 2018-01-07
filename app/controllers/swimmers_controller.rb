@@ -8,7 +8,7 @@ require 'wrappers/timing'
 
 = SwimmersController
 
-  - version:  6.094
+  - version:  6.200
   - author:   Steve A., Leega
 
 =end
@@ -25,17 +25,17 @@ class SwimmersController < ApplicationController
 
   # Index/Search action
   #
-  def index
-    # [Steve, 20161001] We need to whitelist all parameters for the search query:
-    params.permit!()
-    @title = I18n.t('swimmers.search_swimmers')
-    @swimmers_grid = initialize_grid(
-      Swimmer,
-      order: 'swimmers.complete_name',
-      order_direction: 'asc',
-      per_page: 20
-    )
-  end
+  # def index
+    # # [Steve, 20161001] We need to whitelist all parameters for the search query:
+    # params.permit!()
+    # @title = I18n.t('swimmers.search_swimmers')
+    # # @swimmers_grid = initialize_grid(
+      # # Swimmer,
+      # # order: 'swimmers.complete_name',
+      # # order_direction: 'asc',
+      # # per_page: 20
+    # # )
+  # end
   #-- -------------------------------------------------------------------------
   #++
 
@@ -470,7 +470,7 @@ class SwimmersController < ApplicationController
       @badge = @swimmer.badges.for_season_type( @season_type ).sort_by_season('DESC').first
       @header_year = @badge.season.header_year
       if @badge.nil?
-        redirect_back( fallback_location: swimmers_path ) and return
+        redirect_back( fallback_location: root_path ) and return
       end
     end
 
@@ -548,7 +548,7 @@ class SwimmersController < ApplicationController
     # --- "Goggle cup" tab: ---
     @tab_title = @goggle_cups_tab_title
 
-    # Verify if present current goggle cup or some closed editions 
+    # Verify if present current goggle cup or some closed editions
     if @goggle_cups.size == 0 and @swimmer.goggle_cups.size > 0
       @errore = I18n.t('swimmers.no_associated_goggle_cup_found')
       year = @swimmer.goggle_cups.sort_goggle_cup_by_year('DESC').first.season_year
@@ -574,7 +574,7 @@ class SwimmersController < ApplicationController
     # --- "Closed Goggle cup" tab (not shown): ---
     unless ( params[:goggle_cup_id] ) && GoggleCup.exists?( params[:goggle_cup_id].to_i )
       flash[:error] = I18n.t(:invalid_action_request)
-      redirect_back( fallback_location: swimmers_path ) and return
+      redirect_back( fallback_location: root_path ) and return
     end
 
     @tab_title = I18n.t('radiography.goggle_cup_closed')
@@ -669,7 +669,7 @@ class SwimmersController < ApplicationController
       @last_training[:avg_100_meters]   = @last_training[:duration] / ( @last_training[:distance] / 100 ) if @last_training[:distance].to_i > 0
     else
       flash[:error] = I18n.t('swimmers.no_associated_goggler_found')
-      redirect_back( fallback_location: swimmers_path ) and return
+      redirect_back( fallback_location: root_path ) and return
     end
   end
   #-- -------------------------------------------------------------------------

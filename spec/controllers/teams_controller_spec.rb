@@ -1,32 +1,32 @@
 require 'rails_helper'
-require 'wice_grid'
+#require 'wice_grid'
 
 
 describe TeamsController, type: :controller do
 
-  describe '[GET #index]' do
-    context "with an HTML request," do
-      it "handles successfully the request" do
-        get :index
-        expect(response.status).to eq( 200 )
-      end
-      it "assigns the required variables" do
-        get :index
-        expect( assigns(:title) ).to be_an_instance_of( String )
-        expect( assigns(:teams_grid) ).to be_an_instance_of( Wice::WiceGrid )
-      end
-      it "renders the search template" do
-        get :index
-        expect(response).to render_template(:index)
-      end
-    end
-  end
+  # describe '[GET #index]' do
+    # context "with an HTML request," do
+      # it "handles successfully the request" do
+        # get :index
+        # expect(response.status).to eq( 200 )
+      # end
+      # it "assigns the required variables" do
+        # get :index
+        # expect( assigns(:title) ).to be_an_instance_of( String )
+# #        expect( assigns(:teams_grid) ).to be_an_instance_of( Wice::WiceGrid )
+      # end
+      # it "renders the search template" do
+        # get :index
+        # expect(response).to render_template(:index)
+      # end
+    # end
+  # end
   # ===========================================================================
 
 
   describe '[GET #radio/:id]' do
     # We need to set this to make the redirect_to(:back) passes the tests:
-    before(:each) { request.env["HTTP_REFERER"] = teams_path() }
+    before(:each) { request.env["HTTP_REFERER"] = root_path() }
 
     context "with an HTML request for a non-existing id," do
       it "handles the request with a redirect" do
@@ -82,7 +82,7 @@ describe TeamsController, type: :controller do
       context "with an HTML request for a non-existing id," do
         before(:each) do
           # We need to set this to make the redirect_to(:back) passes the tests:
-          request.env["HTTP_REFERER"] = teams_path()
+          request.env["HTTP_REFERER"] = root_path()
           login_user()
           get action_sym, params: { id: 0 }
         end
@@ -125,7 +125,7 @@ describe TeamsController, type: :controller do
       before(:all) { @fixture = create( :team_affiliation_with_badges ).team }
       before :each do
         # We need to set this to make the redirect_to(:back) passes the tests:
-        request.env["HTTP_REFERER"] = teams_path()
+        request.env["HTTP_REFERER"] = root_path()
         login_user()
         get :current_swimmers, params: { id: @fixture.id }
       end
@@ -225,7 +225,7 @@ describe TeamsController, type: :controller do
     context "with an HTML request for a valid id and a logged-in user," do
       before(:all) { @fixture = Team.find(1) }
       before :each do
-        request.env["HTTP_REFERER"] = teams_path()
+        request.env["HTTP_REFERER"] = root_path()
         login_user()
         get :palmares, params: { id: @fixture.id }
       end
@@ -245,7 +245,7 @@ describe TeamsController, type: :controller do
     context "with an HTML request for a valid id and a logged-in user for for a team that doesn't have a current Goggle cup," do
       before(:all) { @fixture = create( :team_affiliation_with_badges ).team }
       before :each do
-        request.env["HTTP_REFERER"] = teams_path()
+        request.env["HTTP_REFERER"] = root_path()
         login_user()
         get :goggle_cup, params: { id: @fixture.id }
       end
@@ -275,7 +275,7 @@ describe TeamsController, type: :controller do
     context "with an HTML request for a valid id and a logged-in user for for a team that has a current Goggle cup," do
       before(:all) { @fixture = Team.find(1).decorate }
       before :each do
-        request.env["HTTP_REFERER"] = teams_path()
+        request.env["HTTP_REFERER"] = root_path()
         login_user()
         get :goggle_cup, params: { id: @fixture.id }
       end
@@ -316,7 +316,7 @@ describe TeamsController, type: :controller do
     context "with an HTML request for a valid id and a logged-in user for for a team that doesn't have closed Goggle cup," do
       before(:all) { @fixture = create( :team_affiliation_with_badges ).team }
       before :each do
-        request.env["HTTP_REFERER"] = teams_path()
+        request.env["HTTP_REFERER"] = root_path()
         login_user()
         get :goggle_cup_all_of_fame, params: { id: @fixture.id }
       end
@@ -333,7 +333,7 @@ describe TeamsController, type: :controller do
     context "with an HTML request for a valid id and a logged-in user for for a team that has some closed Goggle cup," do
       before(:all) { @fixture = Team.find(1) }
       before :each do
-        request.env["HTTP_REFERER"] = teams_path()
+        request.env["HTTP_REFERER"] = root_path()
         login_user()
         get :goggle_cup_all_of_fame, params: { id: @fixture.id }
       end

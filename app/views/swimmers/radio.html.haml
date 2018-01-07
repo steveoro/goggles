@@ -141,7 +141,7 @@
       .col-xs-12
         &nbsp;
       .text-center
-        = link_to( "#{t('radiography.all_races_tab')}<br/>#{@swimmer.get_full_name}".html_safe, meetings_custom_search_path( text: @swimmer.get_full_name, swimmer_id: @swimmer.id ), {class: "btn btn-default"} )
+        = link_to( "#{t('radiography.all_races_tab')}<br/>#{@swimmer.get_full_name}".html_safe, search_meetings_path( s: @swimmer.id ), {class: "btn btn-default"} )
 
   -#= render( partial: 'records' )
   -# TODO Give some plus rendering some achievements!

@@ -24,13 +24,13 @@ class SwimmingPoolReviewsController < ApplicationController
       # [Steve, 20161001] We need to whitelist all parameters for the search query:
       params.permit!()
       @title = I18n.t('swimming_pool_review.title_index')
-      @reviews_grid = initialize_grid(
-        SwimmingPoolReview,
-        include: [:user, :swimming_pool],
-        order: 'swimming_pool_reviews.title',
-        order_direction: 'asc',
-        per_page: 20
-      )
+#      @reviews_grid = initialize_grid(
+#        SwimmingPoolReview,
+#        include: [:user, :swimming_pool],
+#        order: 'swimming_pool_reviews.title',
+#        order_direction: 'asc',
+#        per_page: 20
+#      )
     end
   end
   #-- -------------------------------------------------------------------------
@@ -48,7 +48,7 @@ class SwimmingPoolReviewsController < ApplicationController
       if request.format.json?
         render( status: 406, json: {success: false} ) and return
       else
-        redirect_to( swimming_pool_reviews_path() ) and return
+        redirect_back( fallback_location: root_path ) and return
       end
     end
     @title = I18n.t('swimming_pool_review.title_show')
@@ -173,7 +173,7 @@ class SwimmingPoolReviewsController < ApplicationController
   def edit
     render( status: 406, json: {success: false} ) and return if request.format.json?
     @review = SwimmingPoolReview.find_by_id(params[:id])
-    redirect_to( swimming_pool_reviews_path() ) and return if @review.nil?
+    redirect_back( fallback_location: root_path ) and return if @review.nil?
     @title = I18n.t('swimming_pool_review.title_show')
     respond_with( @review )
   end
@@ -189,7 +189,7 @@ class SwimmingPoolReviewsController < ApplicationController
   #
   def update
     @review = SwimmingPoolReview.find_by_id(params[:id])
-    redirect_to( swimming_pool_reviews_path() ) and return if @review.nil?
+    redirect_back( fallback_location: root_path ) and return if @review.nil?
     @review.update_attributes( swimming_pool_review_params )
     respond_with( @review )
   end
@@ -211,7 +211,7 @@ class SwimmingPoolReviewsController < ApplicationController
     else
       flash[:error] = I18n.t(:invalid_action_request)
     end
-    redirect_to( swimming_pool_reviews_path() ) and return
+    redirect_back( fallback_location: root_path ) and return
   end
   #-- -------------------------------------------------------------------------
   #++

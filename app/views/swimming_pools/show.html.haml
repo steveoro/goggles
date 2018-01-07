@@ -1,5 +1,6 @@
 .row.col-xs-12
-  = link_to( I18n.t(:back_to_index_view), swimming_pools_path() )
+  = link_to( "javascript:history.back()" ) do
+    %i.fa.fa-chevron-circle-left.text-dark
 .row.col-xs-12
   &nbsp;
 
