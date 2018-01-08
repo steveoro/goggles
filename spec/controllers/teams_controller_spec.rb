@@ -91,7 +91,7 @@ describe TeamsController, type: :controller do
           expect(response.status).to eq( 302 )
         end
         it "redirects to #index" do
-          expect( response ).to redirect_to( teams_path() )
+          expect( response ).to redirect_to( root_path() )
         end
       end
 

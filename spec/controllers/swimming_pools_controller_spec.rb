@@ -53,7 +53,7 @@ describe SwimmingPoolsController, type: :controller do
       end
       it "redirects to #index" do
         get :show, params: { id: 0 }
-        expect( response ).to redirect_to( controller: :swimming_pools, action: :index )
+        expect( response ).to redirect_to( root_path )
         # [Steve, 20150410] Using this method fails because "_path" helpers use default locale :en,
         # and we have just set defaul locale to :it
 #        expect( response ).to redirect_to( swimming_pools_path())
