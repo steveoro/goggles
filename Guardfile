@@ -13,8 +13,7 @@
 
 rspec_options = {
   results_file: Dir.pwd + "/tmp/guard_rspec_results.txt", # This option must match the path in engine_plan.rb
-  # Run any spec using zeus as a pre-loader, excluding profiling/performance specs:
-  cmd: "zeus rspec --color -f progress -t ~type:performance",
+  cmd: "spring rspec --color -f progress -t ~type:performance",
   all_after_pass: false,
   failed_mode: :focus
 }
@@ -77,12 +76,10 @@ guard :rspec, rspec_options do
   end
 end
 
-                                                    # === Specific Scopes: ===
-#group :helper do
-#  guard :rspec, cmd: 'zeus rspec -f progress --tag type:helper'
-#end
 
-# Halt as soon as the first fail is found:
-#group :integration, halt_on_fail: true do
-#  guard :rspec, cmd: 'zeus rspec -f progress --tag type:integration'
-#end
+guard 'spring', bundler: true do
+  watch('Gemfile.lock')
+  watch(%r{^config/})
+  watch(%r{^spec/(support|factories)/})
+  watch(%r{^spec/factory.rb})
+end

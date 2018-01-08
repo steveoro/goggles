@@ -54,10 +54,6 @@ gem "goggles_core", git: "https://github.com/steveoro/goggles_core"
 gem "simple-navigation"
 gem 'simple-navigation-bootstrap'
 
-# [Steve A., 20180107] WiceGrid is no longer compatible with Rails 5.1
-#gem "wice_grid", git: "https://github.com/fasar-sw/wice_grid", branch: "rails5"
-# (original master is located at /leikind/wice_grid)
-
 # [Steve] Customized version. For Facebook-like friendship management
 # XXX When using ssh key use the protocol below:
 #gem "amistad", git: "git@github.com:fasar-sw/amistad", branch: "rails5"
@@ -113,11 +109,12 @@ group :development do
   gem 'web-console'
   gem 'listen', '~> 3.0.5'
 
-  # [Steve, 20160919] Spring disabled, since we're already using Zeus:
   # Spring speeds up development by keeping your application running in the background.
   # Read more: https://github.com/rails/spring
-#  gem 'spring'
-#  gem 'spring-watcher-listen', '~> 2.0.0'
+  gem 'spring'
+  gem 'spring-watcher-listen', '~> 2.0.0'
+  gem 'spring-commands-rspec'
+  gem 'guard-spring'
 end
 
 group :development, :test do
