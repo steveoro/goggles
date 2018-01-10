@@ -1,6 +1,9 @@
 = render( partial: 'tabs_and_title' )
 - if @best_finder
   - cache( cache_key_for_swimmer( 'best_timings', @swimmer.id, @max_updated_at ) ) do
+    - involved_seasons = @best_finder.get_current_seasons_involved_into()
+    - last_season = SeasonType.find_by_code('MASFIN').seasons.is_ended.order( :end_date ).last
+    - last_seasons = @best_finder.get_contemporary_seasons_involved_into( last_season )
     .col-xs-12.goggles-category-gap#pageTop
       -# --- Sub-legend for each gender + pool-type
       .navbar
@@ -25,8 +28,8 @@
                 %td.goggles-centeralign
                   %b= record_type.i18n_description
             - pool_type.event_types.each do |event_type|
-              - involved_seasons = @best_finder.get_current_seasons_involved_into()
               - personal_best = @best_finder.get_best_mir_for_event( event_type, pool_type )
+              - last_season_best = @best_finder.get_involved_season_best_mir_for_event( last_seasons, event_type, pool_type )
               - seasonal_best = @best_finder.get_involved_season_best_mir_for_event( involved_seasons, event_type, pool_type )
               - last_result   = @best_finder.get_last_mir_for_event( event_type, pool_type )
               -# We just need to check the existance of the personal best
@@ -34,8 +37,9 @@
                 %tr
                   %td.goggles-rightalign
                     %b= event_type.i18n_short
-                  = render( partial: 'personal_bests_cell', locals: { mir: personal_best, record_type_code: 'BEST' } )
-                  = render( partial: 'personal_bests_cell', locals: { mir: seasonal_best, record_type_code: 'SEA' } )
-                  = render( partial: 'personal_bests_cell', locals: { mir: last_result, record_type_code: 'LAST' } )
+                  = render( partial: 'personal_bests_cell', locals: { mir: personal_best, record_type_code: 'SPB' } )
+                  = render( partial: 'personal_bests_cell', locals: { mir: seasonal_best, record_type_code: 'SSB' } )
+                  = render( partial: 'personal_bests_cell', locals: { mir: last_result, record_type_code: 'SLP' } )
+                  = render( partial: 'personal_bests_cell', locals: { mir: last_season_best, record_type_code: 'SLS' } )
     .col-xs-12.goggles-category-gap
       &nbsp;

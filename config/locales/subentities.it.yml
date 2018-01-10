@@ -564,6 +564,8 @@ it:
     i18n_description_SOR: "RECORD STAGIONALE"
     i18n_short_FOR: "RF"
     i18n_description_FOR: "RECORD FEDERAZIONE"
+    i18n_short_SLS: "SP"
+    i18n_description_SLS: "MIGLIORE STAGIONE PRECEDENTE"
 
   event_types:
     code: "Cod."

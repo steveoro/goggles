@@ -564,6 +564,8 @@ en:
     i18n_description_SOR: "SEASONAL RECORD"
     i18n_short_FOR: "FR"
     i18n_description_FOR: "FEDERATION RECORD"
+    i18n_short_SLS: "SP"
+    i18n_description_SLS: "PREVOIUS SEASON BEST"
 
   disqualification_code_types:
     code: "code"
