@@ -54,8 +54,13 @@
      * [Steve, 20161014] Keep always functions names unique to avoid clash.
      */
     function plotFullHistory1Charts() {
-      var data25 = JSON.parse( "#{ escape_javascript @full_history_events['25'].to_json }" );
-      var data50 = JSON.parse( "#{ escape_javascript @full_history_events['50'].to_json }" );
+      var txt25 = "#{ escape_javascript( @full_history_events['25'].to_json.html_safe ) }";
+      var txt50 = "#{ escape_javascript( @full_history_events['50'].to_json.html_safe ) }";
+      // DEBUG
+      //console.log( txt25 );
+      //console.log( txt50 );
+      var data25 = JSON.parse( txt25 );
+      var data50 = JSON.parse( txt50 );
       var options = {
           series: {
               pie: {
