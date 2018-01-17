@@ -32,3 +32,6 @@ en:
       part5: "La tabella dei tempi base viene calcolata prendendo, per ciascuna specialità di ciascun atleta distinta per tipo di vasca, la migliore prestazione, ottenuta nella stagione precedente. In mancanza di risultati utili nella stagione precedente, la miglior prestazione viene ricercata a ritroso nelle stagioni passate partendo dalle più recenti."
       part6: "Il sistema è pensato per premiare il miglioramento rispetto alla stagione precedente o, dove non possibile, alle stagioni più recenti disponibili. In questo modo replicando in gara i tempi dell'anno precedente si ottengono %{max_points} punti, migliorandoli si ottengono più di %{max_points} punti e, viceversa, peggiornadoli si ottengono meno di %{max_points} punti."
       part7: "Se un atleta disputa una specialità che non ha mai tentato in passato, ottiene d'ufficio i %{max_points} punti ed il tempo realizzato viene inserito immediatamente nella tabella dei tempi base diventando il nuovo riferimento per le future gare della stagione."
+
+    results:
+      part1: "Meeting's scores for the ranking of "

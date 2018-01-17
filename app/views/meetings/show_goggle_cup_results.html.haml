@@ -1,0 +1,5 @@
+= render( partial: 'meeting_header' )
+= render( partial: 'tabs_and_title' )
+- cache( cache_key_for_meeting( 'show_goggle_cup_results', @meeting.id, @max_updated_at, @team.id) ) do
+  .goggles-category-gap.col-xs-12
+    = render( partial: 'full_results_goggle_cup_grid' )

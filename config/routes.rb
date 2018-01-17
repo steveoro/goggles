@@ -73,6 +73,7 @@ Rails.application.routes.draw do
       get "meeting/show_swimmer_results/:id",   to: "meetings#show_swimmer_results",    as: "meeting_show_swimmer_results"
       get "meeting/show_autoscroll/:id",        to: "meetings#show_autoscroll",         as: "meeting_show_autoscroll"
       get "meeting/show_autoscroll_start_list/:id", to: "meetings#show_autoscroll_start_list",  as: "meeting_show_autoscroll_start_list"
+      get "meeting/show_goggle_cup_results/:id", to: "meetings#show_goggle_cup_results", as: "meeting_show_goggle_cup_results"
 
       # === Meeting Reservations ===
       get 'meeting_reservations/edit_events'      # creates a matrix of event reservations (many events for each one of the current team's athletes)

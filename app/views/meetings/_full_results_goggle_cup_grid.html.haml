@@ -1,0 +1,43 @@
+- if @meeting.meeting_individual_results.for_team(@team).has_points('goggle_cup_points').count > 0
+  - goggle_cup_name = @goggle_cup.get_verbose_name
+  
+  %h3=link_to( goggle_cup_name, team_goggle_cup_path(id: @team.id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('radiography.goggle_cup_tooltip') } )
+  %p
+    = I18n.t('goggle_cup.results.part1')
+    %b=goggle_cup_name
+  
+  %table.table.table-striped.table-bordered.table-hover.table-condensed
+    %tbody
+      -# --- Header with unique ID for each starting event_type "group":
+      %tr{'class'=>'info', 'id'=>'goggle_cup_results'}
+        %td
+          %b= I18n.t('activerecord.models.swimmer')
+        %td
+          %b= I18n.t('activerecord.models.event_type')         
+        %td
+          %b= I18n.t('meeting.timing')
+        %td.goggles-rightalign
+          %b= I18n.t('score')
+        -#%td.goggles-rightalign
+        -#  = I18n.t('goggle_cup.standard_times')
+  
+      - # Individual results
+      - @meeting.meeting_individual_results.for_team(@team).has_points('goggle_cup_points').sort_by_goggle_cup.each do |meeting_individual_result|
+        - mir = MeetingIndividualResultDecorator.decorate( meeting_individual_result )
+        %tr
+          %td.col-xs-4
+            = link_to(meeting_show_swimmer_results_path(:id=>@meeting.id, :team_id=>@team.id, :swimmer_id=>mir.swimmer_id), {'id'=>"swimmer#{mir.id}"}, 'data-toggle' => 'tooltip', 'title' => I18n.t('meeting.show_swimmer_results_tooltip')) do
+              = mir.get_swimmer_name
+          %td.col-xs-1
+            = mir.event_type.code
+          %td.col-xs-1.goggles-rightalign
+            = mir.get_timing
+          %td.col-xs-2.goggles-rightalign
+            = mir.get_formatted_goggle_cup_points(true)
+          -#%td.col-xs-2.goggles-rightalign
+          -#  = TODO show goggle cup standard time
+- else
+  = render( partial: 'goggles/no_goggle_cup_found' )          
+
+.row.goggles-category-gap.col-xs-12
+  &nbsp;

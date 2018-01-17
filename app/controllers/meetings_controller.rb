@@ -21,11 +21,11 @@ class MeetingsController < ApplicationController
   before_action :verify_meeting, only: [
       :show_full, :show_autoscroll, :show_autoscroll_start_list,
       :show_ranking, :show_stats,
-      :show_team_results, :show_swimmer_results, :show_invitation,
+      :show_team_results, :show_swimmer_results, :show_goggle_cup_results, :show_invitation,
       :show_start_list, :show_start_list_by_category, :show_team_entries
   ]
 
-  before_action :verify_team,             only: [:show_team_results, :show_team_entries]
+  before_action :verify_team,             only: [:show_team_results, :show_team_results, :show_team_entries]
   before_action :verify_swimmer,          only: [:show_swimmer_results]
   #-- -------------------------------------------------------------------------
   #++
@@ -491,6 +491,37 @@ class MeetingsController < ApplicationController
   #-- -------------------------------------------------------------------------
   #++
 
+
+  # Show meeting results for Team's Goggle Cup (if any)
+  #
+  # === Params:
+  # - id: Meeting row id.
+  # - team_id: Team id.
+  #
+  def show_goggle_cup_results
+                                                    # Get the events filtered by team_id:
+    mir = @meeting.meeting_individual_results.for_team(@team)
+    unless ( mir.count > 0 )
+      flash[:error] = I18n.t(:no_result_to_show)
+      redirect_to( meetings_current_path() ) and return
+    end
+    
+    unless @team.has_goggle_cup_at?( @meeting.header_date )
+      flash[:error] = I18n.t(:no_result_to_show)
+      redirect_to( meetings_current_path() ) and return
+    end
+
+    @goggle_cup = @team.get_current_goggle_cup_at( @meeting.header_date )
+    unless @goggle_cup
+      flash[:error] = I18n.t(:no_result_to_show)
+      redirect_to( meetings_current_path() ) and return
+    end
+    
+    # Get a timestamp for the cache key:
+    @max_updated_at = mir.count > 0 ? mir.select( "meeting_individual_results.updated_at" ).order(:updated_at).last.updated_at.to_i : 0
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Meeting invitation viewer
   #
