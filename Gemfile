@@ -101,7 +101,8 @@ group :development do
   gem 'capistrano-rvm'
   gem 'capistrano-bundler'
   gem 'capistrano-rails'
-  gem 'capistrano-passenger'
+  # [Steve, 20171116] Since we install passenger as stand-alone and currently restart the
+#  gem 'capistrano-passenger'
   # [Steve, 20160919] Do we still need the following one anymore? Really?
 #  gem 'seed_dump' #, '~> 0.5.3'                       # [Steve, 20130926] Version greater than this one are ment only for Rails 4!!
 
