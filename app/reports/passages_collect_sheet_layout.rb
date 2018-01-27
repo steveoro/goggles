@@ -136,8 +136,10 @@ class PassagesCollectSheetLayout
     reservations_events = options[:reservations_events]
     reservations_relays = options[:reservations_relays]
 
-    pdf.bounding_box( [0, pdf.bounds.height - 40],
-                      width: pdf.bounds.width, height: pdf.bounds.height-80 ) do
+#    pdf.bounding_box( [0, pdf.bounds.height - 40],
+#                      width: pdf.bounds.width, height: pdf.bounds.height-80 ) do
+    pdf.bounding_box( [0, pdf.bounds.height - 20],
+                      width: pdf.bounds.width, height: pdf.bounds.height-20 ) do
       # -- Report title and header:
       pdf.text(
         "<u><i>#{ options[:report_title] }</i>: <b>#{ meeting.get_full_name }</b></u>",
@@ -161,14 +163,14 @@ class PassagesCollectSheetLayout
           pool_type = meeting.event_types.where( id: event.event_type_id ).first
             .pool_types
             .first
-          possible_passage_types = team.team_passage_templates
+          is_team_template_present = ( team.team_passage_templates
             .for_event_type( event.event_type )
-            .for_pool_type( pool_type )
+            .for_pool_type( pool_type ).count > 0 )
 
           # passage_types.count will yield the total number of columns for the current event:
-          passage_types = possible_passage_types.count == 0 ?
-            TeamPassageTemplate.get_default_passage_types_for( event.event_type.phase_length_in_meters, pool_type.length_in_meters ) :
-            TeamPassageTemplate.get_template_passage_types_for( team, event.event_type, pool_type )
+          passage_types = is_team_template_present ?
+            TeamPassageTemplate.get_template_passage_types_for( team, event.event_type, pool_type ) :
+            TeamPassageTemplate.get_default_passage_types_for( event.event_type.phase_length_in_meters, pool_type.length_in_meters )
 
           # Enlist all passage types for this event composing their labels:
           passage_labels = passage_types.map{ |p| "<i>#{ p.length_in_meters }</i>" }
@@ -182,7 +184,7 @@ class PassagesCollectSheetLayout
             self.prepare_event_data_table( pdf, event, passage_labels, reservations_events[ event.id ] )
           end
 
-          pdf.move_down( 10 )
+          pdf.move_down( 3 )
         end
       end
 
@@ -228,8 +230,17 @@ class PassagesCollectSheetLayout
         c.align = :center
         c.valign = :center
         c.background_color = "DFF0D8"           # light greenish
-        c.height = 30
+        c.height = 20
         c.size = 10
+      end
+
+      # gender separators:
+      cells.filter do |c|
+        cells[c.row, 0].content.to_s =~ /\*\s\*\s\*/
+      end.style do |c|
+        c.valign = :center
+        c.height = 10
+        c.size = 6
       end
 
       # Timing/entry column cells:

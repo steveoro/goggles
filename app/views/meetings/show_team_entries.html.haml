@@ -34,7 +34,7 @@
             - @meeting.meeting_sessions.each do |meeting_session|
               - meeting_session.meeting_events.each do |meeting_event|
                 %td.goggles-rightalign
-                  = @meeting.meeting_entries.joins(:meeting_program, :meeting_event).where(['meeting_entries.swimmer_id = ? and meeting_events.event_type_id = ?', swimmer.id, meeting_event.event_type_id]).first.get_timing if @meeting.meeting_entries.joins(:meeting_program, :meeting_event).where(['meeting_entries.swimmer_id = ? and meeting_events.event_type_id = ?', swimmer.id, meeting_event.event_type_id]).count > 0
+                  = @meeting.meeting_entries.joins(:meeting_program: [:meeting_event]).where(['meeting_entries.swimmer_id = ? and meeting_events.event_type_id = ?', swimmer.id, meeting_event.event_type_id]).first.get_timing if @meeting.meeting_entries.joins(meeting_program: [:meeting_event]).where(['meeting_entries.swimmer_id = ? and meeting_events.event_type_id = ?', swimmer.id, meeting_event.event_type_id]).count > 0
 
   .goggles-category-gap.col-xs-12
     &nbsp;
