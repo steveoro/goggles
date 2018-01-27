@@ -206,19 +206,18 @@ class MeetingReservationsController < ApplicationController
           meeting_event_id: event.id,
           team_id: @team.id,
           is_doing_this:    true
-        ).joins(:meeting_session, :meeting_event, :event_type, :swimmer)
-          .includes(:meeting_session, :meeting_event, :event_type, :swimmer)
+        ).joins(:swimmer, meeting_event: [:meeting_session, :event_type])
+          .includes(:swimmer, meeting_event: [:meeting_session, :event_type])
           .order('meeting_sessions.session_order, meeting_events.event_order')
           .to_a
-
       # *** EVENTS ***
       else
         @reservations_events[ event.id ] = MeetingEventReservation.where(
           meeting_event_id: event.id,
           team_id: @team.id,
           is_doing_this:    true
-        ).joins(:meeting_session, :meeting_event, :category_type, :gender_type, :event_type, :swimmer)
-          .includes(:meeting_session, :meeting_event, :category_type, :gender_type, :event_type, :swimmer)
+        ).joins(:category_type, swimmer: [:gender_type], meeting_event: [:meeting_session, :event_type])
+          .includes(:category_type, swimmer: [:gender_type], meeting_event: [:meeting_session, :event_type])
           .order('meeting_sessions.session_order, meeting_events.event_order, category_types.code, gender_types.code')
           .to_a
       end
@@ -353,8 +352,8 @@ class MeetingReservationsController < ApplicationController
       @reservations_relays[ event.id ] = MeetingRelayReservation.where(
         meeting_event_id: event.id,
         is_doing_this:    true
-      ).joins(:meeting_session, :meeting_event, :event_type, :swimmer)
-        .includes(:meeting_session, :meeting_event, :event_type, :swimmer)
+      ).joins(:swimmer, meeting_event: [:meeting_session, :event_type])
+        .includes(:swimmer, meeting_event: [:meeting_session, :event_type])
         .order('meeting_sessions.session_order, meeting_events.event_order')
         .to_a
     end
@@ -413,8 +412,8 @@ class MeetingReservationsController < ApplicationController
           meeting_id: meeting.id,
           team_id: team_affiliation.team_id,
           swimmer_id: reservation.swimmer_id
-      ).joins(:meeting_session, :meeting_event, :event_type)
-        .includes(:meeting_session, :meeting_event, :event_type)
+      ).joins(meeting_event: [:meeting_session, :event_type])
+        .includes(meeting_event: [:meeting_session, :event_type])
         .order('meeting_sessions.session_order, meeting_events.event_order')
         .to_a
       # Assuming 'mer' is an item of the resulting array, this yields something
@@ -445,8 +444,8 @@ class MeetingReservationsController < ApplicationController
           meeting_id: meeting.id,
           team_id: team_affiliation.team_id,
           swimmer_id: reservation.swimmer_id
-      ).joins(:meeting_session, :meeting_event, :event_type)
-        .includes(:meeting_session, :meeting_event, :event_type)
+      ).joins(meeting_event: [:meeting_session, :event_type])
+        .includes(meeting_event: [:meeting_session, :event_type])
         .order('meeting_sessions.session_order, meeting_events.event_order')
         .to_a
       # Assuming 'mrr' is an item of the resulting array, this yields something
