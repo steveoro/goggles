@@ -15,9 +15,9 @@ GIT
 
 GIT
   remote: https://github.com/steveoro/goggles_core
-  revision: 5cc79bc90b422c83dbc75fa42efb03122547a0a1
+  revision: 77e39dea355b3a0d40db0c2416d672b0796fe375
   specs:
-    goggles_core (1.3.9)
+    goggles_core (1.3.10)
       active_hash_relation
       active_model_serializers
       activemodel-serializers-xml
@@ -302,7 +302,7 @@ GEM
     net-ssh (4.2.0)
     netrc (0.11.0)
     nio4r (2.2.0)
-    nokogiri (1.8.1)
+    nokogiri (1.8.2)
       mini_portile2 (~> 2.3.0)
     notiffany (0.1.1)
       nenv (~> 0.1)
