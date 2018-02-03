@@ -33,9 +33,9 @@ class HomeController < ApplicationController
           badge.season
         end.uniq
         @seasons.each do |season|
-          @invitations << season.meetings.has_only_invitation.sort_by_date.first if season.meetings.has_only_invitation.count > 0
-          @start_lists << season.meetings.has_only_start_list.sort_by_date.first if season.meetings.has_only_start_list.count > 0
-          @results     << season.meetings.has_results.sort_by_date.last if season.meetings.has_results.count > 0
+          @invitations << season.meetings.has_only_invitation.sort_by_date.first if season.meetings.has_only_invitation.exists?
+          @start_lists << season.meetings.has_only_start_list.sort_by_date.first if season.meetings.has_only_start_list.exists?
+          @results     << season.meetings.has_results.sort_by_date.last if season.meetings.has_results.exists?
         end
         @teams.each do |team|
           @goggle_cups << team.get_current_goggle_cup_at if team.has_goggle_cup_at?

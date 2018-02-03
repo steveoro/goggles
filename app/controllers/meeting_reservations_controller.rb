@@ -673,7 +673,7 @@ class MeetingReservationsController < ApplicationController
   def redirect_to_show_if_meeting_closed
     # Avoid creating useless new reservations for already closed meetings,
     # by redirecting to #show:
-    if ( @meeting.meeting_individual_results.count > 0 || @meeting.are_results_acquired? )
+    if ( @meeting.meeting_individual_results.exists? || @meeting.are_results_acquired? )
       flash[:error] = I18n.t('meeting.errors.meeting_already_closed')
       redirect_to( meeting_reservations_show_path( id: @meeting.id ) ) and return
     end

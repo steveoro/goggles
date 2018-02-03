@@ -107,7 +107,7 @@ class SwimmersController < ApplicationController
         if @swimmer.meeting_individual_results
             .is_valid
             .for_event_by_pool_type(events_by_pool_type)
-            .count > 0
+            .exists?
           event_medals[:event_type] = events_by_pool_type.event_type_i18n_short
 
           # Cycles between medal types
@@ -231,7 +231,7 @@ class SwimmersController < ApplicationController
   def best_timings
     @tab_title = I18n.t('radiography.best_timings_tab')
 
-    if @swimmer.meeting_individual_results.count > 0
+    if @swimmer.meeting_individual_results.exists?
       @best_finder = SwimmerPersonalBestFinder.new( @swimmer )
       @max_updated_at = find_last_updated_mir
     end
@@ -698,7 +698,7 @@ class SwimmersController < ApplicationController
   # Find out the last update of meeting_individual result
   #
   def find_last_updated_mir
-    @max_updated_at = @swimmer.meeting_individual_results.count > 0 ? @swimmer.meeting_individual_results.sort_by_updated_at('DESC').first.updated_at : 0
+    @max_updated_at = @swimmer.meeting_individual_results.exists? ? @swimmer.meeting_individual_results.sort_by_updated_at('DESC').first.updated_at : 0
   end
 
   # Verifies that a swimmer id is provided as a parameter to this controller.

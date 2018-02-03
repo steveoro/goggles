@@ -87,12 +87,12 @@ class TeamsController < ApplicationController
   #
   def best_timings
     # Bail out in case there are no results to process:
-    if @team.meeting_individual_results.count < 1
+    unless @team.meeting_individual_results.exists?
       flash[:error] = I18n.t('radiography.team.no_data_to_process_for_this_team')
       redirect_to( team_radio_path(id: @team.id) ) and return
     end
     # Bail out in case there are no best-timings to process:
-    if IndividualRecord.for_team( @team.id ).count < 1
+    unless IndividualRecord.for_team( @team.id ).exists?
       flash[:error] = I18n.t('radiography.team.no_record_found_for_this_team')
       redirect_to( team_radio_path(id: @team.id) ) and return
       # TODO / FUTURE DEV [Steve, 20170413] Eventually, it could be possibile to fall-back
@@ -130,7 +130,7 @@ class TeamsController < ApplicationController
   #
 #  def best_timings_OLD_VERSION_WITH_REAL_TIME_COMPUTATION
 #    @tab_title = I18n.t('radiography.best_timings_tab')
-#    if @team.meeting_individual_results.count > 0
+#    if @team.meeting_individual_results.exists?
 #      @team_best_finder = TeamBestFinder.new( @team )
 #      @team_bests = @team_best_finder.split_categories( @team_best_finder.scan_for_distinct_bests )
 #      @max_updated_at = find_last_updated_mir
@@ -152,12 +152,12 @@ class TeamsController < ApplicationController
   #
   def printout_best_timings
     # Bail out in case there are no results to process:
-    if @team.meeting_individual_results.count < 1
+    unless @team.meeting_individual_results.exists?
       flash[:error] = I18n.t('radiography.team.no_data_to_process_for_this_team')
       redirect_to( team_radio_path(id: @team.id) ) and return
     end
     # Bail out in case there are no best-timings to process:
-    if IndividualRecord.for_team( @team.id ).count < 1
+    unless IndividualRecord.for_team( @team.id ).exists?
       flash[:error] = I18n.t('radiography.team.no_record_found_for_this_team')
       redirect_to( team_radio_path(id: @team.id) ) and return
       # TODO / FUTURE DEV [Steve, 20170413] Eventually, it could be possibile to fall-back
@@ -356,13 +356,13 @@ class TeamsController < ApplicationController
   # Find out the last update of meeting_individual result
   #
   def find_last_updated_mir
-    @team.meeting_individual_results.count > 0 ? @team.meeting_individual_results.sort_by_updated_at('DESC').first.updated_at : 0
+    @team.meeting_individual_results.exists? ? @team.meeting_individual_results.sort_by_updated_at('DESC').first.updated_at : 0
   end
 
   # Find out the last update of meeting_individual result
   #
   def find_swimmer_to_highlight
-    if current_user.swimmer && Badge.for_team(@team).for_swimmer(current_user.swimmer).count > 0
+    if current_user.swimmer && Badge.for_team(@team).for_swimmer(current_user.swimmer).exists?
       current_user.swimmer.id
     else
       0

@@ -296,12 +296,12 @@ class MeetingResultsController < ApplicationController
     if @swimmer
       team = @swimmer.teams.joins(:badges).where(['badges.season_id = ?', @meeting.season_id]).first
 
-      if @meeting.meeting_individual_results.where(['meeting_individual_results.swimmer_id = ?', @swimmer.id]).count > 0 ||
-        @meeting.meeting_entries.where(['meeting_entries.swimmer_id = ?', @swimmer.id]).count > 0
+      if @meeting.meeting_individual_results.where(['meeting_individual_results.swimmer_id = ?', @swimmer.id]).exists? ||
+        @meeting.meeting_entries.where(['meeting_entries.swimmer_id = ?', @swimmer.id]).exists?
         @team = team
       else
-        if team && (@meeting.meeting_individual_results.where(['meeting_individual_results.team_id = ?', team.id]).count > 0 ||
-          @meeting.meeting_entries.where(['meeting_entries.team_id = ?', team.id]).count > 0)
+        if team && (@meeting.meeting_individual_results.where(['meeting_individual_results.team_id = ?', team.id]).exists? ||
+          @meeting.meeting_entries.where(['meeting_entries.team_id = ?', team.id]).exists?)
           # The team of the swimmer associated with the user parteciapte to the meeting
           @team = team
         end
@@ -314,7 +314,7 @@ class MeetingResultsController < ApplicationController
   # (Actually, it verifies that the current user has any managed affiliation defined.)
   #
   def verify_is_team_manager
-    unless ( current_user && current_user.team_managers.count > 0 )
+    unless ( current_user && current_user.team_managers.exists )
       flash[:error] = I18n.t(:invalid_action_request) + ' - ' + I18n.t('meeting.errors.invalid_team_manager')
       redirect_to( meetings_current_path() ) and return
     end

@@ -298,7 +298,7 @@ class MeetingsController < ApplicationController
   def show_ranking
     @preselected_team_id = params[:team_id]
 
-    if ( @meeting.meeting_team_scores.count > 0 )
+    if ( @meeting.meeting_team_scores.exists? )
       @meeting_team_scores = @meeting.meeting_team_scores
         .joins( :team, :team_affiliation )
         .includes( :team, :team_affiliation )
