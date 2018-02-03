@@ -75,7 +75,7 @@ class SwimmerTrainingPaceDAO
   #-- -------------------------------------------------------------------------
   #++
 
-  # Counts paces calclated
+  # Counts paces calculated
   #
   def count_paces
     @paces.count

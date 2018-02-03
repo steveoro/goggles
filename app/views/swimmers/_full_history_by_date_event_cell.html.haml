@@ -1,4 +1,4 @@
-- has_passages = ( individual_result.passages.count > 0 )
+- has_passages = ( individual_result.passages.exists? )
 %td.goggles-rightalign{ 'class' => individual_result.is_personal_best ? 'success' : '' }
   - if individual_result.is_disqualified
     = I18n.t('meeting.disqualified')

@@ -6,8 +6,8 @@
     -# Check that the meeting is still open; if not, the only enabled tab should be the #show method:
     - is_meeting_closed = @meeting.are_results_acquired
     = show_tab_link( params, 'edit_events', t('meeting_reservation.manage_events_title'), ( is_meeting_closed ? '#' : meeting_reservations_edit_events_path(id: @meeting.id) ) )
-    - relay_count = @meeting.meeting_events.joins(:meeting_session, :event_type).includes(:meeting_session, :event_type).where('event_types.is_a_relay = 1').distinct.count
-    - if relay_count > 0
+    - are_relays_present = @meeting.meeting_events.joins(:meeting_session, :event_type).where('event_types.is_a_relay = 1').distinct.exists?
+    - if are_relays_present
       = show_tab_link( params, 'edit_relays', t('meeting_reservation.manage_relays_title'), ( is_meeting_closed ? '#' : meeting_reservations_edit_relays_path(id: @meeting.id) ) )
       - if ( current_user && TeamManagerValidator.is_reservation_manageable?( @meeting ) && TeamManagerValidator.can_manage?( current_user, @meeting ) )
         = show_tab_link( params, 'relayometer', t('meeting_reservation.relayometer_title'), meeting_reservations_relayometer_path(id: @meeting.id) )

@@ -16,5 +16,5 @@
               %b= pool_type.code
             - @events_list.each do |event_type|
               %td.goggles-rightalign
-                = TimeStandard.where(['season_id = ? AND pool_type_id = ? AND event_type_id = ? AND gender_type_id = ? AND category_type_id = ?', @season.id, pool_type.id, event_type.id, @swimmer.gender_type_id, @badge.category_type_id]).first.get_timing if TimeStandard.where(['season_id = ? AND pool_type_id = ? AND event_type_id = ? AND gender_type_id = ? AND category_type_id = ?', @season.id, pool_type.id, event_type.id, @swimmer.gender_type_id, @badge.category_type_id]).count > 0
+                = TimeStandard.where(['season_id = ? AND pool_type_id = ? AND event_type_id = ? AND gender_type_id = ? AND category_type_id = ?', @season.id, pool_type.id, event_type.id, @swimmer.gender_type_id, @badge.category_type_id]).first.get_timing if TimeStandard.where(['season_id = ? AND pool_type_id = ? AND event_type_id = ? AND gender_type_id = ? AND category_type_id = ?', @season.id, pool_type.id, event_type.id, @swimmer.gender_type_id, @badge.category_type_id]).exists?
 -#                = TimeStandard.get_standard( @season.id, pool_type.id, event_type.id ).get_timing if TimeStandard.has_standard?( @season.id, pool_type.id, event_type.id ) 

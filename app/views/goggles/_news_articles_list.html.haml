@@ -1,7 +1,7 @@
 - if @articles
   - for article in @articles
     -# Skip sticky article about "passages" if current_user is already a TeamManager:
-    - unless current_user && (TeamManager.where(user_id: current_user.id).count > 0) && article.title =~ /passaggi gara/i
+    - unless current_user && (TeamManager.where(user_id: current_user.id).exists?) && article.title =~ /passaggi gara/i
       %div{'class'=>"alert alert-success", 'id'=>"feed#{article.id}"}
         = button_tag( type:'button', id: "bntClose#{article.id}", 'data-dismiss'=>'alert', class: 'close' ) do
           &times;

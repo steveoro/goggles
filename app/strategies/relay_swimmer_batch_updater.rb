@@ -25,7 +25,7 @@ class RelaySwimmerBatchUpdater
   #
   def initialize( current_user )
     raise ArgumentError.new('current_user must be defined!') unless current_user.instance_of?( User )
-    raise ArgumentError.new('the current_user must be a TeamManager!') unless current_user.team_managers.count > 0
+    raise ArgumentError.new('the current_user must be a TeamManager!') unless current_user.team_managers.exists?
     @edited_rows_count = 0
     @created_rows_count = 0
     @destroyed_rows_count = 0

@@ -1,4 +1,4 @@
-- has_passages = ( mir && mir.respond_to?(:passages) && mir.passages.count > 0 )
+- has_passages = ( mir && mir.respond_to?(:passages) && mir.passages.exists? )
 %td
   - if mir
     - if has_passages

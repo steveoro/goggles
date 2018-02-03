@@ -19,8 +19,8 @@
     = show_tab_link( params, 'show_stats', t('stats'), meeting_show_stats_path( id: @meeting.id ) )
 
   - if @meeting.are_results_acquired
-    - can_show_team_results       = @team && ( @meeting.meeting_individual_results.where( team_id: @team.id ).count > 0 )
-    - can_show_swimmer_results    = @team && @swimmer && ( @meeting.meeting_individual_results.where( swimmer_id: @swimmer.id ).count > 0 )
+    - can_show_team_results       = @team && ( @meeting.meeting_individual_results.where( team_id: @team.id ).exists? )
+    - can_show_swimmer_results    = @team && @swimmer && ( @meeting.meeting_individual_results.where( swimmer_id: @swimmer.id ).exists? )
     = show_tab_link( params, 'show_team_results', t('team_results'), (can_show_team_results ? meeting_show_team_results_path(id: @meeting.id, team_id: @team.id) : '#') )
     = show_tab_link( params, 'show_swimmer_results', t('swimmer_results'), (can_show_swimmer_results ? meeting_show_swimmer_results_path(id: @meeting.id, team_id: @team.id, swimmer_id: @swimmer.id) : '#') )
     

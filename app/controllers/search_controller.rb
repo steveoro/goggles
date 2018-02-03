@@ -126,13 +126,13 @@ class SearchController < ApplicationController
     @limitless = true
     if params['s'].present? && (params['s'].to_i > 0)
       @swimmers = [ Swimmer.find_by_id(params['s'].to_i) ]
-      if @swimmers.count >= 1
+      if @swimmers.exists?
         @query = @swimmers.first.get_full_name
         @meetings = @swimmers.first.meetings.distinct.order("header_date DESC")
       end
     elsif params['t'].present? && (params['t'].to_i > 0)
       @teams = [ Team.find_by_id(params['t'].to_i) ]
-      if @teams.count >= 1
+      if @teams.exists?
         @query = @teams.first.get_full_name
         @meetings =@teams.first.meetings.distinct.order("header_date DESC")
       end
@@ -228,7 +228,7 @@ class SearchController < ApplicationController
     result = []
     teams = TeamFinder.new( query, no_limit ? nil : RESULTS_LIMIT ).search()
     # Add all the teams from the swimmer results but only if no matches where found:
-    if teams.count < 1
+    unless teams.exists?
       teams = swimmers_found.map{ |swimmer| swimmer.teams }.flatten.uniq
     end
     result += teams.map{|t| t.decorate }

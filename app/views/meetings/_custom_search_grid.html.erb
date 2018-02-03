@@ -37,7 +37,7 @@
         detach_with_id: :flt_pool_type
     ) do |meeting|
     	[ meeting.swimming_pools.first.pool_type.code,
-    		{ class: 'goggles-centeralign' } ] if meeting.swimming_pools.count > 0
+    		{ class: 'goggles-centeralign' } ] if meeting.swimming_pools.exists?
     end
 
     g.column(

@@ -29,12 +29,12 @@
               %td.goggles-td.text-center
                 = Date::today.year - swimmer.year_of_birth
               - @affiliations.each do |team_affiliation|
-                - badge = swimmer.badges.for_team_affiliation(team_affiliation).first if swimmer.badges.for_team_affiliation(team_affiliation).count > 0
+                - badge = swimmer.badges.for_team_affiliation(team_affiliation).first if swimmer.badges.for_team_affiliation(team_affiliation).exists?
                 %td.goggles-div-centeralign{'data-toggle'=>'tooltip', 'title'=> badge ? "#{badge.category_type.code} - #{badge.number}" : 'N/A' }
                   = show_tag( badge )
                   = " (#{badge.meeting_individual_results.joins(:meeting).includes(:meeting).select('meetings.id').uniq.count})" if badge
               %td.goggles-td.goggles-rightalign
-                = count_with_small_star( swimmer.meeting_individual_results.for_team( @team ).joins(:meeting).includes(:meeting).select('meetings.id').uniq.count, 50, :left )
+                = count_with_small_star( swimmer.meeting_individual_results.for_team( @team ).joins(:meeting).select('meetings.id').uniq.count, 50, :left )
               %td.goggles-td.goggles-rightalign
                 = count_with_small_star( swimmer.meeting_individual_results.for_team( @team ).count + swimmer.meeting_relay_results.for_team( @team ).count, 100, :left )
   .col-xs-12

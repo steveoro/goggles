@@ -2,7 +2,7 @@
 %ul.nav.nav-tabs{role: "tablist"}
   = show_tab_link( params, 'radio', t('radiography.radio_tab'), team_radio_path(id: @team.id) )
   = show_tab_link( params, 'current_swimmers', t('radiography.team_current_swimmers_tab'), team_current_swimmers_path(id: @team.id) )
-  - if @team.meeting_individual_results.count > 0
+  - if @team.meeting_individual_results.exists?
     = show_tab_link( params, 'best_timings', t('radiography.precalc_best_timings_tab'), team_best_timings_path(id: @team.id) )
     = show_tab_link( params, 'palmares', t('radiography.palmares_tab'), team_palmares_path(id: @team.id) )
     = show_tab_link( params, 'goggle_cup', @team.get_current_goggle_cup_name_at, team_goggle_cup_path(id: @team.id) )

@@ -3,7 +3,7 @@
     .row.goggles-category-gap{'id'=>meeting_event.event_type.code}
 
     - GenderType.individual_only.sort_by_courtesy.each do |gender_type|
-      - if meeting_event.meeting_entries.for_gender(gender_type.id).count > 0
+      - if meeting_event.meeting_entries.for_gender(gender_type.id).exists?
         %table.table.table-striped.table-bordered.table-hover.table-condensed
           %tbody
             %tr{'class'=>'info', 'id'=>"#{meeting_event.event_type.code}-#{gender_type.code}"}

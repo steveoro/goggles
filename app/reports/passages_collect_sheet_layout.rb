@@ -165,7 +165,7 @@ class PassagesCollectSheetLayout
             .first
           is_team_template_present = ( team.team_passage_templates
             .for_event_type( event.event_type )
-            .for_pool_type( pool_type ).count > 0 )
+            .for_pool_type( pool_type ).exists? )
 
           # passage_types.count will yield the total number of columns for the current event:
           passage_types = is_team_template_present ?

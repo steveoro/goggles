@@ -1,4 +1,4 @@
-- if @meeting.meeting_individual_results.for_team(@team).has_points('goggle_cup_points').count > 0
+- if @meeting.meeting_individual_results.for_team(@team).has_points('goggle_cup_points').exists?
   - goggle_cup_name = @goggle_cup.get_verbose_name
   
   %h3=link_to( goggle_cup_name, team_goggle_cup_path(id: @team.id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('radiography.goggle_cup_tooltip') } )

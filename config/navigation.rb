@@ -111,7 +111,7 @@ SimpleNavigation::Configuration.run do |navigation|
       :key_starred_meetings,
       "#{ t('tags.starred_meetings.menu') } &nbsp; #{ image_tag('thumbs-up-128.png', class: 'img-circle', style: "width: 25px;")}".html_safe,
       taggings_starred_meetings_path(),
-      if: Proc.new { user_signed_in? && current_user && TeamManager.where(user_id: current_user.id).count > 0 },
+      if: Proc.new { user_signed_in? && current_user && TeamManager.where(user_id: current_user.id).exists? },
       highlights_on: /starred_meetings/
     )
 

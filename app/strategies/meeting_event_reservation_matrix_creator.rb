@@ -76,14 +76,14 @@ class MeetingEventReservationMatrixCreator < MeetingReservationMatrixProcessor
   #
   def create_badge_reservation_if_missing( badge )
     # Check any previous existence:
-    reservation_count = MeetingReservation.where(
+    are_reservations_present = MeetingReservation.where(
       meeting_id:       @meeting.id,
       team_id:          @team_affiliation.team_id,
       swimmer_id:       badge.swimmer_id,
       badge_id:         badge.id
-    ).count
+    ).exists?
 
-    if reservation_count == 0
+    if !are_reservations_present
       # Build the new row
       reservation = prepare_new_badge_reservation( badge )
       # Save it and check for errors:
@@ -107,15 +107,15 @@ class MeetingEventReservationMatrixCreator < MeetingReservationMatrixProcessor
   #
   def create_event_reservation_if_missing( badge, event )
     # Check any previous existence:
-    reservation_count = MeetingEventReservation.where(
+    are_reservations_present = MeetingEventReservation.where(
       meeting_id:       @meeting.id,
       team_id:          @team_affiliation.team_id,
       swimmer_id:       badge.swimmer_id,
       badge_id:         badge.id,
       meeting_event_id: event.id
-    ).count
+    ).exists?
 
-    if reservation_count == 0
+    if !are_reservations_present
       # Build the new row
       reservation = prepare_new_event_reservation( badge, event )
       # Save it and check for errors:

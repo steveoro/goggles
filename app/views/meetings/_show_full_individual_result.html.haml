@@ -1,4 +1,4 @@
-- has_passages = ( individual_result.passages.count > 0 )
+- has_passages = ( individual_result.passages.exists? )
 - mir = MeetingIndividualResultDecorator.decorate( individual_result )
 %tr{ 'class' => is_highlighted ? 'warning' : '' }
   %td.col-xs-1.goggles-rightalign
@@ -24,7 +24,7 @@
     = mir.get_formatted_individual_points
   - if @meeting.has_start_list
     %td.col-xs-1.goggles-rightalign
-      - if @meeting.meeting_entries.where(['swimmer_id = ? AND meeting_program_id = ?', mir.swimmer_id, mir.meeting_program_id]).count > 0
+      - if @meeting.meeting_entries.where(['swimmer_id = ? AND meeting_program_id = ?', mir.swimmer_id, mir.meeting_program_id]).exists?
         = @meeting.meeting_entries.where(['swimmer_id = ? AND meeting_program_id = ?', mir.swimmer_id, mir.meeting_program_id]).first.get_timing
 
 - if has_passages

@@ -110,15 +110,15 @@ class MeetingRelayReservationMatrixCreator < MeetingReservationMatrixProcessor
   #
   def create_relay_reservation_if_missing( badge, event )
     # Check any previous existence:
-    reservation_count = MeetingRelayReservation.where(
+    are_reservations_present = MeetingRelayReservation.where(
       meeting_id:       @meeting.id,
       team_id:          @team_affiliation.team_id,
       swimmer_id:       badge.swimmer_id,
       badge_id:         badge.id,
       meeting_event_id: event.id
-    ).count
+    ).exists?
 
-    if reservation_count == 0
+    if !are_reservations_present
       # Build the new row
       reservation = prepare_new_relay_reservation( badge, event )
       # Save it and check for errors:

@@ -42,7 +42,7 @@
                 = mir.get_formatted_goggle_cup_points(true)
             - if @meeting.has_start_list
               %td.col-xs-1.goggles-rightalign
-                - if @meeting.meeting_entries.where(['swimmer_id = ? AND meeting_program_id = ?', mir.swimmer_id, mir.meeting_program_id]).count > 0
+                - if @meeting.meeting_entries.where(['swimmer_id = ? AND meeting_program_id = ?', mir.swimmer_id, mir.meeting_program_id]).exists?
                   = @meeting.meeting_entries.where(['swimmer_id = ? AND meeting_program_id = ?', mir.swimmer_id, mir.meeting_program_id]).first.get_timing
       -# --- Team Relay result rows:
       - if is_a_relay
@@ -66,7 +66,7 @@
               = mrr.get_formatted_meeting_points(true)
             - if has_goggle_cup
               %td
-            - if mrr.meeting_relay_swimmers.count > 0
+            - if mrr.meeting_relay_swimmers.exists?
               - mrr.meeting_relay_swimmers.sort_by_order.each do |meeting_relay_swimmer|
                 %tr
                   %td.goggles-rightalign{'colspan'=>'3'}

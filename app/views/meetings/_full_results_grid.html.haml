@@ -2,9 +2,9 @@
 .col-xs-10
   - @meeting_events_list.each do |meeting_event|
     - is_a_relay = meeting_event.event_type.is_a_relay
-    - if meeting_event.meeting_individual_results.count > 0 || meeting_event.meeting_relay_results.count > 0
+    - if meeting_event.meeting_individual_results.exists? || meeting_event.meeting_relay_results.exists?
       = render( partial: 'show_full_sub_legend', locals: { meeting_event: meeting_event } )
-      - if !is_a_relay && meeting_event.meeting_individual_results.count > 0
+      - if !is_a_relay && meeting_event.meeting_individual_results.exists?
         - meeting_event.meeting_programs.includes(:category_type, :gender_type).order('category_types.age_begin, gender_types.id DESC').each do |meeting_program|
           .col-xs-12.goggles-category-gap
           %div{'class'=>"col-xs-12", 'id'=>"mprg#{meeting_program.id}"}
@@ -21,7 +21,7 @@
                   - is_highlighted = (@team && @team.id.to_i == individual_result.team_id) || (@swimmer && @swimmer.id.to_i == individual_result.swimmer_id)
                   = render( partial: 'show_full_individual_result', locals: { individual_result: individual_result, is_highlighted: is_highlighted } )
 
-      - if is_a_relay && meeting_event.meeting_relay_results.count > 0
+      - if is_a_relay && meeting_event.meeting_relay_results.exists?
         - meeting_event.meeting_programs.includes(:category_type, :gender_type).order('category_types.age_begin, gender_types.id DESC').each do |meeting_program|
           .col-xs-12.goggles-category-gap
           %div{'class'=>"col-xs-12", 'id'=>"mprg#{meeting_program.id}"}

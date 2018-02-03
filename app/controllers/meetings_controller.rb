@@ -377,7 +377,7 @@ class MeetingsController < ApplicationController
                                                     # Get the events filtered by team_id:
     mir = @meeting.meeting_individual_results.for_team(@team)
     mrr = @meeting.meeting_relay_results.for_team(@team)
-    unless ( mir.count + mrr.count > 0 )
+    unless ( mir.exists? || mrr.exists? )
       flash[:error] = I18n.t(:no_result_to_show)
       redirect_to( meetings_current_path() ) and return
     end
@@ -448,18 +448,18 @@ class MeetingsController < ApplicationController
 
     # Find out top scorer
     @top_scores = {}
-    if mir.has_points.count > 0
+    if mir.has_points.exists?
       GenderType.individual_only.each do |gender_type|
-        @top_scores["#{gender_type.code}-standard_points"] = mir.for_gender_type( gender_type ).sort_by_standard_points.first if mir.for_gender_type( gender_type ).has_points.count > 0
+        @top_scores["#{gender_type.code}-standard_points"] = mir.for_gender_type( gender_type ).sort_by_standard_points.first if mir.for_gender_type( gender_type ).has_points.exists?
       end
     end
-    if mir.has_points('goggle_cup_points').count > 0
+    if mir.has_points('goggle_cup_points').exists?
       @top_scores["goggle_cup_points"] = mir.sort_by_goggle_cup.first
     end
 
     # Get a timestamp for the cache key:
-    max_mir_updated_at = mir.count > 0 ? mir.select( "meeting_individual_results.updated_at" ).order(:updated_at).last.updated_at.to_i : 0
-    max_mrr_updated_at = mrr.count > 0 ? mrr.select( "meeting_relay_results.updated_at" ).order(:updated_at).last.updated_at.to_i : 0
+    max_mir_updated_at = mir.exists? ? mir.select( "meeting_individual_results.updated_at" ).order(:updated_at).last.updated_at.to_i : 0
+    max_mrr_updated_at = mrr.exists? ? mrr.select( "meeting_relay_results.updated_at" ).order(:updated_at).last.updated_at.to_i : 0
     @max_updated_at = max_mir_updated_at >= max_mrr_updated_at ? max_mir_updated_at : max_mrr_updated_at
   end
   #-- -------------------------------------------------------------------------
@@ -501,7 +501,7 @@ class MeetingsController < ApplicationController
   def show_goggle_cup_results
                                                     # Get the events filtered by team_id:
     mir = @meeting.meeting_individual_results.for_team(@team)
-    unless ( mir.count > 0 )
+    unless ( mir.exists? )
       flash[:error] = I18n.t(:no_result_to_show)
       redirect_to( meetings_current_path() ) and return
     end
@@ -518,7 +518,7 @@ class MeetingsController < ApplicationController
     end
     
     # Get a timestamp for the cache key:
-    @max_updated_at = mir.count > 0 ? mir.select( "meeting_individual_results.updated_at" ).order(:updated_at).last.updated_at.to_i : 0
+    @max_updated_at = mir.exists? ? mir.select( "meeting_individual_results.updated_at" ).order(:updated_at).last.updated_at.to_i : 0
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -666,7 +666,7 @@ class MeetingsController < ApplicationController
   # message to the current instance of @meeting (assumed to be an instance of Meeting).
   #
   def get_timestamp_from_relation_chain( relation_to_send = :meeting_individual_results )
-    if @meeting.send( relation_to_send ).count > 0
+    if @meeting.send( relation_to_send ).exists?
       timestamp = @meeting.send( relation_to_send ).select(  "#{ relation_to_send }.updated_at"  ).order(:updated_at).last.updated_at.to_i
       timestamp > @meeting.updated_at.to_i ? timestamp : @meeting.updated_at.to_i
     else
@@ -699,12 +699,12 @@ class MeetingsController < ApplicationController
     if @swimmer
       team = @swimmer.teams.joins(:badges).where(['badges.season_id = ?', @meeting.season_id]).first
 
-      if @meeting.meeting_individual_results.where(['meeting_individual_results.swimmer_id = ?', @swimmer.id]).count > 0 ||
-        @meeting.meeting_entries.where(['meeting_entries.swimmer_id = ?', @swimmer.id]).count > 0
+      if @meeting.meeting_individual_results.where(['meeting_individual_results.swimmer_id = ?', @swimmer.id]).exists? ||
+        @meeting.meeting_entries.where(['meeting_entries.swimmer_id = ?', @swimmer.id]).exists?
         @team = team
       else
-        if team && (@meeting.meeting_individual_results.where(['meeting_individual_results.team_id = ?', team.id]).count > 0 ||
-          @meeting.meeting_entries.where(['meeting_entries.team_id = ?', team.id]).count > 0)
+        if team && (@meeting.meeting_individual_results.where(['meeting_individual_results.team_id = ?', team.id]).exists? ||
+          @meeting.meeting_entries.where(['meeting_entries.team_id = ?', team.id]).exists?)
           # The team of the swimmer associated with the user parteciapte to the meeting
           @team = team
         end

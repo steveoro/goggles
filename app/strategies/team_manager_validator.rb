@@ -29,7 +29,7 @@ class TeamManagerValidator
     # of the chosen meeting.
     current_user.instance_of?( User ) &&
     meeting.instance_of?( Meeting ) &&
-    ( current_user.team_managers.count > 0 ) &&
+    ( current_user.team_managers.exists? ) &&
     (! current_user.team_managers.find{|tm| tm.team_affiliation.season_id == meeting.season_id }.nil?)
   end
   #-- --------------------------------------------------------------------------
@@ -50,7 +50,7 @@ class TeamManagerValidator
     # and the results must not be already acquired.
     meeting.instance_of?( Meeting ) &&
     ( !meeting.are_results_acquired? ) &&
-    ( meeting.meeting_individual_results.count == 0 ) &&
+    ( !meeting.meeting_individual_results.exists? ) &&
     ( meeting.header_date >= Date.today )
   end
   #-- --------------------------------------------------------------------------
@@ -94,7 +94,7 @@ class TeamManagerValidator
   #
   def self.any_reservations_for?( current_user, meeting )
     return false if current_user.nil? || meeting.nil?
-    MeetingReservation.where( meeting_id: meeting.id, swimmer_id: current_user.swimmer_id ).count > 0
+    MeetingReservation.where( meeting_id: meeting.id, swimmer_id: current_user.swimmer_id ).exists?
   end
   #-- --------------------------------------------------------------------------
   #++
