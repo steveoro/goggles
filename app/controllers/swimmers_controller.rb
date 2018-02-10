@@ -267,6 +267,7 @@ class SwimmersController < ApplicationController
         .includes(:meeting, :stroke_type, :passages)
         .where(['pool_types.id = ?', pool_type.id])
         .order("meeting_sessions.scheduled_date")
+        .select([:id, :minutes, :seconds, :hundreds, :is_personal_best, :is_disqualified, :meeting_program_id])
 
       # *event_by_date* structure:
       # The structure is an array of hashes with elements formed by
@@ -282,7 +283,7 @@ class SwimmersController < ApplicationController
 
       mirs.each do |meeting_individual_result|
         event_code = meeting_individual_result.event_type.code
-        event_name = meeting_individual_result.event_type.i18n_short
+        #event_name = meeting_individual_result.event_type.i18n_short
         found_idx = event_by_date.rindex{ |meeting_hash| meeting_hash[:meeting] == meeting_individual_result.meeting }
         mir_with_pass = { :mir => meeting_individual_result }
         mir_with_pass[:passages] = meeting_individual_result.passages if meeting_individual_result.passages.exists?
@@ -294,18 +295,20 @@ class SwimmersController < ApplicationController
         else
           event_by_date << {
             :meeting      => meeting_individual_result.meeting,
-            :meeting_link => meeting_individual_result.meeting.decorate.get_linked_full_name_with_date,
+            :meeting_link => meeting_individual_result.meeting.decorate.get_linked_custom_name( "#{meeting_individual_result.meeting.get_full_name} #{Format.a_date( meeting_individual_result.meeting.header_date )}" ),
             event_code    => mir_with_pass
           }
         end
 
         # Same as above, but for the collection of events used in the graphs:
-        found_idx = @full_history_events[ pool_code ].rindex{ |event_hash| event_hash[:label] == event_name }
+        #found_idx = @full_history_events[ pool_code ].rindex{ |event_hash| event_hash[:label] == event_name }
+        found_idx = @full_history_events[ pool_code ].rindex{ |event_hash| event_hash[:label] == event_code }
         if found_idx
           @full_history_events[ pool_code ][ found_idx ][:data] += 1
         else
           @full_history_events[ pool_code ] << {
-            :label => event_name,
+            #:label => event_name,
+            :label => event_code,
             :data  => 1
           }
         end

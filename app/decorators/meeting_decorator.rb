@@ -90,6 +90,15 @@ class MeetingDecorator < Draper::Decorator
 
   # Retrieves the meeting description
   # with link to meeting result show full
+  #
+  def get_linked_custom_name( name )
+    h.link_to( "#{name}", meeting_show_full_path(id: object.id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.show_results_tooltip') } )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  # Retrieves the meeting description
+  # with link to meeting result show full
   # If results are aquired the link should be to results
   # Else if the invititation is present the link should be to invitation
   # Otherwise returns the true name
