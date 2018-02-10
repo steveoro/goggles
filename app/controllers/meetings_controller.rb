@@ -107,6 +107,8 @@ class MeetingsController < ApplicationController
     params.permit!()
     @start_date = "#{Date.today.prev_day(19)}"
     @end_date   = "#{Date.today.next_month(10)}"
+    #@start_date = "#{Date.today.prev_day(7)}"
+    #@end_date   = "#{Date.today.next_day(7)}"
     @title = if params[:text].to_s.size > 0
       I18n.t('meeting.current_title') + " ('#{ params[:text] }', #{ Format.a_date(@start_date) } ... #{ Format.a_date(@end_date) })"
     else
@@ -117,10 +119,19 @@ class MeetingsController < ApplicationController
 
     # TODO Filter by season type (1,2,3 & 7,8)
 
-    @meetings = Meeting.includes( :season, :season_type, :meeting_sessions, :swimming_pools )
+    #@meetings = Meeting.includes( :season, :season_type, :meeting_sessions, :swimming_pools )
+    #    .where( "(NOT is_cancelled) AND (header_date >= '#{@start_date}') AND (header_date <= '#{@end_date}')" )
+    #    .order( "meetings.header_date ASC" )
+    #    .page( params[:page] || 1 )
+
+    @meetings = Meeting.includes(meeting_sessions: [swimming_pool: [:city], meeting_events: [event_type: [:stroke_type]]], season: [:season_type])
         .where( "(NOT is_cancelled) AND (header_date >= '#{@start_date}') AND (header_date <= '#{@end_date}')" )
         .order( "meetings.header_date ASC" )
         .page( params[:page] || 1 )
+        
+    # TODO
+    # Try Calendar DAO using a costructor which selects meeting with eager load and provides
+    # session data and so on.
   end
   #-- -------------------------------------------------------------------------
   #++
