@@ -256,12 +256,17 @@ class SwimmersController < ApplicationController
     PoolType.only_for_meetings.each do |pool_type|
       pool_code = pool_type.code
                                                     # Collect results for the current pool type:
-      mirs = @swimmer.meeting_individual_results
-        .joins(:event_type)
-        .includes(:event_type)
-        .for_pool_type( pool_type )
-        .sort_by_date
-        .select([:id, :minutes, :seconds, :hundreds, :is_personal_best])
+      #mirs = @swimmer.meeting_individual_results
+      #  .joins(meeting_program: [:pool_type, meeting_event: [:event_type, :meeting_session]])
+      #  .for_pool_type( pool_type )
+      #  .sort_by_date
+      #  #.select([:id, :minutes, :seconds, :hundreds, :is_personal_best])
+
+      mirs=@swimmer.meeting_individual_results
+        .joins(meeting_program: [:pool_type, meeting_event: [:event_type, :meeting_session]])
+        .includes(:meeting, :stroke_type, :passages)
+        .where(['pool_types.id = ?', pool_type.id])
+        .order("meeting_sessions.scheduled_date")
 
       # *event_by_date* structure:
       # The structure is an array of hashes with elements formed by
@@ -271,21 +276,26 @@ class SwimmersController < ApplicationController
       # at the meeting.
       # TODO Refactor that structure as a collection, like personal bests
 
+      event_list = []                               # Initi event list
       event_by_date = []                            # Init lists of events
       @full_history_events[ pool_code ] = []
 
-      mirs.each do |meeting_individul_result|
-        event_code = meeting_individul_result.event_type.code
-        event_name = meeting_individul_result.event_type.i18n_short
-        found_idx = event_by_date.rindex{ |meeting_hash| meeting_hash[:meeting] == meeting_individul_result.meeting }
+      mirs.each do |meeting_individual_result|
+        event_code = meeting_individual_result.event_type.code
+        event_name = meeting_individual_result.event_type.i18n_short
+        found_idx = event_by_date.rindex{ |meeting_hash| meeting_hash[:meeting] == meeting_individual_result.meeting }
+        mir_with_pass = { :mir => meeting_individual_result }
+        mir_with_pass[:passages] = meeting_individual_result.passages if meeting_individual_result.passages.exists?
+        
         # If it's the first meeting result found, we create a new element:
         if found_idx
-          event_by_date[ found_idx ][ event_code ] = meeting_individul_result
+          event_by_date[ found_idx ][ event_code ] = mir_with_pass
         # ...Else, we add the result for the event type:
         else
           event_by_date << {
-            :meeting   => meeting_individul_result.meeting,
-            event_code => meeting_individul_result
+            :meeting      => meeting_individual_result.meeting,
+            :meeting_link => meeting_individual_result.meeting.decorate.get_linked_full_name_with_date,
+            event_code    => mir_with_pass
           }
         end
 
@@ -299,21 +309,16 @@ class SwimmersController < ApplicationController
             :data  => 1
           }
         end
+        
+        # Keep distinct events list
+        event_list << event_code if !event_list.include?( event_code )
       end
-
-      # Collect event types swam to create grid structure
-      event_list = mirs.select('event_types.code').map{ |mir| mir.event_type.code }.uniq
 
       # Sort event type list by event type style order
       #event_list.sort!{ |el_prev, el_next| EventType.find_by_code(el_prev) <=> EventType.find_by_code(el_next) }
       event_list = EventType.sort_list_by_style_order( event_list )
       @full_history_by_date[ pool_code ] = [ event_list, event_by_date ]
     end
-
-    # TODO
-    # Evidenziate personal bests
-    # Should be better to have information already stored in mirs
-    # even calculate it run time
   end
   #-- -------------------------------------------------------------------------
   #++

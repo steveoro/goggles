@@ -1,10 +1,11 @@
 - meeting = event_by_date[:meeting]
 %tr
   %td
-    = meeting.decorate.get_linked_full_name_with_date
+    -#= meeting.decorate.get_linked_full_name_with_date
+    = event_by_date[:meeting_link]
     - event_list.each do |event|
-      - individual_result = event_by_date[event]
-      - if individual_result
-        = render( partial: 'full_history_by_date_event_cell', locals: { individual_result: individual_result } )
+      - individual_result_with_pass = event_by_date[event]
+      - if individual_result_with_pass
+        = render( partial: 'full_history_by_date_event_cell', locals: { individual_result: individual_result_with_pass[:mir], passages: individual_result_with_pass[:passages] } )
       - else
         %td

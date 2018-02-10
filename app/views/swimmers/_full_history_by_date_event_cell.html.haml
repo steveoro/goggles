@@ -1,4 +1,4 @@
-- has_passages = ( individual_result.passages.exists? )
+- has_passages = ( passages != nil)
 %td.goggles-rightalign{ 'class' => individual_result.is_personal_best ? 'success' : '' }
   - if individual_result.is_disqualified
     = I18n.t('meeting.disqualified')
@@ -11,7 +11,7 @@
 
 - if has_passages
   %script
-    var popContent = "#{ escape_javascript( render(partial: 'result_popover_passages', locals: {individual_result: individual_result})) }";
+    var popContent = "#{ escape_javascript( render(partial: 'result_popover_passages', locals: {individual_result: individual_result, passages: passages})) }";
     $("#passages#{individual_result.id}").popover({                             |
       title: "#{ escape_javascript(individual_result.get_timing.html_safe) }",  |
       html: true,                                                               |

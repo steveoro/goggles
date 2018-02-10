@@ -1,7 +1,8 @@
 = render( partial: 'tabs_and_title' )
 - cache( cache_key_for_swimmer( 'full_history_1', @swimmer.id, @max_updated_at ) ) do
+  - pool_types = PoolType.only_for_meetings
   .col-xs-12#pageTop
-    - PoolType.only_for_meetings.each do |pool_type|
+    - pool_types.each do |pool_type|
       .col-xs-6.graph-container-half
         .graph-placeholder-full{ 'id' => "pie#{pool_type.code}" }
         %br/
@@ -12,7 +13,7 @@
                 = pool_type.i18n_description
 
   .col-xs-12.goggles-category-gap#full_history_1
-  - PoolType.only_for_meetings.each do |pool_type|
+  - pool_types.each do |pool_type|
     .col-xs-12
       .goggles-category-gap{ 'id' => "#{pool_type.code}" }
         %h3
