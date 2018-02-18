@@ -1,28 +1,30 @@
 &nbsp;
 %span
-  - if current_user && TeamManagerValidator.any_reservations_for?( current_user, meeting ) && !meeting.are_results_acquired && !meeting.has_start_list && !meeting.is_cancelled? && !meeting.invitation
+  - if current_user && TeamManagerValidator.any_reservations_for?( current_user, meeting ) && !meeting.are_results_acquired && !meeting.has_start_list && !meeting.has_invitation
     = link_to( meeting.get_full_name, meeting_reservations_show_path(id: meeting.id),     |
         { 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.show_data_detail_tooltip') } |
       )                                                                                   |
   - else
-    = meeting.decorate.get_linked_name( :get_full_name )
+    -#= meeting.decorate.get_linked_name( :get_full_name )
+    = meeting.linked_name
   -# Avoid user-generated cruft on ended seasons:
-  - if current_user && !meeting.season.is_season_ended_at() && !meeting.is_cancelled?
-    - is_user_starred = meeting.tags_by_user_list.include?( "u#{ current_user.id }" )
-    - can_manage = TeamManagerValidator.can_manage?( current_user, meeting )
-    - team_affiliation_id = nil
-    - if can_manage
-      - team_affiliation_id = current_user.find_team_affiliation_id_from_team_managers_for( meeting.season_id )
-    - elsif current_user.has_associated_swimmer?
-      - team_affiliation_id = current_user.find_team_affiliation_id_from_badges_for( meeting.season_id )
-    - is_team_starred = meeting.tags_by_team_list.include?( "ta#{ team_affiliation_id }" )
+  -#- if current_user && !meeting.season.is_season_ended_at() && !meeting.is_cancelled?
+  - if current_user
+    -# is_user_starred = meeting.tags_by_user_list.include?( "u#{ current_user.id }" )
+    -# can_manage = TeamManagerValidator.can_manage?( current_user, meeting )
+    -# team_affiliation_id = nil
+    -# if meeting.can_manage
+      -# team_affiliation_id = current_user.find_team_affiliation_id_from_team_managers_for( meeting.season_id )
+    -# elsif current_user.has_associated_swimmer?
+      -# team_affiliation_id = current_user.find_team_affiliation_id_from_badges_for( meeting.season_id )
+    - #is_team_starred = meeting.tags_by_team_list.include?( "ta#{ team_affiliation_id }" )
     -# Here we allow as taggable also meetings tagged by a manager even if the user does not have a badge yet:
-    - if is_team_starred || (! team_affiliation_id.nil?)
+    - if meeting.is_team_starred || (! meeting.team_affiliation_id.nil?)
       %span{ 'id' => "meetingUserStar#{ meeting.id }", 'class' => 'toolTip', 'data-toggle' => 'tooltip', 'data-placement' => 'bottom', 'title' => I18n.t('tags.star_tooltip') }
-        = render(partial: 'goggles/clickable_meeting_user_star', locals: { meeting_id: meeting.id, is_starred: is_user_starred, is_saved_ok: true } )
-      - if can_manage
+        = render(partial: 'goggles/clickable_meeting_user_star', locals: { meeting_id: meeting.id, is_starred: meeting.is_user_starred, is_saved_ok: true } )
+      - if meeting.can_manage
         %span{ 'id' => "meetingTeamStar#{ meeting.id }", 'class' => 'toolTip', 'data-toggle' => 'tooltip', 'data-placement' => 'bottom', 'title' => I18n.t('tags.triplestar_tooltip') }
-          = render(partial: 'goggles/clickable_meeting_team_star', locals: { meeting_id: meeting.id, team_affiliation_id: team_affiliation_id, is_starred: is_team_starred, is_saved_ok: true } )
-      - elsif is_team_starred
+          = render(partial: 'goggles/clickable_meeting_team_star', locals: { meeting_id: meeting.id, team_affiliation_id: meeting.team_affiliation_id, is_starred: meeting.is_team_starred, is_saved_ok: true } )
+      - elsif meeting.is_team_starred
         = image_tag( 'calendar_disabled.png' )
-    = meeting.decorate.manage_reservation_button( current_user )
+    = meeting.reservation_button

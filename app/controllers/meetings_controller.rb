@@ -42,6 +42,7 @@ class MeetingsController < ApplicationController
   # a customized calendar to check out frequently.
   #
   def my
+    
     open_season_ids = Season.is_not_ended.select(:id).map{|s| s.id }
     # Refine the list of open seasons:
     browsable_season_ids = open_season_ids.select{ |season_id|
@@ -49,6 +50,8 @@ class MeetingsController < ApplicationController
     } + open_season_ids.select{ |season_id|
       ! current_user.find_team_affiliation_id_from_team_managers_for( season_id ).nil?
     }
+
+=begin
     # Extract the user-tagged browsable meetings:
     @meetings = Meeting.includes( :season, :season_type, :meeting_sessions, :swimming_pools )
       .joins( :season, :season_type, :meeting_sessions, :swimming_pools )
@@ -90,6 +93,45 @@ class MeetingsController < ApplicationController
     # Re-sort the modified array, *descending* order (that is: B <=> A):
     @meetings.uniq!
     @meetings.sort!{ |ma, mb| mb.header_date <=> ma.header_date }
+=end   
+
+
+    # Extract the user-tagged browsable meetings:
+    meeting_id_list = Meeting
+      .where( "meetings.season_id IN (?)", browsable_season_ids )
+      .tagged_with( "u#{ current_user.id }", on: :tags_by_users )
+      .select( :id, :season_id )
+      .map{ |meeting| meeting.id }
+
+    # Add also the team-tagged browsable meetings.
+    # Find the current, browsable team affiliations that may have tagged the meetings,
+    # and, for each, add any tagged meeting found to the list:
+    browsable_season_ids
+      .map{ |season_id| current_user.find_team_affiliation_id_from_badges_for(season_id) }
+      .compact.each do |tagger_team_affiliation_id|
+        meeting_id_list += Meeting
+          .where( ["meetings.season_id IN (?)", browsable_season_ids] )
+          .tagged_with( "ta#{ tagger_team_affiliation_id }", on: :tags_by_teams )
+          .map{ |meeting| meeting.id }
+      end
+
+#          .where( ["meetings.id not in (?) and meetings.season_id IN (?)", meeting_id_list, browsable_season_ids] )
+
+    # Add also any already attended and closed meeting belonging to the browsable
+    # seasons: (the relationship w/ swimmer is through MIRs, so the inner join is enough)
+    if current_user.has_associated_swimmer?
+      meeting_id_list += current_user.swimmer.meetings
+        .where( ["meetings.season_id IN (?)", browsable_season_ids] )
+        .select( :id, :season_id )
+        .map{ |meeting| meeting.id }
+    end
+
+#        .where( ["meetings.id not in (?) and meetings.season_id IN (?)", meeting_id_list, browsable_season_ids] )
+
+    @calendarDAO = CalendarDAO.new( nil, nil, nil, meeting_id_list.uniq! )
+    @calendarDAO.get_meetings('DESC', current_user)
+    @meetings = @calendarDAO.meetings
+
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -128,6 +170,10 @@ class MeetingsController < ApplicationController
         .where( "(NOT is_cancelled) AND (header_date >= '#{@start_date}') AND (header_date <= '#{@end_date}')" )
         .order( "meetings.header_date ASC" )
         .page( params[:page] || 1 )
+        
+        
+    #@calendarDAO = TmpCalendarDAO.new( nil, @start_date, @end_date )
+    #@meetings = @calendarDAO.meetings 
         
     # TODO
     # Try Calendar DAO using a costructor which selects meeting with eager load and provides

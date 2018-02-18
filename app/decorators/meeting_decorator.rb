@@ -162,6 +162,22 @@ class MeetingDecorator < Draper::Decorator
   #-- -------------------------------------------------------------------------
   #++
 
+  def manage_reservation_button_tm( current_user, can_manage )
+    if ( TeamManagerValidator.is_reservation_manageable?( object ) &&
+         ( can_manage || TeamManagerValidator.any_reservations_for?( current_user, object )) )
+      h.link_to(
+        I18n.t('meeting_reservation.manage_button_title'),
+        meeting_reservations_edit_events_path(id: object.id),
+        { class: 'btn btn-default btn-xs', 'data-toggle'=>'tooltip',
+          'title'=>I18n.t('meeting_reservation.manage_meeting_tooltip') }
+      )
+    else
+      ''
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
   # Computes a short session warm-up schedule in html mode
   # using a new line for each session
   #
