@@ -15,40 +15,23 @@
         %td
           %b= t('calendars.pool')
       - @meetings.each do |meeting|
-        - session_count = meeting.meeting_sessions.count
-        - if session_count == 0
+        - meeting.meeting_sessions.each_with_index do |meeting_session, index|
           %tr
-            %td
-              = render( partial: 'goggles/taggable_meeting_name', locals: {meeting: meeting} )
-            - if meeting.header_date
-              %td.goggles-rightalign
+            - if index == 0
+              %td{ rowspan: meeting.meeting_sessions.count }
+                = render( partial: 'goggles/taggable_meeting_name', locals: {meeting: meeting} )
+            - if meeting_session.date_span > 0
+              %td.goggles-rightalign{ rowspan: meeting_session.date_span }
                 - if meeting.is_confirmed
-                  = meeting.header_date
+                  = meeting_session.get_scheduled_date
                 - else
-                  = meeting.header_date.to_s + ' (*)'
-              %td{ colspan: 4 }
-                = t('to_be_defined')
-            - else
-              %td{ colspan: 5 }
-                = t('to_be_defined')
-        - else
-          - meeting.meeting_sessions.each_with_index do |meeting_session, index|
-            %tr
-              - if index == 0
-                %td{ rowspan: session_count }
-                  = render( partial: 'goggles/taggable_meeting_name', locals: {meeting: meeting} )
-              - if index == 0
-                %td.goggles-rightalign{ rowspan: session_count }
-                  - if meeting.is_confirmed
-                    = meeting_session.get_scheduled_date
-                  - else
-                    = meeting_session.get_scheduled_date.to_s + ' (*)'
-              %td.goggles-rightalign
-                = meeting_session.get_warm_up_time
-              %td.goggles-rightalign
-                = meeting_session.get_begin_time
-              %td
-                = meeting_session.get_short_events
-              - if index == 0
-                %td{ rowspan: session_count }
-                  = meeting_session.swimming_pool.decorate.get_linked_name( :get_city_and_attributes )
+                  = meeting_session.get_scheduled_date.to_s + ' (*)'
+            %td.goggles-rightalign
+              = meeting_session.get_warm_up_time
+            %td.goggles-rightalign
+              = meeting_session.get_begin_time
+            %td
+              = meeting_session.get_short_events
+            - if meeting_session.pool_span > 0
+              %td{ rowspan: meeting_session.pool_span }
+                = meeting_session.linked_pool

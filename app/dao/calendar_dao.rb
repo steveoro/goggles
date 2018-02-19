@@ -14,7 +14,7 @@ class CalendarDAO
  
   class MeetingSessionDAO
     # These must be initialized on creation:
-    attr_reader :id, :session_order, :scheduled_date, :warm_up_time, :begin_time, :events_list, :swimming_pool
+    attr_reader :id, :session_order, :scheduled_date, :warm_up_time, :begin_time, :events_list, :swimming_pool, :linked_pool
 
     # These can be edited later on:
     attr_accessor :date_span, :pool_span
@@ -33,6 +33,7 @@ class CalendarDAO
       #@events_list    = meeting_session.get_short_events
       @events_list    = meeting_session.meeting_events.map{ |event| event.event_type.i18n_compact }.join( ", " )
       @swimming_pool  = meeting_session.swimming_pool
+      @linked_pool    = meeting_session.swimming_pool.decorate.get_linked_name( :get_city_and_attributes )
       @date_span      = date_span
       @pool_span      = pool_span
     end
