@@ -30,7 +30,9 @@ class TeamManagerValidator
     current_user.instance_of?( User ) &&
     meeting.instance_of?( Meeting ) &&
     ( current_user.team_managers.exists? ) &&
-    (! current_user.team_managers.find{|tm| tm.team_affiliation.season_id == meeting.season_id }.nil?)
+    #(! current_user.team_managers.find{|tm| tm.team_affiliation.season_id == meeting.season_id }.nil?)
+    ( current_user.team_managers.joins( :team_affiliation ).where( 'team_affiliations.season_id = ?', meeting.season_id ).exists? )
+    
   end
   #-- --------------------------------------------------------------------------
   #++
@@ -73,12 +75,13 @@ class TeamManagerValidator
     return false if current_user.nil? || meeting.nil? ||
                     (! TeamManagerValidator.can_manage?(current_user, meeting) )
     # Find the user team manager affiliation that can manage this season:
-    team_manager = current_user.team_managers.find{|tm| tm.team_affiliation.season_id == meeting.season_id }
+    #team_manager = current_user.team_managers.find{|tm| tm.team_affiliation.season_id == meeting.season_id }
+    team_manager = current_user.team_managers.joins( :team_affiliation ).where( 'team_affiliations.season_id = ?', meeting.season_id ).limit(1)
     return false if team_manager.nil? # (This is redundant, unless the def. of #can_manage? changes)
 
     # Find the first managed team affiliation among the meeting results:
     # (This will return nil if non are found or the meeting doesn't have any results.)
-    return ( ! meeting.teams.uniq.find{|t| t.id == team_manager.team_affiliation.team_id }.nil? )
+    return ( ! meeting.teams.uniq.find{|t| t.id == team_manager.first.team_affiliation.team_id }.nil? )
   end
 
 

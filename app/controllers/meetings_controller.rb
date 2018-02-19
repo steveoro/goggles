@@ -50,6 +50,7 @@ class MeetingsController < ApplicationController
     } + open_season_ids.select{ |season_id|
       ! current_user.find_team_affiliation_id_from_team_managers_for( season_id ).nil?
     }
+    browsable_season_ids.uniq!
 
 =begin
     # Extract the user-tagged browsable meetings:
