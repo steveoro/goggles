@@ -175,11 +175,12 @@ class CalendarDAO
   end
   #-- -------------------------------------------------------------------------
   #++
-  
+
+
   # Find out meetings for given filter parameters
   #
-  def get_meetings( order = 'ASC', current_user = nil )
-    # Find out team affiliations manageable seasons andcurrent swimmer's team affiliation
+  def retrieve_meetings( order = 'ASC', current_user = nil )
+    # Find out team affiliations manageable seasons and current swimmer's team affiliation
     manageable_seasons = get_manageable_seasons(current_user)
     badges = get_swimmer_badges(current_user)
     

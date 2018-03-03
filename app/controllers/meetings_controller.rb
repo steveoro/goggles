@@ -130,7 +130,7 @@ class MeetingsController < ApplicationController
 #        .where( ["meetings.id not in (?) and meetings.season_id IN (?)", meeting_id_list, browsable_season_ids] )
 
     @calendarDAO = CalendarDAO.new( nil, nil, nil, meeting_id_list.uniq! )
-    @calendarDAO.get_meetings('DESC', current_user)
+    @calendarDAO.retrieve_meetings('DESC', current_user)
     @meetings = @calendarDAO.meetings
 
   end
@@ -172,11 +172,9 @@ class MeetingsController < ApplicationController
     #    .order( "meetings.header_date ASC" )
     #    .page( params[:page] || 1 )
         
-    # TODO - DOING...
-    # Try Calendar DAO using a costructor which selects meeting with eager load and provides
-    # session data and so on.
+    # Calendar DAO using a costructor which selects meeting using dates
     @calendarDAO = CalendarDAO.new( nil, @start_date, @end_date, nil )
-    @calendarDAO.get_meetings('DESC', current_user)
+    @calendarDAO.retrieve_meetings('DESC', current_user)
     @meetings = Kaminari.paginate_array(@calendarDAO.meetings).page( params[:page] || 1 )
         
   end

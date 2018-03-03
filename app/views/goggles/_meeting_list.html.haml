@@ -1,41 +1,42 @@
-.row.col-xs-12
-  %table.table.table-bordered.table-hover.table-condensed#calendar
-    %tbody
-      %tr.info.text-center
+%table.table.table-bordered.table-hover.table-condensed#calendar
+  %tbody
+    %tr.info.text-center
+      - if season
         %td
           &nbsp;
-        %td
-          %b= t('calendars.meeting')
-        %td
-          %b= t('calendars.date')
-        %td
-          %b= t('calendars.warm_up')
-        %td
-          %b= t('calendars.begin')
-        %td
-          %b= t('calendars.events')
-        %td
-          %b= t('calendars.pool')
-      - @meetings.each do |meeting|
-        - meeting.meeting_sessions.each_with_index do |meeting_session, index|
-          %tr
-            - if index == 0
+      %td
+        %b= t('calendars.meeting')
+      %td
+        %b= t('calendars.date')
+      %td
+        %b= t('calendars.warm_up')
+      %td
+        %b= t('calendars.begin')
+      %td
+        %b= t('calendars.events')
+      %td
+        %b= t('calendars.pool')
+    - @meetings.each do |meeting|
+      - meeting.meeting_sessions.each_with_index do |meeting_session, index|
+        %tr
+          - if index == 0
+            - if season
               %td.goggles-centeralign{ rowspan: meeting.meeting_sessions.count }
                 = meeting.logo_for_season_type
-              %td{ rowspan: meeting.meeting_sessions.count }
-                = render( partial: 'goggles/taggable_meeting_name', locals: {meeting: meeting} )
-            - if meeting_session.date_span > 0
-              %td.goggles-rightalign{ rowspan: meeting_session.date_span }
-                - if meeting.is_confirmed
-                  = meeting_session.get_scheduled_date
-                - else
-                  = meeting_session.get_scheduled_date.to_s + ' (*)'
-            %td.goggles-rightalign
-              = meeting_session.get_warm_up_time
-            %td.goggles-rightalign
-              = meeting_session.get_begin_time
-            %td
-              = meeting_session.get_short_events
-            - if meeting_session.pool_span > 0
-              %td{ rowspan: meeting_session.pool_span }
-                = meeting_session.linked_pool
+            %td{ rowspan: meeting.meeting_sessions.count }
+              = render( partial: 'goggles/taggable_meeting_name', locals: {meeting: meeting} )
+          - if meeting_session.date_span > 0
+            %td.goggles-rightalign{ rowspan: meeting_session.date_span }
+              - if meeting.is_confirmed
+                = meeting_session.get_scheduled_date
+              - else
+                = meeting_session.get_scheduled_date.to_s + ' (*)'
+          %td.goggles-rightalign
+            = meeting_session.get_warm_up_time
+          %td.goggles-rightalign
+            = meeting_session.get_begin_time
+          %td
+            = meeting_session.get_short_events
+          - if meeting_session.pool_span > 0
+            %td{ rowspan: meeting_session.pool_span }
+              = meeting_session.linked_pool
