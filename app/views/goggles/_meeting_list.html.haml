@@ -3,6 +3,8 @@
     %tbody
       %tr.info.text-center
         %td
+          &nbsp;
+        %td
           %b= t('calendars.meeting')
         %td
           %b= t('calendars.date')
@@ -18,6 +20,8 @@
         - meeting.meeting_sessions.each_with_index do |meeting_session, index|
           %tr
             - if index == 0
+              %td.goggles-centeralign{ rowspan: meeting.meeting_sessions.count }
+                = meeting.logo_for_season_type
               %td{ rowspan: meeting.meeting_sessions.count }
                 = render( partial: 'goggles/taggable_meeting_name', locals: {meeting: meeting} )
             - if meeting_session.date_span > 0

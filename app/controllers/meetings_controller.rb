@@ -167,18 +167,18 @@ class MeetingsController < ApplicationController
     #    .order( "meetings.header_date ASC" )
     #    .page( params[:page] || 1 )
 
-    @meetings = Meeting.includes(meeting_sessions: [swimming_pool: [:city], meeting_events: [event_type: [:stroke_type]]], season: [:season_type])
-        .where( "(NOT is_cancelled) AND (header_date >= '#{@start_date}') AND (header_date <= '#{@end_date}')" )
-        .order( "meetings.header_date ASC" )
-        .page( params[:page] || 1 )
+    #@meetings = Meeting.includes(meeting_sessions: [swimming_pool: [:city], meeting_events: [event_type: [:stroke_type]]], season: [:season_type])
+    #    .where( "(NOT is_cancelled) AND (header_date >= '#{@start_date}') AND (header_date <= '#{@end_date}')" )
+    #    .order( "meetings.header_date ASC" )
+    #    .page( params[:page] || 1 )
         
-        
-    #@calendarDAO = TmpCalendarDAO.new( nil, @start_date, @end_date )
-    #@meetings = @calendarDAO.meetings 
-        
-    # TODO
+    # TODO - DOING...
     # Try Calendar DAO using a costructor which selects meeting with eager load and provides
     # session data and so on.
+    @calendarDAO = CalendarDAO.new( nil, @start_date, @end_date, nil )
+    @calendarDAO.get_meetings('DESC', current_user)
+    @meetings = @calendarDAO.meetings
+        
   end
   #-- -------------------------------------------------------------------------
   #++

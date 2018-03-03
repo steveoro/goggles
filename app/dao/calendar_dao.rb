@@ -61,7 +61,7 @@ class CalendarDAO
   class MeetingDAO
     # These must be initialized on creation:
     attr_reader :id, :description, :header_date, :is_confirmed, :are_results_acquired, :has_start_list, :has_invitation, :season_id,
-                :linked_name, :reservation_button,
+                :linked_name, :logo_for_season_type, :reservation_button,
                 :can_manage, :team_affiliation_id, :is_user_starred, :is_team_starred,
                 :meeting_sessions
     #-- -------------------------------------------------------------------------
@@ -76,13 +76,14 @@ class CalendarDAO
       @is_confirmed         = meeting.is_confirmed
       @are_results_acquired = meeting.are_results_acquired
       @has_start_list       = meeting.has_start_list
-      @season_id            = season_id
+      @season_id            = meeting.season_id
       @can_manage           = can_manage 
 
       @has_invitation       = (meeting.invitation != nil)
       
       decorated_meeting     = meeting.decorate
       @linked_name          = decorated_meeting.get_linked_name( :get_full_name )
+      @logo_for_season_type = meeting.decorate.get_logo_for_season_type
       #@reservation_button   = current_user != nil ? decorated_meeting.manage_reservation_button_tm( current_user, can_manage ) : ''
       @reservation_button   = current_user != nil ? decorated_meeting.manage_reservation_button( current_user ) : ''
 
@@ -178,22 +179,10 @@ class CalendarDAO
   # Find out meetings for given filter parameters
   #
   def get_meetings( order = 'ASC', current_user = nil )
-    # Finda out team affiliations manageable and swimmer's
-    manageable_seasons = {}
-    badges             = {}
+    # Find out team affiliations manageable seasons andcurrent swimmer's team affiliation
+    manageable_seasons = get_manageable_seasons(current_user)
+    badges = get_swimmer_badges(current_user)
     
-    if current_user != nil
-      manageable_seasons = current_user.team_managers.each do |tm|
-        manageable_seasons[season_id] = tm.team_affiliation.id
-      end
-      
-      if current_user.has_associated_swimmer?
-        @team_affiliation_id = current_user.swimmer.badges.each do |badge|
-          badges[season_id] = badge.team_affiliation.id
-        end
-      end
-
-    end   
     
     @meeting_count = 0
     if @id_list && id_list.size > 0
@@ -230,4 +219,34 @@ class CalendarDAO
     end    
     @meeting_count
   end 
+
+
+  # Retrieve manageable seasons for current user if current user is a team manger
+  # Return an hash with season_id => team_affiliation_id
+  # Empty hash if current_user not set or currentuser not a team manager
+  #
+  def get_manageable_seasons( current_user = nil )
+    manageable_seasons = {}    
+    if current_user != nil
+      managed_teams = current_user.team_managers.includes(:team_affiliation).to_a
+      managed_teams.each do |tm|
+        manageable_seasons[tm.team_affiliation.season_id] = tm.team_affiliation_id
+      end
+    end
+    manageable_seasons
+  end
+
+  # Retrieve user associated swimmer's affiliations if any
+  # Return an hash with season_id => team_affiliation_id
+  # Empty hash if current_user has not associated swimmer
+  #
+  def get_swimmer_badges( current_user = nil )
+    badges = {}
+    if current_user != nil && current_user.has_associated_swimmer?
+      @team_affiliation_id = current_user.swimmer.badges.select(:season_id, :team_affiliation_id).each do |badge|
+        badges[badge.season_id] = badge.team_affiliation_id
+      end
+    end
+    badges
+  end
 end

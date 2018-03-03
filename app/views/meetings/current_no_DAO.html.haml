@@ -1,0 +1,74 @@
+.row
+  %h3= @title
+  = paginate( @meetings, theme: 'twitter-bootstrap-3' )
+
+.row.goggles-category-gap#calendar_supermaster_fin
+  %table.table.table-striped.table-bordered.table-hover.table-condensed#history
+    %tbody
+      %tr{'class'=>'info'}
+        %td
+          &nbsp;
+        %td
+          %b= t('calendars.meeting')
+        %td.goggles-rightalign
+          %b= t('calendars.date')
+        %td.goggles-rightalign
+          %b= t('calendars.warm_up')
+        %td.goggles-rightalign
+          %b= t('calendars.begin')
+        %td
+          %b= t('calendars.events')
+        %td
+          %b= t('calendars.pool')
+      - @meetings.each do |meeting|
+        - session_number = meeting.meeting_sessions.count
+        - if session_number == 0
+          %tr
+            %td.goggles-centeralign
+              = meeting.decorate.get_logo_for_season_type
+            %td
+              = render( partial: 'goggles/taggable_meeting_name', locals: {meeting: meeting} )
+            - if meeting.header_date
+              %td.goggles-rightalign
+                - if meeting.is_confirmed
+                  = meeting.header_date
+                - else
+                  = meeting.header_date.to_s + ' (*)'
+              %td{ colspan: 4 }
+                = t('to_be_defined')
+            - else
+              %td{ colspan: 5 }
+                = t('to_be_defined')
+        - else
+          - meeting.meeting_sessions.each_with_index do |meeting_session, index|
+            %tr
+              - if index == 0
+                %td{ rowspan: session_number, class: "goggles-centeralign" }
+                  = meeting.decorate.get_logo_for_season_type
+                %td{ rowspan: session_number }
+                  = render( partial: 'goggles/taggable_meeting_name', locals: {meeting: meeting} )
+              - if index == 0
+                %td.goggles-rightalign{ rowspan: session_number }
+                  - if meeting.is_confirmed
+                    = meeting_session.scheduled_date
+                  - else
+                    = meeting_session.scheduled_date.to_s + ' (*)'
+              %td.goggles-rightalign
+                = Format.a_time( meeting_session.warm_up_time )
+              %td.goggles-rightalign
+                = Format.a_time( meeting_session.begin_time )
+              %td
+                = meeting_session.get_short_events
+              - if index == 0
+                %td{ rowspan: session_number }
+                  = meeting_session.swimming_pool.decorate.get_linked_name( :get_city_and_attributes )
+
+.row.goggles-category-gap
+  = paginate( @meetings, theme: 'twitter-bootstrap-3' )
+  %br/
+  = page_entries_info( @meetings, entry_name: 'meeting' )
+
+.row.goggles-category-gap#Remark
+  %b= t('calendars.remark')
+
+.row.goggles-category-gap
