@@ -49,9 +49,9 @@
               - else
                 = meeting_session.get_scheduled_date.to_s + ' (*)'
             %td
-              = meeting.tags_by_user_list.map{ |tag| User.find(tag.remove('u').to_i).description }.join(', ')
+              = Meeting.find(meeting.id).tags_by_user_list.map{ |tag| User.find(tag.remove('u').to_i).description }.join(', ')
             %td
-              = meeting_session.swimming_pool.decorate.get_linked_name( :get_city_and_attributes )
+              = meeting_session.linked_pool
 
 .row.col-xs-12.goggles-category-gap#Remark
   %p

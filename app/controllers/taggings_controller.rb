@@ -187,25 +187,37 @@ class TaggingsController < ApplicationController
     }.compact
 
     # Init the list of starred meetings and possible users
-    @meetings = []
+    meeting_id_list = []
 
     # For each affiliation, get all the (current) badges and swimmer IDs, and filter out
     # from all the gogglers the only one that belong to the list of swimmer IDs
     open_team_affiliations.each do |team_affiliation|
       user_ids = team_affiliation.badges.map{ |badge| badge.swimmer_id }
       possible_tags = User.where( "swimmer_id IN (?)", user_ids ).map{ |user| "u#{ user.id }" }
-      # Extract the user-tagged, open and browsable meetings:
-      @meetings += Meeting.includes( :season, :season_type, :meeting_sessions, :swimming_pools )
-        .joins( :season, :season_type, :meeting_sessions, :swimming_pools )
+      
+      meeting_id_list += Meeting
         .where( "meetings.header_date >= ?", Date.today )
         .tagged_with( possible_tags, on: :tags_by_users, any: true )
         .order( "meetings.header_date" )
-        .to_a
+        .map{ |meeting| meeting.id }
+      
+      # Extract the user-tagged, open and browsable meetings:
+      #@meetings += Meeting.includes( :season, :season_type, :meeting_sessions, :swimming_pools )
+      #  .joins( :season, :season_type, :meeting_sessions, :swimming_pools )
+      #  .where( "meetings.header_date >= ?", Date.today )
+      #  .tagged_with( possible_tags, on: :tags_by_users, any: true )
+      #  .order( "meetings.header_date" )
+      #  .to_a
     end
 
     # Prepare the composed arrays:
-    @meetings.uniq!
-    @meetings.sort!{ |ma, mb| ma.header_date <=> mb.header_date }
+    #@meetings.uniq!
+    #@meetings.sort!{ |ma, mb| ma.header_date <=> mb.header_date }
+    
+    @calendarDAO = CalendarDAO.new( nil, nil, nil, meeting_id_list.uniq! )
+    @calendarDAO.retrieve_meetings('DESC', current_user)
+    @meetings = @calendarDAO.meetings
+    
   end
   #-- -------------------------------------------------------------------------
   #++
