@@ -183,7 +183,6 @@ class CalendarDAO
     manageable_seasons = get_manageable_seasons(current_user)
     badges = get_swimmer_badges(current_user)
     
-    
     @meeting_count = 0
     if @id_list && id_list.size > 0
       Meeting

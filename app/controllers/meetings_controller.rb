@@ -177,7 +177,7 @@ class MeetingsController < ApplicationController
     # session data and so on.
     @calendarDAO = CalendarDAO.new( nil, @start_date, @end_date, nil )
     @calendarDAO.get_meetings('DESC', current_user)
-    @meetings = @calendarDAO.meetings
+    @meetings = Kaminari.paginate_array(@calendarDAO.meetings).page( params[:page] || 1 )
         
   end
   #-- -------------------------------------------------------------------------

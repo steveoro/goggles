@@ -1,15 +1,16 @@
-.row
+.row.col-xs-12
   %h3= @title
-  -#= paginate( @meetings, theme: 'twitter-bootstrap-3' )
+  = paginate( @meetings, theme: 'twitter-bootstrap-3' )
 
 = render( partial: 'goggles/meeting_list' )
 
--#.row.goggles-category-gap
--#  = paginate( @meetings, theme: 'twitter-bootstrap-3' )
--#  %br/
--#  = page_entries_info( @meetings, entry_name: 'meeting' )
+.row.goggles-category-gap
+  = paginate( @meetings, theme: 'twitter-bootstrap-3' )
+  %br/
+  = page_entries_info( @meetings, entry_name: 'meeting' )
 
-.row.goggles-category-gap#Remark
+.row.col-xs-12.goggles-category-gap#Remark
   %b= t('calendars.remark')
 
-.row.goggles-category-gap
+.row.col-xs-12
+  &nbsp;
