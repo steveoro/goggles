@@ -79,7 +79,10 @@ describe CalendarDAO, type: :model do
     subject { CalendarDAO::MeetingDAO.new( meeting ) }
 
     it_behaves_like( "(the existance of a method)", [
-      :id, :description, :header_date, :is_confirmed, :are_results_acquired, :has_start_list, :meeting_sessions
+      :id, :description, :header_date, :is_confirmed, :are_results_acquired, :has_start_list, :has_invitation, :season_id,
+      :linked_name, :logo_for_season_type, :reservation_button,
+      :can_manage, :team_affiliation_id, :is_user_starred, :is_team_starred,
+      :meeting_sessions
     ] )
 
     describe "#id" do
@@ -168,7 +171,8 @@ describe CalendarDAO, type: :model do
     subject { CalendarDAO.new() }
 
     it_behaves_like( "(the existance of a method)", [
-      :meetings, :meeting_count, :season_id, :date_start, :date_end, :id_list, :retrieve_meetings
+      :meetings, :meeting_count, :season_id, :date_start, :date_end, :id_list, 
+      :retrieve_meetings, :get_manageable_seasons, :get_swimmer_badges
     ] )
 
     describe "#meetings" do
