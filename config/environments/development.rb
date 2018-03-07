@@ -13,7 +13,7 @@ Rails.application.configure do
   #
   # [Steve, 201609] eager_load required by Rails 5 config.
   # true for production ENVs & when using a pre-loader like Zeus.
-  config.eager_load = true
+  config.eager_load = false
 
   # Log error messages when you accidentally call methods on nil.
   config.whiny_nils = true

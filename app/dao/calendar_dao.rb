@@ -122,10 +122,6 @@ class CalendarDAO
       
       # Calculates column spans
       calculate_span
-      
-      # TODO
-      # Add attributes to manage notes
-      # Automate is_confirmed and other flags
     end
     
     # Determinates the col span forose fields that could be present many times
