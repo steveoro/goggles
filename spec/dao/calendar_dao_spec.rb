@@ -19,7 +19,9 @@ describe CalendarDAO, type: :model do
     subject { CalendarDAO::MeetingSessionDAO.new( meeting_session ) }
 
     it_behaves_like( "(the existance of a method)", [
-      :id, :session_order, :scheduled_date, :warm_up_time, :begin_time, :events_list, :swimming_pool, :date_span, :pool_span
+      :id, :session_order, :scheduled_date, :warm_up_time, :begin_time, :events_list, :linked_pool,
+      :date_span, :pool_span,
+      :get_scheduled_date, :get_warm_up_time, :get_begin_time, :get_short_events
     ] )
 
     describe "#id" do
@@ -50,6 +52,12 @@ describe CalendarDAO, type: :model do
     describe "#events_list" do
       it "is the events of the session specified for the construction" do
         expect( subject.events_list ).to eq( meeting_session.get_short_events )
+      end
+    end
+    describe "#linked_pool" do
+      it "is the linked session's swimming pool name specified for the construction" do
+        expect( subject.linked_pool ).to be_a_kind_of( String ) 
+        expect( subject.linked_pool ).to include( 'href' ) 
       end
     end
     describe "#date_span" do
@@ -160,7 +168,7 @@ describe CalendarDAO, type: :model do
     subject { CalendarDAO.new() }
 
     it_behaves_like( "(the existance of a method)", [
-      :meetings, :meeting_count, :season_id, :date_start, :date_end, :id_list, :get_meetings
+      :meetings, :meeting_count, :season_id, :date_start, :date_end, :id_list, :retrieve_meetings
     ] )
 
     describe "#meetings" do
@@ -228,21 +236,21 @@ describe CalendarDAO, type: :model do
       end
     end
 
-    describe "#get_meetings" do
+    describe "#retrieve_meetings" do
       it "returns a number" do
-        expect( subject.get_meetings ).to be >= 0
+        expect( subject.retrieve_meetings ).to be >= 0
       end
       it "returns the number of season not cancelled meetings" do
-        expect( subject.get_meetings ).to eq( csi_season.meetings.is_not_cancelled.count )
+        expect( subject.retrieve_meetings ).to eq( csi_season.meetings.is_not_cancelled.count )
       end
       it "populates @meetings with season not cancelled meetings" do
         expect( subject.meetings.size ).to eq( 0 )
-        found_meetings = subject.get_meetings
+        found_meetings = subject.retrieve_meetings
         expect( subject.meetings.size ).to eq( found_meetings )
       end
       it "populates @meetings with MeetingDAO instances" do
         expect( subject.meetings ).to be_a_kind_of( Array )
-        subject.get_meetings
+        subject.retrieve_meetings
         subject.meetings.each do |meeting_dao|
           expect( meeting_dao ).to be_an_instance_of( CalendarDAO::MeetingDAO )
         end
@@ -280,21 +288,21 @@ describe CalendarDAO, type: :model do
       end
     end
 
-    describe "#get_meetings" do
+    describe "#retrieve_meetings" do
       it "returns a number" do
-        expect( subject.get_meetings ).to be >= 0
+        expect( subject.retrieve_meetings ).to be >= 0
       end
       it "returns the number of not cancelled meetings between specified dates" do
-        expect( subject.get_meetings ).to eq( Meeting.is_not_cancelled.where( "(header_date >= '#{date_start}') AND (header_date <= '#{date_end}')" ).count )
+        expect( subject.retrieve_meetings ).to eq( Meeting.is_not_cancelled.where( "(header_date >= '#{date_start}') AND (header_date <= '#{date_end}')" ).count )
       end
       it "populates @meetings with not cancelled meetings" do
         expect( subject.meetings.size ).to eq( 0 )
-        found_meetings = subject.get_meetings
+        found_meetings = subject.retrieve_meetings
         expect( subject.meetings.size ).to eq( found_meetings )
       end
       it "populates @meetings with MeetingDAO instances" do
         expect( subject.meetings ).to be_a_kind_of( Array )
-        subject.get_meetings
+        subject.retrieve_meetings
         subject.meetings.each do |meeting_dao|
           expect( meeting_dao ).to be_an_instance_of( CalendarDAO::MeetingDAO )
         end
