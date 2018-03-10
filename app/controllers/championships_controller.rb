@@ -236,7 +236,7 @@ class ChampionshipsController < ApplicationController
     #end
 
     @calendarDAO = CalendarDAO.new( @season.id, nil, nil, nil )
-    @calendarDAO.retrieve_meetings('ASC', current_user)
+    @calendarDAO.retrieve_meetings('DESC', current_user)
     #@meetings = @calendarDAO.meetings
     
     # TODO
