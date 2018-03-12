@@ -37,40 +37,37 @@
         .col-xs-3
           = I18n.t('swimmers.meeting_presence') +':'
         .col-xs-9
-          = count_with_award_star( @ssd.get_meetings_count )
+          = count_with_award_star( @swimmer.meetings.uniq.count )
       .row
         .col-xs-3
           = I18n.t('swimmers.events_attended') +':'
         .col-xs-9
-          = count_with_small_star( @ssd.get_individual_results_count + @swimmer.meeting_relay_swimmers.count )
+          = count_with_small_star( @swimmer.meeting_individual_results.count + @swimmer.meeting_relay_swimmers.count )
       .row
         .col-xs-3
           = I18n.t('swimmers.total_metres_swam') +':'
         .col-xs-9
-          = count_with_star( @ssd.get_meters_swam )
+          = count_with_star( @swimmer.get_total_meters_swam )
       .row
         .col-xs-3
           = I18n.t('swimmers.total_time_swam') +':'
         .col-xs-9
-          = @ssd.get_time_swam.to_s
+          = @swimmer.get_total_time_swam.to_s
       .row
         .col-xs-3
           = I18n.t('swimmers.ironmaster') +':'
         .col-xs-9
-          = count_with_award_star(@ssd.get_iron_masters_count, 1)
+          - ironmaster = 0
+          - @swimmer.badges.for_season_type(SeasonType.find_by_code('MASFIN')).each do |badge|
+            - ironmaster = ironmaster + 1 if badge.has_ironmaster?
+          = count_with_award_star(ironmaster, 1)
       .row
-        .col-xs-3
-          = I18n.t('swimmers.total_fin_points') +':'
-        .col-xs-9
-          = count_with_small_star(@ssd.get_tot_fin_points, 50000)
-
-      .row.goggles-category-gap
         .col-xs-3
           = I18n.t('swimmers.first_attended_meeting') +':'
         .col-xs-9
-          - m = @ssd.get_first_meeting
+          - m = @swimmer.get_first_meeting
           - if m
-            %a{ href: "#{ meeting_show_swimmer_results_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_swimmer_results_tooltip') + "\r\n(#{@swimmer_name} @ #{m.get_full_name})" }
+            %a{ href: "#{ meeting_show_swimmer_results_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_swimmer_results_tooltip') + "\r\n(#{@swimmer.get_full_name} @ #{m.get_full_name})" }
               = m.get_meeting_date
             = ', '
             %a{ href: "#{ meeting_show_full_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_results_tooltip') + "\r\n(#{m.get_full_name})" }
@@ -79,57 +76,61 @@
         .col-xs-3
           = I18n.t('swimmers.last_attended_meeting') +':'
         .col-xs-9
-          - m = @ssd.get_last_meeting
+          - m = @swimmer.get_last_meeting
           - if m
-            %a{ href: "#{ meeting_show_swimmer_results_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_swimmer_results_tooltip') + "\r\n(#{@swimmer_name} @ #{m.get_full_name})" }
+            %a{ href: "#{ meeting_show_swimmer_results_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_swimmer_results_tooltip') + "\r\n(#{@swimmer.get_full_name} @ #{m.get_full_name})" }
               = m.get_meeting_date
             = ', '
             %a{ href: "#{ meeting_show_full_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_results_tooltip') + "\r\n(#{m.get_full_name})" }
               = "#{m.get_full_name} (#{m.get_season_type})"
-      .row
-        .col-xs-3
-          = I18n.t('swimmers.total_disqualifications') +':'
-        .col-xs-9
-          - dsq_count = @ssd.get_disqualifications
-          - if dsq_count > 0
-            = count_with_bomb( dsq_count )
-          - else
-            = I18n.t('swimmers.no_disqualifications')
-
       .row.goggles-category-gap
         .col-xs-3
           = I18n.t('swimmers.best_score_ever') +':'
         .col-xs-9
-          - m = @ssd.get_best_fin
-          - if m
-            = format_score( m.get_std_points ) + ', '
-            %a{ href: "#{ meeting_show_swimmer_results_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_swimmer_results_tooltip') + "\r\n(#{@swimmer_name} @ #{m.get_full_name})" }
-              = m.get_meeting_date
-            = ', '
-            %a{ href: "#{ meeting_show_full_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_results_tooltip') + "\r\n(#{m.get_full_name})" }
-              = "#{m.get_full_name} (#{m.get_season_type})"
-            = ' - '
-            = m.get_event_type
+          - mir = @swimmer.get_best_individual_result
+          - if mir
+            - m = mir.meeting
+            %p
+              = format_score( mir.standard_points ) + ', '
+              - if m
+                %a{ href: "#{ meeting_show_swimmer_results_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_swimmer_results_tooltip') + "\r\n(#{@swimmer.get_full_name} @ #{m.get_full_name})" }
+                  = m.get_scheduled_date
+                = ', '
+                %a{ href: "#{ meeting_show_full_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_results_tooltip') + "\r\n(#{m.get_full_name})" }
+                  = "#{m.get_full_name} (#{m.get_season_type})"
+                = ' - '
+                = mir.event_type_code
       .row
         .col-xs-3
           = I18n.t('swimmers.worst_score_ever') +':'
         .col-xs-9
-          - m = @ssd.get_worst_fin
-          - if m
-            = format_score( m.get_std_points ) + ', '
-            %a{ href: "#{ meeting_show_swimmer_results_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_swimmer_results_tooltip') + "\r\n(#{@swimmer_name} @ #{m.get_full_name})" }
-              = m.get_meeting_date
-            = ', '
-            %a{ href: "#{ meeting_show_full_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_results_tooltip') + "\r\n(#{m.get_full_name})" }
-              = "#{m.get_full_name} (#{m.get_season_type})"
-            = ' - '
-            = m.get_event_type
-
+          - mir = @swimmer.get_worst_individual_result
+          - if mir
+            - m = mir.meeting
+            %p
+              = format_score( mir.standard_points ) + ', '
+              - if m
+                %a{ href: "#{ meeting_show_swimmer_results_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_swimmer_results_tooltip') + "\r\n(#{@swimmer.get_full_name} @ #{m.get_full_name})" }
+                  = m.get_scheduled_date
+                = ', '
+                %a{ href: "#{ meeting_show_full_path(:id=>m.id, :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_results_tooltip') + "\r\n(#{m.get_full_name})" }
+                  = "#{m.get_full_name} (#{m.get_season_type})"
+                = ' - '
+                = mir.event_type_code
+      .row
+        .col-xs-3
+          = I18n.t('swimmers.total_disqualifications') +':'
+        .col-xs-9
+          - dsq_count = @swimmer.get_disqualifications_count
+          - if dsq_count > 0
+            = count_with_bomb( dsq_count )
+          - else
+            = I18n.t('swimmers.no_disqualifications')
       .row.goggles-category-gap
         .col-xs-3
           = I18n.t('swimmers.all_teams') +':'
         .col-xs-9
-          = @ssd.get_linked_team_names.html_safe
+          = @swimmer.get_linked_team_names.html_safe
 
     .col-xs-3
       .text-center
@@ -140,7 +141,7 @@
       .col-xs-12
         &nbsp;
       .text-center
-        = link_to( "#{t('radiography.all_races_tab')}<br/>#{@swimmer_name}".html_safe, search_meetings_path( s: @swimmer.id ), {class: "btn btn-default"} )
+        = link_to( "#{t('radiography.all_races_tab')}<br/>#{@swimmer.get_full_name}".html_safe, search_meetings_path( s: @swimmer.id ), {class: "btn btn-default"} )
 
   -#= render( partial: 'records' )
   -# TODO Give some plus rendering some achievements!

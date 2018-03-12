@@ -46,8 +46,13 @@ class SwimmersController < ApplicationController
   #
   def radio
     # --- "Radiography" tab: ---
-    @team_ids = @swimmer.teams.collect{|row| row.id }.uniq
+    #@team_ids = @swimmer.teams.collect{|row| row.id }.uniq
     @tab_title = I18n.t('radiography.radio_tab')
+    
+    @swimmer_name = @swimmer.get_full_name
+    @ssd = SwimmerStatsDAO.new( @swimmer )
+    @ssd.calculate_stats
+    
   end
   #-- -------------------------------------------------------------------------
   #++

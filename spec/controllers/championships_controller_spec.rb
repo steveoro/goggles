@@ -82,13 +82,15 @@ describe ChampionshipsController, type: :controller do
 
     it "assigns the required variables when invoked without parameters" do
       get :calendar_regional_er_csi
-      expect( assigns(:season_meetings_calendar) ).to be_an_instance_of( Array )
-      expect( assigns(:season_meetings_calendar) ).to all(be_an_instance_of( CalendarDAO ))
+      expect( assigns(:calendarDAO) ).to be_an_instance_of( CalendarDAO )
+      expect( assigns(:meetings) ).to be_an_instance_of( Array )
+      expect( assigns(:meetings) ).to all(be_an_instance_of( CalendarDAO::MeetingDAO ))
     end
     it "assigns the required variables when invoked with valid id" do
       get :calendar_regional_er_csi, params: { id: 131 }
-      expect( assigns(:season_meetings_calendar) ).to be_an_instance_of( Array )
-      expect( assigns(:season_meetings_calendar) ).to all(be_an_instance_of( CalendarDAO ))
+      expect( assigns(:calendarDAO) ).to be_an_instance_of( CalendarDAO )
+      expect( assigns(:meetings) ).to be_an_instance_of( Array )
+      expect( assigns(:meetings) ).to all(be_an_instance_of( CalendarDAO::MeetingDAO ))
     end
   end
   #-- -------------------------------------------------------------------------

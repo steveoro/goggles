@@ -327,7 +327,7 @@ class SwimmerDecorator < Draper::Decorator
     linked_list = ""
     list = []
     if badges
-      badges.each do |badge|
+      badges.includes( :season ).each do |badge|
         if !badge.season.is_season_ended_at
           list.append( badge.team.decorate.get_linked_name )
         end
