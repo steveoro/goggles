@@ -178,7 +178,7 @@ class SwimmerStatsDAO
   # The count of meetings individual results
   #
   def count_individual_results
-    @mirs.count
+    @mirs.size
   end
   
   # Swimmer meters swam

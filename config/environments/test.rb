@@ -7,7 +7,7 @@ Rails.application.configure do
   #
   # [Steve, 201609] eager_load required by Rails 5 config.
   # true for production ENVs & when using a pre-loader like Zeus.
-  config.eager_load = true
+  config.eager_load = false
 
   # Configure public file server for tests with Cache-Control for performance.
   config.public_file_server.enabled = true
