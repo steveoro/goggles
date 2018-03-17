@@ -182,7 +182,7 @@ class CalendarDAO
     badges = get_swimmer_badges(current_user)
     
     @meeting_count = 0
-    if @id_list && id_list.size > 0
+    if @id_list && @id_list.size > 0
       Meeting
         .includes(meeting_sessions: [swimming_pool: [:city, :pool_type], meeting_events: [event_type: [:stroke_type]]], season: [:season_type])
          .where( "id IN (?)", @id_list )
