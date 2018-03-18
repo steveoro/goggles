@@ -39,7 +39,7 @@ class CalendarMeetingPicker
     @parameters[:date_end] = date_end if date_end
     @parameters[:season_id] = season.id if season && season.instance_of?( Season )
     @parameters[:team_id] = team.id if team && team.instance_of?( Team )
-    @parameters[:swimmer_id] = swimmer.id if team && swimmer.instance_of?( Swimmer )
+    @parameters[:swimmer_id] = swimmer.id if swimmer && swimmer.instance_of?( Swimmer )
     @parameters[:id_list] = id_list if id_list
   end
   #-- --------------------------------------------------------------------------
@@ -166,7 +166,31 @@ class CalendarMeetingPicker
   # Meetings are those attended by parameter swimmer
   #
   def pick_meetings_by_swimmer( order = 'ASC', show_cancelled = true, current_user = nil )
+    swimmer_id = @parameters[:swimmer_id]
     meetings_count = 0
+
+    if swimmer_id && swimmer_id > 0
+      # Create filter
+      filters = "(meeting_individual_results.swimmer_id = #{swimmer_id})" 
+      filters += ' AND (NOT is_cancelled)' if !show_cancelled
+          
+      Meeting
+        .joins(:meeting_individual_results)
+        .includes(meeting_sessions: [swimming_pool: [:city, :pool_type], meeting_events: [event_type: [:stroke_type]]], season: [:season_type])
+        .where( "#{filters}" )
+        .distinct
+        .order( "meetings.header_date #{order}" )
+        .each do |meeting|
+          # Verify managements
+          team_affiliation_id = nil
+          team_affiliation_id = @manageable_seasons[meeting.season_id] if @manageable_seasons && @manageable_seasons.size > 0 
+          can_manage = !team_affiliation_id.nil?
+          team_affiliation_id = @swimmer_badges[meeting.season_id] if team_affiliation_id.nil? && @swimmer_badges && @swimmer_badges.size > 0 
+
+          @calendarDAO.meetings << CalendarDAO::MeetingDAO.new( meeting, current_user, can_manage, team_affiliation_id )
+          meetings_count += 1 
+        end
+    end
     meetings_count
   end    
 

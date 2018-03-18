@@ -148,7 +148,7 @@ class CalendarDAO
 
 
   # These must be initialized on creation:
-  attr_reader :meetings, :meeting_count
+  attr_reader :meeting_count
   #-- -------------------------------------------------------------------------
   #++
 
@@ -162,6 +162,26 @@ class CalendarDAO
   def initialize( current_user = nil )
     @meetings      = []
     @meeting_count = 0
+    @paginated     = false
+  end
+  
+  def meetings
+    @paginated = false
+    @meetings
+  end
+
+  def get_meetings
+    @paginated = false
+    @meetings
+  end
+
+  def get_paginated_meetings( page = 1 )
+    @paginated = true
+    Kaminari.paginate_array(@meetings).page( page )
+  end
+  
+  def paginated?
+    @paginated
   end
   #-- -------------------------------------------------------------------------
   #++

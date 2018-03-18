@@ -168,8 +168,21 @@ describe CalendarDAO, type: :model do
     subject { CalendarDAO.new() }
 
     it_behaves_like( "(the existance of a method)", [
-      :meetings, :meeting_count
+      :meeting_count, 
+      :meetings, :get_meetings, :get_paginated_meetings, :paginated?
     ] )
+
+    describe "#meeting_count" do
+      it "is a number" do
+        expect( subject.meeting_count ).to be >= 0
+      end
+    end
+
+    describe "#paginated?" do
+      it "is a boolean" do
+        expect( subject.paginated? ).to eq( false ).or( eq( true ) )
+      end
+    end
 
     describe "#meetings" do
       it "is an array" do
@@ -180,13 +193,41 @@ describe CalendarDAO, type: :model do
           expect( meeting_dao ).to be_an_instance_of( CalendarDAO::MeetingDAO )
         end
       end
-    end
-    describe "#meeting_count" do
-      it "is a number" do
-        expect( subject.meeting_count ).to be >= 0
+      it "isn't pagintaed" do
+        subject.get_meetings
+        expect( subject.paginated? ).to eq( false )
       end
     end
-    
+
+    describe "#get_meetings" do
+      it "is an array" do
+        expect( subject.get_meetings ).to be_a_kind_of( Array )
+      end
+      it "contains MeetingDAO instances" do
+        subject.get_meetings.each do |meeting_dao|
+          expect( meeting_dao ).to be_an_instance_of( CalendarDAO::MeetingDAO )
+        end
+      end
+      it "isn't pagintaed" do
+        subject.get_meetings
+        expect( subject.paginated? ).to eq( false )
+      end
+    end
+
+    describe "#get_paginated_meetings" do
+      it "is an array" do
+        expect( subject.get_paginated_meetings ).to be_a_kind_of( Array )
+      end
+      it "contains MeetingDAO instances" do
+        subject.get_paginated_meetings.each do |meeting_dao|
+          expect( meeting_dao ).to be_an_instance_of( CalendarDAO::MeetingDAO )
+        end
+      end
+      it "is pagintaed" do
+        subject.get_paginated_meetings
+        expect( subject.paginated? ).to eq( true )
+      end
+    end
   end
   #-- -------------------------------------------------------------------------
   #++

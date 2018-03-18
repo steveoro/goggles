@@ -126,9 +126,12 @@ class SearchController < ApplicationController
     @limitless = true
     if params['s'].present? && (params['s'].to_i > 0)
       @swimmers = [ Swimmer.find_by_id(params['s'].to_i) ]
-      if @swimmers.exists?
+      if @swimmers.size > 0
         @query = @swimmers.first.get_full_name
-        @meetings = @swimmers.first.meetings.distinct.order("header_date DESC")
+        #@meetings = @swimmers.first.meetings.distinct.order("header_date DESC")
+        @calendarMeetingPicker = CalendarMeetingPicker.new( nil, nil, nil, nil, nil, @swimmers.first )
+        @calendarDAO = @calendarMeetingPicker.pick_meetings( 'DESC', false, current_user )
+        @meetings = @calendarDAO.get_paginated_meetings( params[:page] || 1 ) 
       end
     elsif params['t'].present? && (params['t'].to_i > 0)
       @teams = [ Team.find(params['t'].to_i) ]
@@ -137,7 +140,7 @@ class SearchController < ApplicationController
         #@meetings =@teams.first.meetings.distinct.order("header_date DESC")
         @calendarMeetingPicker = CalendarMeetingPicker.new( nil, nil, nil, nil, @teams.first )
         @calendarDAO = @calendarMeetingPicker.pick_meetings( 'DESC', false, current_user )
-        @meetings = Kaminari.paginate_array(@calendarDAO.meetings).page( params[:page] || 1 )
+        @meetings = @calendarDAO.get_paginated_meetings( params[:page] || 1 ) 
       end
     else
       prepare_query_results( params['q'], 'm' )

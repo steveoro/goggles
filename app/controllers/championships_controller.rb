@@ -42,7 +42,7 @@ class ChampionshipsController < ApplicationController
 
     @calendarMeetingPicker = CalendarMeetingPicker.new( nil, nil, @season )
     @calendarDAO = @calendarMeetingPicker.pick_meetings( 'ASC', false, current_user)
-    @meetings = @calendarDAO.meetings
+    @meetings = @calendarDAO.get_meetings
 
     # TODO Maybe add a schema with events by meeting
     #          50SL 100SL 200SL 400SL 800SL 50FA...
@@ -229,9 +229,7 @@ class ChampionshipsController < ApplicationController
     # TODO
     # Calculate the current page according to the position of meetings
     # for current date
-    
-    #@meetings = @calendarDAO.meetings
-    @meetings = Kaminari.paginate_array(@calendarDAO.meetings).page( params[:page] || 1 )
+    @meetings = @calendarDAO.get_paginated_meetings( params[:page] || 1 )
   end
   #-- -------------------------------------------------------------------------
   #++

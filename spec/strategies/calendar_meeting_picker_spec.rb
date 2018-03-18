@@ -288,6 +288,65 @@ describe CalendarMeetingPicker, type: :strategy do
   #-- -------------------------------------------------------------------------
   #++
 
+  context "with swimmer parameter," do
+
+    subject { CalendarMeetingPicker.new( nil, nil, nil, nil, nil, swimmer ) }
+
+    describe "#parameters" do
+      it "returns a non empty array" do
+        expect( subject.parameters.count ).to eq( 1 )        
+      end
+      it "contains the team specified" do
+        expect( subject.parameters[:swimmer_id] ).to eq( swimmer.id )
+      end
+    end
+
+    describe "#pick_meetings_by_ids" do
+      it "returns 0 beacuse no id_list parameter set" do
+        expect( subject.pick_meetings_by_ids ).to eq( 0 )
+      end
+    end
+    describe "#pick_meetings_by_season" do
+      it "returns 0 beacuse no season parameter set" do
+        expect( subject.pick_meetings_by_season ).to eq( 0 )
+      end
+    end
+    describe "#pick_meetings_by_team" do
+      it "returns 0 beacuse no id_list parameter set" do
+        expect( subject.pick_meetings_by_team ).to eq( 0 )
+      end
+    end
+    describe "#pick_meetings_by_swimmer" do
+      it "returns 0 or more meetings" do
+        expect( subject.pick_meetings_by_swimmer ).to be >= 0
+      end
+      it "returns the number of meetings attended by team not cancelled if request" do
+        expect( subject.pick_meetings_by_swimmer( nil, false ) ).to eq( swimmer.meetings.distinct.select('meetings.id, meetings.is_cancelled').is_not_cancelled.count )
+      end
+      it "returns the number of meetings attended by team" do
+        expect( subject.pick_meetings_by_swimmer ).to eq( swimmer.meetings.distinct.select('meetings.id').count )
+      end
+    end
+    describe "#pick_meetings_by_dates" do
+      it "returns 0 beacuse no id_list parameter set" do
+        expect( subject.pick_meetings_by_dates ).to eq( 0 )
+      end
+    end
+
+    describe "#pick_meetings" do
+      it "returns a well formed calendarDAO" do
+        calendar = subject.pick_meetings
+        expect( calendar ).to be_an_instance_of( CalendarDAO )
+        expect( calendar.meetings ).to be_a_kind_of( Array )
+        calendar.meetings.each do |meeting_dao|
+          expect( meeting_dao ).to be_an_instance_of( CalendarDAO::MeetingDAO )
+        end
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
   context "with dates parameter," do
 
     subject { CalendarMeetingPicker.new( date_start, date_end ) }

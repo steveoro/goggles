@@ -131,7 +131,7 @@ class MeetingsController < ApplicationController
 
     @calendarMeetingPicker = CalendarMeetingPicker.new( nil, nil, nil, meeting_id_list.uniq! )
     @calendarDAO = @calendarMeetingPicker.pick_meetings( 'DESC', false, current_user )
-    @meetings = @calendarDAO.meetings
+    @meetings = @calendarDAO.get_meetings
 
   end
   #-- -------------------------------------------------------------------------
@@ -148,7 +148,7 @@ class MeetingsController < ApplicationController
   def current
     # [Steve, 20161001] We need to whitelist all parameters for the search query:
     params.permit!()
-    @start_date = "#{Date.today.prev_day(19)}"
+    @start_date = "#{Date.today.prev_day(8)}"
     @end_date   = "#{Date.today.next_month(10)}"
     #@start_date = "#{Date.today.prev_day(7)}"
     #@end_date   = "#{Date.today.next_day(7)}"
@@ -173,9 +173,9 @@ class MeetingsController < ApplicationController
     #    .page( params[:page] || 1 )
         
     # Calendar DAO using a costructor which selects meeting using dates
-    @calendarMeetingPicker = CalendarMeetingPicker.new( nil, @start_date, @end_date )
-    @calendarDAO = @calendarMeetingPicker.pick_meetings( 'DESC', false, current_user )
-    @meetings = Kaminari.paginate_array(@calendarDAO.meetings).page( params[:page] || 1 )
+    @calendarMeetingPicker = CalendarMeetingPicker.new( @start_date, @end_date )
+    @calendarDAO = @calendarMeetingPicker.pick_meetings( 'ASC', false, current_user )
+    @meetings = @calendarDAO.get_paginated_meetings( params[:page] || 1 )
         
   end
   #-- -------------------------------------------------------------------------
