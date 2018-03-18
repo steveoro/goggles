@@ -1,7 +1,7 @@
 &nbsp;
 %span
   - if current_user && TeamManagerValidator.any_reservations_for?( current_user, meeting ) && !meeting.are_results_acquired && !meeting.has_start_list && !meeting.has_invitation
-    = link_to( meeting.get_full_name, meeting_reservations_show_path(id: meeting.id),     |
+    = link_to( meeting.description, meeting_reservations_show_path(id: meeting.id),     |
         { 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.show_data_detail_tooltip') } |
       )                                                                                   |
   - else

@@ -40,14 +40,8 @@ class ChampionshipsController < ApplicationController
   def calendar_regional_er_csi
     @title = I18n.t('championships.calendar') + ' ' + @season.get_full_name
 
-    # Collect calendarDAO for each season meetings
-    #@season_meetings_calendar = []
-    #@season.meetings.sort_by_date.each do |meeting|
-    #  @season_meetings_calendar << CalendarDAO.new( meeting )
-    #end
-
-    @calendarDAO = CalendarDAO.new( @season.id, nil, nil, nil )
-    @calendarDAO.retrieve_meetings('ASC', current_user)
+    @calendarMeetingPicker = CalendarMeetingPicker.new( nil, nil, @season )
+    @calendarDAO = @calendarMeetingPicker.pick_meetings( 'ASC', false, current_user)
     @meetings = @calendarDAO.meetings
 
     # TODO Maybe add a schema with events by meeting
@@ -229,28 +223,15 @@ class ChampionshipsController < ApplicationController
   def calendar_supermaster_fin
     @title = I18n.t('championships.calendar') + ' ' + @season.get_full_name
 
-    # Collect calendarDAO for each season meetings
-    #@season_meetings_calendar = []
-    #@season.meetings.sort_by_date.each do |meeting|
-    #  @season_meetings_calendar << CalendarDAO.new( meeting )
-    #end
-
-    @calendarDAO = CalendarDAO.new( @season.id, nil, nil, nil )
-    @calendarDAO.retrieve_meetings('DESC', current_user)
-    #@meetings = @calendarDAO.meetings
+    @calendarMeetingPicker = CalendarMeetingPicker.new( nil, nil, @season )
+    @calendarDAO = @calendarMeetingPicker.pick_meetings( 'DESC', false, current_user)
     
     # TODO
     # Calculate the current page according to the position of meetings
     # for current date
     
+    #@meetings = @calendarDAO.meetings
     @meetings = Kaminari.paginate_array(@calendarDAO.meetings).page( params[:page] || 1 )
-
-    # TODO Maybe add a schema with events by meeting
-    #          50SL 100SL 200SL 400SL 800SL 50FA...
-    # 1a prova  X                 X
-    # 2a prova        X     X
-    # 3a prova                                X
-    # ...
   end
   #-- -------------------------------------------------------------------------
   #++

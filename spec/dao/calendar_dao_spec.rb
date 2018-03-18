@@ -9,10 +9,6 @@ describe CalendarDAO, type: :model do
   #let(:meeting_session) { meeting.meeting_sessions.first }
   let(:meeting)         { Meeting.find(13106) }
   let(:meeting_session) { meeting.meeting_sessions.first }
-  let(:csi_season)      { Season.where( season_type_id: 2 ).sample }
-  let(:season)          { Season.sample }
-  let(:date_start)      { Date.today - (rand * 30).to_i }
-  let(:date_end)        { Date.today + (rand * 30).to_i }
 
   context "MeetingSessionDAO subclass," do
 
@@ -164,15 +160,15 @@ describe CalendarDAO, type: :model do
       end
     end
   end
+  #-- -------------------------------------------------------------------------
+  #++
 
-
-  context "without parameters," do
+  context "a valid instance," do
 
     subject { CalendarDAO.new() }
 
     it_behaves_like( "(the existance of a method)", [
-      :meetings, :meeting_count, :season_id, :date_start, :date_end, :id_list, 
-      :retrieve_meetings, :get_manageable_seasons, :get_swimmer_badges
+      :meetings, :meeting_count
     ] )
 
     describe "#meetings" do
@@ -190,128 +186,10 @@ describe CalendarDAO, type: :model do
         expect( subject.meeting_count ).to be >= 0
       end
     end
-    describe "#season_id" do
-      it "is nil" do
-        expect( subject.season_id ).to be_nil
-      end
-    end
-    describe "#date_start" do
-      it "is nil" do
-        expect( subject.date_start ).to be_nil
-      end
-    end
-    describe "#date_end" do
-      it "is nil" do
-        expect( subject.date_end ).to be_nil
-      end
-    end
     
   end
   #-- -------------------------------------------------------------------------
   #++
 
-  context "with season (CSI) parameter," do
-
-    subject { CalendarDAO.new( csi_season.id ) }
-
-    describe "#meetings" do
-      it "is an array" do
-        expect( subject.meetings ).to be_a_kind_of( Array )
-      end
-      it "contains MeetingDAO instances" do
-        subject.meetings.each do |meeting_dao|
-          expect( meeting_dao ).to be_an_instance_of( CalendarDAO::MeetingDAO )
-        end
-      end
-    end
-    describe "#season_id" do
-      it "is the season specified" do
-        expect( subject.season_id ).to eq( csi_season.id )
-      end
-    end
-    describe "#date_start" do
-      it "is nil" do
-        expect( subject.date_start ).to be_nil
-      end
-    end
-    describe "#date_end" do
-      it "is nil" do
-        expect( subject.date_end ).to be_nil
-      end
-    end
-
-    describe "#retrieve_meetings" do
-      it "returns a number" do
-        expect( subject.retrieve_meetings ).to be >= 0
-      end
-      it "returns the number of season not cancelled meetings" do
-        expect( subject.retrieve_meetings ).to eq( csi_season.meetings.is_not_cancelled.count )
-      end
-      it "populates @meetings with season not cancelled meetings" do
-        expect( subject.meetings.size ).to eq( 0 )
-        found_meetings = subject.retrieve_meetings
-        expect( subject.meetings.size ).to eq( found_meetings )
-      end
-      it "populates @meetings with MeetingDAO instances" do
-        expect( subject.meetings ).to be_a_kind_of( Array )
-        subject.retrieve_meetings
-        subject.meetings.each do |meeting_dao|
-          expect( meeting_dao ).to be_an_instance_of( CalendarDAO::MeetingDAO )
-        end
-      end
-    end
-  end
-
-  context "with dates parameter," do
-
-    subject { CalendarDAO.new( nil, date_start, date_end ) }
-
-    describe "#meetings" do
-      it "is an array" do
-        expect( subject.meetings ).to be_a_kind_of( Array )
-      end
-      it "contains MeetingDAO instances" do
-        subject.meetings.each do |meeting_dao|
-          expect( meeting_dao ).to be_an_instance_of( CalendarDAO::MeetingDAO )
-        end
-      end
-    end
-    describe "#season_id" do
-      it "is nil" do
-        expect( subject.season_id ).to be_nil
-      end
-    end
-    describe "#date_start" do
-      it "is the start date specified" do
-        expect( subject.date_start ).to eq( date_start )
-      end
-    end
-    describe "#date_end" do
-      it "is the end date specified" do
-        expect( subject.date_end ).to eq( date_end )
-      end
-    end
-
-    describe "#retrieve_meetings" do
-      it "returns a number" do
-        expect( subject.retrieve_meetings ).to be >= 0
-      end
-      it "returns the number of not cancelled meetings between specified dates" do
-        expect( subject.retrieve_meetings ).to eq( Meeting.is_not_cancelled.where( "(header_date >= '#{date_start}') AND (header_date <= '#{date_end}')" ).count )
-      end
-      it "populates @meetings with not cancelled meetings" do
-        expect( subject.meetings.size ).to eq( 0 )
-        found_meetings = subject.retrieve_meetings
-        expect( subject.meetings.size ).to eq( found_meetings )
-      end
-      it "populates @meetings with MeetingDAO instances" do
-        expect( subject.meetings ).to be_a_kind_of( Array )
-        subject.retrieve_meetings
-        subject.meetings.each do |meeting_dao|
-          expect( meeting_dao ).to be_an_instance_of( CalendarDAO::MeetingDAO )
-        end
-      end
-    end
-  end
 end
 

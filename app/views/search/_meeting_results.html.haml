@@ -24,4 +24,4 @@
           %span(id='meetingSearchLoadIndicator' hidden='true')
             = image_tag( 'indicator.gif' )
     #searchMeetingsResult.collapse.in
-      = render( partial: 'goggles/meeting_list' )
+      = render( partial: 'goggles/meeting_list', locals: {season: true} )

@@ -153,97 +153,16 @@ class CalendarDAO
   #++
 
   # These can be edited later on:
-  attr_accessor :season_id, :date_start, :date_end, :id_list
+  #attr_accessor
   #-- -------------------------------------------------------------------------
   #++
 
   # Creates a new instance.
   #
-  def initialize( season_id = nil, date_start = nil, date_end = nil, id_list = nil )
+  def initialize( current_user = nil )
     @meetings      = []
     @meeting_count = 0
-    
-    # Filters
-    @season_id  = season_id
-    @date_start = date_start
-    @date_end   = date_end
-    @id_list    = id_list
-    
   end
   #-- -------------------------------------------------------------------------
   #++
-
-
-  # Find out meetings for given filter parameters
-  #
-  def retrieve_meetings( order = 'ASC', current_user = nil )
-    # Find out team affiliations manageable seasons and current swimmer's team affiliation
-    manageable_seasons = get_manageable_seasons(current_user)
-    badges = get_swimmer_badges(current_user)
-    
-    @meeting_count = 0
-    if @id_list && @id_list.size > 0
-      Meeting
-        .includes(meeting_sessions: [swimming_pool: [:city, :pool_type], meeting_events: [event_type: [:stroke_type]]], season: [:season_type])
-         .where( "id IN (?)", @id_list )
-        .order( "meetings.header_date #{order}" )
-        .each do |meeting|
-          team_affiliation_id = nil
-          team_affiliation_id = manageable_seasons[meeting.season_id] if manageable_seasons.size > 0 
-          can_manage = !team_affiliation_id.nil?
-          team_affiliation_id = badges[meeting.season_id] if team_affiliation_id.nil? && badges.size > 0 
-          @meetings << MeetingDAO.new( meeting, current_user, can_manage, team_affiliation_id )
-          @meeting_count += 1 
-        end
-    else
-      filters = '(NOT is_cancelled)'
-      filters += " AND (season_id = #{@season_id})" if @season_id
-      filters += " AND (header_date >= '#{@date_start}')" if @date_start
-      filters += " AND (header_date <= '#{@date_end}')" if @date_end
-         
-      Meeting
-        .includes(meeting_sessions: [swimming_pool: [:city, :pool_type], meeting_events: [event_type: [:stroke_type]]], season: [:season_type])
-        .where( "#{filters}" )
-        .order( "meetings.header_date #{order}" )
-        .each do |meeting|
-          team_affiliation_id = nil
-          team_affiliation_id = manageable_seasons[meeting.season_id] if manageable_seasons.size > 0 
-          can_manage = !team_affiliation_id.nil?
-          team_affiliation_id = badges[meeting.season_id] if team_affiliation_id.nil? && badges.size > 0 
-          @meetings << MeetingDAO.new( meeting, current_user, can_manage, team_affiliation_id )
-          @meeting_count += 1 
-        end
-    end    
-    @meeting_count
-  end 
-
-
-  # Retrieve manageable seasons for current user if current user is a team manger
-  # Return an hash with season_id => team_affiliation_id
-  # Empty hash if current_user not set or currentuser not a team manager
-  #
-  def get_manageable_seasons( current_user = nil )
-    manageable_seasons = {}    
-    if current_user != nil
-      managed_teams = current_user.team_managers.includes(:team_affiliation).to_a
-      managed_teams.each do |tm|
-        manageable_seasons[tm.team_affiliation.season_id] = tm.team_affiliation_id
-      end
-    end
-    manageable_seasons
-  end
-
-  # Retrieve user associated swimmer's affiliations if any
-  # Return an hash with season_id => team_affiliation_id
-  # Empty hash if current_user has not associated swimmer
-  #
-  def get_swimmer_badges( current_user = nil )
-    badges = {}
-    if current_user != nil && current_user.has_associated_swimmer?
-      @team_affiliation_id = current_user.swimmer.badges.select(:season_id, :team_affiliation_id).each do |badge|
-        badges[badge.season_id] = badge.team_affiliation_id
-      end
-    end
-    badges
-  end
 end

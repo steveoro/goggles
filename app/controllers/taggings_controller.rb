@@ -214,8 +214,8 @@ class TaggingsController < ApplicationController
     #@meetings.uniq!
     #@meetings.sort!{ |ma, mb| ma.header_date <=> mb.header_date }
     
-    @calendarDAO = CalendarDAO.new( nil, nil, nil, meeting_id_list.uniq! )
-    @calendarDAO.retrieve_meetings('DESC', current_user)
+    @calendarMeetingPicker = CalendarMeetingPicker.new( nil, nil, nil, meeting_id_list.uniq! )
+    @calendarDAO = @calendarMeetingPicker.pick_meetings( 'DESC', false, current_user )
     @meetings = @calendarDAO.meetings
     
   end

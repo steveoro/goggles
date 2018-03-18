@@ -129,8 +129,8 @@ class MeetingsController < ApplicationController
 
 #        .where( ["meetings.id not in (?) and meetings.season_id IN (?)", meeting_id_list, browsable_season_ids] )
 
-    @calendarDAO = CalendarDAO.new( nil, nil, nil, meeting_id_list.uniq! )
-    @calendarDAO.retrieve_meetings('DESC', current_user)
+    @calendarMeetingPicker = CalendarMeetingPicker.new( nil, nil, nil, meeting_id_list.uniq! )
+    @calendarDAO = @calendarMeetingPicker.pick_meetings( 'DESC', false, current_user )
     @meetings = @calendarDAO.meetings
 
   end
@@ -173,8 +173,8 @@ class MeetingsController < ApplicationController
     #    .page( params[:page] || 1 )
         
     # Calendar DAO using a costructor which selects meeting using dates
-    @calendarDAO = CalendarDAO.new( nil, @start_date, @end_date, nil )
-    @calendarDAO.retrieve_meetings('DESC', current_user)
+    @calendarMeetingPicker = CalendarMeetingPicker.new( nil, @start_date, @end_date )
+    @calendarDAO = @calendarMeetingPicker.pick_meetings( 'DESC', false, current_user )
     @meetings = Kaminari.paginate_array(@calendarDAO.meetings).page( params[:page] || 1 )
         
   end
