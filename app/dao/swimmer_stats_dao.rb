@@ -17,7 +17,7 @@ class SwimmerStatsDAO
   #
   class SwimmerStatsMeetingDAO
     # These must be initialized on creation:
-    attr_reader :meeting_type, :meeting_data 
+    attr_reader :meeting_type, :meeting_data
 
     #-- -------------------------------------------------------------------------
     #++
@@ -106,55 +106,56 @@ class SwimmerStatsDAO
   #
   def calculate_stats
     retrieve_individual_results if @mirs.size == 0
-
-    @swimmer_stats[:meetings_count]           = count_meetings
-    @swimmer_stats[:individual_results_count] = count_individual_results
-    @swimmer_stats[:team_names]               = find_linked_team_names
-
-    @swimmer_stats[:first] = SwimmerStatsMeetingDAO.new( :first, @mirs.first ) 
-    @swimmer_stats[:last]  = SwimmerStatsMeetingDAO.new( :last, @mirs.last ) 
-
-    # Data collected with a for each cicle on results
-    # Data found should be the same obtained using single methods 
-    #@swimmer_stats[:meters_swam]              = sum_meters_swam
-    #@swimmer_stats[:time_swam]                = sum_time_swam
-    #@swimmer_stats[:disqualifications]        = count_disqualifications
-    meters_swam       = 0
-    time_swam         = 0
-    disqualifications = 0
-    @mirs.each do |mir|
-      meters_swam += mir.length_in_meters
-      time_swam += mir.get_timing_instance.to_hundreds
-      disqualifications += 1 if mir.is_disqualified
-    end
-    @swimmer_stats[:meters_swam]       = meters_swam
-    @swimmer_stats[:time_swam]         = time_swam
-    @swimmer_stats[:disqualifications] = disqualifications
-
-    # FIN statistics    
-    retrieve_valid_fin_results_only if @fin_mirs.size == 0
-    if @fin_mirs.size > 0
-      @swimmer_stats[:iron_masters] = count_iron_masters
-      
-      tot_fin_points = 0
-      min_fin_points = 2000  # Set higher than FIN max possibile points
-      max_fin_points = 0
-      worst_fin_mir  = nil
-      best_fin_mir   = nil
-      @fin_mirs.each do |mir|
-        tot_fin_points += mir.standard_points
-        if min_fin_points > mir.standard_points
-          min_fin_points = mir.standard_points
-          worst_fin_mir  = mir
-        end
-        if max_fin_points < mir.standard_points
-          max_fin_points = mir.standard_points
-          best_fin_mir  = mir
-       end
+    if @mirs.size > 0
+      @swimmer_stats[:meetings_count]           = count_meetings
+      @swimmer_stats[:individual_results_count] = count_individual_results
+      @swimmer_stats[:team_names]               = find_linked_team_names
+  
+      @swimmer_stats[:first] = SwimmerStatsMeetingDAO.new( :first, @mirs.first ) 
+      @swimmer_stats[:last]  = SwimmerStatsMeetingDAO.new( :last, @mirs.last ) 
+  
+      # Data collected with a for each cicle on results
+      # Data found should be the same obtained using single methods 
+      #@swimmer_stats[:meters_swam]              = sum_meters_swam
+      #@swimmer_stats[:time_swam]                = sum_time_swam
+      #@swimmer_stats[:disqualifications]        = count_disqualifications
+      meters_swam       = 0
+      time_swam         = 0
+      disqualifications = 0
+      @mirs.each do |mir|
+        meters_swam += mir.length_in_meters
+        time_swam += mir.get_timing_instance.to_hundreds
+        disqualifications += 1 if mir.is_disqualified
       end
-      @swimmer_stats[:tot_fin_points] = tot_fin_points
-      @swimmer_stats[:worst_fin]      = SwimmerStatsMeetingDAO.new( :worst_fin, worst_fin_mir ) 
-      @swimmer_stats[:best_fin]       = SwimmerStatsMeetingDAO.new( :best_fin, best_fin_mir ) 
+      @swimmer_stats[:meters_swam]       = meters_swam
+      @swimmer_stats[:time_swam]         = time_swam
+      @swimmer_stats[:disqualifications] = disqualifications
+  
+      # FIN statistics    
+      retrieve_valid_fin_results_only if @fin_mirs.size == 0
+      if @fin_mirs.size > 0
+        @swimmer_stats[:iron_masters] = count_iron_masters
+        
+        tot_fin_points = 0
+        min_fin_points = 2000  # Set higher than FIN max possibile points
+        max_fin_points = 0
+        worst_fin_mir  = nil
+        best_fin_mir   = nil
+        @fin_mirs.each do |mir|
+          tot_fin_points += mir.standard_points
+          if min_fin_points > mir.standard_points
+            min_fin_points = mir.standard_points
+            worst_fin_mir  = mir
+          end
+          if max_fin_points < mir.standard_points
+            max_fin_points = mir.standard_points
+            best_fin_mir  = mir
+         end
+        end
+        @swimmer_stats[:tot_fin_points] = tot_fin_points
+        @swimmer_stats[:worst_fin]      = SwimmerStatsMeetingDAO.new( :worst_fin, worst_fin_mir ) 
+        @swimmer_stats[:best_fin]       = SwimmerStatsMeetingDAO.new( :best_fin, best_fin_mir ) 
+      end
     end
   end
   #-- -------------------------------------------------------------------------

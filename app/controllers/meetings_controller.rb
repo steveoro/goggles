@@ -150,8 +150,6 @@ class MeetingsController < ApplicationController
     params.permit!()
     @start_date = "#{Date.today.prev_day(8)}"
     @end_date   = "#{Date.today.next_month(10)}"
-    #@start_date = "#{Date.today.prev_day(7)}"
-    #@end_date   = "#{Date.today.next_day(7)}"
     @title = if params[:text].to_s.size > 0
       I18n.t('meeting.current_title') + " ('#{ params[:text] }', #{ Format.a_date(@start_date) } ... #{ Format.a_date(@end_date) })"
     else
@@ -160,18 +158,6 @@ class MeetingsController < ApplicationController
     @preselected_swimmer_id = params[:swimmer_id].to_i if params[:swimmer_id]
     @preselected_team_id    = params[:team_id].to_i if params[:team_id]
 
-    # TODO Filter by season type (1,2,3 & 7,8)
-
-    #@meetings = Meeting.includes( :season, :season_type, :meeting_sessions, :swimming_pools )
-    #    .where( "(NOT is_cancelled) AND (header_date >= '#{@start_date}') AND (header_date <= '#{@end_date}')" )
-    #    .order( "meetings.header_date ASC" )
-    #    .page( params[:page] || 1 )
-
-    #@meetings = Meeting.includes(meeting_sessions: [swimming_pool: [:city], meeting_events: [event_type: [:stroke_type]]], season: [:season_type])
-    #    .where( "(NOT is_cancelled) AND (header_date >= '#{@start_date}') AND (header_date <= '#{@end_date}')" )
-    #    .order( "meetings.header_date ASC" )
-    #    .page( params[:page] || 1 )
-        
     # Calendar DAO using a costructor which selects meeting using dates
     @calendarMeetingPicker = CalendarMeetingPicker.new( @start_date, @end_date )
     @calendarDAO = @calendarMeetingPicker.pick_meetings( 'ASC', false, current_user )
