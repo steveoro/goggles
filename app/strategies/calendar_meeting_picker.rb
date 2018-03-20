@@ -92,7 +92,7 @@ class CalendarMeetingPicker
           can_manage = !team_affiliation_id.nil?
           team_affiliation_id = @swimmer_badges[meeting.season_id] if team_affiliation_id.nil? && @swimmer_badges && @swimmer_badges.size > 0 
 
-          @calendarDAO.meetings << CalendarDAO::MeetingDAO.new( meeting, current_user, can_manage, team_affiliation_id )
+          @calendarDAO.add_meeting( meeting, current_user, can_manage, team_affiliation_id )
           meetings_count += 1 
         end
     end
@@ -123,7 +123,7 @@ class CalendarMeetingPicker
         .where( "#{filters}" )
         .order( "meetings.header_date #{order}" )
         .each do |meeting|
-          @calendarDAO.meetings << CalendarDAO::MeetingDAO.new( meeting, current_user, can_manage, team_affiliation_id )
+          @calendarDAO.add_meeting( meeting, current_user, can_manage, team_affiliation_id )
           meetings_count += 1 
         end
     end    
@@ -155,7 +155,7 @@ class CalendarMeetingPicker
           can_manage = !team_affiliation_id.nil?
           team_affiliation_id = @swimmer_badges[meeting.season_id] if team_affiliation_id.nil? && @swimmer_badges && @swimmer_badges.size > 0 
 
-          @calendarDAO.meetings << CalendarDAO::MeetingDAO.new( meeting, current_user, can_manage, team_affiliation_id )
+          @calendarDAO.add_meeting( meeting, current_user, can_manage, team_affiliation_id )
           meetings_count += 1 
         end
     end
@@ -187,7 +187,7 @@ class CalendarMeetingPicker
           can_manage = !team_affiliation_id.nil?
           team_affiliation_id = @swimmer_badges[meeting.season_id] if team_affiliation_id.nil? && @swimmer_badges && @swimmer_badges.size > 0 
 
-          @calendarDAO.meetings << CalendarDAO::MeetingDAO.new( meeting, current_user, can_manage, team_affiliation_id )
+          @calendarDAO.add_meeting( meeting, current_user, can_manage, team_affiliation_id )
           meetings_count += 1 
         end
     end
@@ -220,7 +220,7 @@ class CalendarMeetingPicker
           can_manage = !team_affiliation_id.nil?
           team_affiliation_id = @badges[meeting.season_id] if team_affiliation_id.nil? && @swimmer_badges && @swimmer_badges.size > 0 
           
-          @calendarDAO.meetings  << CalendarDAO::MeetingDAO.new( meeting, current_user, can_manage, team_affiliation_id )
+          @calendarDAO.add_meeting( meeting, current_user, can_manage, team_affiliation_id )
           meetings_count += 1 
         end
     end    

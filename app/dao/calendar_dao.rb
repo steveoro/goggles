@@ -1,5 +1,7 @@
 # encoding: utf-8
 
+require 'common/validation_error_tools'
+
 =begin
 
 = CalendarDAO
@@ -26,6 +28,10 @@ class CalendarDAO
     # Creates a new instance.
     #
     def initialize( meeting_session, date_span = 1, pool_span = 1 )
+      unless meeting_session && meeting_session.instance_of?( MeetingSession )
+        raise ArgumentError.new("CalendarDAO sessions needs a valid meeting session")
+      end
+      
       @id             = meeting_session.id
       @session_order  = meeting_session.session_order
       @scheduled_date = meeting_session.get_scheduled_date
@@ -63,7 +69,7 @@ class CalendarDAO
     # These must be initialized on creation:
     attr_reader :id, :description, :header_date, :is_confirmed, :are_results_acquired, :has_start_list, :has_invitation, :season_id,
                 :linked_name, :logo_for_season_type, :reservation_button,
-                :can_manage, :team_affiliation_id, :is_user_starred, :is_team_starred,
+                :can_manage, :team_affiliation_id, :is_user_starred, :is_team_starred, :is_current,
                 :meeting_sessions
     #-- -------------------------------------------------------------------------
     #++
@@ -71,6 +77,10 @@ class CalendarDAO
     # Creates a new instance.
     #
     def initialize( meeting, current_user = nil, can_manage = false, team_affiliation_id = nil )
+      unless meeting && meeting.instance_of?( Meeting )
+        raise ArgumentError.new("CalendarDAO meetings needs a valid meeting")
+      end
+      
       @id                   = meeting.id
       @description          = meeting.get_full_name
       @header_date          = meeting.header_date
@@ -93,7 +103,9 @@ class CalendarDAO
       @is_user_starred = current_user != nil ? meeting.tags_by_user_list.include?( "u#{ current_user.id }" ) : false
       @is_team_starred = @team_affiliation_id != nil ? meeting.tags_by_team_list.include?( "ta#{ @team_affiliation_id }" ) : false
 
-      @meeting_sessions     = []
+      @is_current = (@header_date >= Date.today() - 6 || @header_date <= Date.today() + 6)   
+
+      @meeting_sessions = []
       
       previous_date = nil
       previous_pool = nil
@@ -148,7 +160,7 @@ class CalendarDAO
 
 
   # These must be initialized on creation:
-  attr_reader :meeting_count
+  attr_reader :meeting_count, :months, :first_current
   #-- -------------------------------------------------------------------------
   #++
 
@@ -163,6 +175,8 @@ class CalendarDAO
     @meetings      = []
     @meeting_count = 0
     @paginated     = false
+    @months        = Hash.new()
+    @first_current = 0
   end
   
   def meetings
@@ -182,6 +196,19 @@ class CalendarDAO
   
   def paginated?
     @paginated
+  end
+
+  # Adds a meetingDAO to the meeting colelction of calendar DAO
+  def add_meeting( meeting, current_user = nil, can_manage = false, team_affiliation_id = nil )
+    if meeting && meeting.instance_of?( Meeting )
+      meetingDAO = MeetingDAO.new( meeting, current_user, can_manage, team_affiliation_id )
+      @meetings << meetingDAO 
+      @meeting_count += 1
+      month = meetingDAO.header_date.month
+      @months[month] = meetingDAO.id if !@months.include?( month )
+      @first_current = @meeting_count if meetingDAO.is_current && @first_current == 0   
+    end
+    @meeting_count
   end
   #-- -------------------------------------------------------------------------
   #++

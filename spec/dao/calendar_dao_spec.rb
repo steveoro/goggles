@@ -77,8 +77,12 @@ describe CalendarDAO, type: :model do
     it_behaves_like( "(the existance of a method)", [
       :id, :description, :header_date, :is_confirmed, :are_results_acquired, :has_start_list, :has_invitation, :season_id,
       :linked_name, :logo_for_season_type, :reservation_button,
-      :can_manage, :team_affiliation_id, :is_user_starred, :is_team_starred,
+      :can_manage, :team_affiliation_id,
       :meeting_sessions
+    ] )
+
+    it_behaves_like( "(the existance of a method returning a boolean value)", [
+      :is_user_starred, :is_team_starred, :is_current,
     ] )
 
     describe "#id" do
@@ -168,13 +172,25 @@ describe CalendarDAO, type: :model do
     subject { CalendarDAO.new() }
 
     it_behaves_like( "(the existance of a method)", [
-      :meeting_count, 
-      :meetings, :get_meetings, :get_paginated_meetings, :paginated?
+      :meeting_count, :months, :first_current,
+      :meetings, :get_meetings, :get_paginated_meetings, :paginated?, :add_meeting
     ] )
 
     describe "#meeting_count" do
       it "is a number" do
         expect( subject.meeting_count ).to be >= 0
+      end
+    end
+
+    describe "#months" do
+      it "is an hash" do
+        expect( subject.months ).to be_a_kind_of( Hash )
+      end
+    end
+
+    describe "#first_current" do
+      it "is a number" do
+        expect( subject.first_current ).to be >= 0
       end
     end
 
@@ -227,6 +243,33 @@ describe CalendarDAO, type: :model do
         subject.get_paginated_meetings
         expect( subject.paginated? ).to eq( true )
       end
+    end
+    
+    describe "#add_meeting" do
+      it "returns a number" do
+        expect( subject.add_meeting( meeting ) ).to be >= 0
+      end
+      it "increases meetings count" do
+        count = subject.meeting_count
+        subject.add_meeting( meeting )
+        expect( subject.meeting_count ).to be > count
+      end
+      it "increases months count" do
+        size = subject.months.size
+        subject.add_meeting( meeting )
+        expect( subject.months.size ).to be > 0
+        expect( subject.months.size ).to be >= size
+      end
+      it "create meeting header date month key in months hash" do
+        subject.add_meeting( meeting )
+        expect( subject.months[meeting.header_date.month] ).to be > 0
+      end
+      it "doesn't increases meetings count if wrong parameters" do
+        count = subject.meeting_count
+        subject.add_meeting("wrong")
+        expect( subject.meeting_count ).to be == count
+      end
+      
     end
   end
   #-- -------------------------------------------------------------------------
