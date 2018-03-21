@@ -7,7 +7,11 @@ require 'common/format'
 describe CalendarDAO, type: :model do
   #let(:meeting)         { create(:meeting_with_sessions) }
   #let(:meeting_session) { meeting.meeting_sessions.first }
-  let(:meeting)         { Meeting.find(13106) }
+  let(:fin_meeting)     { Meeting.find(16201) }
+  let(:csi_meeting)     { Meeting.find(13106) }
+  let(:csi_meeting_2)   { Meeting.find(15101) }
+  let(:csi_meeting_3)   { Meeting.find(16102) }
+  let(:meeting)         { Meeting.all.sample }
   let(:meeting_session) { meeting.meeting_sessions.first }
 
   context "MeetingSessionDAO subclass," do
@@ -76,7 +80,7 @@ describe CalendarDAO, type: :model do
 
     it_behaves_like( "(the existance of a method)", [
       :id, :description, :header_date, :is_confirmed, :are_results_acquired, :has_start_list, :has_invitation, :season_id,
-      :linked_name, :logo_for_season_type, :reservation_button,
+      :linked_name, :season_type_code, :reservation_button, :month,
       :can_manage, :team_affiliation_id,
       :meeting_sessions
     ] )
@@ -122,6 +126,45 @@ describe CalendarDAO, type: :model do
       it "contains MeetingSessionDAO instances" do
         subject.meeting_sessions.each do |meeting_session_dao|
           expect( meeting_session_dao ).to be_an_instance_of( CalendarDAO::MeetingSessionDAO )
+        end
+      end
+    end
+
+    describe "#season_type_code" do
+      it "returns a string" do
+        expect( subject.season_type_code ).to be_an_instance_of( String )
+      end
+      it "contains CSI for MASCSI meetings" do
+        csi_mDAO = CalendarDAO::MeetingDAO.new( csi_meeting )
+        expect( csi_mDAO.season_type_code ).to include( 'CSI' )
+      end
+      it "contains FIN for MASFIN meetings" do
+        fin_mDAO = CalendarDAO::MeetingDAO.new( fin_meeting )
+        expect( fin_mDAO.season_type_code ).to include( 'FIN' )
+      end
+    end
+
+    describe "#month" do
+      it "returns a string" do
+        expect( subject.month ).to be_an_instance_of( String )
+      end
+      it "is the month of the header date of meeting specified for the construction" do
+        expect( subject.month ).to eq( subject.month_name( meeting.header_date.month ) )
+      end
+    end
+
+    describe "#month_name" do
+      it "retturns a string" do
+        expect( subject.month_name( (rand * 12).to_i ) ).to be_an_instance_of( String )
+      end
+    end
+
+    describe "#is_current" do
+      it "returns true if meeting header date is a week near today" do
+        if subject.header_date >= (Date.today() - 6) && subject.header_date <= (Date.today() + 6)
+          expect( subject.is_current ).to eq( true )
+        else
+          expect( subject.is_current ).to eq( false )
         end
       end
     end
@@ -172,8 +215,12 @@ describe CalendarDAO, type: :model do
     subject { CalendarDAO.new() }
 
     it_behaves_like( "(the existance of a method)", [
-      :meeting_count, :months, :first_current,
-      :meetings, :get_meetings, :get_paginated_meetings, :paginated?, :add_meeting
+      :meeting_count, :months, :first_current, :column_to_be_shown,
+      :meetings, :get_meetings, :get_paginated_meetings, :add_meeting
+    ] )
+
+    it_behaves_like( "(the existance of a method returning a boolean value)", [
+      :paginated?, :show_months_index?, :show_season?
     ] )
 
     describe "#meeting_count" do
@@ -183,8 +230,8 @@ describe CalendarDAO, type: :model do
     end
 
     describe "#months" do
-      it "is an hash" do
-        expect( subject.months ).to be_a_kind_of( Hash )
+      it "is an array" do
+        expect( subject.months ).to be_a_kind_of( Array )
       end
     end
 
@@ -197,6 +244,16 @@ describe CalendarDAO, type: :model do
     describe "#paginated?" do
       it "is a boolean" do
         expect( subject.paginated? ).to eq( false ).or( eq( true ) )
+      end
+    end
+
+    describe "#column_to_be_shown" do
+      it "is a number" do
+        expect( subject.column_to_be_shown ).to be >= 0
+      end
+      it "is a number between 6 and 7" do
+        expect( subject.column_to_be_shown ).to be >= 6
+        expect( subject.column_to_be_shown ).to be <= 7
       end
     end
 
@@ -260,15 +317,39 @@ describe CalendarDAO, type: :model do
         expect( subject.months.size ).to be > 0
         expect( subject.months.size ).to be >= size
       end
-      it "create meeting header date month key in months hash" do
+      it "increases seasons count" do
+        count = subject.seasons.size
         subject.add_meeting( meeting )
-        expect( subject.months[meeting.header_date.month] ).to be > 0
+        expect( subject.seasons.size ).to be > count
+      end
+      it "creates only one season for meetings of same season" do
+        expect( subject.seasons.size ).to eq( 0 )
+        subject.add_meeting( csi_meeting )
+        expect( subject.seasons.size ).to eq( 1 )
+        subject.add_meeting( csi_meeting_2 )
+        expect( subject.seasons.size ).to eq( 1 )
+        subject.add_meeting( csi_meeting_3 )
+        expect( subject.seasons.size ).to eq( 1 )
+      end
+      it "creates two seasons for meetings of different seasons" do
+        expect( subject.seasons.size ).to eq( 0 )
+        subject.add_meeting( csi_meeting )
+        expect( subject.seasons.size ).to eq( 1 )
+        subject.add_meeting( fin_meeting )
+        expect( subject.seasons.size ).to eq( 2 )
+        subject.add_meeting( csi_meeting_2 )
+        expect( subject.seasons.size ).to eq( 2 )
+      end
+      it "create meeting header date month in months array" do
+        subject.add_meeting( meeting )
+        expect( subject.months.size ).to be > 0
       end
       it "doesn't increases meetings count if wrong parameters" do
         count = subject.meeting_count
         subject.add_meeting("wrong")
         expect( subject.meeting_count ).to be == count
       end
+      
       
     end
   end

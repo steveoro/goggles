@@ -12,8 +12,8 @@ require 'common/validation_error_tools'
  DAO class containing the structure for calendar rendering.
 
 =end
-class CalendarDAO
- 
+class CalendarDAO < Draper::Decorator
+     
   class MeetingSessionDAO
     # These must be initialized on creation:
     attr_reader :id, :session_order, :scheduled_date, :warm_up_time, :begin_time, 
@@ -68,7 +68,7 @@ class CalendarDAO
   class MeetingDAO
     # These must be initialized on creation:
     attr_reader :id, :description, :header_date, :is_confirmed, :are_results_acquired, :has_start_list, :has_invitation, :season_id,
-                :linked_name, :logo_for_season_type, :reservation_button,
+                :linked_name, :season_type_code, :reservation_button, :month,
                 :can_manage, :team_affiliation_id, :is_user_starred, :is_team_starred, :is_current,
                 :meeting_sessions
     #-- -------------------------------------------------------------------------
@@ -94,7 +94,8 @@ class CalendarDAO
       
       decorated_meeting     = meeting.decorate
       @linked_name          = decorated_meeting.get_linked_name( :get_full_name )
-      @logo_for_season_type = meeting.decorate.get_logo_for_season_type
+      #@logo_for_season_type = meeting.decorate.get_logo_for_season_type
+      @season_type_code     = meeting.season.season_type.code
       #@reservation_button   = current_user != nil ? decorated_meeting.manage_reservation_button_tm( current_user, can_manage ) : ''
       @reservation_button   = current_user != nil ? decorated_meeting.manage_reservation_button( current_user ) : ''
 
@@ -103,7 +104,8 @@ class CalendarDAO
       @is_user_starred = current_user != nil ? meeting.tags_by_user_list.include?( "u#{ current_user.id }" ) : false
       @is_team_starred = @team_affiliation_id != nil ? meeting.tags_by_team_list.include?( "ta#{ @team_affiliation_id }" ) : false
 
-      @is_current = (@header_date >= Date.today() - 6 || @header_date <= Date.today() + 6)   
+      @is_current = (@header_date >= Date.today() - 6 && @header_date <= Date.today() + 6)
+      @month = month_name( @header_date.month )   
 
       @meeting_sessions = []
       
@@ -156,11 +158,17 @@ class CalendarDAO
         end
       end
     end
+    
+    # Retrieve the month name
+    def month_name( month )
+      month_names   = {1=>'Gennaio', 2=>'Febbraio', 3=>'Marzo', 4=>'Aprile', 5=>'Maggio', 6=>'Giugno', 10=>'Ottobre', 11=>'Novembre', 12=>'Dicembre', 0=>'Da definire'}
+      month_names[month]
+    end
   end
 
 
   # These must be initialized on creation:
-  attr_reader :meeting_count, :months, :first_current
+  attr_reader :meeting_count, :months, :first_current, :seasons
   #-- -------------------------------------------------------------------------
   #++
 
@@ -175,8 +183,9 @@ class CalendarDAO
     @meetings      = []
     @meeting_count = 0
     @paginated     = false
-    @months        = Hash.new()
+    @months        = []
     @first_current = 0
+    @seasons       = Hash.new
   end
   
   def meetings
@@ -198,17 +207,42 @@ class CalendarDAO
     @paginated
   end
 
+  def show_months_index?
+    @months.size > 1 && @meeting_count > 6
+  end
+
+  def show_season?
+    @seasons.size > 1
+  end
+
+  def column_to_be_shown
+    show_season? ? 7 : 6
+  end
+
   # Adds a meetingDAO to the meeting colelction of calendar DAO
   def add_meeting( meeting, current_user = nil, can_manage = false, team_affiliation_id = nil )
     if meeting && meeting.instance_of?( Meeting )
       meetingDAO = MeetingDAO.new( meeting, current_user, can_manage, team_affiliation_id )
       @meetings << meetingDAO 
       @meeting_count += 1
-      month = meetingDAO.header_date.month
-      @months[month] = meetingDAO.id if !@months.include?( month )
-      @first_current = @meeting_count if meetingDAO.is_current && @first_current == 0   
+      @months << meetingDAO.month if !@months.include?( meetingDAO.month )
+      @first_current = @meeting_count if meetingDAO.is_current && @first_current == 0
+      @seasons[meetingDAO.season_type_code] = get_logo_for_season_type( meetingDAO.season_type_code ) if !@seasons.include?( meetingDAO.season_type_code )   
     end
     @meeting_count
+  end
+
+  # Returns an image_tag for this meeting, according to the associated season type.
+  # Returns an empty string when not defined.
+  #
+  def get_logo_for_season_type( season_type_code )
+    if season_type_code =~ /CSI/i
+      h.image_tag( 'logo_csi.png', size: '20x16' )
+    elsif season_type_code =~ /FIN/i
+      h.image_tag( 'logo_fin.png', size: '40x16' )
+    else
+      season_type_code
+    end
   end
   #-- -------------------------------------------------------------------------
   #++

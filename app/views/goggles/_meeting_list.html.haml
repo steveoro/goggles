@@ -2,11 +2,22 @@
   .row.col-xs-12
     = paginate( @meetings, theme: 'twitter-bootstrap-3' )
 
+- if @calendarDAO.show_months_index?
+  .row
+    %ul.col-xs-offset-10.col-xs-2.col-sm-offset-11.col-sm-1.col-md-offset-11.col-md-1.nav.nav-pills.nav-stacked.navbar-fixed-bottom.goggles-divlist-odd.navpill_side
+      %li
+        = link_to("#calendar", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+          = image_tag('bullet_arrow_up.png')
+      - @calendarDAO.months.each do |month|
+        %li
+          = link_to("##{month}", {'data-turbolinks'=>'false'}) do
+            = month
+
 .row.col-xs-12
   %table.table.table-bordered.table-hover.table-condensed#calendar
     %tbody
       %tr.info.text-center
-        - if season
+        - if @calendarDAO.show_season?
           %td
             &nbsp;
         %td
@@ -21,13 +32,21 @@
           %b= t('calendars.events')
         %td
           %b= t('calendars.pool')
+      - prev_month = 0
       - @meetings.each do |meeting|
+
+        - if @calendarDAO.show_months_index? && prev_month != meeting.month
+          - prev_month = meeting.month
+          %tr.text-center{'id'=>"#{prev_month}", 'class'=>'success'}
+            %td.goggles-centeralign{'colspan'=>"#{@calendarDAO.column_to_be_shown}"}
+              %b= meeting.month
+            
         - meeting.meeting_sessions.each_with_index do |meeting_session, index|
           %tr
             - if index == 0
-              - if season
+              - if @calendarDAO.show_season?
                 %td.goggles-centeralign{ rowspan: meeting.meeting_sessions.count }
-                  = meeting.logo_for_season_type
+                  = @calendarDAO.seasons[meeting.season_type_code]
               %td{ rowspan: meeting.meeting_sessions.count }
                 = render( partial: 'goggles/taggable_meeting_name', locals: {meeting: meeting} )
             - if meeting_session.date_span > 0
