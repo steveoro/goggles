@@ -149,13 +149,16 @@ describe CalendarDAO, type: :model do
         expect( subject.month ).to be_an_instance_of( String )
       end
       it "is the month of the header date of meeting specified for the construction" do
-        expect( subject.month ).to eq( subject.month_name( meeting.header_date.month ) )
+        expect( subject.month ).to eq( subject.month_name( meeting.header_date ) )
       end
     end
 
     describe "#month_name" do
       it "retturns a string" do
-        expect( subject.month_name( (rand * 12).to_i ) ).to be_an_instance_of( String )
+        expect( subject.month_name( meeting.header_date ) ).to be_an_instance_of( String )
+      end
+      it "retturns 'Da definire' if not date present" do
+        expect( subject.month_name( nil ) ).to include('Da definire')
       end
     end
 
@@ -220,7 +223,7 @@ describe CalendarDAO, type: :model do
     ] )
 
     it_behaves_like( "(the existance of a method returning a boolean value)", [
-      :paginated?, :show_months_index?, :show_season?
+      :paginated?, :show_months_index?, :show_months_header?, :show_season?
     ] )
 
     describe "#meeting_count" do
@@ -296,9 +299,13 @@ describe CalendarDAO, type: :model do
           expect( meeting_dao ).to be_an_instance_of( CalendarDAO::MeetingDAO )
         end
       end
-      it "is pagintaed" do
+      it "is paginated" do
         subject.get_paginated_meetings
         expect( subject.paginated? ).to eq( true )
+      end
+      it "doesn't show month index" do
+        subject.get_paginated_meetings
+        expect( subject.show_months_index? ).to eq( false )
       end
     end
     

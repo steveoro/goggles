@@ -193,7 +193,10 @@ class SearchController < ApplicationController
     @pools    = (entity.nil? || entity == 'p') ? get_possible_pools( params['q'], @limitless ) : []
     logger.debug("Found #{ @pools.count } pools")
     # Get all meetings somehow related to the query text:
-    @meetings = (entity.nil? || entity == 'm') ? get_possible_meetings( params['q'], @limitless ) : []
+    meetings_ids = (entity.nil? || entity == 'm') ? get_possible_meetings( params['q'], @limitless ) : []
+    @calendarMeetingPicker = CalendarMeetingPicker.new( nil, nil, nil, meetings_ids )
+    @calendarDAO = @calendarMeetingPicker.pick_meetings( 'DESC', false, current_user )
+    @meetings = @calendarDAO.get_meetings
     logger.debug("Found #{ @meetings.count } meetings")
   end
   #-- -------------------------------------------------------------------------
@@ -274,13 +277,14 @@ class SearchController < ApplicationController
   # An array of Meeting instances
   #
   def get_possible_meetings( query, no_limit = false )
-    result = []
-    meetings = MeetingFinder.new( query, no_limit ? nil : RESULTS_LIMIT ).search()
-    meetings.distinct!
-    result += meetings.map{|m| m.decorate }
+    #result = []
+    meetings_ids = MeetingFinder.new( query, no_limit ? nil : RESULTS_LIMIT ).search_ids()
+    #meetings_ids.uniq!
+    meetings_ids
+    #result += meetings.map{|m| m.decorate }
     # Re-sort the modified array:
-    result.sort!{ |ma, mb| mb.header_date <=> ma.header_date }
-    result
+    #result.sort!{ |ma, mb| mb.header_date <=> ma.header_date }
+    #result
   end
   #-- -------------------------------------------------------------------------
   #++

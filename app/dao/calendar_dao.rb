@@ -105,7 +105,7 @@ class CalendarDAO < Draper::Decorator
       @is_team_starred = @team_affiliation_id != nil ? meeting.tags_by_team_list.include?( "ta#{ @team_affiliation_id }" ) : false
 
       @is_current = (@header_date >= Date.today() - 6 && @header_date <= Date.today() + 6)
-      @month = month_name( @header_date.month )   
+      @month = month_name( @header_date )   
 
       @meeting_sessions = []
       
@@ -160,9 +160,9 @@ class CalendarDAO < Draper::Decorator
     end
     
     # Retrieve the month name
-    def month_name( month )
-      month_names   = {1=>'Gennaio', 2=>'Febbraio', 3=>'Marzo', 4=>'Aprile', 5=>'Maggio', 6=>'Giugno', 10=>'Ottobre', 11=>'Novembre', 12=>'Dicembre', 0=>'Da definire'}
-      month_names[month]
+    def month_name( header_date )
+      month_names = {1=>'Gennaio', 2=>'Febbraio', 3=>'Marzo', 4=>'Aprile', 5=>'Maggio', 6=>'Giugno', 7=>'Luglio', 8=>'Agosto', 9=>'Settembre', 10=>'Ottobre', 11=>'Novembre', 12=>'Dicembre'} 
+      header_date && month_names[header_date.month] ? month_names[header_date.month] + ' ' + header_date.year.to_s : 'Da definire' 
     end
   end
 
@@ -201,14 +201,23 @@ class CalendarDAO < Draper::Decorator
   def get_paginated_meetings( page = 1 )
     @paginated = true
     Kaminari.paginate_array(@meetings).page( page )
+    
+    # TODO
+    # @months should be calculated within the page 
   end
   
   def paginated?
     @paginated
   end
 
+  def show_months_header?
+    months = @months.size
+    months > 1 && @meeting_count > 6 && @meeting_count > months 
+  end
+
   def show_months_index?
-    @months.size > 1 && @meeting_count > 6
+    months = @months.size
+    !@paginated && months > 1 && months < 20 && @meeting_count > 6 && @meeting_count > months 
   end
 
   def show_season?

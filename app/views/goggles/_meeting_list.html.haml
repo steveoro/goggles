@@ -35,14 +35,14 @@
       - prev_month = 0
       - @meetings.each do |meeting|
 
-        - if @calendarDAO.show_months_index? && prev_month != meeting.month
+        - if @calendarDAO.show_months_header? && prev_month != meeting.month
           - prev_month = meeting.month
           %tr.text-center{'id'=>"#{prev_month}", 'class'=>'success'}
             %td.goggles-centeralign{'colspan'=>"#{@calendarDAO.column_to_be_shown}"}
               %b= meeting.month
             
         - meeting.meeting_sessions.each_with_index do |meeting_session, index|
-          %tr
+          %tr{'id'=>"#{meeting.id}-#{index}"}
             - if index == 0
               - if @calendarDAO.show_season?
                 %td.goggles-centeralign{ rowspan: meeting.meeting_sessions.count }
