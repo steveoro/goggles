@@ -76,7 +76,7 @@ class CalendarDAO < Draper::Decorator
     
     # Creates a new instance.
     #
-    def initialize( meeting, current_user = nil, can_manage = false, team_affiliation_id = nil )
+    def initialize( meeting, current_user = nil, can_manage = false, team_affiliation_id = nil, is_user_tagged = false, is_team_tagged = false )
       unless meeting && meeting.instance_of?( Meeting )
         raise ArgumentError.new("CalendarDAO meetings needs a valid meeting")
       end
@@ -89,20 +89,19 @@ class CalendarDAO < Draper::Decorator
       @has_start_list       = meeting.has_start_list
       @season_id            = meeting.season_id
       @can_manage           = can_manage 
-
+      @team_affiliation_id  = team_affiliation_id
+      @season_type_code     = meeting.season.season_type.code
       @has_invitation       = (meeting.invitation != nil)
       
       decorated_meeting     = meeting.decorate
       @linked_name          = decorated_meeting.get_linked_name( :get_full_name )
-      #@logo_for_season_type = meeting.decorate.get_logo_for_season_type
-      @season_type_code     = meeting.season.season_type.code
       #@reservation_button   = current_user != nil ? decorated_meeting.manage_reservation_button_tm( current_user, can_manage ) : ''
       @reservation_button   = current_user != nil ? decorated_meeting.manage_reservation_button( current_user ) : ''
 
-      @team_affiliation_id   = team_affiliation_id
-
-      @is_user_starred = current_user != nil ? meeting.tags_by_user_list.include?( "u#{ current_user.id }" ) : false
-      @is_team_starred = @team_affiliation_id != nil ? meeting.tags_by_team_list.include?( "ta#{ @team_affiliation_id }" ) : false
+      #@is_user_starred = current_user != nil ? meeting.tags_by_user_list.include?( "u#{ current_user.id }" ) : false
+      #@is_team_starred = @team_affiliation_id != nil ? meeting.tags_by_team_list.include?( "ta#{ @team_affiliation_id }" ) : false
+      @is_user_starred = is_user_tagged
+      @is_team_starred = is_team_tagged
 
       @is_current = (@header_date >= Date.today() - 6 && @header_date <= Date.today() + 6)
       @month = month_name( @header_date )   
@@ -229,9 +228,9 @@ class CalendarDAO < Draper::Decorator
   end
 
   # Adds a meetingDAO to the meeting colelction of calendar DAO
-  def add_meeting( meeting, current_user = nil, can_manage = false, team_affiliation_id = nil )
+  def add_meeting( meeting, current_user = nil, can_manage = false, team_affiliation_id = nil, is_user_tagged = false, is_team_tagged = false  )
     if meeting && meeting.instance_of?( Meeting )
-      meetingDAO = MeetingDAO.new( meeting, current_user, can_manage, team_affiliation_id )
+      meetingDAO = MeetingDAO.new( meeting, current_user, can_manage, team_affiliation_id, is_user_tagged, is_team_tagged )
       @meetings << meetingDAO 
       @meeting_count += 1
       @months << meetingDAO.month if !@months.include?( meetingDAO.month )

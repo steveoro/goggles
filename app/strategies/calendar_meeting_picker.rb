@@ -31,16 +31,19 @@ class CalendarMeetingPicker
     @parameters     = Hash.new()
     @meetings_count = 0
 
-    @calendarDAO        = CalendarDAO.new()
-    @manageable_seasons = Hash.new()
-    @swimmer_badges     = Hash.new()
+    @calendarDAO = CalendarDAO.new()
+    
+    @manageable_seasons   = Hash.new()
+    @swimmer_badges       = Hash.new()
+    @user_tagged_meetings = []
+    @team_tagged_meetings = []
 
     @parameters[:date_start] = date_start if date_start
-    @parameters[:date_end] = date_end if date_end
-    @parameters[:season_id] = season.id if season && season.instance_of?( Season )
-    @parameters[:team_id] = team.id if team && team.instance_of?( Team )
+    @parameters[:date_end]   = date_end if date_end
+    @parameters[:season_id]  = season.id if season && season.instance_of?( Season )
+    @parameters[:team_id]    = team.id if team && team.instance_of?( Team )
     @parameters[:swimmer_id] = swimmer.id if swimmer && swimmer.instance_of?( Swimmer )
-    @parameters[:id_list] = id_list if id_list
+    @parameters[:id_list]    = id_list if id_list
   end
   #-- --------------------------------------------------------------------------
   #++
@@ -49,8 +52,10 @@ class CalendarMeetingPicker
   #
   def pick_meetings( order = 'ASC', show_cancelled = true, current_user = nil )
     # Find out team affiliations manageable seasons and current swimmer's team affiliation
-    @manageable_seasons = get_manageable_seasons(current_user)
-    @swimmer_badges = get_swimmer_badges(current_user)
+    @manageable_seasons   = get_manageable_seasons(current_user)
+    @swimmer_badges       = get_swimmer_badges(current_user)
+    @user_tagged_meetings = get_user_tagged_meetings(current_user)  
+    @team_tagged_meetings = get_team_tagged_meetings(@swimmer_badges)  
     
     if @parameters[:id_list]
       @meetings_count = pick_meetings_by_ids( order, show_cancelled, current_user )
@@ -90,9 +95,11 @@ class CalendarMeetingPicker
           team_affiliation_id = nil
           team_affiliation_id = @manageable_seasons[meeting.season_id] if @manageable_seasons && @manageable_seasons.size > 0 
           can_manage = !team_affiliation_id.nil?
-          team_affiliation_id = @swimmer_badges[meeting.season_id] if team_affiliation_id.nil? && @swimmer_badges && @swimmer_badges.size > 0 
+          team_affiliation_id = @swimmer_badges[meeting.season_id] if team_affiliation_id.nil? && @swimmer_badges && @swimmer_badges.size > 0
+          is_user_tagged = @user_tagged_meetings.include?(meeting.id)
+          is_team_tagged = @team_tagged_meetings.include?(meeting.id)
 
-          @calendarDAO.add_meeting( meeting, current_user, can_manage, team_affiliation_id )
+          @calendarDAO.add_meeting( meeting, current_user, can_manage, team_affiliation_id, is_user_tagged, is_team_tagged )
           meetings_count += 1 
         end
     end
@@ -123,7 +130,10 @@ class CalendarMeetingPicker
         .where( "#{filters}" )
         .order( "meetings.header_date #{order}" )
         .each do |meeting|
-          @calendarDAO.add_meeting( meeting, current_user, can_manage, team_affiliation_id )
+          is_user_tagged = @user_tagged_meetings.include?(meeting.id)
+          is_team_tagged = @team_tagged_meetings.include?(meeting.id)
+
+          @calendarDAO.add_meeting( meeting, current_user, can_manage, team_affiliation_id, is_user_tagged, is_team_tagged )
           meetings_count += 1 
         end
     end    
@@ -154,8 +164,10 @@ class CalendarMeetingPicker
           team_affiliation_id = @manageable_seasons[meeting.season_id] if @manageable_seasons && @manageable_seasons.size > 0 
           can_manage = !team_affiliation_id.nil?
           team_affiliation_id = @swimmer_badges[meeting.season_id] if team_affiliation_id.nil? && @swimmer_badges && @swimmer_badges.size > 0 
+          is_user_tagged = @user_tagged_meetings.include?(meeting.id)
+          is_team_tagged = @team_tagged_meetings.include?(meeting.id)
 
-          @calendarDAO.add_meeting( meeting, current_user, can_manage, team_affiliation_id )
+          @calendarDAO.add_meeting( meeting, current_user, can_manage, team_affiliation_id, is_user_tagged, is_team_tagged )
           meetings_count += 1 
         end
     end
@@ -186,8 +198,10 @@ class CalendarMeetingPicker
           team_affiliation_id = @manageable_seasons[meeting.season_id] if @manageable_seasons && @manageable_seasons.size > 0 
           can_manage = !team_affiliation_id.nil?
           team_affiliation_id = @swimmer_badges[meeting.season_id] if team_affiliation_id.nil? && @swimmer_badges && @swimmer_badges.size > 0 
+          is_user_tagged = @user_tagged_meetings.include?(meeting.id)
+          is_team_tagged = @team_tagged_meetings.include?(meeting.id)
 
-          @calendarDAO.add_meeting( meeting, current_user, can_manage, team_affiliation_id )
+          @calendarDAO.add_meeting( meeting, current_user, can_manage, team_affiliation_id, is_user_tagged, is_team_tagged )
           meetings_count += 1 
         end
     end
@@ -219,8 +233,10 @@ class CalendarMeetingPicker
           team_affiliation_id = @manageable_seasons[meeting.season_id] if @manageable_seasons && @manageable_seasons.size > 0 
           can_manage = !team_affiliation_id.nil?
           team_affiliation_id = @badges[meeting.season_id] if team_affiliation_id.nil? && @swimmer_badges && @swimmer_badges.size > 0 
-          
-          @calendarDAO.add_meeting( meeting, current_user, can_manage, team_affiliation_id )
+          is_user_tagged = @user_tagged_meetings.include?(meeting.id)
+          is_team_tagged = @team_tagged_meetings.include?(meeting.id)
+
+          @calendarDAO.add_meeting( meeting, current_user, can_manage, team_affiliation_id, is_user_tagged, is_team_tagged )
           meetings_count += 1 
         end
     end    
@@ -257,4 +273,47 @@ class CalendarMeetingPicker
     swimmer_badges
   end
   
+  # Retrieve user tagged meetings
+  # Return an array with tagged meetings id, if any
+  # Empty array if current_user not set
+  #
+  def get_user_tagged_meetings( current_user = nil )
+    tagged_meetings_ids = []
+    if current_user != nil
+      #tagged_meetings = Tagging.where(tag_id: current_user).select(:taggable_id).to_a
+      user_tag = "u#{current_user.id}"
+      tagged_meetings = execute_statement("select tg.taggable_id from taggings tg join tags t on t.id = tg.tag_id where t.name = '#{user_tag}' and taggable_type = 'Meeting' and tg.context = 'tags_by_users' and tg.tagger_id is null")
+      tagged_meetings_ids = tagged_meetings.map{|a| a[0]} if tagged_meetings  
+    end
+    tagged_meetings_ids
+  end
+    
+  # Retrieve team tagged meetings
+  # Return an array with tagged meetings id, if any for the given badges
+  # Empty array if none badges
+  #
+  def get_team_tagged_meetings( badge_list = {} )
+    tagged_meetings_ids = []
+    team_tag_list       = []
+    if badge_list.size > 0
+      badge_list.each do |key,value|
+        team_tag_list << "'ta#{value}'"
+      end
+      team_tag = team_tag_list.join(',')
+      tagged_meetings = execute_statement("select tg.taggable_id from taggings tg join tags t on t.id = tg.tag_id where t.name in (#{team_tag}) and taggable_type = 'Meeting' and tg.context = 'tags_by_teams' and tg.tagger_id is null")
+      tagged_meetings_ids = tagged_meetings.map{|a| a[0]} if tagged_meetings  
+    end
+    tagged_meetings_ids
+  end
+
+  private
+  
+   def execute_statement(sql)
+    results = ActiveRecord::Base.connection.execute(sql)
+    if results.present?
+      return results
+    else
+      return nil
+    end
+  end
 end

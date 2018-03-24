@@ -23,7 +23,7 @@ describe CalendarMeetingPicker, type: :strategy do
 
     it_behaves_like( "(the existance of a method)", [
       :parameters, :meetings_count,
-      :pick_meetings, :get_manageable_seasons, :get_swimmer_badges, 
+      :pick_meetings, :get_manageable_seasons, :get_swimmer_badges, :get_user_tagged_meetings, :get_team_tagged_meetings,
       :pick_meetings_by_ids, :pick_meetings_by_season, :pick_meetings_by_team, :pick_meetings_by_swimmer, :pick_meetings_by_dates
     ] )
 
@@ -82,7 +82,7 @@ describe CalendarMeetingPicker, type: :strategy do
       it "returns an hash" do
         expect( subject.get_manageable_seasons ).to be_a_kind_of( Hash )
       end
-      it "returns an empty hash in current_user not set" do
+      it "returns an empty hash if current_user not set" do
         expect( subject.get_manageable_seasons.size ).to eq( 0 )
       end
       it "returns an empty hash if current_user set but not a manager" do
@@ -97,7 +97,7 @@ describe CalendarMeetingPicker, type: :strategy do
       it "returns an hash" do
         expect( subject.get_swimmer_badges ).to be_a_kind_of( Hash )
       end
-      it "returns an empty hash in current_user not set" do
+      it "returns an empty hash if current_user not set" do
         expect( subject.get_swimmer_badges.size ).to eq( 0 )
       end
       it "returns an empty hash if current_user set but not associated with a swimmer" do
@@ -105,6 +105,56 @@ describe CalendarMeetingPicker, type: :strategy do
       end
       it "returns a non empty hash if current_user is a swimmer (goggler)" do
         expect( subject.get_swimmer_badges(goggler).size ).to be > 0 
+      end
+    end
+    
+    describe "#get_user_tagged_meetings" do
+      it "returns an array" do
+        expect( subject.get_user_tagged_meetings ).to be_a_kind_of( Array )
+      end
+      it "returns an empty array if current_user not set" do
+        expect( subject.get_user_tagged_meetings.size ).to eq( 0 )
+      end
+      it "returns an empty array if current_user set but new" do
+        expect( subject.get_user_tagged_meetings(new_user).size ).to eq( 0 ) 
+      end
+      it "returns a non empty array containing ids if current_user is a manager (Leega)" do
+        tagged = subject.get_user_tagged_meetings(manager)
+        expect( tagged.size ).to be > 0
+        tagged.each do |tag|
+          expect( tag ).to be > 0
+        end
+      end
+      it "returns an array containing 171 season meetings if current_user is Leega" do
+        tagged = subject.get_user_tagged_meetings(manager)
+        expect( tagged.include?(17101) ).to be( true )
+        expect( tagged.include?(17102) ).to be( true )
+        expect( tagged.include?(17103) ).to be( true )
+      end
+    end
+
+    describe "#get_team_tagged_meetings" do
+      it "returns an array" do
+        expect( subject.get_team_tagged_meetings ).to be_a_kind_of( Array )
+      end
+      it "returns an empty array no badges presents" do
+        empty_list = {}
+        expect( subject.get_team_tagged_meetings(empty_list).size ).to eq( 0 )
+      end
+      it "returns an empty array if current_user set but new" do
+        empty_list = subject.get_swimmer_badges(new_user)
+        expect( subject.get_team_tagged_meetings(empty_list).size ).to eq( 0 ) 
+      end
+      it "returns a non empty array containing ids if current_user is a manager (Leega)" do
+        badge_list = subject.get_swimmer_badges(manager)
+        expect( subject.get_team_tagged_meetings(badge_list).size ).to be > 0 
+      end
+      it "returns an array containing 171 season meetings if current_user is Leega" do
+        badge_list = subject.get_swimmer_badges(manager)
+        tagged = subject.get_team_tagged_meetings(badge_list)
+        expect( tagged.include?(17101) ).to be( true )
+        expect( tagged.include?(17102) ).to be( true )
+        expect( tagged.include?(17103) ).to be( true )
       end
     end
   end
