@@ -32,8 +32,9 @@ class NewsletterMailer < ActionMailer::Base
     @host = GogglesCore::AppConstants::WEB_MAIN_DOMAIN_NAME
     @contents = contents
     @title = title
+      #subject: "[#{ GogglesCore::AppConstants::WEB_APP_NAME }@#{ @host }] #{ subject }",
     mail(
-      subject: "[#{ GogglesCore::AppConstants::WEB_APP_NAME }@#{ @host }] #{ subject }",
+      subject: "#{ subject } [#{GogglesCore::AppConstants::WEB_APP_NAME}]",
       to:      user.email,
       date:    Time.now
     )
