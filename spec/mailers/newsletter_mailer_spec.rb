@@ -15,8 +15,9 @@ describe NewsletterMailer, type: :mailer do
     it 'renders the title in the subject' do
       expect( subject.subject ).to match( I18n.t('newsletter_mailer.data_updates.generic_title') )
     end
-    it 'renders the hostname in the subject' do
-      expect( subject.subject ).to match( GogglesCore::AppConstants::WEB_MAIN_DOMAIN_NAME )
+    it 'renders the application name (was host name) in the subject' do
+      #expect( subject.subject ).to match( GogglesCore::AppConstants::WEB_MAIN_DOMAIN_NAME )
+      expect( subject.subject ).to match( GogglesCore::AppConstants::WEB_APP_NAME )
     end
     it 'renders for each specified meeting its description and header_year' do
       meeting_array.each do |meeting|
