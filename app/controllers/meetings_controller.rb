@@ -560,7 +560,7 @@ class MeetingsController < ApplicationController
     end
     
     # Get a timestamp for the cache key:
-    @max_updated_at = @meeting.meeting_individual_results.for_team(@team).has_points('goggle_cup_points').order(:updated_at).last.updated_at.to_i
+    @max_updated_at = @meeting.meeting_individual_results.for_team(@team).has_points('goggle_cup_points').unscope(:order).order(:updated_at).last.updated_at.to_i
   end
   #-- -------------------------------------------------------------------------
   #++
