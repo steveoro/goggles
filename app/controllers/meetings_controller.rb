@@ -541,13 +541,7 @@ class MeetingsController < ApplicationController
   # - team_id: Team id.
   #
   def show_goggle_cup_results
-                                                    # Get the events filtered by team_id:
-    mir = @meeting.meeting_individual_results.for_team(@team)
-    unless ( mir.exists? )
-      flash[:error] = I18n.t(:no_result_to_show)
-      redirect_to( meetings_current_path() ) and return
-    end
-    
+
     unless @team.has_goggle_cup_at?( @meeting.header_date )
       flash[:error] = I18n.t(:no_result_to_show)
       redirect_to( meetings_current_path() ) and return
@@ -558,9 +552,15 @@ class MeetingsController < ApplicationController
       flash[:error] = I18n.t(:no_result_to_show)
       redirect_to( meetings_current_path() ) and return
     end
+
+    @mirs = @meeting.meeting_individual_results.includes(:swimmer, :event_type).for_team(@team).has_points('goggle_cup_points').unscope(:order).sort_by_goggle_cup
+    unless @mirs.exists?
+      flash[:error] = I18n.t(:no_result_to_show)
+      redirect_to( meetings_current_path() ) and return
+    end
     
     # Get a timestamp for the cache key:
-    @max_updated_at = mir.exists? ? mir.select( "meeting_individual_results.updated_at" ).order(:updated_at).last.updated_at.to_i : 0
+    @max_updated_at = @meeting.meeting_individual_results.for_team(@team).has_points('goggle_cup_points').order(:updated_at).last.updated_at.to_i
   end
   #-- -------------------------------------------------------------------------
   #++

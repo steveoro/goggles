@@ -1,4 +1,4 @@
-- if @meeting.meeting_individual_results.for_team(@team).has_points('goggle_cup_points').exists?
+- if @mirs.exists?
   - goggle_cup_name = @goggle_cup.get_verbose_name
   
   %h3=link_to( goggle_cup_name, team_goggle_cup_path(id: @team.id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('radiography.goggle_cup_tooltip') } )
@@ -22,7 +22,7 @@
         -#  = I18n.t('goggle_cup.standard_times')
   
       - # Individual results
-      - @meeting.meeting_individual_results.for_team(@team).has_points('goggle_cup_points').sort_by_goggle_cup.each do |meeting_individual_result|
+      - @mirs.each do |meeting_individual_result|
         - mir = MeetingIndividualResultDecorator.decorate( meeting_individual_result )
         %tr
           %td.col-xs-4
@@ -36,6 +36,7 @@
             = mir.get_formatted_goggle_cup_points(true)
           -#%td.col-xs-2.goggles-rightalign
           -#  = TODO show goggle cup standard time
+
 - else
   = render( partial: 'goggles/no_goggle_cup_found' )          
 
