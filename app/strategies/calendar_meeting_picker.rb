@@ -232,7 +232,7 @@ class CalendarMeetingPicker
           team_affiliation_id = nil
           team_affiliation_id = @manageable_seasons[meeting.season_id] if @manageable_seasons && @manageable_seasons.size > 0 
           can_manage = !team_affiliation_id.nil?
-          team_affiliation_id = @badges[meeting.season_id] if team_affiliation_id.nil? && @swimmer_badges && @swimmer_badges.size > 0 
+          team_affiliation_id = @swimmer_badges[meeting.season_id] if team_affiliation_id.nil? && @swimmer_badges && @swimmer_badges.size > 0 
           is_user_tagged = @user_tagged_meetings.include?(meeting.id)
           is_team_tagged = @team_tagged_meetings.include?(meeting.id)
 
