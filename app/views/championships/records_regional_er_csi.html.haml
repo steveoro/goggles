@@ -1,0 +1,71 @@
+.row
+  .goggles-category-gap#pageTop
+    = render( partial: 'regional_er_csi_tabs' )
+  .goggles-category-gap
+    = render( partial: 'title' )
+  
+  - if @recordDAO
+    - cache( cache_key_for_season_type_records( @season_type.id, @max_updated_at, @highlight_swimmer_id ) ) do
+      -# --- Sub-legend for each gender + pool-type
+      .row
+        %ul.col-xs-offset-10.col-xs-2.col-sm-offset-11.col-sm-1.col-md-offset-11.col-md-1.nav.nav-pills.nav-stacked.navbar-fixed-bottom.goggles-divlist-odd.navpill_side
+          %li
+            = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+              = image_tag('bullet_arrow_up.png')
+          - @recordDAO.gender_types.each do |gender_type|
+            - @recordDAO.pool_types.each do |pool_type|
+              %li
+                = link_to("##{gender_type.code}#{pool_type.code}", {'data-turbolinks'=>'false', class: 'btn goggles-nav-compact'}) do
+                  = gender_type.i18n_alternate + ' - ' + pool_type.i18n_short
+  
+      .col-xs-3
+        = link_to_best_timings_printout( @season_type )
+  
+      .col-xs-12
+        - @recordDAO.gender_types.each do |gender_type|
+          - @recordDAO.pool_types.each do |pool_type|
+            .col-xs-12.goggles-category-gap{ 'id' => "#{gender_type.code}#{pool_type.code}" }
+              %h3
+                = "#{gender_type.i18n_alternate}, #{pool_type.i18n_description}"
+                = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+                  = image_tag('bullet_arrow_up.png')
+            .row.col-xs-12.table-responsive
+              - code = gender_type.code + '-' + pool_type.code
+              - valid_categories = @recordDAO.category_types[code].sort{ |a,b| a.age_begin <=> b.age_begin and a.age_end <=> b.age_end }
+              %table.table.table-striped.table-bordered.table-hover.table-condensed
+                %tbody
+                  %tr.info
+                    %td
+                    - valid_categories.each do |category_type|
+                      %td.goggles-centeralign
+                        %b= category_type.code
+  
+                  - @recordDAO.event_types[code].sort{ |a,b| a.style_order <=> b.style_order }.each do |event_type|
+                    %tr
+                      %td.goggles-td.goggles-rightalign.info
+                        %b= event_type.code
+                      - valid_categories.each do |category_type|
+                        - single_record = @recordDAO.get_record( pool_type.code, gender_type.code, event_type.code, category_type.code )
+                        %td.goggles-td.goggles-centeralign{ 'class' => ( @highlight_swimmer_id && single_record && ( single_record.swimmer.id == @highlight_swimmer_id ) ) ? 'success' : '' }
+                          - if single_record
+                            - #swimmer = Swimmer.find(single_record.swimmer_id).decorate
+                            - swimmer = single_record.swimmer.decorate
+                            - meeting = single_record.meeting
+                            %p
+                              %b= single_record.get_record_timing
+                            %p
+                              = swimmer.get_linked_swimmer_name
+                            - if (sched_date = single_record.get_record_date).kind_of?(Date)
+                              %a{'id'=>"rec#{single_record.get_record_instance.id}", 'href'=>"#{ meeting_show_full_path(:id=>meeting.id, :swimmer_id=>swimmer.id) }", 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.show_results_tooltip') + "\r\n(#{meeting.get_full_name})"}
+                                %p= Format.a_date( sched_date )
+                            - else
+                              %p= '-'
+  
+                  %tr.info
+                    %td
+                    - valid_categories.each do |category_type|
+                      %td.goggles-centeralign
+                        %b= category_type.code
+  
+            .col-xs-12.goggles-category-gap
+    

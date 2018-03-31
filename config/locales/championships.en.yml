@@ -34,6 +34,7 @@ en:
     third_place: "Third place"
     show_full_season: "Show season full data"
     back_to_current: "Back to current season"
+    records: "All time records"
 
     ranking:
       starred_score_note: "(*) Starred scores and timings are converted from a different-sized pool from the standard length of this Championship."

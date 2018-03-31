@@ -35,6 +35,7 @@ it:
     third_place: "Terzo posto"
     show_full_season: "Mostra i dati completi della stagione"
     back_to_current: "Torna alla stagione corrente"
+    records: "Record del circuito"
 
     ranking:
       starred_score_note: "(*) I tempi ed i punteggi asteriscati sono convertiti da piscine di lunghezze diverse da quella standard del Campionato."

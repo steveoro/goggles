@@ -23,6 +23,21 @@ module ChampionshipsHelper
   #-- -------------------------------------------------------------------------
   #++
 
+  # Getter for a unique string key viable for use as a cache key for fragments involving
+  # the rending of any specified <tt>action_name</tt> of this controller.
+  #
+  def cache_key_for_season_type_records( season_type_id, history_updated_at, swimmer_id = nil )
+    [
+      'season_type_records',
+      season_type_id,
+      history_updated_at.to_i.to_s,
+      I18n.locale.to_s,
+      swimmer_id,
+    ].compact.join('-')
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
   # Returns the HTML for championship#printout_ranking_regional_csi
   # action for the specified Season instance.
   #

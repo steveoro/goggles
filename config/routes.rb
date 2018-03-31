@@ -155,6 +155,7 @@ Rails.application.routes.draw do
       get  "championships/individual_rank_regional_er_csi(/:id)", to: "championships#individual_rank_regional_er_csi", as: "championships_individual_rank_regional_er_csi"
       get  "championships/rules_regional_er_csi(/:id)",     to: "championships#rules_regional_er_csi",     as: "championships_rules_regional_er_csi"
       get  "championships/history_regional_er_csi(/:id)",   to: "championships#history_regional_er_csi",   as: "championships_history_regional_er_csi"
+      get  "championships/records_regional_er_csi(/:id)",   to: "championships#records_regional_er_csi",   as: "championships_records_regional_er_csi"
       get  "championships/calendar_regional_er_uisp(/:id)", to: "championships#calendar_regional_er_uisp", as: "championships_calendar_regional_er_uisp"
       get  "championships/ranking_regional_er_uisp(/:id)",  to: "championships#ranking_regional_er_uisp",  as: "championships_ranking_regional_er_uisp"
       get  "championships/rules_regional_er_uisp(/:id)",    to: "championships#rules_regional_er_uisp",    as: "championships_rules_regional_er_uisp"

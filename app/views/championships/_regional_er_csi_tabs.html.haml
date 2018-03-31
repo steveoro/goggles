@@ -12,4 +12,6 @@
   - if @season.rules
     = show_tab_link( params, 'rules_regional_er_csi', t('championships.rules'), championships_rules_regional_er_csi_path( id: @season.id ) )
 
+  = show_tab_link( params, 'records_regional_er_csi', t('championships.records'), championships_records_regional_er_csi_path( id: @season.id ) )
+  
   = show_tab_link( params, 'history_regional_er_csi', t('championships.history'), championships_history_regional_er_csi_path( id: @season.id ) )

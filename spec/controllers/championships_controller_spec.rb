@@ -169,4 +169,14 @@ describe ChampionshipsController, type: :controller do
   end
   #-- -------------------------------------------------------------------------
   #++
+
+  describe '[GET #records_regional_er_csi]' do
+    it_behaves_like( "(GET http action with or without parameters)", :records_regional_er_csi, 161 )
+
+    it "assigns the required variables when invoked with valid id" do
+      get :records_regional_er_csi, params: { id: 161 }
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 end

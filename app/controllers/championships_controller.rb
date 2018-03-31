@@ -15,7 +15,7 @@ class ChampionshipsController < ApplicationController
   before_action :verify_parameter_regional_er_csi, only: [
       :ranking_regional_er_csi, :printout_ranking_regional_csi,
       :calendar_regional_er_csi, :event_ranking_regional_er_csi,
-      :individual_rank_regional_er_csi, :rules_regional_er_csi, :history_regional_er_csi
+      :individual_rank_regional_er_csi, :rules_regional_er_csi, :history_regional_er_csi, :records_regional_er_csi
   ]
   before_action :verify_parameter_regional_er_uisp, only: [
       :ranking_regional_er_uisp, :calendar_regional_er_uisp, :rules_regional_er_uisp,
@@ -51,8 +51,6 @@ class ChampionshipsController < ApplicationController
     # 3a prova                                X
     # ...
   end
-  #-- -------------------------------------------------------------------------
-  #++
 
 
   # CSI Regional Emilia Romagna championship ranking data display manager
@@ -90,8 +88,6 @@ class ChampionshipsController < ApplicationController
         filename: filename
     )
   end
-  #-- -------------------------------------------------------------------------
-  #++
 
 
   # Season rules viewer for a given regonal er CSI season
@@ -99,8 +95,6 @@ class ChampionshipsController < ApplicationController
   def rules_regional_er_csi
     @title = I18n.t('championships.rules') + ' ' + @season.get_full_name
   end
-  #-- -------------------------------------------------------------------------
-  #++
 
 
   # Past seasons championships ranking data display manager
@@ -216,6 +210,45 @@ class ChampionshipsController < ApplicationController
       @season.meeting_individual_results.select( "meeting_individual_results.updated_at" ).order(:updated_at).last.updated_at.to_i :
       0
   end
+
+
+  # CSI regional ER all times records
+  # CSI ER Regional records doesn't need category split or join
+  #
+  def records_regional_er_csi
+    @title = I18n.t('championships.records') + ' ' + @season_type.get_full_name
+    
+    # Prepare record DAO
+    @recordDAO = RecordX4DAO.new( @season_type, RecordType.find_by_code( 'FOR' ) )
+    
+    # Add records
+    IndividualRecord.
+     #joins(:swimmer, :category_type, :gender_type, :pool_type, :event_type, [meeting_individual_result: [meeting_program: [meeting_event: [meeting_session: :meeting]]]], season: :season_type).
+     joins(:record_type, season: :season_type).
+     #includes(:swimmer, :category_type, :gender_type, :pool_type, :event_type, :meeting_individual_result).
+     #for_season_type( @season_type.id ).where( gender_type: 1, pool_type: 1 ).limit(50).
+     where("record_types.code = 'FOR' and season_types.code = 'MASCSI'", ).#where( gender_type: 1, pool_type: 1 ).
+     includes(:swimmer, :category_type, :gender_type, :pool_type, :event_type, [meeting_individual_result: [meeting_program: [meeting_event: [meeting_session: :meeting]]]]).
+     each do |record|
+      # TODO
+      # Manage the fucking 50 specials...
+      if !record.category_type.is_undivided 
+        @recordDAO.add_record( 
+         record.meeting_individual_result, 
+         record.category_type, 
+         record.pool_type, 
+         record.gender_type, 
+         record.event_type,
+         record.swimmer
+        )
+        @max_updated_at = record.updated_at if @max_updated_at.nil? || @max_updated_at < record.updated_at  
+      end
+    end
+       
+    @highlight_swimmer_id = current_user.swimmer_id if current_user 
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Season calendar for a given fin supermaster season
