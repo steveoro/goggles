@@ -144,12 +144,51 @@ class RecordX4DAO
       # - Should be an error (consider only the best)
       # - Should be a pair (same time swam in different results). In this case should review get methods too
       new_record = RecordElementDAO.new( pool_type, gender_type, event_type, category_type, meeting_individual_result, swimmer )
-      record_code = new_record.get_record_code
       if new_record
         # Add record to the record ash
+        record_code = new_record.get_record_code
         @records[record_code] = new_record 
         added = true
      
+        # Populates member arrays
+        @gender_types << gender_type if !@gender_types.include?( gender_type ) 
+        @pool_types << pool_type if !@pool_types.include?( pool_type )
+        
+        table_code = gender_type.code + '-' + pool_type.code
+        @category_types[table_code] = [] if @category_types[table_code].nil?
+        @event_types[table_code] = [] if @event_types[table_code].nil?
+        
+        @category_types[table_code] << category_type if @category_types[table_code].rindex{ |e| e.code == category_type.code }.nil? 
+        @event_types[table_code] << event_type if @event_types[table_code].rindex{ |e| e.code == event_type.code }.nil?
+      end
+    end
+    added
+  end
+
+  # Adds a record to the record collection
+  #
+  def add_record_from_individual_records( individual_record )
+    added = false
+    if individual_record && individual_record.instance_of?( IndividualRecord )
+      
+      # TODO Eventually manage scenarios with records already present
+      # - Should be an error (consider only the best)
+      # - Should be a pair (same time swam in different results). In this case should review get methods too
+      new_record = RecordElementDAO.new( 
+       individual_record.pool_type, 
+       individual_record.gender_type, 
+       individual_record.event_type, 
+       individual_record.category_type, 
+       individual_record.meeting_individual_result, 
+       individual_record.swimmer )
+      if new_record
+        # Add record to the record ash
+        record_code = new_record.get_record_code
+        @records[record_code] = new_record 
+        added = true
+     
+        # TODO
+        # Isolate member popolation method
         # Populates member arrays
         @gender_types << gender_type if !@gender_types.include?( gender_type ) 
         @pool_types << pool_type if !@pool_types.include?( pool_type )
@@ -206,10 +245,8 @@ class RecordX4DAO
   # Return nil if no record set
   #
   def get_record( pool_code, gender_code, event_code, category_code )
-    if has_record_for?( pool_code, gender_code, event_code, category_code )
-      record_code = create_record_code( pool_code, gender_code, event_code, category_code )
-      @records[record_code]
-    end
+    record_code = create_record_code( pool_code, gender_code, event_code, category_code )
+    @records[record_code]
   end
 
   # Creates the record code

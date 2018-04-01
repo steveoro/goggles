@@ -18,9 +18,6 @@
                 = link_to("##{gender_type.code}#{pool_type.code}", {'data-turbolinks'=>'false', class: 'btn goggles-nav-compact'}) do
                   = gender_type.i18n_alternate + ' - ' + pool_type.i18n_short
   
-      .col-xs-3
-        = link_to_best_timings_printout( @season_type )
-  
       .col-xs-12
         - @recordDAO.gender_types.each do |gender_type|
           - @recordDAO.pool_types.each do |pool_type|
