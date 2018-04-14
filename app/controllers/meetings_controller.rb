@@ -425,7 +425,7 @@ class MeetingsController < ApplicationController
     end
 
                                                     # Get the swimmer list and some stats:
-    @meeting_team_swimmers =  mir.joins(:swimmer).includes(:swimmer)
+    @meeting_team_swimmers =  mir.unscope(:order).joins(:swimmer).includes(:swimmer)
       .group(:swimmer_id)
       .order('swimmers.complete_name ASC')
       .map{ |row| row.swimmer }
