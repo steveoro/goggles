@@ -2,7 +2,7 @@
 = render( partial: 'tabs_and_title' )
 - cache( cache_key_for_meeting( 'show_team_entries', @meeting.id, @max_entry_updated_at, @team ? @team.id : 0 ) ) do
   - swimmers = []
-  - @meeting.meeting_entries.for_team(@team).sort_by_swimmer.each do |meeting_entry|
+  - @meeting.meeting_entries.unscope(:order).for_team(@team).sort_by_swimmer.each do |meeting_entry|
     - swimmers << meeting_entry.swimmer if !swimmers.include?( meeting_entry.swimmer )
   .goggles-category-gap.col-xs-12
     %p
