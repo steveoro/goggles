@@ -241,19 +241,22 @@ describe Api::V1::RecordsController, type: :controller, api: true do
           expect( item.has_key?('total') ).to be true
         end
       end
-      it "returns at least some non-zero value for the specified swimmer" do
-        result = JSON.parse(response.body)
-        result.each do |hash|
-          expect( hash ).to be_an_instance_of(Hash)
-          # Hopefully, there should be at least 5 records/best results for this swimmer/season_type
-          # combo in the preloaded seed files for this specific season_type_id:
-          # FIXME WARNING: this may change from time to time as records are updated with the results according to current seed data! This should be refactored somehow.
-          if hash['season_type_id'] == 2
-            expect( hash['total'] ).to be >= 5
-            break
-          end
-        end
-      end
+
+      # XXX [Steve, 20180420] The following test is bullshit, since records will be
+      #     re-computed from time to time and, eventually, any record-holder could loose his/her ownership of the record.
+      # it "returns at least some non-zero value for the specified swimmer" do
+        # result = JSON.parse(response.body)
+        # result.each do |hash|
+          # expect( hash ).to be_an_instance_of(Hash)
+          # # Hopefully, there should be at least 5 records/best results for this swimmer/season_type
+          # # combo in the preloaded seed files for this specific season_type_id:
+          # # WARNING: this may change from time to time as records are updated with the results according to current seed data! This should be refactored somehow.
+          # if hash['season_type_id'] == 2
+            # expect( hash['total'] ).to be >= 5
+            # break
+          # end
+        # end
+      # end
     end
   end
   #-- -------------------------------------------------------------------------

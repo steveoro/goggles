@@ -35,7 +35,7 @@ describe Api::V1::PassagesController, type: :controller, api: true do
 
       it "returns at least a match with the created fixture" do
         result = JSON.parse(response.body)
-        expect( result.first['id'] ).to eq( @fixture_row.id )
+        expect( result.map{ |row_hash| row_hash['id'] } ).to include( @fixture_row.id )
       end
     end
 

@@ -314,7 +314,7 @@ class MeetingResultsController < ApplicationController
   # (Actually, it verifies that the current user has any managed affiliation defined.)
   #
   def verify_is_team_manager
-    unless ( current_user && current_user.team_managers.exists )
+    unless ( current_user && current_user.team_managers.exists? )
       flash[:error] = I18n.t(:invalid_action_request) + ' - ' + I18n.t('meeting.errors.invalid_team_manager')
       redirect_to( meetings_current_path() ) and return
     end

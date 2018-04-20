@@ -53,9 +53,6 @@ describe NewsletterMailer, type: :mailer do
     it 'renders the title in the subject' do
       expect( subject.subject ).to include( mail_subject )
     end
-    it 'renders the hostname in the subject' do
-      expect( subject.subject ).to include( GogglesCore::AppConstants::WEB_MAIN_DOMAIN_NAME )
-    end
     it 'renders the specified title in its body' do
       expect( subject.body.encoded ).to include( mail_title )
     end
