@@ -417,15 +417,15 @@ class MeetingsController < ApplicationController
   #
   def show_team_results
                                                     # Get the events filtered by team_id:
-    mir = @meeting.meeting_individual_results.for_team(@team)
-    mrr = @meeting.meeting_relay_results.for_team(@team)
+    mir = @meeting.meeting_individual_results.for_team(@team).unscope(:order)
+    mrr = @meeting.meeting_relay_results.for_team(@team).unscope(:order)
     unless ( mir.exists? || mrr.exists? )
       flash[:error] = I18n.t(:no_result_to_show)
       redirect_to( meetings_current_path() ) and return
     end
 
                                                     # Get the swimmer list and some stats:
-    @meeting_team_swimmers =  mir.unscope(:order).joins(:swimmer).includes(:swimmer)
+    @meeting_team_swimmers =  mir.joins(:swimmer).includes(:swimmer)
       .group(:swimmer_id)
       .order('swimmers.complete_name ASC')
       .map{ |row| row.swimmer }
