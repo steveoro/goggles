@@ -43,6 +43,8 @@ class MeetingDecorator < Draper::Decorator
       h.image_tag( 'logo_csi.png', size: '20x16' )
     elsif object.season_type && object.season_type.code =~ /FIN/i
       h.image_tag( 'logo_fin.png', size: '40x16' )
+    elsif object.season_type && object.season_type.code =~ /UISP/i
+      h.image_tag( 'logo_uisp.png', size: '40x16' )
     elsif object.season
       object.season.get_season_type
     else
