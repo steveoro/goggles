@@ -5,7 +5,7 @@
     - if meeting_event.meeting_individual_results.exists? || meeting_event.meeting_relay_results.exists?
       = render( partial: 'show_full_sub_legend', locals: { meeting_event: meeting_event } )
       - if !is_a_relay && meeting_event.meeting_individual_results.exists?
-        - meeting_event.meeting_programs.includes(:category_type, :gender_type).order('category_types.age_begin, gender_types.id DESC').each do |meeting_program|
+        - meeting_event.meeting_programs.joins(:category_type, :gender_type).includes(:category_type, :gender_type).order('category_types.age_begin, gender_types.id DESC').each do |meeting_program|
           .col-xs-12.goggles-category-gap
           %div{'class'=>"col-xs-12", 'id'=>"mprg#{meeting_program.id}"}
             %table.table.table-striped.table-bordered.table-hover.table-condensed
@@ -17,12 +17,12 @@
                   - if @meeting.has_start_list
                     %td.goggles-rightalign
                       = '(' + t('meeting.entry_time') + ')'
-                - meeting_program.meeting_individual_results.sort_by_timing.each do |individual_result|
+                - meeting_program.meeting_individual_results.includes(:swimmer, :team).sort_by_timing.each do |individual_result|
                   - is_highlighted = (@team && @team.id.to_i == individual_result.team_id) || (@swimmer && @swimmer.id.to_i == individual_result.swimmer_id)
                   = render( partial: 'show_full_individual_result', locals: { individual_result: individual_result, is_highlighted: is_highlighted } )
 
       - if is_a_relay && meeting_event.meeting_relay_results.exists?
-        - meeting_event.meeting_programs.includes(:category_type, :gender_type).order('category_types.age_begin, gender_types.id DESC').each do |meeting_program|
+        - meeting_event.meeting_programs.joins(:category_type, :gender_type).includes(:category_type, :gender_type).order('category_types.age_begin, gender_types.id DESC').each do |meeting_program|
           .col-xs-12.goggles-category-gap
           %div{'class'=>"col-xs-12", 'id'=>"mprg#{meeting_program.id}"}
             %table.table.table-striped.table-bordered.table-hover.table-condensed
