@@ -13,6 +13,8 @@ describe MeetingResultDAO, type: :model do
   let(:meeting_program) { meeting.meeting_programs.sample }
   let(:mir)             { meeting.meeting_individual_results.sample }
   let(:passage)         { Passage.all.sample }
+  
+  let(:mir_with_pass)   { passage.meeting_individual_result }
 
   context "MeetingResultEventDAO subclass," do
 
@@ -45,12 +47,24 @@ describe MeetingResultDAO, type: :model do
 
     describe "#populate_programs" do
       it "returns a number" do
-        expect( subject.populate_programs(meeting_event) ).to be >= 0
+        expect( subject.populate_programs ).to be >= 0
       end
       it "populates programs array only if event has programs" do
         expect( subject.programs.size ).to eq( 0 )
-        programs_number = subject.populate_programs(meeting_event)
+        programs_number = subject.populate_programs
         expect( subject.programs.size ).to eq( programs_number )
+      end
+      it "populates events with MeetingResultProgramDAO objects" do
+        subject.populate_programs
+        expect( subject.programs ).to all(be_an_instance_of( MeetingResultDAO::MeetingResultProgramDAO ))
+      end
+    end
+
+    describe "#with populate parameter" do
+      it "populates automatically programs and results" do
+        mrep = MeetingResultDAO::MeetingResultEventDAO.new( meeting_event, false, true )
+        expect( mrep.programs.size ).to be > 0
+        expect( mrep.programs[0].rank.size ).to be > 0
       end
     end
   end
@@ -94,12 +108,23 @@ describe MeetingResultDAO, type: :model do
 
     describe "#populate_ranking" do
       it "returns a number" do
-        expect( subject.populate_ranking(meeting_program) ).to be >= 0
+        expect( subject.populate_ranking ).to be >= 0
       end
       it "populates rank array only if program has results" do
         expect( subject.rank.size ).to eq( 0 )
-        results_number = subject.populate_ranking(meeting_program)
+        results_number = subject.populate_ranking
         expect( subject.rank.size ).to eq( results_number )
+      end
+      it "populates rank with MeetingResultIndividualDAO objects" do
+        subject.populate_ranking
+        expect( subject.rank ).to all(be_an_instance_of( MeetingResultDAO::MeetingResultIndividualDAO ))
+      end
+    end
+
+    describe "#with populate parameter" do
+      it "populates automatically rank" do
+        mrpp = MeetingResultDAO::MeetingResultProgramDAO.new( meeting_program, false, true )
+        expect( mrpp.rank.size ).to be > 0
       end
     end
   end
@@ -136,11 +161,23 @@ describe MeetingResultDAO, type: :model do
         expect( subject.passages.size ).to eq( results_number )
       end
       it "populates passages if any" do
-        mri = MeetingResultDAO::MeetingResultIndividualDAO.new( passage.meeting_individual_result )
+        mri = MeetingResultDAO::MeetingResultIndividualDAO.new( mir_with_pass )
         expect( mri.has_passages? ).to eq( false )
-        mri.populate_passages(passage.meeting_individual_result)
+        mri.populate_passages
         expect( mri.has_passages? ).to eq( true )
         expect( mri.passages.size ).to be > 0
+      end
+      it "populates passages with MeetingResultPAssageDAO objects" do
+        mri = MeetingResultDAO::MeetingResultIndividualDAO.new( mir_with_pass )
+        mri.populate_passages
+        expect( mri.passages ).to all(be_an_instance_of( MeetingResultDAO::MeetingResultPassageDAO ))
+      end
+    end
+
+    describe "#with populate parameter" do
+      it "populates automatically passages" do
+        mrip = MeetingResultDAO::MeetingResultIndividualDAO.new( mir_with_pass, true )
+        expect( mrip.passages.size ).to be > 0
       end
     end
   end
@@ -155,6 +192,52 @@ describe MeetingResultDAO, type: :model do
       :timing
     ] )
 
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  context "MeetingResultDAO," do
+
+    subject { MeetingResultDAO.new( meeting ) }
+
+    it_behaves_like( "(the existance of a method)", [
+      :events, :has_start_list
+    ] )
+
+    describe "#has_start_list" do
+      it "is a boolean" do
+        expect( subject.has_start_list ).to eq( true ).or( eq( false ))
+      end
+    end
+
+    describe "#events" do
+      it "is a kind of array" do
+        expect( subject.events ).to be_a_kind_of( Array )
+      end
+    end
+
+    describe "#populate_events" do
+      it "returns a number" do
+        expect( subject.populate_events(meeting) ).to be >= 0
+      end
+      it "populates event array only if meeting has events" do
+        expect( subject.events.size ).to eq( 0 )
+        events_number = subject.populate_events
+        expect( subject.events.size ).to eq( events_number )
+      end
+      it "populates events with MeetingResukltEventDAO objects" do
+        subject.populate_events
+        expect( subject.events ).to all(be_an_instance_of( MeetingResultDAO::MeetingResultEventDAO ))
+      end
+    end
+
+    describe "#with populate parameter" do
+      it "populates automatically events and programs" do
+        mrp = MeetingResultDAO.new( meeting, true )
+        expect( mrp.events.size ).to be > 0
+        expect( mrp.events[0].programs.size ).to be > 0
+      end
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
