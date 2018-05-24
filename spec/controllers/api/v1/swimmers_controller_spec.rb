@@ -75,7 +75,7 @@ describe Api::V1::SwimmersController, type: :controller, api: true do
     context "with both matching :q AND :t (ARRAY) filtering parameters," do
       before :each do
         # Assert: we rely on the pre-loaded seeds here
-        get :index, format: :json, params: { q: 'allor', t: [1] }
+        get :index, format: :json, params: { q: 'alloro', t: [1] }
       end
       it_behaves_like( "(Ap1-V1-Controllers, success returning an Array of Hash)" )
       it "returns at least a match for the name (with the existing seeds)" do
@@ -87,8 +87,8 @@ describe Api::V1::SwimmersController, type: :controller, api: true do
         id = result.first['id']
         swimmer = Swimmer.find_by_id( id )
         expect( swimmer ).to be_a( Swimmer )
-        expect( swimmer.badges.first.team_id ).to eq(1)
-        expect( swimmer.badges.last.team_id ).to eq(1)
+        expect( swimmer.badges.first.team_id ).to eq(1).or eq(224)
+        expect( swimmer.badges.last.team_id ).to eq(1).or eq(224)
       end
     end
 
