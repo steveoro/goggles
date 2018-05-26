@@ -157,12 +157,14 @@ class PassagesCollectSheetLayout
         end
         prev_event_is_a_relay = event.event_type.is_a_relay
 
-        if ( event.event_type.is_a_relay && reservations_relays[ event.id ] && reservations_relays[ event.id ].size > 0 ) ||
+        if ( event.event_type.is_a_relay && reservations_relays[ event.id ] &&
+             reservations_relays[ event.id ].size > 0 ) ||
            ( reservations_events[ event.id ] && reservations_events[ event.id ].size > 0 )
           # Get the pool type and the passage types:
           pool_type = meeting.event_types.where( id: event.event_type_id ).first
             .pool_types
-            .first
+            .first || event.meeting_session.swimming_pool.pool_type
+
           is_team_template_present = ( team.team_passage_templates
             .for_event_type( event.event_type )
             .for_pool_type( pool_type ).exists? )
