@@ -15,12 +15,13 @@ GIT
 
 GIT
   remote: https://github.com/steveoro/goggles_core
-  revision: d0dabc0e315b7cfb0e4409b4a94b350236313670
+  revision: 064ce0323f4140f19cd166eea1e24eb850c2c3dd
   specs:
-    goggles_core (1.3.20)
+    goggles_core (1.3.22)
       active_hash_relation
       active_model_serializers
       activemodel-serializers-xml
+      activerecord-session_store
       acts-as-taggable-on
       acts_as_votable
       devise
@@ -30,8 +31,8 @@ GIT
       fuzzy-string-match_pure
       haml-rails
       jquery-rails
-      mysql2
-      rails (~> 5.1.4)
+      mysql2 (~> 0.4.10)
+      rails (~> 5.1)
       simple_token_authentication (~> 1.14)
       therubyracer
 
@@ -295,7 +296,7 @@ GEM
     money (6.10.1)
       i18n (>= 0.6.4, < 1.0)
     multi_json (1.12.2)
-    mysql2 (0.5.1)
+    mysql2 (0.4.10)
     nenv (0.3.0)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
