@@ -107,7 +107,7 @@ class TeamsController < ApplicationController
     team_distinct_best_dao = RecordX4dDAO.new( @team, RecordType.find_by_code( 'TTB' ) )
 
     # Scan the pre-computed records and fill the collection DAO with each records'MIR row found:
-    IndividualRecord.for_team( @team.id ).includes(:meeting_individual_result)
+    IndividualRecord.joins(:record_type).where( 'record_types.code' => 'TTB' ).for_team( @team.id ).includes(:meeting_individual_result)
       .joins(:meeting_individual_result).each do |record|
         team_distinct_best_dao.add_record( record.meeting_individual_result )
     end
