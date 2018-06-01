@@ -1,9 +1,9 @@
 ## Goggles  -o^o-
 ### Swimming Results Browser & "Swimming Life-style" enhancer
 
-[![Code Climate](https://codeclimate.com/github/steveoro/goggles/badges/gpa.svg)](https://codeclimate.com/github/steveoro/goggles)
-[![Test Coverage](https://codeclimate.com/github/steveoro/goggles/badges/coverage.svg)](https://codeclimate.com/github/steveoro/goggles)
-[![PullReview stats](https://www.pullreview.com/github/steveoro/goggles/badges/master.svg?)](https://www.pullreview.com/github/steveoro/goggles/reviews/master)
+[![Maintainability](https://api.codeclimate.com/v1/badges/d04a16c56341b1ce59a3/maintainability)](https://codeclimate.com/github/steveoro/goggles/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/d04a16c56341b1ce59a3/test_coverage)](https://codeclimate.com/github/steveoro/goggles/test_coverage)
+[![CodeFactor](https://www.codefactor.io/repository/github/steveoro/goggles/badge)](https://www.codefactor.io/repository/github/steveoro/goggles)
 [![Build Status](https://semaphoreci.com/api/v1/steveoro/goggles/branches/master/badge.svg)](https://semaphoreci.com/steveoro/goggles)
 
 Goggles is a Rails application developed to manage the storage of the results from any official

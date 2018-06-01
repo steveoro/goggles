@@ -142,7 +142,6 @@ GEM
       xpath (>= 2.0, < 4.0)
     case_transform (0.2)
       activesupport
-    certifi (2017.11.05)
     childprocess (0.8.0)
       ffi (~> 1.0, >= 1.0.11)
     cocoon (1.2.11)
@@ -327,9 +326,6 @@ GEM
       coderay (~> 1.1.0)
       method_source (~> 0.9.0)
     public_suffix (3.0.1)
-    pullreview-coverage (0.0.5)
-      certifi
-      simplecov (>= 0.7.1, < 1.0.0)
     puma (3.11.0)
     rack (2.0.5)
     rack-test (1.0.0)
@@ -558,7 +554,6 @@ DEPENDENCIES
   nokogiri
   prawn (~> 2.1)
   prawn-table
-  pullreview-coverage
   puma (~> 3.7)
   rails (~> 5.1.4)
   rails-controller-testing
