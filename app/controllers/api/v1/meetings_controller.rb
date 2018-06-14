@@ -283,7 +283,7 @@ class Api::V1::MeetingsController < Api::BaseController
       # Method #3: Spawn a system thread for curl usage, w/ output capture
       # (with this method we don't have a class response with a body, but plain text that has to be converted to UTF-8 for safety)
       # [Steve, 20171119] Sometimes the SSL certificate may be invalid or expired, so we turn off the check with "-k"
-      web_response, s = ::Open3.capture2( "curl --insecure #{ uri } -L", stdin_data: nil, binmode: true )
+      web_response, s = ::Open3.capture2( "curl --location --insecure #{ uri }", stdin_data: nil, binmode: true )
 
 
 # DEBUG

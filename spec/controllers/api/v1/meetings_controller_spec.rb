@@ -244,13 +244,30 @@ describe Api::V1::MeetingsController, type: :controller, api: true do
       end
     end
 
-    context "with a JSON request and valid credentials," do
+    context "with a JSON request and valid credentials (news site)," do
       it "handles successfully the request" do
         get :download, format: :json, params: { url: test_addr, body_id: "body", user_email: user.email, user_token: user.authentication_token }
         expect(response.status).to eq( 200 )
       end
       it "returns a JSON result of 'success' as true and the request payload as 'data'" do
         get :download, format: :json, params: { url: test_addr, body_id: "body", user_email: user.email, user_token: user.authentication_token }
+        result = JSON.parse( response.body )
+# DEBUG
+#        puts "\r\n------------8<-----------\r\n#{ result.inspect }\r\n------------8<-----------"
+        expect( result['success'] ).to eq( true )
+        expect( result['data'] ).to be_present
+      end
+    end
+
+    context "with a JSON request and valid credentials (FIN result data)," do
+      let( :fin_url ) { "https://www.federnuoto.it/discipline/master/circuito-supermaster.html?view=risultati&codice=G08A&anno=2018" }
+
+      it "handles successfully the request" do
+        get :download, format: :json, params: { url: fin_url, body_id: "body", user_email: user.email, user_token: user.authentication_token }
+        expect(response.status).to eq( 200 )
+      end
+      it "returns a JSON result of 'success' as true and the request payload as 'data'" do
+        get :download, format: :json, params: { url: fin_url, body_id: "body", user_email: user.email, user_token: user.authentication_token }
         result = JSON.parse( response.body )
 # DEBUG
 #        puts "\r\n------------8<-----------\r\n#{ result.inspect }\r\n------------8<-----------"

@@ -13,9 +13,20 @@
             .goggles-category-gap.col-xs-12
               &nbsp;
             .col-xs-12
+              :javascript
+                // Do we have a retrievable link?
+                if ( #{ @meeting.invitation.to_s =~ /www.federnuoto.it/ui } ) {
+                  // Get the page via AJAX:
+                  $.get({
+                    url: "#{ api_v1_meeting_download_path( url: @meeting.invitation.to_s.gsub('http:', 'https:') ) }",
+                  }).done( function( result ) {
+                    $('#downloaded_manifest').replaceWith( result.data );
+                  });
+                };
               #downloaded_manifest
                 %span(id='loadingIndicator')
                   = image_tag( 'indicator.gif' )
+
           - else
             .panel-body.text-center
               .col-xs-12
@@ -36,17 +47,3 @@
             = html_doc.css('body').inner_html.html_safe
   .col-xs-12
     &nbsp;
-
-:javascript
-  // (Wait for the page to be ready)
-  $( function() {
-    // Do we have a retrievable link?
-    if ( #{ @meeting.invitation.to_s =~ /www.federnuoto.it/ui } ) {
-      // Get the page via AJAX:
-      $.get({
-        url: "#{ api_v1_meeting_download_path( url: @meeting.invitation.to_s.gsub('http:', 'https:') ) }",
-      }).done( function( result ) {
-        $('#downloaded_manifest').replaceWith( result.data );
-      });
-    }
-  });

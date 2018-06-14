@@ -9,6 +9,16 @@
       .goggles-category-gap.col-xs-12
         &nbsp;
       .col-xs-12
+        :javascript
+          // Do we have a retrievable link?
+          if ( #{ @calendar_row && @calendar_row.startlist_link.present? ? 'true' : 'false' } ) {
+            // Get the page via AJAX:
+            $.get({
+              url: "#{ api_v1_meeting_download_path( url: 'https://www.federnuoto.it' + (@calendar_row && @calendar_row.startlist_link.present? ? @calendar_row.startlist_link.to_s : '') ) }",
+            }).done( function( result ) {
+              $('#downloaded_startlist').replaceWith( result.data );
+            });
+          };
         #downloaded_startlist
           %span(id='loadingIndicator')
             = image_tag( 'indicator.gif' )
@@ -30,17 +40,3 @@
     .row
       .col-xs-12
         = render( partial: 'start_list_grid' )
-
-:javascript
-  // (Wait for the page to be ready)
-  $( function() {
-    // Do we have a retrievable link?
-    if ( #{ @calendar_row && @calendar_row.startlist_link.present? ? 'true' : 'false' } ) {
-      // Get the page via AJAX:
-      $.get({
-        url: "#{ api_v1_meeting_download_path( url: 'https://www.federnuoto.it' + (@calendar_row && @calendar_row.startlist_link.present? ? @calendar_row.startlist_link.to_s : '') ) }",
-      }).done( function( result ) {
-        $('#downloaded_startlist').replaceWith( result.data );
-      });
-    }
-  });
