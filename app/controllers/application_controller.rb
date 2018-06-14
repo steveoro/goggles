@@ -21,7 +21,7 @@ class ApplicationController < ActionController::Base
 #  end
 
   before_action :set_locale, :check_maintenance_mode
-  before_action :configure_permitted_parameters, if: :devise_controller?
+  before_action :configure_devise_permitted_parameters, if: :devise_controller?
 
   # Security note: controllers with no-CSRF protection must disable the Devise fallback,
   # see #49 for details.
@@ -60,12 +60,64 @@ class ApplicationController < ActionController::Base
 #  end
 
 
-  # Devise 4+ "lazy" parameter sanitizer
-  def configure_permitted_parameters
-    devise_parameter_sanitizer.permit(:sign_up, keys: [:name, :first_name, :last_name, :description, :year_of_birth])
-    devise_parameter_sanitizer.permit(:account_update, keys: [:name, :first_name, :last_name, :description, :year_of_birth])
+  # Devise "lazy" parameter sanitizer.
+  #
+  def configure_devise_permitted_parameters
+    # We can't easily override here the internal Devise::RegistrionController used by the
+    # Engine, because the engine is not namespaced.
+    # So we have to resort to some tinkering right here:
+# DEBUG
+#    logger.debug( "\r\n\r\n!! =====[ #{self.class.name}: configure_devise_permitted_parameters ]====" )
+#    logger.debug( "- resource...: " << resource.inspect )
+#    logger.debug( "- PARAMS.....: " << params.inspect )
+#    logger.debug( "- CTRL.......: " << params[:controller] )
+#    logger.debug( "- ACTION.....: " << params[:action] )
+
+    # User new/create: do not allow any parameter if recaptcha fails:
+    if (params[:controller].to_s == 'devise/registrations') &&
+       ( (params[:action].to_s == 'new') || (params[:action].to_s == 'create') )
+#      logger.debug( "In devise/registrations..." )
+
+      if (params[:action].to_s == 'new') || (params[:action].to_s == 'create' && verify_recaptcha)
+        devise_parameter_sanitizer.permit(:sign_up) do |user_params|
+          user_params.permit(
+            :email, :password, :password_confirmation,
+            :name, :first_name, :last_name, :description, :year_of_birth
+          )
+        end
+        flash[:error] = nil
+      else
+        flash[:error] = I18n.t('search_view.captcha_fail')
+      end
+    end
+
+    # User edit/update:
+    devise_parameter_sanitizer.permit(:account_update) do |user_params|
+      user_params.permit(
+        :email, :password, :password_confirmation,
+        :name, :first_name, :last_name, :description, :year_of_birth
+      )
+    end
   end
   #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Check captcha set in #create form only for devise registration controller
+  def check_captcha_for_devise_registration_create
+# DEBUG
+    logger.debug( "\r\n\r\n!! =====[ #{self.class.name}: check_captcha_for_devise_registration_create ]====" )
+    logger.debug( "- resource...: " << resource.inspect )
+    logger.debug( "- PARAMS.....: " << params.inspect )
+
+    unless verify_recaptcha
+      self.resource = resource_class.new sign_up_params
+      resource.validate # Look for any other validation errors besides Recaptcha
+      set_minimum_password_length
+      respond_with resource
+    end
+  end
+  #-- --------------------------------------------------------------------------
   #++
 
 
