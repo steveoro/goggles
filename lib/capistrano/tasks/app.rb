@@ -173,9 +173,6 @@ end
 
 # Custom hooks:
 before 'deploy:check:linked_files', 'app:setup:prod_env'
-# [Steve, 20160810] This is no more required for Goggles version5:
-# before 'deploy:check:linked_files', 'app:setup:shared_extjs'
-
 before 'deploy:check:linked_files', 'app:setup:common_output'
 
 # [Steve, 20141201] Warning: this may lead to errors on "cold" deploys, where the creation
