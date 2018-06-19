@@ -11,7 +11,7 @@ require 'reservations_csi_2_csv'
 
 = MeetingReservationsController
 
-  - version:  6.160
+  - version:  6.337
   - author:   Steve A.
 
 =end

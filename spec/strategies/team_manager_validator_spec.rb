@@ -4,14 +4,14 @@ require 'team_manager_validator'
 
 
 describe TeamManagerValidator, type: :strategy do
-  # These are assumed NOT to have any reservations and to be ccrrently "closed":
-  let(:old_meeting)               { Meeting.find_by_id( [13101, 13102, 13103, 13105, 14101, 14102, 14103, 14104, 14105, 15101, 15102, 15103, 15104, 15105].sort{rand * 0.5}.first ) }
-  let(:old_unmanageable_meeting)  { Meeting.find_by_id( [16232, 16231, 16236, 16237, 16358, 16233, 16300, 16239, 16243, 16242, 16245, 16246, 16247, 16316].sort{rand * 0.5}.first ) }
+  # These are assumed NOT to have any reservations and to be currently "closed":
+  let(:old_meeting)               { Meeting.find_by_id( [13101, 13102, 13103, 13105, 14101, 14102, 14103, 14104, 14105, 15101, 15102, 15103, 15104, 15105].sample ) }
+  let(:old_unmanageable_meeting)  { Meeting.find_by_id( [16232, 16231, 16236, 16237, 16358, 16233, 16300, 16239, 16243, 16242, 16245, 16246, 16247, 16316].sample ) }
 
   # For one of these we will add temporarilty a reservation row:
-  let(:meeting_with_reservation)  { Meeting.find_by_id( [12101, 12102, 16101].sort{rand * 0.5}.first ) }
+  let(:meeting_with_reservation)  { Meeting.find_by_id( [12101, 12102, 16101].sample ) }
   # This will be a user that has attended to one of the above meeting:
-  let(:user_for_reservation)      { User.find_by_id( [1, 2].sort{rand * 0.5}.first ) }
+  let(:user_for_reservation)      { User.find_by_id( [1, 2].sample ) }
 
   # This meeting is assumed to be far-fetched in the future, without reservations (yet)
   let(:new_meeting)   { create(:meeting, header_date: Date.today + 10.days) }
