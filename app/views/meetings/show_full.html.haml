@@ -9,19 +9,18 @@
       .goggles-category-gap.col-xs-12
         &nbsp;
       .col-xs-12
-        :javascript
-          // Do we have a retrievable link?
-          if ( #{ @calendar_row && @calendar_row.results_link.present? ? 'true' : 'false' } ) {
-            // Get the page via AJAX:
-            $.get({
-              url: "#{ api_v1_meeting_download_path( url: 'https://www.federnuoto.it' + (@calendar_row && @calendar_row.results_link.present? ? @calendar_row.results_link.to_s : '') ) }",
-            }).done( function( result ) {
-              $('#downloaded_results').replaceWith( result.data );
-            });
-          };
         #downloaded_results
           %span(id='loadingIndicator')
             = image_tag( 'indicator.gif' )
+        :javascript
+          // Do we have a retrievable link?
+          if ( #{ @calendar_row && @calendar_row.results_link.present? ? 'true' : 'false' } ) {
+            startPageDownloader(
+              "https://api.apify.com/v1/YZw3JnXkocmreiBvj/crawlers/qP7zZes7Ctm48syFG",
+              "?token=dzs3ZLAjn8bCTb2fGGp9dQdBh", "/execute?token=cYxTRzRgXL2zdYRpfs7ydfHTn", "/lastExec?token=DAqFBawiWpzDjzZfA4Zvhz39M",
+              "https://www.federnuoto.it#{ @calendar_row && @calendar_row.results_link.present? ? @calendar_row.results_link.to_s.html_safe : '' }"
+            );
+          };
     - else
       .panel-body.text-center
         .col-xs-12
