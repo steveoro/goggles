@@ -8,13 +8,17 @@ describe MeetingResultDAO, type: :model do
   #let(:meeting)         { create(:meeting_with_sessions) }
   #let(:meeting_session) { meeting.meeting_sessions.first }
 
-  let(:meeting)         { Meeting.where('are_results_acquired').sample }
-  let(:meeting_event)   { meeting.meeting_events.sample }
-  let(:meeting_program) { meeting.meeting_programs.sample }
-  let(:mir)             { meeting.meeting_individual_results.sample }
+  let(:mir) do
+    MeetingIndividualResult.where("meeting_program_id IS NOT NULL")
+      .last(100).sample
+  end
+  let(:meeting)         { mir.meeting }
+  let(:meeting_event)   { mir.meeting_event }
+  let(:meeting_program) { mir.meeting_program }
   let(:passage)         { Passage.all.sample }
-  
+
   let(:mir_with_pass)   { passage.meeting_individual_result }
+
 
   context "MeetingResultEventDAO subclass," do
 
@@ -23,7 +27,7 @@ describe MeetingResultDAO, type: :model do
     it_behaves_like( "(the existance of a method)", [
       :code, :programs, :has_start_list, :populate_programs
     ] )
-    
+
     describe "#has_start_list" do
       it "is a boolean" do
         expect( subject.has_start_list ).to eq( true ).or( eq( false ))
@@ -71,6 +75,7 @@ describe MeetingResultDAO, type: :model do
   #-- -------------------------------------------------------------------------
   #++
 
+
   context "MeetingResultProgramDAO subclass," do
 
     subject { MeetingResultDAO::MeetingResultProgramDAO.new( meeting_program ) }
@@ -78,7 +83,7 @@ describe MeetingResultDAO, type: :model do
     it_behaves_like( "(the existance of a method)", [
       :event_name, :category_name, :gender_name, :has_start_list, :rank, :has_results?, :populate_ranking
     ] )
-    
+
     describe "#has_start_list" do
       it "is a boolean" do
         expect( subject.has_start_list ).to eq( true ).or( eq( false ))
@@ -130,6 +135,7 @@ describe MeetingResultDAO, type: :model do
   end
   #-- -------------------------------------------------------------------------
   #++
+
 
   context "MeetingResultIndividualDAO subclass," do
 
@@ -184,6 +190,7 @@ describe MeetingResultDAO, type: :model do
   #-- -------------------------------------------------------------------------
   #++
 
+
   context "MeetingResultPassageDAO subclass," do
 
     subject { MeetingResultDAO::MeetingResultPassageDAO.new( passage ) }
@@ -195,6 +202,7 @@ describe MeetingResultDAO, type: :model do
   end
   #-- -------------------------------------------------------------------------
   #++
+
 
   context "MeetingResultDAO," do
 
