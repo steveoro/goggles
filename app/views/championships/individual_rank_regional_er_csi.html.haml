@@ -42,13 +42,19 @@
                       = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
                         = image_tag('bullet_arrow_up.png')
 
-                  - rank_array.swimmers.each_with_index do |ranked_swimmer,index|
+                  - previous_score = 0
+                  - rank = 0
+                  - rank_array.swimmers.each_with_index do |ranked_swimmer, index|
                     - curr_swimmer = ranked_swimmer.swimmer.decorate
                     - curr_team = curr_swimmer.get_current_team( @season ).decorate
                     - is_highlighted = (@team && @team.id == curr_team.id)
                     %tr{ 'class' => is_highlighted ? 'warning' : '' }
-                      %td
-                        = index + 1
+                      %td.goggles-rightalign
+                        - rank += 1 if ( previous_score != ranked_swimmer.total_best_5_on_6 )
+                        = show_tag( rank==1, "medal_gold_3.png", '' )
+                        = show_tag( rank==2, "medal_silver_3.png", '' )
+                        = show_tag( rank==3, "medal_bronze_3.png", '' )
+                        = rank
                       %td
                         = curr_swimmer.get_linked_swimmer_name
                       %td.goggles-rightalign
@@ -64,6 +70,7 @@
                           %td
                       %td.goggles-rightalign{ 'data-toggle'=>'tooltip', 'title'=>"#{@individual_ranking.meetings_with_results.count}" }
                         %b= ranked_swimmer.total_best_5_on_6
+                        - previous_score = ranked_swimmer.total_best_5_on_6
                   %tr{'class'=>'info'}
                     %td{ colspan: 5 + meeting_columns }
                       %b= I18n.t('meeting_stats.tot_swimmers')

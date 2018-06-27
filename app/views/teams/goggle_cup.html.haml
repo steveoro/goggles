@@ -28,17 +28,21 @@
             %b= I18n.t('max')
           %td.text-center
             %b= I18n.t('min')
+        - previous_score = 0
+        - rank = 0
         - @goggle_cup_rank.each_with_index do |rank_element,index|
           %tr
             %td.goggles-rightalign
-              = show_tag( index==0, "medal_gold_3.png", '' )
-              = show_tag( index==1, "medal_silver_3.png", '' )
-              = show_tag( index==2, "medal_bronze_3.png", '' )
-              = index + 1
+              - rank += 1 if ( previous_score != rank_element[:total] )
+              = show_tag( rank==1, "medal_gold_3.png", '' )
+              = show_tag( rank==2, "medal_silver_3.png", '' )
+              = show_tag( rank==3, "medal_bronze_3.png", '' )
+              = rank
             %td
               = rank_element[:swimmer].decorate.get_linked_swimmer_name_to_goggle_cup
             %td.goggles-rightalign
               %b= sprintf( "%02.2f", rank_element[:total] )
+              - previous_score = rank_element[:total]
             %td.goggles-centeralign
               = rank_element[:count]
             %td.goggles-rightalign
