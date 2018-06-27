@@ -287,8 +287,8 @@ class Api::V1::MeetingsController < Api::BaseController
 
 
 # DEBUG
-#      puts "response.....: #{ web_response.inspect }"
-#      puts "response body: #{ web_response.body }"
+#      puts "response...: #{ web_response.inspect }"
+#      puts "status.....: #{ s.inspect }"
 
 #      if web_response && web_response.respond_to?(:body) && web_response.body.present?
       if web_response && web_response.present?
