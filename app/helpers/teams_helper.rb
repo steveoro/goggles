@@ -29,4 +29,19 @@ module TeamsHelper
   end
   #-- -------------------------------------------------------------------------
   #++
+
+  # Returns the HTML for championship#printout_ranking_regional_csi
+  # action for the specified Season instance.
+  #
+  def link_to_goggle_cup_rankings_printout( goggle_cup )
+    return nil unless goggle_cup.instance_of?( GoggleCup )
+    link_to(
+      team_printout_goggle_cup_path(id: goggle_cup.id),
+      class: 'btn btn-default'
+    ) do
+      image_tag('page_white_acrobat.png') << "&nbsp;#{ I18n.t('goggle_cup.ranking') }".html_safe
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 end

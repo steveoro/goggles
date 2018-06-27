@@ -226,8 +226,41 @@ class TeamsController < ApplicationController
     @goggle_cup_max_points = @goggle_cup ? @goggle_cup.max_points.to_s : I18n.t('goggle_cup.default_max_points')
     @goggle_cup_max_performance = @goggle_cup ? @goggle_cup.max_performance.to_s : I18n.t('goggle_cup.default_max_performance')
 
-    # Gets goggle cup ranks
+    # Prepare goggle cup rankings
     @goggle_cup_rank = @goggle_cup ? @goggle_cup.calculate_goggle_cup_rank : []
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Radiography for a specified team id: "Goggle cup" tab rendering
+  # Collects and represents the Goggle cup ranking
+  #
+  # == Params:
+  # id: the GoggleCup id to be processed
+  #
+  def printout_goggle_cup
+    # Gets current goggle cup, if any
+    goggle_cup = GoggleCup.find_by_id( params[:id] )
+    goggle_cup_name = goggle_cup ? goggle_cup.get_full_name : I18n.t('goggle_cup.default_name')
+
+    # Prepare goggle cup rankings
+    @goggle_cup_rank = goggle_cup ? goggle_cup.calculate_goggle_cup_rank : []
+
+    # == OPTIONS setup + RENDERING phase ==
+    base_filename = I18n.t('goggle_cup.default_name').underscore
+    filename = create_unique_filename( base_filename ) + '.pdf'
+    options = {
+      report_title:         goggle_cup_name,
+      meta_info_subject:    'team best-timings records printout',
+      meta_info_keywords:   "Goggles, #{ base_filename }'",
+      ranking:              @goggle_cup_rank
+    }
+    send_data(                                      # == Render layout & send data:
+        GoggleCupRankingLayout.render( options ),
+        type: 'application/pdf',
+        filename: filename
+    )
   end
   #-- -------------------------------------------------------------------------
   #++

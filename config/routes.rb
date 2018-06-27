@@ -141,6 +141,7 @@ Rails.application.routes.draw do
       get  "teams/goggle_cup/:id",              to: "teams#goggle_cup",                 as: "team_goggle_cup"
       get  "teams/goggle_cup_all_of_fame/:id",  to: "teams#goggle_cup_all_of_fame",     as: "team_goggle_cup_all_of_fame"
       get  "teams/closed_goggle_cup/:id",       to: "teams#closed_goggle_cup",          as: "team_closed_goggle_cup"
+      get  "teams/printout_goggle_cup/:id",     to: "teams#printout_goggle_cup",        as: "team_printout_goggle_cup"
 
       # === Swimming Pools ===
 #      get "swimming_pools/index",               as: "swimming_pools"

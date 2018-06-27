@@ -1,6 +1,7 @@
 en:
   goggle_cup:
     default_name: "Goggle-Cup"
+    ranking: "Ranking"
     default_max_points: "5000"
     default_max_performance: "5"
     rules_title: "Rules"

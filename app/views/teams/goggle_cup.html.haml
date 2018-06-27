@@ -1,5 +1,11 @@
 = render( partial: 'tabs_and_title' )
 
+- if @goggle_cup
+  .navbar
+    %ul.nav.nav-pills
+      %li
+        = link_to_goggle_cup_rankings_printout( @goggle_cup )
+
 .col-xs-12#goggle_cup_presentation
   .col-xs-offset-1.col-xs-10
     %p
