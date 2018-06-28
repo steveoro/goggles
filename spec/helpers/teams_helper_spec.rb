@@ -26,8 +26,22 @@ describe TeamsHelper, :type => :helper do
   #++
 
 
-  describe "#link_to_best_timings_printout()" do
 
+  shared_examples_for "correctly rendering the event sheet PDF link button" do
+    it "is not nil" do
+      expect( subject ).not_to be_nil
+    end
+    it "returns a non-empty text" do
+      expect( subject.size ).to be > 0
+    end
+    it "contains the image name" do
+      expect( subject ).to include('page_white_acrobat')
+    end
+  end
+
+
+
+  describe "#link_to_best_timings_printout()" do
     context "when given a nil team," do
       subject { helper.link_to_best_timings_printout( nil ) }
 
@@ -35,22 +49,8 @@ describe TeamsHelper, :type => :helper do
         expect( subject ).to be nil
       end
     end
-    #-- -----------------------------------------------------------------------
-    #++
 
     context "when given valid parameters," do
-      shared_examples_for "correctly rendering the event sheet PDF link button" do
-        it "is not nil" do
-          expect( subject ).not_to be_nil
-        end
-        it "returns a non-empty text" do
-          expect( subject.size ).to be > 0
-        end
-        it "contains the image name" do
-          expect( subject ).to include('page_white_acrobat')
-        end
-      end
-
       context "[params: Team WITH existing result]," do
         let(:team) { Team.all.limit(1000).sample }
         subject { helper.link_to_best_timings_printout( team ) }
@@ -59,6 +59,31 @@ describe TeamsHelper, :type => :helper do
 
         it "contains the path to the printout action" do
           expect( subject ).to include( team_printout_best_timings_path(id: team.id) )
+        end
+      end
+    end
+  end
+
+
+
+  describe "#link_to_goggle_cup_rankings_printout()" do
+    context "when given a nil GoggleCup," do
+      subject { helper.link_to_goggle_cup_rankings_printout( nil ) }
+
+      it "returns nil" do
+        expect( subject ).to be nil
+      end
+    end
+
+    context "when given valid parameters," do
+      context "[params: valid GoggleCup]," do
+        let(:goggle_cup) { GoggleCup.all.limit(200).sample }
+        subject { helper.link_to_goggle_cup_rankings_printout( goggle_cup ) }
+
+        it_behaves_like "correctly rendering the event sheet PDF link button"
+
+        it "contains the path to the printout action" do
+          expect( subject ).to include( team_printout_goggle_cup_path(id: goggle_cup.id) )
         end
       end
     end

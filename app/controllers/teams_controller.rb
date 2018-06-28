@@ -15,29 +15,10 @@ class TeamsController < ApplicationController
   # Require authorization before invoking any of this controller's actions:
   before_action :authenticate_user!, except: [:index, :radio] # Devise HTTP log-in strategy
   # Parse parameters:
-  before_action :verify_parameter, except: [:index, :closed_goggle_cup]
+  before_action :verify_parameter, except: [:index, :closed_goggle_cup, :printout_goggle_cup]
   #-- -------------------------------------------------------------------------
   #++
 
-
-  # Index/Search action
-  #
-  # def index
-    # # [Steve, 20161001] We need to whitelist all parameters for the search query:
-    # params.permit!()
-    # # Leega
-    # # TODO Verify order by name:
-    # # Team CITTA' DEI RAGAZZI (alias NUOTO AZZURRO) doesn't result correctly ordered
-    # @title = I18n.t('team.search_title')
-    # # @teams_grid = initialize_grid(
-      # # Team,
-      # # order: 'name',
-      # # order_direction: 'asc',
-      # # per_page: 20
-    # # )
-  # end
-  #-- -------------------------------------------------------------------------
-  #++
 
   # Radiography for a specified team id: main ID card "Radiography" tab rendering.
   #
@@ -49,6 +30,7 @@ class TeamsController < ApplicationController
   end
   #-- -------------------------------------------------------------------------
   #++
+
 
   # Radiography for a specified team id: "Current Swimmers" tab rendering
   #

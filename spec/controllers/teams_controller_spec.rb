@@ -309,6 +309,46 @@ describe TeamsController, type: :controller do
   # ===========================================================================
 
 
+  describe '[GET #printout_goggle_cup/:id]' do
+    it_behaves_like( "(Teams restricted GET action as an unlogged user)", :printout_goggle_cup )
+
+    context "as a logged-in user" do
+      context "with an HTML request for a non-existing GoggleCup id," do
+        before(:each) do
+          login_user()
+          get :printout_goggle_cup, params: { id: 0 }
+        end
+        it "handles the request" do
+          expect( response ).to have_http_status(:success)
+        end
+        it "assigns an empty array to the result variable" do
+          expect( assigns(:goggle_cup_rank) ).to eq([])
+        end
+        it "returns a PDF file" do
+          expect( response.body ).to include("%PDF")
+        end
+      end
+
+      context "with an HTML request for a valid id," do
+        before(:all)  { @fixture = GoggleCup.all.limit(200).sample }
+        before(:each) do
+          login_user()
+          get :printout_goggle_cup, params: { id: @fixture.id }
+        end
+
+        it "assigns the required variables" do
+          expect( assigns(:goggle_cup_rank) ).to be_an_instance_of( Array )
+        end
+        it "returns http success and receives a PDF file" do
+          expect( response ).to have_http_status(:success)
+          expect( response.body ).to include("%PDF")
+        end
+      end
+    end
+  end
+  # ===========================================================================
+
+
   describe '[GET #goggle_cup_all_of_fame/:id]' do
     it_behaves_like( "(Teams restricted GET action as an unlogged user)", :palmares )
     it_behaves_like( "(Teams restricted GET action as a logged-in user)", :palmares )
