@@ -170,6 +170,52 @@ describe ChampionshipsController, type: :controller do
   #-- -------------------------------------------------------------------------
   #++
 
+
+  describe '[GET #printout_indi_ranking_csi/:id]' do
+    context "as a logged-in user" do
+      context "with an HTML request regarding a non-existing Season id," do
+        before(:each) do
+          login_user()
+          get :printout_indi_ranking_csi, params: { id: 0 }
+        end
+        it "handles the request with a redirect" do
+          expect(response.status).to eq( 302 )
+        end
+        it "redirects to #index" do
+          expect( response ).to redirect_to( root_path )
+        end
+      end
+
+      context "with an HTML request regarding an invalid Season id," do
+        before(:each) do
+          login_user()
+          get :printout_indi_ranking_csi, params: { id: [122,132,142,152,162,172].sample }
+        end
+        it "handles the request with a redirect" do
+          expect(response.status).to eq( 302 )
+        end
+        it "redirects to #index" do
+          expect( response ).to redirect_to( root_path )
+        end
+      end
+
+      context "with an HTML request regarding a valid Season id," do
+        before(:each) do
+          login_user()
+          get :printout_indi_ranking_csi, params: { id: [121,131,141,151,161,171].sample }
+        end
+
+        it "returns http success and receives a PDF file" do
+          expect( response ).to have_http_status(:success)
+          expect( response.body ).to include("%PDF")
+        end
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
   describe '[GET #records_regional_er_csi]' do
     it_behaves_like( "(GET http action with or without parameters)", :records_regional_er_csi, 161 )
 

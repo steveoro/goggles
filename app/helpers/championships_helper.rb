@@ -52,4 +52,19 @@ module ChampionshipsHelper
   end
   #-- -------------------------------------------------------------------------
   #++
+
+  # Returns the HTML for championship#printout_indi_ranking_csi
+  # action for the specified Season instance.
+  #
+  def link_to_csi_indi_rankings_printout( season )
+    return nil unless season.instance_of?( Season )
+    link_to(
+      championships_printout_indi_ranking_csi_path(id: season.id),
+      class: 'btn btn-default'
+    ) do
+      image_tag('page_white_acrobat.png') << "&nbsp;#{ I18n.t('championships.individual_rank') }".html_safe
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 end

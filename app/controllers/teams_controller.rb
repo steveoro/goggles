@@ -6,7 +6,7 @@ require 'common/format'
 
 = TeamsController
 
-  - version:  6.200
+  - version:  6.340
   - author:   Steve A.
 
 =end
@@ -234,7 +234,7 @@ class TeamsController < ApplicationController
     filename = create_unique_filename( base_filename ) + '.pdf'
     options = {
       report_title:         goggle_cup_name,
-      meta_info_subject:    'team best-timings records printout',
+      meta_info_subject:    'GoggleCup rankings printout',
       meta_info_keywords:   "Goggles, #{ base_filename }'",
       ranking:              @goggle_cup_rank
     }

@@ -3,13 +3,21 @@
     = render( partial: 'regional_er_csi_tabs' )
   .goggles-category-gap
     = render( partial: 'title' )
+
+    .row
+      .col-xs-8
+        %p= @individual_ranking.get_html_ranking_description
+      .col-xs-4
+        .navbar
+          %ul.nav.nav-pills
+            %li
+              = link_to_csi_indi_rankings_printout( @season )
+
     - cache( cache_key_for_meeting( 'individual_ranking', @season.id, @ranking_updated_at, @team ? @team.id : 0 ) ) do
 
       - meeting_columns = @individual_ranking.meetings_with_results.count
       - if @season.id == 141 && @individual_ranking.meetings_with_results.count < 6
         %p= I18n.t('meeting_stats.rank_disclaimer')
-
-      %p= @individual_ranking.get_html_ranking_description
       %ul.col-xs-offset-10.col-xs-2.col-sm-offset-11.col-sm-1.col-md-offset-11.col-md-1.nav.nav-pills.nav-stacked.navbar-fixed-bottom.goggles-divlist-odd.navpill_side
         %li
           = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do

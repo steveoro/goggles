@@ -6,7 +6,7 @@ require 'common/format'
 
 = ChampionshipsController
 
-  - version:  6.135
+  - version:  6.340
   - author:   Leega, Steve A.
 
 =end
@@ -15,7 +15,8 @@ class ChampionshipsController < ApplicationController
   before_action :verify_parameter_regional_er_csi, only: [
       :ranking_regional_er_csi, :printout_ranking_regional_csi,
       :calendar_regional_er_csi, :event_ranking_regional_er_csi,
-      :individual_rank_regional_er_csi, :rules_regional_er_csi, :history_regional_er_csi, :records_regional_er_csi
+      :individual_rank_regional_er_csi, :printout_indi_ranking_csi,
+      :rules_regional_er_csi, :history_regional_er_csi, :records_regional_er_csi
   ]
   before_action :verify_parameter_regional_er_uisp, only: [
       :ranking_regional_er_uisp, :calendar_regional_er_uisp, :rules_regional_er_uisp,
@@ -30,7 +31,7 @@ class ChampionshipsController < ApplicationController
   before_action :set_team, only: [
       :ranking_regional_er_csi,
       :event_ranking_regional_er_csi,
-      :individual_rank_regional_er_csi
+      :individual_rank_regional_er_csi, :printout_indi_ranking_csi
   ]
   #-- -------------------------------------------------------------------------
   #++
@@ -181,6 +182,8 @@ class ChampionshipsController < ApplicationController
       @season_ranking << gender_ranking
     end
   end
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Seasonal individual ranking
@@ -212,15 +215,57 @@ class ChampionshipsController < ApplicationController
   end
 
 
+  # PDF rendering for the CSI seasonal individual ranking.
+  #
+  def printout_indi_ranking_csi
+    title = I18n.t('championships.individual_rank') + ' ' + @season_type.get_full_name
+
+    @category_types = @season.category_types.are_not_relays.is_divided.sort_by_age
+
+    # Decides what kind of calculation for the season
+    # TODO store it on DB using calculation formulas
+    case @season.id
+    when 141 # CSI 2014/2015
+      # Balanced individual ranking
+      @individual_ranking = BalancedIndividualRankingDAO.new( @season )
+    when 151 # CSI 2015/2016
+      # Enhance individual ranking
+      @individual_ranking = EnhanceIndividualRankingDAO.new( @season )
+    else # 161.. and over (CSI 2016/2017, ...)
+      # Enhance individual ranking
+      @individual_ranking = EnhanceIndividualRankingDAO.new( @season )
+    end
+
+    # == OPTIONS setup + RENDERING phase ==
+    base_filename = I18n.t('championships.individual_rank').gsub(' ', '_').underscore
+    filename = create_unique_filename( base_filename ) + '.pdf'
+    options = {
+      report_title:         title,
+      meta_info_subject:    'csi championship individual rankings printout',
+      meta_info_keywords:   "Goggles, #{ base_filename }'",
+      season:               @season,
+      ranking:              @individual_ranking,
+      categoriy_types:      @category_types
+    }
+    send_data(                                      # == Render layout & send data:
+        ChampionshipIndiRankingCSILayout.render( options ),
+        type: 'application/pdf',
+        filename: filename
+    )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
   # CSI regional ER all times records
   # CSI ER Regional records doesn't need category split or join
   #
   def records_regional_er_csi
     @title = I18n.t('championships.records') + ' ' + @season_type.get_full_name
-    
+
     # Prepare record DAO
     @recordDAO = RecordX4DAO.new( @season_type, RecordType.find_by_code( 'FOR' ) )
-    
+
     # Add records
     IndividualRecord.
      #joins(:swimmer, :category_type, :gender_type, :pool_type, :event_type, [meeting_individual_result: [meeting_program: [meeting_event: [meeting_session: :meeting]]]], season: :season_type).
@@ -232,20 +277,20 @@ class ChampionshipsController < ApplicationController
      each do |record|
       # TODO
       # Manage the fucking 50 specials...
-      if !record.category_type.is_undivided 
-        @recordDAO.add_record( 
-         record.meeting_individual_result, 
-         record.category_type, 
-         record.pool_type, 
-         record.gender_type, 
+      if !record.category_type.is_undivided
+        @recordDAO.add_record(
+         record.meeting_individual_result,
+         record.category_type,
+         record.pool_type,
+         record.gender_type,
          record.event_type,
          record.swimmer
         )
-        @max_updated_at = record.updated_at if @max_updated_at.nil? || @max_updated_at < record.updated_at  
+        @max_updated_at = record.updated_at if @max_updated_at.nil? || @max_updated_at < record.updated_at
       end
     end
-       
-    @highlight_swimmer_id = current_user.swimmer_id if current_user 
+
+    @highlight_swimmer_id = current_user.swimmer_id if current_user
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -258,7 +303,7 @@ class ChampionshipsController < ApplicationController
 
     @calendarMeetingPicker = CalendarMeetingPicker.new( nil, nil, @season )
     @calendarDAO = @calendarMeetingPicker.pick_meetings( 'DESC', false, current_user)
-    
+
     # TODO
     # Calculate the current page according to the position of meetings
     # for current date
@@ -384,25 +429,40 @@ class ChampionshipsController < ApplicationController
   #
   def prepare_parameters( season_type_code )
     set_season_type( season_type_code )
-    unless ( @season_type )
+    @season = Season.find_by_id( params[:id] )
+
+    # We can either set the season with the default current one, according to the
+    # season type code specified, or we can specify directly a Season :id; in this
+    # case, we must check that the season exists & has the same type specified by
+    # the parameter:
+    is_correct_season = if params[:id].present?
+      # The tuple season & season_type must be correct:
+      @season_type.present? && @season.present? && (@season.season_type.id == @season_type.id)
+    else
+      # In this case, we'll default to the current season for this type:
+      @season_type.present?
+    end
+
+    unless ( is_correct_season )
 # DEBUG
 #      puts "\r\n- prepare_parameters(#{season_type_code}): NO @season_type"
       flash[:error] = I18n.t(:invalid_action_request)
       redirect_back( fallback_location: root_path ) and return
     end
 
-    # Find current CSI season
-    @current_season_id = Season.get_last_season_by_type( @season_type.code ).id
-
     # Use the specified season :id or default to the current one:
-    season_id = ( params[:id].present? ? params[:id].to_i : @current_season_id )
-
-    set_season( season_id )
     unless ( @season )
+      # Find current season when no direct Season.id is specified:
+      @current_season_id = Season.get_last_season_by_type( @season_type.code ).id
+      set_season( @current_season_id )
+
+      # Last check regarding the existance of the Season (in case we had to use the current one):
+      unless ( @season )
 # DEBUG
-#      puts "\r\n- prepare_parameters(#{season_type_code}): NO @season; params[:id]: '#{params[:id]}', season_id: #{ season_id }, @current_season_id: #{ @current_season_id }"
-      flash[:error] = I18n.t(:invalid_action_request)
-      redirect_back( fallback_location: root_path ) and return
+#        puts "\r\n- prepare_parameters(#{season_type_code}): NO @season; params[:id]: '#{params[:id]}', season_id: #{ season_id }, @current_season_id: #{ @current_season_id }"
+        flash[:error] = I18n.t(:invalid_action_request)
+        redirect_back( fallback_location: root_path ) and return
+      end
     end
   end
 

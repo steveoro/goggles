@@ -313,7 +313,7 @@ describe TeamsController, type: :controller do
     it_behaves_like( "(Teams restricted GET action as an unlogged user)", :printout_goggle_cup )
 
     context "as a logged-in user" do
-      context "with an HTML request for a non-existing GoggleCup id," do
+      context "with an HTML request regarding a non-existing GoggleCup id," do
         before(:each) do
           login_user()
           get :printout_goggle_cup, params: { id: 0 }
@@ -329,11 +329,10 @@ describe TeamsController, type: :controller do
         end
       end
 
-      context "with an HTML request for a valid id," do
-        before(:all)  { @fixture = GoggleCup.all.limit(200).sample }
+      context "with an HTML request regarding a valid GoggleCup id," do
         before(:each) do
           login_user()
-          get :printout_goggle_cup, params: { id: @fixture.id }
+          get :printout_goggle_cup, params: { id: GoggleCup.all.limit(200).sample.id }
         end
 
         it "assigns the required variables" do
