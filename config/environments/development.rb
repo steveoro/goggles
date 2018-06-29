@@ -71,7 +71,8 @@ Rails.application.configure do
   config.assets.compress = false
 
   # Use a different path for precompiling development assets:
-  config.assets.prefix = "/dev-assets"
+  # (This is needed only if remote assets precompile is turned off)
+  # config.assets.prefix = "/dev-assets"
 
   # Only use best-standards-support built into browsers
   config.action_dispatch.best_standards_support = :builtin

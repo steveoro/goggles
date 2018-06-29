@@ -6,7 +6,7 @@ require 'common/format'
 
 = ChampionshipsController
 
-  - version:  6.340
+  - version:  6.341
   - author:   Leega, Steve A.
 
 =end
@@ -190,23 +190,7 @@ class ChampionshipsController < ApplicationController
   # for CSI regional ER championships
   #
   def individual_rank_regional_er_csi
-    @title = I18n.t('championships.individual_rank') + ' ' + @season_type.get_full_name
-
-    @category_types = @season.category_types.are_not_relays.is_divided.sort_by_age
-
-    # Decides what kind of calculation for the season
-    # TODO store it on DB using calculation formulas
-    case @season.id
-    when 141 # CSI 2014/2015
-      # Balanced individual ranking
-      @individual_ranking = BalancedIndividualRankingDAO.new( @season )
-    when 151 # CSI 2015/2016
-      # Enhance individual ranking
-      @individual_ranking = EnhanceIndividualRankingDAO.new( @season )
-    else # 161.. and over (CSI 2016/2017, ...)
-      # Enhance individual ranking
-      @individual_ranking = EnhanceIndividualRankingDAO.new( @season )
-    end
+    prepare_csi_champioship_individual_rankings()
 
     # Manage updates for cache
     @ranking_updated_at = @season.meeting_individual_results.exists? ?
@@ -218,31 +202,16 @@ class ChampionshipsController < ApplicationController
   # PDF rendering for the CSI seasonal individual ranking.
   #
   def printout_indi_ranking_csi
-    title = I18n.t('championships.individual_rank') + ' ' + @season_type.get_full_name
-
-    @category_types = @season.category_types.are_not_relays.is_divided.sort_by_age
-
-    # Decides what kind of calculation for the season
-    # TODO store it on DB using calculation formulas
-    case @season.id
-    when 141 # CSI 2014/2015
-      # Balanced individual ranking
-      @individual_ranking = BalancedIndividualRankingDAO.new( @season )
-    when 151 # CSI 2015/2016
-      # Enhance individual ranking
-      @individual_ranking = EnhanceIndividualRankingDAO.new( @season )
-    else # 161.. and over (CSI 2016/2017, ...)
-      # Enhance individual ranking
-      @individual_ranking = EnhanceIndividualRankingDAO.new( @season )
-    end
+    prepare_csi_champioship_individual_rankings()
 
     # == OPTIONS setup + RENDERING phase ==
     base_filename = I18n.t('championships.individual_rank').gsub(' ', '_').underscore
     filename = create_unique_filename( base_filename ) + '.pdf'
     options = {
-      report_title:         title,
+      report_title:         @title,
       meta_info_subject:    'csi championship individual rankings printout',
       meta_info_keywords:   "Goggles, #{ base_filename }'",
+      view_context:         view_context,
       season:               @season,
       ranking:              @individual_ranking,
       categoriy_types:      @category_types
@@ -379,6 +348,32 @@ class ChampionshipsController < ApplicationController
 
 
   private
+
+
+  # Prepares the data for the CSI championship rankings and stores the result into
+  # dedicated member variables.
+  #
+  def prepare_csi_champioship_individual_rankings
+    @title = I18n.t('championships.individual_rank') + ' ' + @season_type.get_full_name
+
+    @category_types = @season.category_types.are_not_relays.is_divided.sort_by_age
+
+    # Decides what kind of calculation for the season
+    # TODO store it on DB using calculation formulas
+    case @season.id
+    when 141 # CSI 2014/2015
+      # Balanced individual ranking
+      @individual_ranking = BalancedIndividualRankingDAO.new( @season )
+    when 151 # CSI 2015/2016
+      # Enhance individual ranking
+      @individual_ranking = EnhanceIndividualRankingDAO.new( @season )
+    else # 161.. and over (CSI 2016/2017, ...)
+      # Enhance individual ranking
+      @individual_ranking = EnhanceIndividualRankingDAO.new( @season )
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 
 
   # Verifies that a season id is provided as parameter; otherwise

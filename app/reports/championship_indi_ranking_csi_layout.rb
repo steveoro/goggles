@@ -4,13 +4,14 @@
 
 == GoggleCupRankingLayout
 
-- version:  6.340
+- version:  6.341
 - author:   Steve A.
 
 =end
 class ChampionshipIndiRankingCSILayout
   require "prawn"
   require 'common/format'
+
 
   AUTHOR_STRING = '--=[  Goggles  -o^o-  ]=-- / (p) 2013-2018' unless defined?(AUTHOR_STRING)
 
@@ -26,6 +27,8 @@ class ChampionshipIndiRankingCSILayout
   #
   # - <tt>:meta_info_keywords<\tt> =>
   #   String text for the PDF meta-info Keywords field.
+  #
+  # - <tt>:view_context<\tt> (required) => the rendering view_context in order to access assets paths
   #
   # - <tt>:season<\tt> (required) => the selected Season instance
   #
@@ -43,8 +46,8 @@ class ChampionshipIndiRankingCSILayout
                                                     # Document margins (in PS pts):
       left_margin:    16,
       right_margin:   16,
-      top_margin:     20,
-      bottom_margin:  20,
+      top_margin:     30,
+      bottom_margin:  30,
                                                     # Metadata:
       info: {
         Title:        options[ :report_title ],
@@ -58,9 +61,10 @@ class ChampionshipIndiRankingCSILayout
     }
 
     pdf = Prawn::Document.new( options[:pdf_format] )
-    build_page_header( pdf, options )
     build_page_footer( pdf, options )
+
     build_report_body( pdf, options )
+
     finalize_standard_report( pdf )
     pdf.render()
   end
@@ -71,26 +75,20 @@ class ChampionshipIndiRankingCSILayout
   protected
 
 
-  # Builds and adds a page header on each page.
-  #
-  def self.build_page_header( pdf, options )
-    pdf.repeat( :all ) do
-      pdf.move_cursor_to( pdf.bounds.top() )
-      pdf.text( "<i>#{AUTHOR_STRING}</i>", align: :center, size: 6, inline_format: true )
-      pdf.move_cursor_to( pdf.bounds.top() - 10 )
-      pdf.stroke_horizontal_rule()
-    end
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-
-
   # Builds and adds a page footer on each page.
   #
   def self.build_page_footer( pdf, options )
     pdf.repeat( :all ) do
       pdf.move_cursor_to( pdf.bounds.bottom() + 7 )
       pdf.stroke_horizontal_rule()
+      pdf.text_box(
+        AUTHOR_STRING,
+        size: 6,
+        at: [50, 2],
+        width: pdf.bounds.width - 100,
+        height: 6,
+        align: :left
+      )
       pdf.text_box(
         Format.a_short_datetime( DateTime.now ),
         size: 6,
@@ -107,6 +105,39 @@ class ChampionshipIndiRankingCSILayout
   #++
 
 
+  # Returns the cell decoration data corresponding to the specified rank number.
+  # Typically this will be a medal image for ranks [1..3] and an empty string
+  # for all other values.
+  #
+  def self.get_medal_for( rank, options )
+    view_context = options[:view_context]
+    case rank.to_i
+    when 1
+      {
+        image: File.join( Rails.root, 'public', view_context.image_path("medal_gold_3.png") ),
+        scale: 0.6,
+        position: :center
+      }
+    when 2
+      {
+        image: File.join( Rails.root, 'public', view_context.image_path("medal_silver_3.png") ),
+        scale: 0.6,
+        position: :center
+      }
+    when 3
+      {
+        image: File.join( Rails.root, 'public', view_context.image_path("medal_bronze_3.png") ),
+        scale: 0.6,
+        position: :center
+      }
+    else
+      ""
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
   # Builds the report body, redifining also the margins to avoid overwriting on
   # page headers and footers.
   #
@@ -115,10 +146,12 @@ class ChampionshipIndiRankingCSILayout
     individual_ranking = options[:ranking]
     category_types = options[:categoriy_types]
 
+    pdf.move_cursor_to( pdf.bounds.top() + 7 )
+
     GenderType.individual_only.sort_by_courtesy.each do |gender_type|
       category_types.each do |category_type|
-        self.build_category_table( pdf, season, gender_type, category_type, individual_ranking )
-        pdf.move_down( 10 )
+        self.build_category_table( pdf, season, gender_type, category_type, individual_ranking, options )
+        pdf.move_down( 12 )
       end
     end
 
@@ -137,7 +170,7 @@ class ChampionshipIndiRankingCSILayout
   # builds a single ranking table for the specified PDF stream, with data
   # computed on-the-fly and filtered on gender_type & category_type.
   #
-  def self.build_category_table( pdf, season, gender_type, category_type, individual_ranking )
+  def self.build_category_table( pdf, season, gender_type, category_type, individual_ranking, options )
     ranking_list = individual_ranking.calculate_ranking( gender_type, category_type )
 
     # -- Table title:
@@ -145,15 +178,16 @@ class ChampionshipIndiRankingCSILayout
       "<u><b>#{ category_type.get_full_name } #{ gender_type.i18n_description }</b></u>",
       { align: :center, size: 10, inline_format: true }
     )
-    pdf.move_down( 10 )
+    pdf.move_down( 6 )
 
     # *** Prepare data table:
     data_table_array = [
       # Prepare the first data row, with the labels:
       [
         "<b>#{ I18n.t('rank') }</b>",
+        " ",
         "<b>#{ I18n.t('activerecord.models.swimmer') }</b>",
-        "&nbsp;",
+        " ",
         "<b>#{ I18n.t('championships.team') }</b>",
         "<b>#{ I18n.t('championships.total_points') }</b>"
       ]
@@ -174,10 +208,11 @@ class ChampionshipIndiRankingCSILayout
       # Add the data row to the data matrix:
       data_table_array << [
         "<b>#{ rank }</b>",
-        curr_swimmer.get_full_name,
+        self.get_medal_for( rank, options ),
+        rank < 4 ? "<b>#{ curr_swimmer.get_full_name }</b>" : curr_swimmer.get_full_name,
         curr_swimmer.year_of_birth,
         curr_team.get_full_name,
-        ranked_swimmer.total_best_5_on_6
+        rank < 4 ? "<b>#{ ranked_swimmer.total_best_5_on_6 }</b>" : ranked_swimmer.total_best_5_on_6
       ]
     end
 
@@ -200,11 +235,12 @@ class ChampionshipIndiRankingCSILayout
       end.style do |c|
         c.background_color = "C4E3F3"           # light cyan
         c.size = 6
+        c.align = :center
       end
 
-      # Any data timing cell:
+      # Any other data cell:
       cells.filter do |c|
-        ( c.column > 0 ) && ( c.row > 0 )
+        ( c.column > 1 ) && ( c.row > 0 )
       end.style do |c|
         c.align = :center
         c.valign = :center
