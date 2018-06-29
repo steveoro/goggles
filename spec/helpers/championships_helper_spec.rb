@@ -37,8 +37,20 @@ describe ChampionshipsHelper, :type => :helper do
   #++
 
 
-  describe "#link_to_csi_team_rankings_printout()" do
+  shared_examples_for "correctly rendering the event sheet PDF link button" do
+    it "is not nil" do
+      expect( subject ).not_to be_nil
+    end
+    it "returns a non-empty text" do
+      expect( subject.size ).to be > 0
+    end
+    it "contains the image name" do
+      expect( subject ).to include('page_white_acrobat')
+    end
+  end
 
+
+  describe "#link_to_csi_team_rankings_printout()" do
     context "when given a nil season," do
       subject { helper.link_to_csi_team_rankings_printout( nil ) }
 
@@ -46,35 +58,39 @@ describe ChampionshipsHelper, :type => :helper do
         expect( subject ).to be nil
       end
     end
-    #-- -----------------------------------------------------------------------
-    #++
 
-    context "when given valid parameters," do
-      shared_examples_for "correctly rendering the event sheet PDF link button" do
-        it "is not nil" do
-          expect( subject ).not_to be_nil
-        end
-        it "returns a non-empty text" do
-          expect( subject.size ).to be > 0
-        end
-        it "contains the image name" do
-          expect( subject ).to include('page_white_acrobat')
-        end
-      end
+    context "when given a valid Season instance (it doesn't matter if it's a CSI-type season or not)," do
+      let(:season) { Season.last(100).sample }
+      subject { helper.link_to_csi_team_rankings_printout( season ) }
 
-      context "[params: Team WITH existing result]," do
-        let(:season) { Season.where( season_type_id: SeasonType.find_by_code("MASCSI").id ).sample }
-        subject { helper.link_to_csi_team_rankings_printout( season ) }
+      it_behaves_like "correctly rendering the event sheet PDF link button"
 
-        it_behaves_like "correctly rendering the event sheet PDF link button"
-
-        it "contains the path to the printout action" do
-          expect( subject ).to include( championships_printout_ranking_regional_csi_path(id: season.id) )
-        end
+      it "contains the path to the printout action" do
+        expect( subject ).to include( championships_printout_ranking_regional_csi_path(id: season.id) )
       end
     end
-    #-- -----------------------------------------------------------------------
-    #++
+  end
+
+
+  describe "#link_to_csi_indi_rankings_printout()" do
+    context "when given a nil season," do
+      subject { helper.link_to_csi_indi_rankings_printout( nil ) }
+
+      it "returns nil" do
+        expect( subject ).to be nil
+      end
+    end
+
+    context "when given a valid Season instance (it doesn't matter if it's a CSI-type season or not)," do
+      let(:season) { Season.last(100).sample }
+      subject { helper.link_to_csi_indi_rankings_printout( season ) }
+
+      it_behaves_like "correctly rendering the event sheet PDF link button"
+
+      it "contains the path to the printout action" do
+        expect( subject ).to include( championships_printout_indi_ranking_csi_path(id: season.id) )
+      end
+    end
   end
   #-- -------------------------------------------------------------------------
   #++

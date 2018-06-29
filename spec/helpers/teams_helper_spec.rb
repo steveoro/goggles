@@ -52,7 +52,7 @@ describe TeamsHelper, :type => :helper do
 
     context "when given valid parameters," do
       context "[params: Team WITH existing result]," do
-        let(:team) { Team.all.limit(1000).sample }
+        let(:team) { Team.all.limit(200).sample }
         subject { helper.link_to_best_timings_printout( team ) }
 
         it_behaves_like "correctly rendering the event sheet PDF link button"

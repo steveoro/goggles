@@ -6,7 +6,7 @@ require 'common/format'
 
 = TeamsController
 
-  - version:  6.340
+  - version:  6.341
   - author:   Steve A.
 
 =end
@@ -236,6 +236,7 @@ class TeamsController < ApplicationController
       report_title:         goggle_cup_name,
       meta_info_subject:    'GoggleCup rankings printout',
       meta_info_keywords:   "Goggles, #{ base_filename }'",
+      view_context:         view_context,
       ranking:              @goggle_cup_rank
     }
     send_data(                                      # == Render layout & send data:

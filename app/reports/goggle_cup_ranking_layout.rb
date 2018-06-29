@@ -4,7 +4,7 @@
 
 == GoggleCupRankingLayout
 
-- version:  6.338
+- version:  6.341
 - author:   Steve A.
 
 =end
@@ -26,6 +26,8 @@ class GoggleCupRankingLayout
   #
   # - <tt>:meta_info_keywords<\tt> =>
   #   String text for the PDF meta-info Keywords field.
+  #
+  # - <tt>:view_context<\tt> (required) => the rendering view_context in order to access assets paths
   #
   # - <tt>:ranking<\tt> (required) => the result from @goggle_cup.calculate_goggle_cup_rank,
   #   which is expected to be an array of Hash, having the following minimum structure fields:
@@ -108,6 +110,39 @@ class GoggleCupRankingLayout
   #++
 
 
+  # Returns the cell decoration data corresponding to the specified rank number.
+  # Typically this will be a medal image for ranks [1..3] and an empty string
+  # for all other values.
+  #
+  def self.get_medal_for( rank, options )
+    view_context = options[:view_context]
+    case rank.to_i
+    when 1
+      {
+        image: File.join( Rails.root, 'public', view_context.image_path("medal_gold_3.png") ),
+        scale: 0.6,
+        position: :center
+      }
+    when 2
+      {
+        image: File.join( Rails.root, 'public', view_context.image_path("medal_silver_3.png") ),
+        scale: 0.6,
+        position: :center
+      }
+    when 3
+      {
+        image: File.join( Rails.root, 'public', view_context.image_path("medal_bronze_3.png") ),
+        scale: 0.6,
+        position: :center
+      }
+    else
+      ""
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
   # Builds the report body, redifining also the margins to avoid overwriting on
   # page headers and footers.
   #
@@ -128,6 +163,7 @@ class GoggleCupRankingLayout
         # Prepare the first data row, with the labels:
         [
           "<b>#{ I18n.t('rank') }</b>",
+          " ",
           "<b>#{ I18n.t('activerecord.models.swimmer') }</b>",
           "<b>#{ I18n.t('total') }</b>",
           "<b>#{ I18n.t('goggle_cup.count') }</b>",
@@ -148,8 +184,9 @@ class GoggleCupRankingLayout
         # Add the data row to the data matrix:
         data_table_array << [
           "<b>#{ rank }</b>",
-          rank_element[:swimmer].decorate.get_linked_swimmer_name_to_goggle_cup,
-          sprintf( "%02.2f", rank_element[:total] ),
+          self.get_medal_for( rank, options ),
+          rank < 4 ? "<b>#{ rank_element[:swimmer].decorate.get_full_name }</b>" : rank_element[:swimmer].decorate.get_full_name,
+          rank < 4 ? sprintf( "<b>%02.2f</b>", rank_element[:total] ) : sprintf( "%02.2f", rank_element[:total] ),
           rank_element[:count],
           sprintf( "%02.2f", rank_element[:average] ),
           sprintf( "%02.2f", rank_element[:max] ),
@@ -176,11 +213,12 @@ class GoggleCupRankingLayout
         end.style do |c|
           c.background_color = "C4E3F3"           # light cyan
           c.size = 6
+          c.align = :center
         end
 
         # Any data timing cell:
         cells.filter do |c|
-          ( c.column > 0 ) && ( c.row > 0 )
+          ( c.column > 1 ) && ( c.row > 0 )
         end.style do |c|
           c.align = :center
           c.valign = :center
