@@ -14,18 +14,18 @@ describe SwimmerStatsDAO, type: :model do
 
     it_behaves_like( "(the existance of a method)", [
       :swimmer, :swimmer_stats,
-      :retrieve_individual_results, :retrieve_valid_fin_results_only, :calculate_stats, 
+      :retrieve_individual_results, :retrieve_valid_fin_results_only, :calculate_stats,
       :find_linked_team_names, :get_linked_team_names, :sum_time_swam, :get_time_swam,
       :get_first_meeting, :get_last_meeting, :get_best_fin, :get_worst_fin
     ] )
 
     it_behaves_like( "(the existance of a method returning numeric values)", [
-      :count_meetings, :count_individual_results, :sum_meters_swam, :count_iron_masters, :find_max_fin_points, :find_min_fin_points, :find_tot_fin_points, :count_disqualifications, 
-      :get_meetings_count, :get_individual_results_count, :get_meters_swam, :get_iron_masters_count, :get_tot_fin_points, :get_disqualifications 
+      :count_meetings, :count_individual_results, :sum_meters_swam, :count_iron_masters, :find_max_fin_points, :find_min_fin_points, :find_tot_fin_points, :count_disqualifications,
+      :get_meetings_count, :get_individual_results_count, :get_meters_swam, :get_iron_masters_count, :get_tot_fin_points, :get_disqualifications
     ])
 
     it_behaves_like( "(the existance of a method returning an array)", [
-      :mirs, :fin_mirs 
+      :mirs, :fin_mirs
     ])
 
     describe "#swimmer" do
@@ -51,44 +51,51 @@ describe SwimmerStatsDAO, type: :model do
 
     describe "#calculate_stats" do
       it "populates stats hash" do
-        expect( subject.swimmer_stats.size ).to eq( 0 )
-        subject.calculate_stats
-        expect( subject.swimmer_stats.size ).to be > 0
+        result = SwimmerStatsDAO.new( swimmer )
+        expect( result.swimmer_stats.size ).to eq( 0 )
+        result.calculate_stats
+        expect( result.swimmer_stats.size ).to be > 0
       end
       it "calculates disqualifications, total meters and time swam as single methods" do
-        subject.calculate_stats
-        expect( subject.count_disqualifications ).to eq( subject.get_disqualifications )
-        expect( subject.sum_meters_swam ).to eq( subject.get_meters_swam )
-        expect( subject.sum_time_swam ).to eq( subject.get_time_swam )       
+        result = SwimmerStatsDAO.new( swimmer )
+        result.calculate_stats
+        expect( result.count_disqualifications ).to eq( result.get_disqualifications )
+        expect( result.sum_meters_swam ).to eq( result.get_meters_swam )
+        expect( result.sum_time_swam ).to eq( result.get_time_swam )
       end
     end
-    
+
     describe "#get_first_meeting" do
-      it "returns nil if no data retrieved" do
-        expect( subject.swimmer_stats.size ).to eq( 0 )
-        expect( subject.get_first_meeting ).to be_nil
+      it "returns nil when no data as yet to be retrieved" do
+        result = SwimmerStatsDAO.new( swimmer )
+        expect( result.swimmer_stats.size ).to eq( 0 )
+        expect( result.get_first_meeting ).to be_nil
       end
-      it "returns a SwimmerMeetingDAO if data retrieved" do
-        subject.calculate_stats
-        expect( subject.get_first_meeting ).to be_an_instance_of( SwimmerStatsDAO::SwimmerStatsMeetingDAO )
+      it "returns a SwimmerMeetingDAO after data is retrieved" do
+        result = SwimmerStatsDAO.new( swimmer )
+        result.calculate_stats
+        expect( result.get_first_meeting ).to be_an_instance_of( SwimmerStatsDAO::SwimmerStatsMeetingDAO )
       end
     end
-    
+
     describe "#get_last_meeting" do
       it "returns nil if no data retrieved" do
-        expect( subject.swimmer_stats.size ).to be( 0 )
-        expect( subject.get_last_meeting ).to be_nil
+        result = SwimmerStatsDAO.new( swimmer )
+        expect( result.swimmer_stats.size ).to be( 0 )
+        expect( result.get_last_meeting ).to be_nil
       end
       it "returns a Meeting if data retrieved" do
-        subject.calculate_stats
-        expect( subject.get_first_meeting ).to be_an_instance_of( SwimmerStatsDAO::SwimmerStatsMeetingDAO )
+        result = SwimmerStatsDAO.new( swimmer )
+        result.calculate_stats
+        expect( result.get_first_meeting ).to be_an_instance_of( SwimmerStatsDAO::SwimmerStatsMeetingDAO )
       end
     end
-    
+
     describe "#get_best_fin" do
       it "returns nil if no data retrieved" do
-        expect( subject.swimmer_stats.size ).to eq( 0 )
-        expect( subject.get_best_fin ).to be_nil
+        result = SwimmerStatsDAO.new( swimmer )
+        expect( result.swimmer_stats.size ).to eq( 0 )
+        expect( result.get_best_fin ).to be_nil
       end
       it "returns a SwimmerMeetingDAO if data retrieved" do
         ssd = SwimmerStatsDAO.new( leega )
@@ -96,11 +103,12 @@ describe SwimmerStatsDAO, type: :model do
         expect( ssd.get_best_fin ).to be_an_instance_of( SwimmerStatsDAO::SwimmerStatsMeetingDAO )
       end
     end
-    
+
     describe "#get_worst_fin" do
       it "returns nil if no data retrieved" do
-        expect( subject.swimmer_stats.size ).to eq( 0 )
-        expect( subject.get_worst_fin ).to be_nil
+        result = SwimmerStatsDAO.new( swimmer )
+        expect( result.swimmer_stats.size ).to eq( 0 )
+        expect( result.get_worst_fin ).to be_nil
       end
       it "returns a SwimmerMeetingDAO if data retrieved" do
         ssd = SwimmerStatsDAO.new( leega )
