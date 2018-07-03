@@ -191,8 +191,6 @@ en:
   invalid_token: "Invalid token!"
   log_in_successful: "Login successful."
   log_out_successful: "Logout successful."
-  api_request_must_be_json: "The request must be JSON."
-  api_request_must_contain_user_and_password: "The request MUST contain the user email and password."
 
   id: Id
   name: Name

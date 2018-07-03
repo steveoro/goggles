@@ -192,8 +192,6 @@ it:
   invalid_token: "Token non valido!"
   log_in_successful: "Log-in eseguito con successo."
   log_out_successful: "Log-out eseguito con successo."
-  api_request_must_be_json: "La richiesta deve essere JSON."
-  api_request_must_contain_user_and_password: "La richiesta deve contenere email & password utente."
 
   id: Id
   name: Nome

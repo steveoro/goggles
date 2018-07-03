@@ -1,0 +1,19 @@
+en:
+  api:
+    log_in_successful: "Log-in successful"
+    sign_up_successful: "Sign-up successful"
+    log_out_successful: "Log-out successful"
+    search_successful: "Match found"
+    errors:
+      request_must_be_json: "The request must be JSON."
+      request_must_contain_user_and_password: "The request MUST contain the user email and password."
+      invalid_request: "Invalid request"
+      invalid_user: "Invalid user"
+      invalid_password: "Invalid password"
+      invalid_token: "Invalid token"
+      unable_to_sign_up: "Unable to sign-up (creation error)"
+      unable_to_find_or_create_data_row: "Unable to find or create data row."
+      unable_to_find_existing_badge: "Unable to find existing Badge or other parameters."
+      unable_to_clear_existing_row: "Unable to find existing row for clearing."
+      email_already_taken: "e-mail or user name already taken"
+      nickname_not_found: "Nickname not found"

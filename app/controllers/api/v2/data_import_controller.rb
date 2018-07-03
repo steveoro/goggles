@@ -39,7 +39,7 @@ class Api::V2::DataImportController < Api::BaseController
   #
   def start
     # TODO
-    render status: 200, json: "ok"
+    render status: 200, json: { result: "ok" }
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -55,7 +55,7 @@ class Api::V2::DataImportController < Api::BaseController
   #
   def edit
     # TODO
-    render status: 200, json: "ok"
+    render status: 200, json: { result: "ok" }
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -74,7 +74,7 @@ class Api::V2::DataImportController < Api::BaseController
   #
   def commit
     # TODO
-    render status: 200, json: "ok"
+    render status: 200, json: { result: "ok" }
   end
   #-- -------------------------------------------------------------------------
   #++

@@ -64,7 +64,7 @@ class Api::V1::SessionsController < Devise::SessionsController
   def create
     # Validations
     if request.format != :json
-      render( status: 406, json: { success: false, message: I18n.t(:api_request_must_be_json) } )
+      render( status: 406, json: { success: false, message: I18n.t("api.errors.request_must_be_json") } )
       return
     end
 
@@ -74,7 +74,7 @@ class Api::V1::SessionsController < Devise::SessionsController
     user = User.find_for_database_authentication( email: email ) if email.presence
 
     if email.nil? or password.nil?
-      render( status: 400, json: { success: false, message: I18n.t(:api_request_must_contain_user_and_password) } )
+      render( status: 400, json: { success: false, message: I18n.t("api.errors.request_must_contain_user_and_password") } )
       return
     end
 
@@ -91,14 +91,14 @@ class Api::V1::SessionsController < Devise::SessionsController
             success:    true,
             user_name:  user.name,
             user_token: user.authentication_token,
-            message:    I18n.t(:log_in_successful)
+            message:    I18n.t("api.errors.log_in_successful")
           }
         )
       else
-        render( status: 401, json: { success: false, message: I18n.t(:invalid_user) } )
+        render( status: 401, json: { success: false, message: I18n.t("api.errors.invalid_user") } )
       end
     else
-      render( status: 401, json: { success: false, message: I18n.t(:invalid_user) } )
+      render( status: 401, json: { success: false, message: I18n.t("api.errors.invalid_user") } )
     end
   end
   #-- -------------------------------------------------------------------------
@@ -119,7 +119,7 @@ class Api::V1::SessionsController < Devise::SessionsController
   def destroy
     # Validations
     if request.format != :json
-      render( status: 406, json: { success: false, message: I18n.t(:api_request_must_be_json) } )
+      render( status: 406, json: { success: false, message: I18n.t("api.errors.request_must_be_json") } )
       return
     end
 
@@ -127,12 +127,12 @@ class Api::V1::SessionsController < Devise::SessionsController
     user = User.find_for_database_authentication( authentication_token: params[:user_token] )
 
     if user.nil?
-      render( status: 404, json: { success: false, message: I18n.t(:invalid_token) } )
+      render( status: 404, json: { success: false, message: I18n.t("api.errors.invalid_token") } )
     else
       user.reload
       user.authentication_token = nil
       user.save!
-      render( status: :ok, json: { success: true, message: I18n.t(:log_out_successful) } )
+      render( status: :ok, json: { success: true, message: I18n.t("api.errors.log_out_successful") } )
     end
   end
   #-- -------------------------------------------------------------------------
