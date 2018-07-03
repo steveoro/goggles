@@ -50,6 +50,10 @@ gem "goggles_core", git: "https://github.com/steveoro/goggles_core"
 # XXX [Steve, 20160920] DO NOT USE SafeYAML. Too many issues w/ ActiveRecord,
 # Guard & DelayedJob (See https://github.com/dtao/safe_yaml#known-issues).
 
+# For asynch db-diff reporting in micro-transactions:
+gem 'daemons'
+gem 'delayed_job_active_record'
+
                                         # [Steve, 20130801] Navigation gems for rendering menus & breadcrumbs:
 gem "simple-navigation"
 gem 'simple-navigation-bootstrap'

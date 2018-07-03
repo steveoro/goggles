@@ -168,7 +168,13 @@ GEM
       countries (~> 2.0)
       sort_alphabetical (~> 1.0)
     crass (1.0.4)
+    daemons (1.2.6)
     debug_inspector (0.0.3)
+    delayed_job (4.1.4)
+      activesupport (>= 3.0, < 5.2)
+    delayed_job_active_record (4.1.2)
+      activerecord (>= 3.0, < 5.2)
+      delayed_job (>= 3.0, < 5)
     devise (4.4.3)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
@@ -530,6 +536,8 @@ DEPENDENCIES
   codeclimate-test-reporter
   coffee-rails (~> 4.2)
   country_select
+  daemons
+  delayed_job_active_record
   documatic!
   execjs
   factory_bot_rails
