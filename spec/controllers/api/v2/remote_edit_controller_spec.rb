@@ -7,12 +7,15 @@ RSpec.describe Api::V2::RemoteEditController, type: :controller, api: true do
     @user = create( :user )
   end
 
-  let(:mrr_sample)  { MeetingRelayResult.limit(200).sample }
-  let(:ta)          { TeamAffiliation.where( team_id: mrr_sample.team_id, season_id: mrr_sample.season.id ).first }
-  let(:swimmer)     { ta.badges.sample.swimmer }
-  let(:min)         { (0..1).to_a.sample }
-  let(:sec)         { (0..59).to_a.sample }
-  let(:hun)         { (0..59).to_a.sample }
+  let(:mrr_sample)    { MeetingRelayResult.limit(200).sample }
+  let(:ta)            { TeamAffiliation.where( team_id: mrr_sample.team_id, season_id: mrr_sample.season.id ).first }
+  let(:swimmer)       { ta.badges.sample.swimmer }
+  let(:min)           { (0..1).to_a.sample }
+  let(:sec)           { (0..59).to_a.sample }
+  let(:hun)           { (0..59).to_a.sample }
+  let(:reaction)      { (0..99).to_a.sample }
+  let(:timing_text)   { "#{ min }'#{ sec }\"#{ hun }" }
+  let(:reaction_text) { "0\"#{ reaction }" }
   #-- -------------------------------------------------------------------------
   #++
 
@@ -36,12 +39,7 @@ RSpec.describe Api::V2::RemoteEditController, type: :controller, api: true do
           params: {
             u: @user.email,
             t: @user.authentication_token,
-            mrr: mrr_sample.id,
-            s: swimmer.id,
-            o: 1,
-            min: 0,
-            sec: 35,
-            hun: 0
+            mrr: mrr_sample.id, s: swimmer.id, o: 1, time: timing_text
           }
         )
         # [Steve A.]
@@ -64,7 +62,7 @@ RSpec.describe Api::V2::RemoteEditController, type: :controller, api: true do
         post( :update_relay_swimmer, format: :json,
           params: {
             u: @user.email, t: @user.authentication_token,
-            s: swimmer.id, o: 1, min: 0, sec: 35, hun: 0
+            s: swimmer.id, o: 1, time: timing_text
           }
         )
       end
@@ -77,7 +75,7 @@ RSpec.describe Api::V2::RemoteEditController, type: :controller, api: true do
         post( :update_relay_swimmer, format: :json,
           params: {
             u: @user.email, t: @user.authentication_token,
-            mrr: mrr_sample.id, s: swimmer.id, min: 0, sec: 35, hun: 0
+            mrr: mrr_sample.id, s: swimmer.id, time: timing_text
           }
         )
       end
@@ -91,7 +89,7 @@ RSpec.describe Api::V2::RemoteEditController, type: :controller, api: true do
         post( :update_relay_swimmer, format: :json,
           params: {
             u: @user.email, t: @user.authentication_token,
-            mrr: mrr_sample.id, s: swimmer.id, o: 1, min: min, sec: sec, hun: hun
+            mrr: mrr_sample.id, s: swimmer.id, o: 1, time: timing_text, r: reaction_text
           }
         )
       end
@@ -101,7 +99,6 @@ RSpec.describe Api::V2::RemoteEditController, type: :controller, api: true do
         result = JSON.parse(response.body)
         expect( result['result'] ).to eq('ok')
       end
-
       it "persists the specified values into the MeetingRelaySwimmer row specified by the keys (creating it when not existing)" do
         mrs = MeetingRelaySwimmer.where(
           meeting_relay_result_id: mrr_sample.id,
@@ -112,10 +109,36 @@ RSpec.describe Api::V2::RemoteEditController, type: :controller, api: true do
         expect( mrs.minutes ).to eq( min )
         expect( mrs.seconds ).to eq( sec )
         expect( mrs.hundreds ).to eq( hun )
-        expect( mrs.reaction_time ).to eq( 0 )
-# TODO
-#        expect( mrs.badge_id ).to be > 0
-#        expect( mrs.stroke_type_id ).to be > 0
+        expect( mrs.reaction_time ).to eq( TimingParser.parse( reaction_text ).to_hundreds / 100.0 )
+        expect( mrs.badge_id ).to be > 0
+        expect( mrs.stroke_type_id ).to be > 0
+      end
+    end
+
+
+    context "for an logged-in user w/ a valid JSON request (no swimmer_id)," do
+      before(:each) do
+        login_user(@user)
+        post( :update_relay_swimmer, format: :json,
+          params: {
+            u: @user.email, t: @user.authentication_token,
+            mrr: mrr_sample.id, o: 1, time: timing_text
+          }
+        )
+      end
+
+      it "returns http success with a JSON 'ok' result" do
+        expect( response ).to have_http_status(:success)
+        result = JSON.parse(response.body)
+        expect( result['result'] ).to eq('ok')
+      end
+      it "deletes any existing MeetingRelaySwimmer row specified by the keys" do
+        expect(
+          MeetingRelaySwimmer.where(
+            meeting_relay_result_id: mrr_sample.id,
+            relay_order: 1
+          ).exists?
+        ).to be false
       end
     end
   end

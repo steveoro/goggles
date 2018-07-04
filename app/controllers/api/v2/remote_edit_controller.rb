@@ -41,12 +41,10 @@ class Api::V2::RemoteEditController < Api::BaseController
   # - "mrr" => MeetingRelayResult ID (key#1, used for MeetingRelaySwimmer.find_or_create_by)
   # - "o"   => lap/step ordering in relay (key#2, used for MeetingRelaySwimmer.find_or_create_by)
   # - "s"   => Swimmer.id (when not set, allows to clear the row)
-  # - "min" => minutes from timing value
-  # - "sec" => seconds from timing value
-  # - "hun" => hundreds from timing value
   #
   # === Additional Parameters:
-  # - "r"   => reaction_time
+  # - "time" => incremental timing value as text (e.g.: "1'15\"00")
+  # - "r"    => reaction_time as text (e.g.: "0\"65")
   #
   # === Returns:
   #
@@ -57,113 +55,28 @@ class Api::V2::RemoteEditController < Api::BaseController
     mrr         = MeetingRelayResult.find_by_id( params['mrr'].to_i )
     relay_order = params['o'].to_i
     swimmer_id  = params['s'].to_i
-    minutes     = params['min'].to_i
-    seconds     = params['sec'].to_i
-    hundreds    = params['hun'].to_i
-    reaction_time = params['r'].to_i
+    timing_text   = params['time'].to_s
+    reaction_text = params['r'].to_s
     unless mrr && (relay_order > 0)
       render( status: 400, json: { result: "error", message: I18n.t("api.errors.invalid_request") } ) and return
       return
     end
-    sql_diff_text = ""
 
-    # Swimmer.id null? Search for an existing MeetingRelaySwimmer and delete the row if found:
-    if swimmer_id < 1                               # Possible DELETE
-# DEBUG
-      puts "\r\nswimmer_id null => seeking MRS with MRR #{ mrr.id } & relay_order: #{ relay_order }..."
-      mrs = MeetingRelaySwimmer.where( meeting_relay_result_id: mrr.id, relay_order: relay_order ).first
+    updater = RelaySwimmerUpdater.new( current_user )
+    result  = updater.process( mrr, relay_order, swimmer_id, timing_text, reaction_text )
 
-      if mrs                                        # --- DELETE ---
-# DEBUG
-        puts "MRS found. Deleting..."
-        mrs.delete
-        # Store Db-diff text for DELETE
-        sql_diff_text << to_sql_delete( mrs, false, "\r\n" )
-        # TODO add SQL text to AppParameter
-      else # (no error, nothing done)
-        render( status: 200, json: { result: "ok", message: I18n.t("api.errors.unable_to_clear_existing_row") } ) and return
-      end
+    if result.nil?                                  # --- ERROR during CREATE/UPDATE ---
+      render( status: 400, json: { result: "error", message: I18n.t("api.errors.unable_to_find_or_create_data_row") } ) and return
 
-    else                                            # Possible UPDATE or CREATE
-      team_id   = mrr.team_id
-      season_id = mrr.season.id
-# DEBUG
-      puts "MRR #{ mrr.id }. Seeking badge for team: #{ team_id }, season: #{ season_id }, swimmer: #{ swimmer_id }"
-      badge     = Badge.where( team_id: team_id, season_id: season_id, swimmer_id: swimmer_id ).first
-      stroke_type_id = RelaySwimmerBatchUpdater.get_fractionist_stroke_type_id_by( mrr.event_type.stroke_type_id, relay_order )
-
-      unless badge && stroke_type_id
-# DEBUG
-        puts "badge (#{ badge ? badge.id : 'nil'}) or stroke_type_id (#{ stroke_type_id }) NOT found"
-        render( status: 400, json: { result: "error", message: I18n.t("api.errors.unable_to_find_existing_badge") } ) and return
-      end
-
-      begin
-        MeetingRelaySwimmer.transaction do
-# DEBUG
-          puts "in TRANSACTION"
-          mrs = MeetingRelaySwimmer.where( meeting_relay_result_id: mrr.id, relay_order: relay_order ).first
-
-          if mrs                                    # --- UPDATE ---
-# DEBUG
-            puts "before UPDATE"
-            mrs.update!(
-              minutes:        minutes,
-              seconds:        seconds,
-              hundreds:       hundreds,
-              swimmer_id:     swimmer_id,
-              reaction_time:  reaction_time.to_f,
-              badge_id:       badge.id,
-              stroke_type_id: stroke_type_id,
-              user_id:        current_user.id
-            )
-            # Store Db-diff text for UPDATE
-            sql_attributes = mrs.attributes.select do |key|
-              [
-                'id', 'minutes', 'seconds', 'hundreds',
-                'reaction_time',
-                'stroke_type_id', 'swimmer_id', 'badge_id', 'user_id',
-                'meeting_relay_result_id'
-              ].include?( key.to_s )
-            end
-            sql_diff_text << to_sql_update( mrs, false, sql_attributes, "\r\n" )
-
-          else                                      # --- CREATE ---
-            mrs = MeetingRelaySwimmer.new(
-              meeting_relay_result_id: mrr.id,
-              relay_order:    relay_order,
-              minutes:        minutes,
-              seconds:        seconds,
-              hundreds:       hundreds,
-              swimmer_id:     swimmer_id,
-              reaction_time:  reaction_time,
-              badge_id:       badge.id,
-              stroke_type_id: stroke_type_id,
-              user_id:        current_user.id
-            )
-# DEBUG
-            puts "before SAVE!"
-            puts ValidationErrorTools.recursive_error_for( mrs )
-            mrs.save!
-            # Store Db-diff text for INSERT
-            sql_diff_text << to_sql_insert( mrs, false, "\r\n" )
-          end
-        end
-      rescue
-# DEBUG
-        puts "RESCUE: '#{ $! }'"
-        render( status: 400, json: { result: "error", message: I18n.t("api.errors.unable_to_find_or_create_data_row") } ) and return
-      end
+    elsif result                                    # --- CREATE / UPDATE / DELETE performed ---
+      # Add SQL text to AppParameter:
+      serialize_into_app_parameters( updater )
+      # Launch delayed Job to send the DB-diff to the SysOp using the remote-editing
+      # dedicated named queue ('edit'):
+      SendDbDiffJob.set( queue: :edit, wait: 1.minutes ).perform_later
+#    else
+      # (no operations for result false => DELETE skipped => no SQL edits)
     end
-
-    # Add SQL text to AppParameter:
-# DEBUG
-    puts "SUCCESS. Before AppParameter.find_or_create_by!"
-    app_parameter = AppParameter.find_or_create_by!( code: 100000 + current_user.id )
-    app_parameter.free_text_1 = app_parameter.free_text_1.to_s << "\r\n\r\n" << sql_diff_text
-    app_parameter.save!
-    # Launch delayed Job to send the DB-diff to the SysOp using the remote editing named queue:
-    SendDbDiffJob.set( queue: :edit, wait: 1.minutes ).perform_later
 
     render status: 200, json: { result: "ok" }
   end
@@ -272,6 +185,34 @@ class Api::V2::RemoteEditController < Api::BaseController
   def update_relay_reservation
     # TODO
     render status: 200, json: { result: "ok" }
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  private
+
+
+  # Stores into a dedicated row of AppParameter the SQL DB-diff contents logged
+  # by the specified updater instance.
+  #
+  # The updater is supposed to respond to the SqlConvertable interface.
+  #
+  def serialize_into_app_parameters( updater )
+# DEBUG
+#   puts "\r\nserialize_into_app_parameters for code: #{ 100000 + current_user.id }"
+    app_parameter = AppParameter.find_or_create_by!( code: 100000 + current_user.id )
+
+    new_text = if app_parameter.free_text_1.to_s.empty?
+      updater.sql_diff_text_log
+    else
+      "#{ app_parameter.free_text_1 }\r\n\r\n#{ updater.sql_diff_text_log }"
+    end
+
+    app_parameter.update( free_text_1: new_text )
+# DEBUG
+#    app_parameter.reload
+#    puts "\r\n------------8<----------\r\n#{ app_parameter.free_text_1 }\r\n-----------------------"
   end
   #-- -------------------------------------------------------------------------
   #++
