@@ -197,6 +197,8 @@ class MeetingReservationsController < ApplicationController
     # Collect all available event (both ind. and relays) reservations:
     @reservations_events = {}
     @reservations_relays = {}
+# DEBUG
+#    puts "\r\n#- printout_event_sheet: Team: #{ @team.id }, meeting: #{ @meeting.id }, TA: #{ @team_affiliation.id }"
 
     @events.each do |event|
       # *** RELAYS ***
@@ -230,19 +232,20 @@ class MeetingReservationsController < ApplicationController
       .uniq
     @meeting_reservations = MeetingReservation.where(
       meeting_id:    @meeting.id,
-      team_id:       @team.id,
+      team_id:       @team_affiliation ? @team_affiliation.team_id : @team.id,
       is_not_coming: false,
       swimmer_id:    all_swimmer_ids
     ).joins(:swimmer).includes(:swimmer)
 
 # DEBUG
-    # logger.debug "---------------"
-    # logger.debug "@events:"
-    # @events.each{ |ev| logger.debug ev.inspect }
-    # logger.debug "---------------"
-    # logger.debug "- available @meeting_reservations tot...: #{ @meeting_reservations.count }"
-    # logger.debug "- available @reservations_events subarrays tot....: #{ @reservations_events.count }"
-    # logger.debug "- available @reservations_relays subarrays tot....: #{ @reservations_relays.count }"
+    # puts "---------------"
+    # puts "all_swimmer_ids: #{ all_swimmer_ids.inspect }"
+    # puts "@events:"
+    # @events.each{ |ev| puts ev.inspect }
+    # puts "---------------"
+    # puts "- available @meeting_reservations tot...: #{ @meeting_reservations.count }"
+    # puts "- available @reservations_events subarrays tot....: #{ @reservations_events.count }"
+    # puts "- available @reservations_relays subarrays tot....: #{ @reservations_relays.count }"
     # logger.debug "---------------"
     # logger.debug "@meeting_reservations:"
     # @meeting_reservations.each{ |r| logger.debug r.inspect }
@@ -260,30 +263,36 @@ class MeetingReservationsController < ApplicationController
     # end
     # logger.debug "---------------"
 
-    if all_swimmer_ids.size < 1
+    # Prepare the printout only if there's actually someone going to this Meeting:
+    # (No redirect if there's no data)
+    if all_swimmer_ids.size > 0
+                                                    # == OPTIONS setup + RENDERING phase ==
+      base_filename = "#{I18n.t('meeting_reservation.event_sheet_basefilename')}_#{@meeting.code}"
+      filename = create_unique_filename( base_filename ) + '.pdf'
+      options = {
+        report_title:         I18n.t('meeting_reservation.event_sheet_title'),
+        meta_info_subject:    'passages collection model sheet printout',
+        meta_info_keywords:   "Goggles, #{base_filename}'",
+        meeting:              @meeting,
+        team:                 @team,
+        events:               @events,
+        meeting_reservations: @meeting_reservations,
+        reservations_events:  @reservations_events,
+        reservations_relays:  @reservations_relays
+      }
+
+      send_data(                                    # == Render layout & send data:
+          PassagesCollectSheetLayout.render( options ),
+          type: 'application/pdf',
+          filename: filename
+      )
+
+    # XXX [Steve, 20180704] Use-case example that forces a redirect during PDF printout of the event sheet:
+    #     TeamManager #9 (Simone DelRio) w/ Meeting ID 16106 (for example), w/ 0 MER reserved rows.
+    else
       flash[:error] = I18n.t(:no_detail_to_process)
       redirect_to( meetings_current_path() ) and return
     end
-                                                    # == OPTIONS setup + RENDERING phase ==
-    base_filename = "#{I18n.t('meeting_reservation.event_sheet_basefilename')}_#{@meeting.code}"
-    filename = create_unique_filename( base_filename ) + '.pdf'
-    options = {
-      report_title:         I18n.t('meeting_reservation.event_sheet_title'),
-      meta_info_subject:    'passages collection model sheet printout',
-      meta_info_keywords:   "Goggles, #{base_filename}'",
-      meeting:              @meeting,
-      team:                 @team,
-      events:               @events,
-      meeting_reservations: @meeting_reservations,
-      reservations_events:  @reservations_events,
-      reservations_relays:  @reservations_relays
-    }
-
-    send_data(                                      # == Render layout & send data:
-        PassagesCollectSheetLayout.render( options ),
-        type: 'application/pdf',
-        filename: filename
-    )
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -653,7 +662,7 @@ class MeetingReservationsController < ApplicationController
       @team_affiliation = enabled_manager.team_affiliation
     else
 # DEBUG
-#      puts "\r\n--- @swimmer: #{ @swimmer.inspect }"
+#      puts "\r\n=> verify_meeting_and_association()\r\n--- @swimmer: #{ @swimmer.inspect }"
 #      puts "--- @meeting: #{ @meeting.inspect }"
 
       enabled_badge = @swimmer.badges.includes(:team_affiliation)

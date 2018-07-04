@@ -63,32 +63,31 @@ RSpec.describe MeetingReservationsController, type: :controller do
 
 
 
-  let(:team_manager_with_results_and_res) do
-    # Choose a random team manager, whose affiliation's team has
-    # at least a meeting with (some) results acquired and some reservation headers:
-    team_manager = TeamManager.all
-      .select{ |tm|
-        MeetingEventReservation.where( team_id: tm.team_affiliation.team_id )
-          .any?{ |res| res.meeting.meeting_individual_results.count > 0 }
-      }
-      .sample
-    expect( team_manager ).to be_a( TeamManager )
-    team_manager
-  end
-
-  let(:old_managed_meeting_with_results) do
-    reservation = MeetingEventReservation.where( team_id: team_manager_with_results_and_res.team_affiliation.team_id )
-      .select( :meeting_id ).distinct.to_a
-      .select{ |res| res.meeting.meeting_individual_results.count > 0 }
-      .sample
+  let(:reservation_for_meeting_with_results) do
+    reservation = MeetingEventReservation.is_reserved
+      .includes(:meeting).joins(:meeting)
+      .where('meetings.are_results_acquired = ?', true).sample
 # DEBUG
-#    puts "\r\n** old_managed_meeting_with_results **\r\n- team manager: #{ team_manager_with_results_and_res.inspect }"
-#    puts "- chosen reservation: #{ reservation.inspect }"
+#    puts "\r\n** reservation_for_meeting_with_results **\r\n- reservation: #{ reservation.inspect }"
 #    puts "- meeting: #{ reservation.meeting.inspect }"
     expect( reservation ).to be_a( MeetingEventReservation )
     expect( reservation.meeting ).to be_a( Meeting )
     expect( reservation.meeting.meeting_individual_results.count ).to be > 0
-    reservation.meeting
+    reservation
+  end
+
+  let(:old_managed_meeting_with_results) do
+    # XXX This yields a redirection because TM#9's team did not come to this event, although registered (Simone DelRio / CSI Prova6)
+#    return Meeting.find(16106)
+    reservation_for_meeting_with_results.meeting
+  end
+
+  let(:team_manager_with_results_and_res) do
+    # XXX This yields a redirection because TM#9's team did not come to this event, although registered (Simone DelRio / CSI Prova6)
+#    return TeamManager.find(9)
+    tm = reservation_for_meeting_with_results.badge.team_affiliation.team_managers.sample
+    expect( TeamManagerValidator.can_manage?( tm.user, old_managed_meeting_with_results ) ).to be true
+    tm
   end
 
 
@@ -521,6 +520,9 @@ RSpec.describe MeetingReservationsController, type: :controller do
     describe "GET #printout_event_sheet" do
       context "for a logged-in user manager," do
         it "accepts the request" do
+# DEBUG
+#          puts "\r\n--- team_manager_with_results: #{ team_manager_with_results_and_res.inspect }"
+#          puts "\r\n--- old_managed_meeting_with_results.id: #{ old_managed_meeting_with_results.id }"
           expect( old_managed_meeting_with_results.meeting_individual_results.count ).to be > 0
           get :printout_event_sheet, params: { id: old_managed_meeting_with_results.id }
           expect(response).to have_http_status(:success)
