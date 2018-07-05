@@ -16,6 +16,9 @@ RSpec.describe Api::V2::RemoteEditController, type: :controller, api: true do
   let(:reaction)      { (0..99).to_a.sample }
   let(:timing_text)   { "#{ min }'#{ sec }\"#{ hun }" }
   let(:reaction_text) { "0\"#{ reaction }" }
+
+  let(:passage)       { Passage.includes(:meeting_individual_result).limit(100).sample }
+  let(:destroyable_passage) { Passage.order(created_at: :asc).limit(100).sample }
   #-- -------------------------------------------------------------------------
   #++
 
@@ -83,7 +86,7 @@ RSpec.describe Api::V2::RemoteEditController, type: :controller, api: true do
     end
 
 
-    context "for an logged-in user w/ a valid JSON request (full data)," do
+    context "for an logged-in user w/ a valid JSON request (full data => CREATE or UPDATE)," do
       before(:each) do
         login_user(@user)
         post( :update_relay_swimmer, format: :json,
@@ -116,13 +119,15 @@ RSpec.describe Api::V2::RemoteEditController, type: :controller, api: true do
     end
 
 
-    context "for an logged-in user w/ a valid JSON request (no swimmer_id)," do
+    context "for an logged-in user w/ a valid JSON request (valid keys but no swimmer_id => DELETE)," do
+      let(:mrs_deletable) { MeetingRelaySwimmer.order(created_at: :asc).limit(100).sample }
+
       before(:each) do
         login_user(@user)
         post( :update_relay_swimmer, format: :json,
           params: {
             u: @user.email, t: @user.authentication_token,
-            mrr: mrr_sample.id, o: 1, time: timing_text
+            mrr: mrs_deletable.meeting_relay_result_id, o: mrs_deletable.relay_order
           }
         )
       end
@@ -133,12 +138,7 @@ RSpec.describe Api::V2::RemoteEditController, type: :controller, api: true do
         expect( result['result'] ).to eq('ok')
       end
       it "deletes any existing MeetingRelaySwimmer row specified by the keys" do
-        expect(
-          MeetingRelaySwimmer.where(
-            meeting_relay_result_id: mrr_sample.id,
-            relay_order: 1
-          ).exists?
-        ).to be false
+        expect( MeetingRelaySwimmer.find_by_id( mrs_deletable.id ) ).to be nil
       end
     end
   end
@@ -149,21 +149,60 @@ RSpec.describe Api::V2::RemoteEditController, type: :controller, api: true do
 
   describe "POST #update_passage" do
 
-    context "for an logged-in user w/ a valid request," do
+    context "for an unlogged user making a non-JSON request," do
+      it "redirects to the login page" do
+        post( :update_passage,
+          params: {
+            u: @user.email,
+            t: @user.authentication_token,
+            p: passage.id, time: timing_text, r: reaction_text,
+            mpg: passage.meeting_program_id,  pt: passage.passage_type_id,
+            s: passage.swimmer_id, te: passage.team_id,
+            mir: passage.meeting_individual_result_id
+          }
+        )
+        # [Steve A.]
+        # NOTE that the path below assumes that the Core Engine including
+        # the Devise routes is mounted to "/". (Otherwise is should be changed
+        # to something like "/mounting_path/users/sign_in").
+        # Keep in mind also that:
+        #   new_user_session_path( locale='XX' ) => '/users/sign_in?locale=XX'
+        expect( response ).to be_a_redirect
+        expect( response ).to redirect_to( '/users/sign_in' )
+      end
+    end
+    #-- -----------------------------------------------------------------------
+    #++
+
+
+    context "for an logged-in user w/ an incomplete JSON request (missing both passage & timing),"
+
+
+    context "for an logged-in user w/ a valid request (full data => CREATE or UPDATE)," do
       before(:each) { login_user(@user) }
 
-      xit "returns http success" do
+      it "returns http success" do
         post( :update_passage, format: :json,
           params: {
             u: @user.email,
-            s: existing_data_import_session.id,
-            f: "meeting_individual_result_id",
-            v: existing_meeting_with_results.meeting_individual_results.sample.id
+            t: @user.authentication_token,
+            p: passage.id, time: timing_text, r: reaction_text,
+            mpg: passage.meeting_program_id,  pt: passage.passage_type_id,
+            s: passage.swimmer_id, te: passage.team_id,
+            mir: passage.meeting_individual_result_id
           }
         )
         expect( response ).to have_http_status(:success)
       end
     end
+
+
+    # TODO
+
+
+    context "for an logged-in user w/ an valid JSON request but no timing (=> DELETE),"
+
+
   end
   #-- -------------------------------------------------------------------------
   #++

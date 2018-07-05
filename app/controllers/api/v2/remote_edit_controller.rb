@@ -5,7 +5,7 @@
 
 = Api::V2::RemoteEditController
 
-  - version:  6.343
+  - version:  6.345
   - author:   Steve A.
 
   API v2 controller for Remote-editing of single, specific data rows via JSON requests.
@@ -25,7 +25,9 @@ class Api::V2::RemoteEditController < Api::BaseController
 
 
   # POST #update_relay_swimmer
-  #     { mrr: <MRR_id>, s: <swimmer_id>, min: <minutes>, sec: <seconds>, hun: <hundreds>, r: <reaction_time> }
+  #     { u: <user.email>, t: <auth_token>,
+  #       mrr: <MRR_id>, o: <relay_order>, s: <swimmer_id>,
+  #       time: <incremental_timing_text>, r: <reaction_timing_text> }
   #
   # Creates or updates a specific row of meeting_relay_swimmers, storing the resulting SQL
   # text as a serialized DB-diff into the dedicated row (free_text_1) of AppParameter.
@@ -57,20 +59,21 @@ class Api::V2::RemoteEditController < Api::BaseController
     swimmer_id  = params['s'].to_i
     timing_text   = params['time'].to_s
     reaction_text = params['r'].to_s
-    unless mrr && (relay_order > 0)
+
+    unless mrr && (relay_order > 0)                 # Nothing to do, bail out:
       render( status: 400, json: { result: "error", message: I18n.t("api.errors.invalid_request") } ) and return
       return
     end
 
     updater = RelaySwimmerUpdater.new( current_user )
-    result  = updater.process( mrr, relay_order, swimmer_id, timing_text, reaction_text )
+    result  = updater.process!( mrr, relay_order, swimmer_id, timing_text, reaction_text )
 
     if result.nil?                                  # --- ERROR during CREATE/UPDATE ---
       render( status: 400, json: { result: "error", message: I18n.t("api.errors.unable_to_find_or_create_data_row") } ) and return
 
     elsif result                                    # --- CREATE / UPDATE / DELETE performed ---
       # Add SQL text to AppParameter:
-      serialize_into_app_parameters( updater )
+      serialize_into_app_parameters!( updater )
       # Launch delayed Job to send the DB-diff to the SysOp using the remote-editing
       # dedicated named queue ('edit'):
       SendDbDiffJob.set( queue: :edit, wait: 1.minutes ).perform_later
@@ -85,8 +88,10 @@ class Api::V2::RemoteEditController < Api::BaseController
 
 
   # POST #update_passage
-  #     { mpg: <meeting_program_id>, pt: <passage_type_id>, s: <swimmer_id>, t: <team_id>
-  #       min: <minutes>, sec: <seconds>, hun: <hundreds> }
+  #     { u: <user.email>, t: <auth_token>,
+  #       p: <passage.id>
+  #       mpg: <meeting_program_id>, pt: <passage_type_id>, s: <swimmer_id>, te: <team_id>,
+  #       time: <incremental_timing_text>, r: <reaction_timing_text>, mir: <MIR.id> }
   #
   # Creates or updates a specific row of passages, storing the resulting SQL
   # text as a serialized DB-diff into the dedicated row (free_text_1) of AppParameter.
@@ -98,25 +103,54 @@ class Api::V2::RemoteEditController < Api::BaseController
   # The delay in minutes should be chosen as "enough" to collect multiple DB updates
   # at once, in order to avoid sending too many DB-diff files to the same SysOp e-mail.
   #
-  # === Minimun/Required Parameters:
-  # - "mpg" => MeetingProgram ID (key#1, used for Passage.find_or_create_by)
-  # - "pt"  => PassageType.id (key#2, used for Passage.find_or_create_by)
-  # - "s"   => Swimmer.id
-  # - "t"   => Team.id
-  # - "min" => minutes for the timing value
-  # - "sec" => seconds for the timing value
-  # - "hun" => hundreds for the timing value
-  #
-  # === Additional Parameters:
-  # - "r"   => reaction_time
-  # - "mir" => MeetingIndividualResult ID (when available)
+  # === Parameters:
+  # - "p"    => Passage.id, required only for edits
+  # - "time" => incremental timing value as text (e.g.: "1'15\"00");
+  #             when missing and the Passage.id is present, the Passage row is deleted
+  # - "r"    => reaction_time as text (e.g.: "0\"65")
+  # - "mpg"  => MeetingProgram ID
+  # - "pt"   => PassageType.id
+  # - "s"    => Swimmer.id
+  # - "te"   => Team.id
+  # - "mir"  => MeetingIndividualResult ID (when available)
   #
   # === Returns:
   #
   # A JSON response (either :success or :error).
   #
   def update_passage
-    # TODO
+    # Fetch params
+    passage         = Passage.find_by_id( params['p'].to_i )
+    timing_text     = params['time'].to_s
+    reaction_text   = params['r'].to_s
+    mpg_id          = params['mpg']
+    passage_type_id = params['pt']
+    swimmer_id      = params['s']
+    team_id         = params['te']
+    mir_id          = params['mir']
+
+    if passage.nil? && !timing_text.present?        # Nothing to do, bail out:
+      render( status: 400, json: { result: "error", message: I18n.t("api.errors.invalid_request") } ) and return
+      return
+    end
+
+    updater = PassageUpdater.new( current_user )
+    result  = updater.process!( passage, timing_text, passage_type_id, mir_id,
+                                reaction_text, swimmer_id, team_id, mpg_id )
+
+    if result.nil?                                  # --- ERROR during CREATE/UPDATE ---
+      render( status: 400, json: { result: "error", message: I18n.t("api.errors.unable_to_find_or_create_data_row") } ) and return
+
+    elsif result                                    # --- CREATE / UPDATE / DELETE performed ---
+      # Add SQL text to AppParameter:
+      serialize_into_app_parameters!( updater )
+      # Launch delayed Job to send the DB-diff to the SysOp using the remote-editing
+      # dedicated named queue ('edit'):
+      SendDbDiffJob.set( queue: :edit, wait: 1.minutes ).perform_later
+#    else
+      # (no operations for result false => DELETE skipped => no SQL edits)
+    end
+
     render status: 200, json: { result: "ok" }
   end
   #-- -------------------------------------------------------------------------
@@ -124,8 +158,9 @@ class Api::V2::RemoteEditController < Api::BaseController
 
 
   # POST #update_event_reservation
-  #     { m: <meeting_id>, b: <badge_id>, e: <meeting_event_id>, min: <minutes>,
-  #       sec: <seconds>, hun: <hundreds>, on: <is_doing_this> }
+  #     { u: <user.email>, t: <auth_token>,
+  #       m: <meeting_id>, b: <badge_id>, e: <meeting_event_id>,
+  #       time: <incremental_timing_text>, on: <is_doing_this> }
   #
   # Creates or updates a specific row of meeting_event_reservations, storing the resulting SQL
   # text as a serialized DB-diff into the dedicated row (free_text_1) of AppParameter.
@@ -141,10 +176,8 @@ class Api::V2::RemoteEditController < Api::BaseController
   # - "m"   => Meeting ID (required, key#1, used for Passage.find_or_create_by)
   # - "b"   => Badge id (required, key#2, used for Passage.find_or_create_by)
   # - "e"   => MeetingEvent id (required, key#3, used for Passage.find_or_create_by)
+  # - "time" => incremental timing value as text (e.g.: "1'15\"00")
   # - "on"  => 'is_doing_this' ON (1) / OFF (0) <default> as smallint digit
-  # - "min" => minutes for the timing value
-  # - "sec" => seconds for the timing value
-  # - "hun" => hundreds for the timing value
   #
   # === Returns:
   #
@@ -159,7 +192,8 @@ class Api::V2::RemoteEditController < Api::BaseController
 
 
   # POST #update_relay_reservation
-  #     { m: <meeting_id>, b: <badge_id>, e: <meeting_event_id>, on: <is_doing_this>, n: <notes> }
+  #     { u: <user.email>, t: <auth_token>,
+  #       m: <meeting_id>, b: <badge_id>, e: <meeting_event_id>, on: <is_doing_this>, n: <notes> }
   #
   # Creates or updates a specific row of meeting_relay_reservations, storing the resulting SQL
   # text as a serialized DB-diff into the dedicated row (free_text_1) of AppParameter.
@@ -198,7 +232,7 @@ class Api::V2::RemoteEditController < Api::BaseController
   #
   # The updater is supposed to respond to the SqlConvertable interface.
   #
-  def serialize_into_app_parameters( updater )
+  def serialize_into_app_parameters!( updater )
 # DEBUG
 #   puts "\r\nserialize_into_app_parameters for code: #{ 100000 + current_user.id }"
     app_parameter = AppParameter.find_or_create_by!( code: 100000 + current_user.id )

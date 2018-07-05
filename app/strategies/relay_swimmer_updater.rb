@@ -7,7 +7,7 @@ require 'common/validation_error_tools'
 
 = RelaySwimmerUpdater
 
-  - Goggles framework vers.:  6.344
+  - Goggles framework vers.:  6.345
   - author: Steve A.
 
  Single-row MeetingRelaySwimmer updater.
@@ -45,11 +45,13 @@ class RelaySwimmerUpdater
   # and the relay order.
   #
   # The row will be:
-  # - updated, when found existing;
-  # - created, wuth the specified values when not found;
-  # - deleted, when swimmer_id is nil or 0 and the row itself is existing.
+  # - updated, when the row exists;
+  # - created with the specified values, when not found;
+  # - deleted, when the timing specified is nil and the row itself is existing.
   #
-  # The method updates the internal SQL diff log file accordingly.
+  # The method will act according to the presence of the first 3 parameters,
+  # the others are not required and can be nil.
+  # The method updates also the internal SQL diff log file accordingly.
   #
   # == Returns:
   #
@@ -59,14 +61,14 @@ class RelaySwimmerUpdater
   # Result is +false+ when the row was not found and the deletion was skipped,
   # or +nil+ only in case of error during the update/create transaction.
   #
-  def process( mrr, relay_order, swimmer_id, incremental_timing_text_value, reaction_time_text )
+  def process!( mrr, relay_order, swimmer_id, incremental_timing_text_value, reaction_time_text )
     return nil unless mrr && (relay_order.to_i > 0)
+    mrs = MeetingRelaySwimmer.where( meeting_relay_result_id: mrr.id, relay_order: relay_order ).first
 
-    # Swimmer.id null? Search for an existing MeetingRelaySwimmer and delete the row if found:
-    if swimmer_id.to_i < 1                               # Possible DELETE
-      return delete_existing_row( mrr.id, relay_order )
+    if mrs && swimmer_id.to_i < 1                   # --- DELETE ---
+      return delete_existing_row!( mrs )
 
-    else                                            # Possible UPDATE or CREATE
+    else                                            # --- UPDATE or CREATE ---
       team_id   = mrr.team_id
       season_id = mrr.season.id
 # DEBUG
@@ -87,22 +89,16 @@ class RelaySwimmerUpdater
 
       begin
         MeetingRelaySwimmer.transaction do
-# DEBUG
-#          puts "in TRANSACTION, checking for row existance..."
-          mrs = MeetingRelaySwimmer.where( meeting_relay_result_id: mrr.id, relay_order: relay_order ).first
-
           if mrs                                    # --- UPDATE ---
 # DEBUG
 #            puts "before UPDATE"
-            edit_existing_row( mrs, swimmer_id, badge.id, stroke_type_id, timing, reaction_time )
-
+            edit_existing_row!( mrs, swimmer_id, badge.id, stroke_type_id, timing, reaction_time )
           else                                      # --- CREATE ---
 # DEBUG
 #            puts "before CREATE"
-            create_new_row( mrr, relay_order, swimmer_id, badge.id, stroke_type_id, timing, reaction_time )
+            create_new_row!( mrr, relay_order, swimmer_id, badge.id, stroke_type_id, timing, reaction_time )
           end
         end
-
       rescue
 # DEBUG
 #        puts "RESCUE: '#{ $! }'"
@@ -117,24 +113,15 @@ class RelaySwimmerUpdater
   protected
 
 
-  # Deletes an existing row of MeetingRelaySwimmer if any was found indexed by
-  # meeting_relay_result_id (mrr_id) and relay_order.
-  #
+  # Deletes an existing MeetingRelaySwimmer row when found existing.
   # This method updates also the internal SQL diff log file.
   #
   # == Returns:
   #
-  # +true+ in case of deletion, +false+ otherwise (row not found, deletion skipped).
+  # +true+ in case of deletion, +false+ otherwise (row not found / destroy skipped).
   #
-  def delete_existing_row( mrr_id, relay_order )
-# DEBUG
-#    puts "\r\ndelete_existing_row( mrr_id: #{ mrr_id }, relay_order: #{ relay_order })"
-    mrs = MeetingRelaySwimmer.where( meeting_relay_result_id: mrr_id, relay_order: relay_order ).first
-
-    if mrs                                        # --- DELETE ---
-# DEBUG
-#      puts "MRS found (id: #{ mrs.id }). Deleting..."
-      mrs.delete
+  def delete_existing_row!( mrs )
+    if mrs && mrs.destroy                           # --- DELETE ---
       # Store Db-diff text for DELETE
       sql_diff_text_log << to_sql_delete( mrs, false, "\r\n" )
       true
@@ -156,7 +143,7 @@ class RelaySwimmerUpdater
   # The specified MeetingRelaySwimmer instance (which will result updated only when successful).
   # nil only in case of no-ops.
   #
-  def edit_existing_row( mrs, swimmer_id, badge_id, stroke_type_id, timing_instance, reaction_time_instance )
+  def edit_existing_row!( mrs, swimmer_id, badge_id, stroke_type_id, timing_instance, reaction_time_instance )
     return nil unless swimmer_id.present? && badge_id.present?
 # DEBUG
 #    puts "\r\nedit_existing_row( mrs.id: #{ mrs.id }, swimmer_id: #{ swimmer_id }, badge_id: #{ badge_id }, stroke_type_id: #{ stroke_type_id }, timing: #{ timing_instance }, reaction_time: #{ reaction_time_instance })"
@@ -204,7 +191,7 @@ class RelaySwimmerUpdater
   # The specified MeetingRelaySwimmer instance (which will result created only when successful).
   # nil only in case of no-ops.
   #
-  def create_new_row( mrr, relay_order, swimmer_id, badge_id, stroke_type_id, timing_instance, reaction_time_instance )
+  def create_new_row!( mrr, relay_order, swimmer_id, badge_id, stroke_type_id, timing_instance, reaction_time_instance )
     return nil unless swimmer_id.present? && badge_id.present? && relay_order.present?
     mrs = MeetingRelaySwimmer.new(
       meeting_relay_result_id: mrr.id,

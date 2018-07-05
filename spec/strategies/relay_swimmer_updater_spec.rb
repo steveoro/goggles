@@ -22,7 +22,7 @@ describe RelaySwimmerUpdater, type: :strategy do
     end
 
     it_behaves_like( "(the existance of a method)", [
-      :process,
+      :process!,
     ] )
     #-- -----------------------------------------------------------------------
     #++
@@ -43,21 +43,21 @@ describe RelaySwimmerUpdater, type: :strategy do
 
       context "for a valid user w/ incomplete parameters (nil MRR)," do
         it "returns nil" do
-          expect( subject.process( nil, relay_order, swimmer.id, timing_text, reaction_text ) ).to be nil
+          expect( subject.process!( nil, relay_order, swimmer.id, timing_text, reaction_text ) ).to be nil
         end
       end
 
 
       context "for a valid user w/ incomplete parameters (nil or 0 relay_order)," do
         it "returns nil" do
-          expect( subject.process( mrr_sample, [0, nil].sample, swimmer.id, timing_text, reaction_text ) ).to be nil
+          expect( subject.process!( mrr_sample, [0, nil].sample, swimmer.id, timing_text, reaction_text ) ).to be nil
         end
       end
 
 
       context "for a valid user w/ valid parameters (full data)," do
         let(:result) do
-          subject.process( mrr_sample, relay_order, swimmer.id, timing_text, reaction_text )
+          subject.process!( mrr_sample, relay_order, swimmer.id, timing_text, reaction_text )
         end
 
         it "returns the created or updated MRS instance" do
@@ -77,7 +77,7 @@ describe RelaySwimmerUpdater, type: :strategy do
       context "for a valid user w/ valid parameters for an existing MRS row (no swimmer ID, no timings)," do
         let( :result ) do
           FactoryBot.create(:meeting_relay_swimmer, meeting_relay_result: mrr_sample, relay_order: 5)
-          subject.process( mrr_sample, 5, nil, nil, nil )
+          subject.process!( mrr_sample, 5, nil, nil, nil )
         end
 
         it "returns true to signal the deletion of the row" do
