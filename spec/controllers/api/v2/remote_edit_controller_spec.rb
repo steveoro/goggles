@@ -109,9 +109,7 @@ RSpec.describe Api::V2::RemoteEditController, type: :controller, api: true do
           relay_order: 1
         ).first
         expect( mrs ).to be_a( MeetingRelaySwimmer )
-        expect( mrs.minutes ).to eq( min )
-        expect( mrs.seconds ).to eq( sec )
-        expect( mrs.hundreds ).to eq( hun )
+        expect( mrs.get_timing_instance.to_hundreds ).to eq( TimingParser.parse( timing_text ).to_hundreds )
         expect( mrs.reaction_time ).to eq( TimingParser.parse( reaction_text ).to_hundreds / 100.0 )
         expect( mrs.badge_id ).to be > 0
         expect( mrs.stroke_type_id ).to be > 0
@@ -175,13 +173,25 @@ RSpec.describe Api::V2::RemoteEditController, type: :controller, api: true do
     #++
 
 
-    context "for an logged-in user w/ an incomplete JSON request (missing both passage & timing),"
+    context "for an logged-in user w/ an incomplete JSON request (missing both passage & timing)," do
+      before(:each) do
+        login_user(@user)
+        post( :update_passage, format: :json,
+          params: {
+            u: @user.email,
+            t: @user.authentication_token,
+            r: reaction_text,
+            mpg: passage.meeting_program_id,  pt: passage.passage_type_id
+          }
+        )
+      end
+      it_behaves_like "valid JSON request but with incomplete required parameters"
+    end
 
 
     context "for an logged-in user w/ a valid request (full data => CREATE or UPDATE)," do
-      before(:each) { login_user(@user) }
-
-      it "returns http success" do
+      before(:each) do
+        login_user(@user)
         post( :update_passage, format: :json,
           params: {
             u: @user.email,
@@ -192,17 +202,56 @@ RSpec.describe Api::V2::RemoteEditController, type: :controller, api: true do
             mir: passage.meeting_individual_result_id
           }
         )
+      end
+
+      it "returns http success with a JSON 'ok' result" do
         expect( response ).to have_http_status(:success)
+        result = JSON.parse(response.body)
+        expect( result['result'] ).to eq('ok')
+      end
+      it "persists the specified values into the MeetingRelaySwimmer row specified by the keys (creating it when not existing)" do
+        edited_passage = Passage.find_by_id( passage.id )
+        expect( edited_passage ).to be_a( Passage )
+# DEBUG
+#        puts "\r\n- edited_passage.get_timing: #{ edited_passage.get_timing } vs. #{ timing_text }"
+#        puts "- edited_passage / to 100s : #{ edited_passage.get_timing_instance.to_hundreds } vs. #{ TimingParser.parse( timing_text ).to_hundreds }"
+        # Timing will be converted to delta-timing depending on its value, so we check both values with an OR:
+        expect( min ).to eq( edited_passage.minutes ).or eq( edited_passage.minutes_from_start )
+        expect( sec ).to eq( edited_passage.seconds ).or eq( edited_passage.seconds_from_start )
+        expect( hun ).to eq( edited_passage.hundreds ).or eq( edited_passage.hundreds_from_start )
+        expect( edited_passage.reaction_time ).to eq( TimingParser.parse( reaction_text ).to_hundreds / 100.0 )
+        # These should never change:
+        expect( edited_passage.passage_type_id ).to eq( passage.passage_type_id )
+        expect( edited_passage.meeting_program_id ).to eq( passage.meeting_program_id )
+        expect( edited_passage.meeting_individual_result_id ).to eq( passage.meeting_individual_result_id )
+        expect( edited_passage.swimmer_id ).to eq( passage.swimmer_id )
+        expect( edited_passage.team_id ).to eq( passage.team_id )
       end
     end
 
 
-    # TODO
+    context "for an logged-in user w/ an valid JSON request but no timing (=> DELETE)," do
+      let(:destroyable_passage) { Passage.order(created_at: :asc).limit(100).sample }
+      before(:each) do
+        login_user(@user)
+        post( :update_passage, format: :json,
+          params: {
+            u: @user.email,
+            t: @user.authentication_token,
+            p: destroyable_passage.id
+          }
+        )
+      end
 
-
-    context "for an logged-in user w/ an valid JSON request but no timing (=> DELETE),"
-
-
+      it "returns http success with a JSON 'ok' result" do
+        expect( response ).to have_http_status(:success)
+        result = JSON.parse(response.body)
+        expect( result['result'] ).to eq('ok')
+      end
+      it "deletes any existing Passage row specified by the keys" do
+        expect( Passage.find_by_id( destroyable_passage.id ) ).to be nil
+      end
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
