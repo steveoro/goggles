@@ -7,7 +7,7 @@ require 'common/validation_error_tools'
 
 = RelaySwimmerUpdater
 
-  - Goggles framework vers.:  6.345
+  - Goggles framework vers.:  6.347
   - author: Steve A.
 
  Single-row MeetingRelaySwimmer updater.
@@ -101,7 +101,7 @@ class RelaySwimmerUpdater
         end
       rescue
 # DEBUG
-#        puts "RESCUE: '#{ $! }'"
+        puts "RESCUE: '#{ $! }'"
         return nil
       end
     end
@@ -221,8 +221,8 @@ class RelaySwimmerUpdater
   private
 
 
-  # Returns true if the specified constitute any actual changes to the specified
-  # instance of MeetingRelaySwimmer; false otherwise.
+  # Returns +true+ if the row has any actual changes when compared to the parameters;
+  # false otherwise.
   #
   def is_an_actual_update_of( mrs, swimmer_id, badge_id, timing )
     ( timing.instance_of?(Timing) && mrs.get_timing_instance.to_hundreds != timing.to_hundreds ) ||

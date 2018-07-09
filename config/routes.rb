@@ -230,8 +230,7 @@ Rails.application.routes.draw do
       # === Remote Edit ===
       post 'remote_edit/update_relay_swimmer'
       post 'remote_edit/update_passage'
-      post 'remote_edit/update_event_reservation'
-      post 'remote_edit/update_relay_reservation'
+      post 'remote_edit/update_reservation'
     end
 
     namespace :v1 do

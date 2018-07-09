@@ -5,7 +5,7 @@
 
 = Api::V2::RemoteEditController
 
-  - version:  6.345
+  - version:  6.347
   - author:   Steve A.
 
   API v2 controller for Remote-editing of single, specific data rows via JSON requests.
@@ -157,67 +157,72 @@ class Api::V2::RemoteEditController < Api::BaseController
   #++
 
 
-  # POST #update_event_reservation
+  # POST #update_reservation
   #     { u: <user.email>, t: <auth_token>,
-  #       m: <meeting_id>, b: <badge_id>, e: <meeting_event_id>,
-  #       time: <incremental_timing_text>, on: <is_doing_this> }
+  #       b: <badge_id>, e: <meeting_event_id>, time: <incremental_timing_text> (can be nil),
+  #       on: <is_doing_this>, skip: <is_not_coming>, ok: <has_confirmed>, n: <notes> }
   #
-  # Creates or updates a specific row of meeting_event_reservations, storing the resulting SQL
+  # Creates or updates a specific tuple/set of reservations, storing the resulting SQL
   # text as a serialized DB-diff into the dedicated row (free_text_1) of AppParameter.
   # The actual row ID for the serialization of the DB-diff SQL text depends upon
   # the current_user.id (100_000 + user.id).
+  # The action will involve either a MeetingEventReservation or a MeetingRelayReservation
+  # depending by the type of the specified MeetingEvent ID.
+  # Header rows (MeetingReservation) are also handled.
   #
-  # At the end of the update process, a SendDbDiffJob will be invoked to be run after
+  # @see MeetingReservationUpdater for more info.
+  #
+  # At the end of the update process a SendDbDiffJob will be invoked to be run after
   # a few minutes.
   # The delay in minutes should be chosen as "enough" to collect multiple DB updates
   # at once, in order to avoid sending too many DB-diff files to the same SysOp e-mail.
   #
   # === Parameters:
-  # - "m"   => Meeting ID (required, key#1, used for Passage.find_or_create_by)
-  # - "b"   => Badge id (required, key#2, used for Passage.find_or_create_by)
-  # - "e"   => MeetingEvent id (required, key#3, used for Passage.find_or_create_by)
-  # - "time" => incremental timing value as text (e.g.: "1'15\"00")
-  # - "on"  => 'is_doing_this' ON (1) / OFF (0) <default> as smallint digit
+  # - "e"     => MeetingEvent id (required, key#2)
+  # - "b"     => Badge id (required, key#1)
+  # - "time"  => incremental timing value as text (e.g.: "1'15\"00"); can be nil when deleting rows
+  # - "skip"  => 'is_not_coming' ON=1 / OFF=0 <default> as smallint char digit; when '1' any detail row will be deleted
+  # - "on"    => 'is_doing_this' ON=1 / OFF=0 <default> as smallint char digit
+  # - "ok"    => 'has_confirmed' ON=1 / OFF=0 <default> as smallint char digit
+  # - "n"     => notes (used only for MeetingReservation and/or MeetingRelayReservation rows)
   #
   # === Returns:
   #
   # A JSON response (either :success or :error).
   #
-  def update_event_reservation
-    # TODO
-    render status: 200, json: { result: "ok" }
-  end
-  #-- -------------------------------------------------------------------------
-  #++
+  def update_reservation
+# DEBUG
+#    puts "\r\n--- #update_reservation: ---\r\nPARAMS: #{ params.inspect }"
+    # Fetch params
+    event_id      = params['e']
+    badge_id      = params['b'].to_s
+    is_not_coming = (params['skip'].to_i > 0)
+    is_doing_this = (params['on'].to_i > 0)
+    has_confirmed = (params['ok'].to_i > 0)
+    timing_text   = params['time'].to_s
+    notes         = params['n']
 
+    if !event_id.present? && !badge_id.present?     # Nothing to do, bail out:
+      render( status: 400, json: { result: "error", message: I18n.t("api.errors.invalid_request") } ) and return
+      return
+    end
 
-  # POST #update_relay_reservation
-  #     { u: <user.email>, t: <auth_token>,
-  #       m: <meeting_id>, b: <badge_id>, e: <meeting_event_id>, on: <is_doing_this>, n: <notes> }
-  #
-  # Creates or updates a specific row of meeting_relay_reservations, storing the resulting SQL
-  # text as a serialized DB-diff into the dedicated row (free_text_1) of AppParameter.
-  # The actual row ID for the serialization of the DB-diff SQL text depends upon
-  # the current_user.id (100_000 + user.id).
-  #
-  # At the end of the update process, a SendDbDiffJob will be invoked to be run after
-  # a few minutes.
-  # The delay in minutes should be chosen as "enough" to collect multiple DB updates
-  # at once, in order to avoid sending too many DB-diff files to the same SysOp e-mail.
-  #
-  # === Parameters:
-  # - "m"   => Meeting ID (required, key#1, used for Passage.find_or_create_by)
-  # - "b"   => Badge id (required, key#2, used for Passage.find_or_create_by)
-  # - "e"   => MeetingEvent id (required, key#3, used for Passage.find_or_create_by)
-  # - "on"  => 'is_doing_this' ON (1) / OFF (0) <default> as smallint digit
-  # - "n"   => free text notes
-  #
-  # === Returns:
-  #
-  # A JSON response (either :success or :error).
-  #
-  def update_relay_reservation
-    # TODO
+    updater = MeetingReservationUpdater.new( current_user )
+    result  = updater.process!( event_id, badge_id, is_doing_this, is_not_coming, has_confirmed, timing_text, notes )
+
+    if result.nil?                                  # --- ERROR during CREATE/UPDATE ---
+      render( status: 400, json: { result: "error", message: I18n.t("api.errors.unable_to_find_or_create_data_row") } ) and return
+
+    elsif result                                    # --- CREATE / UPDATE / DELETE performed ---
+      # Add SQL text to AppParameter:
+      serialize_into_app_parameters!( updater )
+      # Launch delayed Job to send the DB-diff to the SysOp using the remote-editing
+      # dedicated named queue ('edit'):
+      SendDbDiffJob.set( queue: :edit, wait: 1.minutes ).perform_later
+#    else
+      # (no operations for result false => DELETE skipped => no SQL edits)
+    end
+
     render status: 200, json: { result: "ok" }
   end
   #-- -------------------------------------------------------------------------

@@ -7,7 +7,7 @@ require 'common/validation_error_tools'
 
 = PassageUpdater
 
-  - Goggles framework vers.:  6.345
+  - Goggles framework vers.:  6.347
   - author: Steve A.
 
  Single-row Passage updater.
@@ -68,7 +68,7 @@ class PassageUpdater
 
     return nil if passage.nil? && timing_instance.nil? # (nothing to be done)
 # DEBUG
-    puts "timing: '#{ incremental_timing_text_value }' => #{ timing_instance }\r\nreaction: '#{ reaction_time_text }' => #{ reaction_time }"
+#    puts "timing: '#{ incremental_timing_text_value }' => #{ timing_instance }\r\nreaction: '#{ reaction_time_text }' => #{ reaction_time }"
 
     if passage && timing_instance.nil?                # --- DELETE ---
       return delete_existing_row!( passage )
@@ -188,8 +188,8 @@ class PassageUpdater
   def edit_existing_row!( passage, timing_instance, reaction_time_instance = nil )
     return nil unless passage && timing_instance
 # DEBUG
-    puts "\r\nedit_existing_row( passage.id: #{ passage.id }, timing: #{ timing_instance }, reaction_time: #{ reaction_time_instance })"
-    puts "before UPDATE"
+#    puts "\r\nedit_existing_row( passage.id: #{ passage.id }, timing: #{ timing_instance }, reaction_time: #{ reaction_time_instance })"
+#    puts "before UPDATE"
 
     passage = prepare_passage_fields( passage, timing_instance, reaction_time_instance )
     passage.save!
@@ -282,7 +282,7 @@ class PassageUpdater
       passage.hundreds_from_start = timing_instance.hundreds
     end
 # DEBUG
-    puts "\r\n- prepare_passage_fields(mir: #{mir ? mir.id : 'nil'}): " << passage.inspect
+#    puts "\r\n- prepare_passage_fields(mir: #{mir ? mir.id : 'nil'}): " << passage.inspect
 
     passage
   end
