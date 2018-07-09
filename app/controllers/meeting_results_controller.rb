@@ -66,6 +66,8 @@ class MeetingResultsController < ApplicationController
     #end
   end
 
+  alias_method :edit_passages2, :edit_passages
+
 
   # Upodates or creates Meeting results passage/lap times rows, according to the
   # specified paramters.
@@ -162,6 +164,8 @@ class MeetingResultsController < ApplicationController
       @relay_swimmer_hash[ mrr.id ] = relay_swimmers
     end
   end
+
+  alias_method :edit_relay_swimmers2, :edit_relay_swimmers
   #-- -------------------------------------------------------------------------
   #++
 

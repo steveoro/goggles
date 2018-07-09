@@ -88,9 +88,13 @@ Rails.application.routes.draw do
 
       # === Meeting Results ===
       get "meeting_results/edit_passages/:id",          to: "meeting_results#edit_passages",           as: "meeting_results_edit_passages"
+      get "meeting_results/edit_passages2/:id",         to: "meeting_results#edit_passages2",          as: "meeting_results_edit_passages2"
       post "meeting_results/update_passages/:id",       to: "meeting_results#update_passages",         as: "meeting_results_update_passages"
+#      post "meeting_results/update_passages2/:id",      to: "meeting_results#update_passages2",        as: "meeting_results_update_passages2"
       get "meeting_results/edit_relay_swimmers/:id",    to: "meeting_results#edit_relay_swimmers",     as: "meeting_results_edit_relay_swimmers"
+      get "meeting_results/edit_relay_swimmers2/:id",   to: "meeting_results#edit_relay_swimmers2",    as: "meeting_results_edit_relay_swimmers2"
       post "meeting_results/update_relay_swimmers/:id", to: "meeting_results#update_relay_swimmers",   as: "meeting_results_update_relay_swimmers"
+#      post "meeting_results/update_relay_swimmers2/:id",to: "meeting_results#update_relay_swimmers2",  as: "meeting_results_update_relay_swimmers2"
 
       # === Search ===
       get 'search/smart'
