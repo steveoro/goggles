@@ -35,6 +35,7 @@ en:
   teams: 'Teams'
   follow_us: 'Follow us'
   news: 'News'
+  saving_changes: 'Saving changes...'
 
   general:
     swimmer: 'Swimmer'

@@ -48,14 +48,21 @@ describe PassageUpdater, type: :strategy do
 
       context "for a valid user w/ valid parameters (full data)," do
         let(:result) do
+# DEBUG
+#          puts "\r\nBEFORE Passage: #{ passage.inspect }, timing_text: #{ timing_text }"
           subject.process!( passage, timing_text, passage.passage_type_id, passage.meeting_individual_result_id, reaction_text )
         end
 
         it "returns the created or updated MRS instance" do
+# DEBUG
+#          puts "\r\nresult: #{ result.inspect }, timing_text: #{ timing_text }"
           expect( result ).to be_a( Passage )
         end
         it "persists the specified values into the Passage row specified" do
-          expect( result.get_timing_instance.to_hundreds ).to eq( TimingParser.parse( timing_text ).to_hundreds )
+          # Timing will be converted to delta-timing depending on its value, so we check both values with an OR:
+          expect( min ).to eq( result.minutes ).or eq( result.minutes_from_start )
+          expect( sec ).to eq( result.seconds ).or eq( result.seconds_from_start )
+          expect( hun ).to eq( result.hundreds ).or eq( result.hundreds_from_start )
           expect( result.reaction_time ).to eq( TimingParser.parse( reaction_text ).to_hundreds / 100.0 )
           expect( result.passage_type_id ).to eq( passage.passage_type_id )
           expect( result.meeting_individual_result_id ).to eq( passage.meeting_individual_result_id )

@@ -12,11 +12,10 @@
  *
  *= require bootstrap.min
  *= require jasny-bootstrap.min
+ *= require font-awesome
  *= require_tree .
  *= require_self
  */
-@import "wice_grid";
-@import "font-awesome";
 
 /* ----- Misc helpers ----- */
 .goggles-margin-left {
@@ -43,6 +42,13 @@
 }
 .goggles-nomargin {
     margin: 0px;
+}
+.goggles-abscenter {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 2000;
+  color: blue;
 }
 
 /* ----- Fix classes for the CSS-pure toggle switches that need a space for the label (upfront) ----- */

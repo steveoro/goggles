@@ -119,6 +119,8 @@ class Api::V2::RemoteEditController < Api::BaseController
   # A JSON response (either :success or :error).
   #
   def update_passage
+# DEBUG
+    puts "\r\n--- #update_passage: ---\r\nPARAMS: #{ params.inspect }"
     # Fetch params
     passage         = Passage.find_by_id( params['p'].to_i )
     timing_text     = params['time'].to_s

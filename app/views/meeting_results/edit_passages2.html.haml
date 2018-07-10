@@ -1,7 +1,8 @@
 = render( partial: 'tabs_and_title' )
+= render( partial: 'goggles/spinner_modal_overflow' )
+
 
 .col-xs-12.goggles-category-gap
-  = form_tag( meeting_results_update_passages_path(@meeting.id), onsubmit: "$('#loadingIndicator').show();" )
   %table.table.table-striped.table-bordered.table-hover.table-condensed
     %tbody
       - previous_event = nil
@@ -38,6 +39,8 @@
                   "pas_#{passage.id}",                                        |
                   passage.compute_incremental_time,                           |
                   'class' => "input-mini text-right timing",                  |
+                  'onchange' => "return handleEditPassage(this);",            |
+                  'data-passage' => passage.id,                               |
                   'data-mir' => mir.id,                                       |
                   'data-passage-type' => passage.passage_type_id              |
                 )                                                             |
@@ -52,6 +55,7 @@
                     "new_#{mir.id}_#{passage_type.id}",                         |
                     nil,                                                        |
                     'class' => "input-mini text-right timing",                  |
+                    'onchange' => "return handleEditPassage(this);",            |
                     'data-mir' => mir.id,                                       |
                     'data-passage-type' => passage_type.id                      |
                   )                                                             |
@@ -61,23 +65,48 @@
                     "auto_#{mir.id}_#{passage_type.id}",                        |
                     mir.get_timing,                                             |
                     'class' => "input-mini text-right timing",                  |
+                    'onchange' => "return handleEditPassage(this);",            |
                     'data-mir' => mir.id,                                       |
                     'data-passage-type' => passage_type.id                      |
                   )                                                             |
           %td.goggles-rightalign
             %b= mir.get_timing
 
-  .col-xs-12.goggles-category-gap
-    .col-xs-2
-      = submit_tag( I18n.t(:save), id: 'btnSavePassages', data: {confirm: I18n.t('netzke.basepack.grid_panel.are_you_sure'), |
-          disable_with: I18n.t(:please_wait), class: 'disabled' }, class: "btn btn-primary" )         |
-      %span(id='loadingIndicator' hidden='true')
-        = image_tag( 'indicator.gif' )
-
 .col-xs-12.goggles-category-gap
   &nbsp;
 
 :javascript
+  /**
+   * Invokes the remote editing action for the server
+   */
+  function handleEditPassage( obj ) {
+    $('#spinner').removeClass('hide');
+    $.ajax({
+      type: "POST",
+      url: "#{ api_v2_remote_edit_update_passage_path() }",
+      data: {
+        p:    obj.dataset['passage'],
+        mir:  obj.dataset['mir'],
+        pt:   obj.dataset['passageType'],
+        time: obj.value,
+      },
+      dataType: "application/json"
+    }).done(function() {
+      // DEBUG
+      console.log('DONE');
+    }).fail(function() {
+      // DEBUG
+      console.log('ERROR');
+    }).always(function() {
+      // DEBUG
+      console.log('in Always');
+      $('#spinner').addClass('hide');
+    });
+
+    return true;
+  };
+  // --------------------------------------------------------------------------
+
   /**
    * Binds formatting event to key press.
    */

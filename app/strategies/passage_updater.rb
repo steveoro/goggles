@@ -7,7 +7,7 @@ require 'common/validation_error_tools'
 
 = PassageUpdater
 
-  - Goggles framework vers.:  6.347
+  - Goggles framework vers.:  6.348
   - author: Steve A.
 
  Single-row Passage updater.
@@ -41,6 +41,7 @@ class PassageUpdater
   #++
 
 
+
   # Process a single Passage row.
   #
   # The row will be:
@@ -50,6 +51,14 @@ class PassageUpdater
   #
   # The method will act according to the presence of the first 2 parameters,
   # the others are not required and can be nil.
+  #
+  # When specified, the MeetingIndividualResult instance (mir_id) parameter will take
+  # precedence over any other supplied meeting_program_id, swimmer_id & team_id.
+  # (These 3 must all be present in order to be used when the +mir+ parameter is +nil+)
+  #
+  # (Thus, this updater supports also the editing of Passage rows w/o the existance
+  # of a parent MIR row.)
+  #
   # The method updates also the internal SQL diff log file accordingly.
   #
   # == Returns:
@@ -60,8 +69,7 @@ class PassageUpdater
   # or +nil+ only in case of any errors during the update/create transaction.
   #
   def process!( passage, incremental_timing_text_value, passage_type_id = nil, mir_id = nil,
-                reaction_time_text = nil, swimmer_id = nil, team_id = nil,
-                meeting_program_id = nil )
+                reaction_time_text = nil, swimmer_id = nil, team_id = nil, meeting_program_id = nil )
     timing_instance = TimingParser.parse( incremental_timing_text_value ) if incremental_timing_text_value
     reaction_time   = TimingParser.parse( reaction_time_text ) if reaction_time_text
     mir = MeetingIndividualResult.find_by_id( mir_id )
@@ -76,7 +84,8 @@ class PassageUpdater
     elsif passage && timing_instance                  # --- UPDATE ---
       begin
         Passage.transaction do
-          edit_existing_row!( passage, timing_instance, reaction_time )
+          edit_existing_row!( passage, timing_instance, reaction_time,
+                              meeting_program_id, swimmer_id, team_id )
         end
       rescue
 # DEBUG
@@ -87,7 +96,8 @@ class PassageUpdater
     elsif passage.nil? && timing_instance           # --- CREATE ---
       begin
         Passage.transaction do
-          create_new_row!( mir, passage_type_id, timing_instance, reaction_time_instance = nil )
+          create_new_row!( mir, passage_type_id, timing_instance, reaction_time,
+                           meeting_program_id, swimmer_id, team_id )
         end
       rescue
 # DEBUG
@@ -98,6 +108,7 @@ class PassageUpdater
   end
   #-- -------------------------------------------------------------------------
   #++
+
 
 
   # Check if a passage timing refers to a delta/lap timing value.
@@ -185,13 +196,16 @@ class PassageUpdater
   # The specified Passage instance.
   # +nil+ only in case of errors.
   #
-  def edit_existing_row!( passage, timing_instance, reaction_time_instance = nil )
+  def edit_existing_row!( passage, timing_instance, reaction_time_instance = nil,
+                          meeting_program_id = nil, swimmer_id = nil, team_id = nil )
     return nil unless passage && timing_instance
 # DEBUG
 #    puts "\r\nedit_existing_row( passage.id: #{ passage.id }, timing: #{ timing_instance }, reaction_time: #{ reaction_time_instance })"
 #    puts "before UPDATE"
 
-    passage = prepare_passage_fields( passage, timing_instance, reaction_time_instance )
+    passage = prepare_passage_fields( passage, timing_instance, reaction_time_instance,
+                                      passage.meeting_individual_result, passage.passage_type_id,
+                                      meeting_program_id, swimmer_id, team_id )
     passage.save!
 
     # Store Db-diff text for UPDATE
@@ -214,14 +228,20 @@ class PassageUpdater
   # Creates a new row given its parent mrr id and its other values.
   # This method updates also the internal SQL diff log file.
   #
+  # When specified, the MeetingIndividualResult instance (mir) parameter will take
+  # precedence over any other supplied meeting_program_id, swimmer_id & team_id.
+  # (These 3 must all be present in order to be used when the +mir+ parameter is +nil+)
+  #
   # == Returns:
   #
   # The specified Passage instance (which will result created only when successful).
   # nil only in case of errors.
   #
-  def create_new_row!( mir, passage_type_id, timing_instance, reaction_time_instance = nil )
+  def create_new_row!( mir, passage_type_id, timing_instance, reaction_time_instance = nil,
+                       meeting_program_id = nil, swimmer_id = nil, team_id = nil )
     return nil unless passage_type_id && timing_instance
-    passage = prepare_passage_fields( Passage.new, timing_instance, reaction_time_instance, mir, passage_type_id )
+    passage = prepare_passage_fields( Passage.new, timing_instance, reaction_time_instance, mir, passage_type_id,
+                                      meeting_program_id, swimmer_id, team_id )
     passage.save!
 
     # Store Db-diff text for INSERT
@@ -239,16 +259,26 @@ class PassageUpdater
   # Prepares the required timing fields for the specified passage instance row,
   # given a parsed timing instance containing the values used to update the Passage.
   #
+  # When specified, the MeetingIndividualResult instance (mir) parameter will take
+  # precedence over any other supplied meeting_program_id, swimmer_id & team_id.
+  # (These 3 must all be present in order to be used when the +mir+ parameter is +nil+)
+  #
   # === Returns:
   # The updated Passage instance
   #
-  def prepare_passage_fields( passage, timing_instance, reaction_time_instance = nil, mir = nil, passage_type_id = nil )
+  def prepare_passage_fields( passage, timing_instance, reaction_time_instance = nil, mir = nil, passage_type_id = nil,
+                              meeting_program_id = nil, swimmer_id = nil, team_id = nil )
     passage.user_id = @current_user.id
+
     if mir.instance_of?( MeetingIndividualResult )
       passage.meeting_program_id = mir.meeting_program_id
-      passage.meeting_individual_result_id = mir_id
+      passage.meeting_individual_result_id = mir.id
       passage.swimmer_id = mir.swimmer_id
       passage.team_id = mir.team_id
+    elsif meeting_program_id.present? && swimmer_id.present? && team_id.present?
+      passage.meeting_program_id = meeting_program_id
+      passage.swimmer_id = swimmer_id
+      passage.team_id = team_id
     end
     passage.passage_type_id = passage_type_id if passage_type_id
 

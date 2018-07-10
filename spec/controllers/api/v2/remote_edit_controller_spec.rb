@@ -193,6 +193,8 @@ RSpec.describe Api::V2::RemoteEditController, type: :controller, api: true do
     context "for an logged-in user w/ a valid request (full data => CREATE or UPDATE)," do
       before(:each) do
         login_user(@user)
+# DEBUG
+#        puts "\r\n- BEFORE action, passage to be edited:\r\n#{ passage.inspect }"
         post( :update_passage, format: :json,
           params: {
             u: @user.email,
@@ -222,6 +224,8 @@ RSpec.describe Api::V2::RemoteEditController, type: :controller, api: true do
         expect( hun ).to eq( edited_passage.hundreds ).or eq( edited_passage.hundreds_from_start )
         expect( edited_passage.reaction_time ).to eq( TimingParser.parse( reaction_text ).to_hundreds / 100.0 )
         # These should never change:
+# DEBUG
+#        puts "\r\n- edited_passage:\r\n#{ edited_passage.inspect }\r\n--- vs. ---\r\n#{ passage.inspect }"
         expect( edited_passage.passage_type_id ).to eq( passage.passage_type_id )
         expect( edited_passage.meeting_program_id ).to eq( passage.meeting_program_id )
         expect( edited_passage.meeting_individual_result_id ).to eq( passage.meeting_individual_result_id )

@@ -35,6 +35,7 @@ it:
   swimmers: 'Nuotatori'
   follow_us: 'Seguici'
   news: 'News'
+  saving_changes: 'Salvo le modifiche...'
 
   general:
     team: 'Squadra'

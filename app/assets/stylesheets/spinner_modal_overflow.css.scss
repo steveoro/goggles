@@ -1,0 +1,75 @@
+/*
+ * Modal container for loader/spinner in full-page overflow
+ *
+ * The basename for the classes is 'modal2' to avoid clashing w/ Bootstrap's own 'modal' class.
+ * Sample usage:
+ *
+ * #spinner.modal2.modal2-once
+ *  .modal2-outer-container
+ *    .modal2-middle-container
+ *      .modal2-inner-container.text-center
+ *        .modal2-body.full-height-modal2
+ *          %i.fa.fa-spinner.fa-spin.fa-3x.fa-fw
+ *
+ * (p) FASAR Software, Steve A.
+ */
+.modal2-backdrop, .modal2-backdrop.fade.in {
+    -webkit-animation: fade .3s;
+    animation: fade .3s;
+    opacity: .9;
+    filter: alpha(opacity=90);
+}
+
+.modal2-backdrop {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1040;
+    background-color: gray;
+}
+.modal2 {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1050;
+    overflow: auto;
+}
+.modal2-outer-container {
+    display: table;
+    width: 100%;
+    height: 100%;
+}
+.modal2-middle-container {
+    display: table-cell;
+    vertical-align: middle;
+}
+.modal2-inner-container {
+    margin: 0 auto;
+    color: blue;
+}
+.modal2-once .modal2-header {
+    border: none;
+}
+.modal2 .modal2-body.full-height-modal2 {
+    max-height: calc(100vh - 150px);
+}
+.modal2-body {
+    overflow-y: auto;
+    max-height: 400px;
+    padding: 15px;
+}
+
+/* Modifiers for other text contents beside the simple spinner: */
+.modal2-once .modal2-inner-container2 {
+    max-width: 80%;
+}
+.modal2-inner-container2 {
+    max-width: 400px;
+    margin: 0 auto;
+    background-color: white;
+    background-clip: padding-box;
+    color: blue;
+}
