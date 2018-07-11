@@ -8,8 +8,7 @@
       - previous_event = nil
       - @editable_stuff.each do |hash_item|
         - individual_result = hash_item.keys.first
-        - passages = hash_item.values.first
-        - has_passages = ( passages.count > 0 )
+        - has_passages = ( hash_item.values.first.count > 0 )
         - mir = MeetingIndividualResultDecorator.decorate( individual_result )
         - passage_types = mir.team.team_passage_templates.for_event_type( mir.event_type ).for_pool_type( mir.pool_type ).exists? ? TeamPassageTemplate.get_default_passage_types_for( mir.event_type.length_in_meters, mir.pool_type.length_in_meters ) : TeamPassageTemplate.get_template_passage_types_for( mir.team, mir.event_type, mir.pool_type )
         - if previous_event != mir.meeting_event
@@ -29,46 +28,42 @@
           %td
             %a{ id: "swimmer#{mir.id}", href: "#{ meeting_show_swimmer_results_path(id: @meeting.id, team_id: mir.team_id, swimmer_id: mir.swimmer_id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_swimmer_results_tooltip') }
               = mir.get_swimmer_name
-          - if has_passages
-            - passages.order(:passage_type_id).each_with_index do |passage, index|
-              %td.goggles-rightalign{'colspan'=>'1'}
-                - if passage.get_passage_distance != passage_types[index].length_in_meters
+          - count = ( passage_types.count - 1 )
+          - passage_types.each_with_index do |passage_type, index|
+            %td.goggles-rightalign{'colspan'=>'1'}
+              - curr_passage = has_passages ? hash_item.values.first.where( passage_type_id: passage_type.id ).first : nil
+              - if index < count                      # Data columns?
+                - if curr_passage && (curr_passage.get_passage_distance != passage_types[index].length_in_meters)
                   %i= "#{ passage.get_passage_distance } #{ I18n.t('meters_short') }"
                   %br/
-                = text_field_tag(                                             |
-                  "pas_#{passage.id}",                                        |
-                  passage.compute_incremental_time,                           |
-                  'class' => "input-mini text-right timing",                  |
-                  'onchange' => "return handleEditPassage(this);",            |
-                  'data-passage' => passage.id,                               |
-                  'data-mir' => mir.id,                                       |
-                  'data-passage-type' => passage.passage_type_id              |
-                )                                                             |
-                %br/
-                = passage.get_timing
-          - else
-            - count = ( passage_types.count - 1 )
-            - passage_types.each_with_index do |passage_type, index|
-              - if index < count
-                %td.goggles-rightalign{'colspan'=>'1'}
-                  = text_field_tag(                                             |
-                    "new_#{mir.id}_#{passage_type.id}",                         |
-                    nil,                                                        |
-                    'class' => "input-mini text-right timing",                  |
-                    'onchange' => "return handleEditPassage(this);",            |
-                    'data-mir' => mir.id,                                       |
-                    'data-passage-type' => passage_type.id                      |
-                  )                                                             |
-              - else
-                %td.goggles-rightalign{'colspan'=>'1'}
-                  = text_field_tag(                                             |
-                    "auto_#{mir.id}_#{passage_type.id}",                        |
-                    mir.get_timing,                                             |
-                    'class' => "input-mini text-right timing",                  |
-                    'onchange' => "return handleEditPassage(this);",            |
-                    'data-mir' => mir.id,                                       |
-                    'data-passage-type' => passage_type.id                      |
-                  )                                                             |
+                = text_field_tag(                                                 |
+                  "new_#{mir.id}_#{passage_type.id}",                             |
+                  curr_passage ? curr_passage.compute_incremental_time : nil,     |
+                  'class' => "input-mini text-right timing",                      |
+                  'onkeyup' => "return _formatTiming( $(this).val(), $(this) );", |
+                  'onchange' => "return handleEditPassage(this);",                |
+                  'data-passage' => curr_passage ? curr_passage.id : nil,         |
+                  'data-mir' => mir.id,                                           |
+                  'data-passage-type' => passage_type.id                          |
+                )                                                                 |
+                - if curr_passage
+                  %br/
+                  = curr_passage.get_timing
+
+              - else                                  # Last column:
+                = text_field_tag(                                                 |
+                  "auto_#{mir.id}_#{passage_type.id}",                            |
+                  mir.get_timing,                                                 |
+                  'class' => "input-mini text-right timing",                      |
+                  'onkeyup' => "return _formatTiming( $(this).val(), $(this) );", |
+                  'onchange' => "return handleEditPassage(this);",                |
+                  'data-mir' => mir.id,                                           |
+                  'data-passage-type' => passage_type.id                          |
+                )                                                                 |
+                - if curr_passage
+                  %br/
+                  = curr_passage.get_timing
+
           %td.goggles-rightalign
             %b= mir.get_timing
 
@@ -91,15 +86,10 @@
         time: obj.value,
       },
       dataType: "application/json"
-    }).done(function() {
+    }).always(function( result ) {
       // DEBUG
-      console.log('DONE');
-    }).fail(function() {
-      // DEBUG
-      console.log('ERROR');
-    }).always(function() {
-      // DEBUG
-      console.log('in Always');
+      //console.log('Callback: always');
+      //console.log( result.status );
       $('#spinner').addClass('hide');
     });
 
@@ -107,15 +97,6 @@
   };
   // --------------------------------------------------------------------------
 
-  /**
-   * Binds formatting event to key press.
-   */
-  $('input.timing').bind('keyup', function (event) {
-      var key = event.which;
-      var currentValue = $(this).val();
-      _formatTiming( currentValue, $(this) );
-  });
-  // --------------------------------------------------------------------------
 
   /**
    * Formats the current value as a timing.
@@ -127,5 +108,7 @@
       newValue = newValue.replace( /(?=(\d{2})$)/g, "\"" );
       newValue = newValue.replace( /(?=\B(\d{2})\D\d{2}$)/g, "\'" );
       targetNode.val( newValue );
+
+      return true;
   };
   // --------------------------------------------------------------------------

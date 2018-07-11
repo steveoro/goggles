@@ -5,7 +5,7 @@
 
 = Api::V2::RemoteEditController
 
-  - version:  6.347
+  - version:  6.349
   - author:   Steve A.
 
   API v2 controller for Remote-editing of single, specific data rows via JSON requests.
@@ -22,6 +22,13 @@ class Api::V2::RemoteEditController < Api::BaseController
   before_action :ensure_format
   #-- -------------------------------------------------------------------------
   #++
+
+
+  # Default asynch wait period before creating a new ActiveJob instance
+  WAIT_MINS_BEFORE_JOB_CREATE = 3.minutes
+  #-- -------------------------------------------------------------------------
+  #++
+
 
 
   # POST #update_relay_swimmer
@@ -76,7 +83,7 @@ class Api::V2::RemoteEditController < Api::BaseController
       serialize_into_app_parameters!( updater )
       # Launch delayed Job to send the DB-diff to the SysOp using the remote-editing
       # dedicated named queue ('edit'):
-      SendDbDiffJob.set( queue: :edit, wait: 1.minutes ).perform_later
+      SendDbDiffJob.set( queue: :edit, wait: WAIT_MINS_BEFORE_JOB_CREATE ).perform_later
 #    else
       # (no operations for result false => DELETE skipped => no SQL edits)
     end
@@ -148,7 +155,7 @@ class Api::V2::RemoteEditController < Api::BaseController
       serialize_into_app_parameters!( updater )
       # Launch delayed Job to send the DB-diff to the SysOp using the remote-editing
       # dedicated named queue ('edit'):
-      SendDbDiffJob.set( queue: :edit, wait: 1.minutes ).perform_later
+      SendDbDiffJob.set( queue: :edit, wait: WAIT_MINS_BEFORE_JOB_CREATE ).perform_later
 #    else
       # (no operations for result false => DELETE skipped => no SQL edits)
     end
@@ -220,7 +227,7 @@ class Api::V2::RemoteEditController < Api::BaseController
       serialize_into_app_parameters!( updater )
       # Launch delayed Job to send the DB-diff to the SysOp using the remote-editing
       # dedicated named queue ('edit'):
-      SendDbDiffJob.set( queue: :edit, wait: 1.minutes ).perform_later
+      SendDbDiffJob.set( queue: :edit, wait: WAIT_MINS_BEFORE_JOB_CREATE ).perform_later
 #    else
       # (no operations for result false => DELETE skipped => no SQL edits)
     end

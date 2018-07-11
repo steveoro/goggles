@@ -176,6 +176,7 @@ en:
         hundreds: "Hnd."
       meeting_relay_swimmer:
         relay_order: "Order"
+        reaction_time: "Reaction time"
       meeting_team_score:
         rank: "Rank"
         total_individual_points: "Individ. Score"

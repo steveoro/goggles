@@ -10,7 +10,7 @@ require 'relay_swimmer_batch_updater'
 
 = MeetingsController
 
-  - version:  6.093
+  - version:  6.349
   - author:   Steve A.
 
 =end
@@ -58,6 +58,10 @@ class MeetingResultsController < ApplicationController
         .includes( :passages )
         .to_a
         .map{ |mir| { mir => mir.passages } }
+# DEBUG
+#    puts "\r\n\r\n--- @editable_stuff: ---\r\n#{ @editable_stuff.inspect }\r\n"
+    # TODO Use a dedicated DAO class instead of this ugly Hash
+
     # TODO
     # Should order by start-list.
     # If no start-list present should use timing
@@ -145,19 +149,17 @@ class MeetingResultsController < ApplicationController
 
     @mrrs.each do |mrr|
       needed_swimmer_count = mrr.event_type.partecipants
-      relay_swimmers = MeetingRelaySwimmer.where(meeting_relay_result_id: mrr.id).to_a
-      # Just fill-in the missing relay swimmers with new instances:
-      ( relay_swimmers.count .. needed_swimmer_count-1 ).each do |idx|
-        relay_swimmers << MeetingRelaySwimmer.new(
-          meeting_relay_result_id: mrr.id,
-          # XXX [Steve, 20170308] ASSUMING THAT the existing Relay Swimmer rows:
-          # - have internal ordering starting from 1;
-          # - are created sequentially;
-          # - whenever they are missing,the missing relay orders are the top-most.
-          #   (That is, if, for whatever reason, only 2 rows have been created,
-          #    the "missing ones" will be placed at positions #3 & #4.)
-          relay_order: idx + 1,
-          stroke_type_id: RelaySwimmerBatchUpdater.get_fractionist_stroke_type_id_by( mrr.event_type.stroke_type_id, idx+1 )
+      relay_swimmers = []
+      # Fill-in the relay swimmers either with new instances or with existing ones:
+      ( 1 .. needed_swimmer_count ).each do |index|
+        existing_relay_swimmer = MeetingRelaySwimmer.where( meeting_relay_result_id: mrr.id, relay_order: index ).first
+        relay_swimmers << (
+          existing_relay_swimmer ||
+          MeetingRelaySwimmer.new(
+            meeting_relay_result_id: mrr.id,
+            relay_order:             index,
+            stroke_type_id:          RelaySwimmerBatchUpdater.get_fractionist_stroke_type_id_by( mrr.event_type.stroke_type_id, index )
+          )
         )
       end
       # Add the completed list of relay swimmers to the hash, for each existing MRR:
