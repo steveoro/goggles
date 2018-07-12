@@ -7,7 +7,7 @@ require 'common/validation_error_tools'
 
 = PassageUpdater
 
-  - Goggles framework vers.:  6.348
+  - Goggles framework vers.:  6.350
   - author: Steve A.
 
  Single-row Passage updater.
@@ -134,6 +134,11 @@ class PassageUpdater
   # 150: 3270 -> delta (50 in 3270 is a variation lesser than 50% of previous one)
   #
   def self.is_delta?( passage )
+    # We can't compute anything if the Passage doesn't have a working link on the MIR
+    return true if passage.meeting_individual_result_id.to_i < 1
+
+    # XXX [Steve, 20180712] Currently, passage.get_previous_passage() & passage.get_final_time()
+    # work correctly only if the Passage row has a valid link to a MIR row.
     is_delta = false
 
     # Is incremental (not delta) if passage time swam equal to mir time swam
@@ -269,20 +274,26 @@ class PassageUpdater
   def prepare_passage_fields( passage, timing_instance, reaction_time_instance = nil, mir = nil, passage_type_id = nil,
                               meeting_program_id = nil, swimmer_id = nil, team_id = nil )
     passage.user_id = @current_user.id
+    prev_timing_instance = nil
 
     if mir.instance_of?( MeetingIndividualResult )
+# DEBUG
+#      puts "Passage->MIR link valid"
       passage.meeting_program_id = mir.meeting_program_id
       passage.meeting_individual_result_id = mir.id
       passage.swimmer_id = mir.swimmer_id
       passage.team_id = mir.team_id
-    elsif meeting_program_id.present? && swimmer_id.present? && team_id.present?
-      passage.meeting_program_id = meeting_program_id
-      passage.swimmer_id = swimmer_id
-      passage.team_id = team_id
+      # [Steve, 20180712] passage.get_previous_passage() works only if the Passage
+      # instance has a MIR associated.
+      prev_timing_instance = passage.get_previous_passage ? passage.get_previous_passage.compute_incremental_time : nil
+    else
+# DEBUG
+#      puts "Passage->MIR link NULL"
+      passage.meeting_program_id = meeting_program_id if meeting_program_id.present?
+      passage.swimmer_id = swimmer_id if swimmer_id.present?
+      passage.team_id    = team_id if team_id.present?
     end
     passage.passage_type_id = passage_type_id if passage_type_id
-
-    prev_timing_instance = passage.get_previous_passage ? passage.get_previous_passage.compute_incremental_time : nil
 
     # Establish whether the passage is "delta" or "incremental":
     passage.minutes  = timing_instance.minutes

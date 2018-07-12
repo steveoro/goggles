@@ -145,7 +145,7 @@ RSpec.describe Api::V2::RemoteEditController, type: :controller, api: true do
 
 
   describe "POST #update_passage" do
-    let(:passage)             { Passage.includes(:meeting_individual_result).limit(100).sample }
+    let(:passage)             { Passage.includes(:meeting_individual_result).joins(:meeting_individual_result).limit(100).sample }
     let(:destroyable_passage) { Passage.order(created_at: :desc).limit(100).sample }
 
     context "for an unlogged user making a non-JSON request," do
@@ -194,7 +194,9 @@ RSpec.describe Api::V2::RemoteEditController, type: :controller, api: true do
       before(:each) do
         login_user(@user)
 # DEBUG
-#        puts "\r\n- BEFORE action, passage to be edited:\r\n#{ passage.inspect }"
+        puts "\r\n- BEFORE action, passage to be edited:\r\n#{ passage.inspect }"
+        expect( passage.meeting_program_id ).to be > 0
+        expect( passage.meeting_individual_result_id ).to be > 0
         post( :update_passage, format: :json,
           params: {
             u: @user.email,
