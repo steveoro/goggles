@@ -63,7 +63,7 @@ describe PassageUpdater, type: :strategy do
           expect( min ).to eq( result.minutes ).or eq( result.minutes_from_start )
           expect( sec ).to eq( result.seconds ).or eq( result.seconds_from_start )
           expect( hun ).to eq( result.hundreds ).or eq( result.hundreds_from_start )
-          expect( result.reaction_time ).to eq( TimingParser.parse( reaction_text ).to_hundreds / 100.0 )
+          expect( result.reaction_time.to_f ).to eq( TimingParser.parse( reaction_text ).to_hundreds / 100.0 )
           expect( result.passage_type_id ).to eq( passage.passage_type_id )
           expect( result.meeting_individual_result_id ).to eq( passage.meeting_individual_result_id )
         end
@@ -96,7 +96,7 @@ describe PassageUpdater, type: :strategy do
           expect( min ).to eq( result.minutes ).or eq( result.minutes_from_start )
           expect( sec ).to eq( result.seconds ).or eq( result.seconds_from_start )
           expect( hun ).to eq( result.hundreds ).or eq( result.hundreds_from_start )
-          expect( result.reaction_time ).to eq( TimingParser.parse( reaction_text ).to_hundreds / 100.0 )
+          expect( result.reaction_time.to_f ).to eq( TimingParser.parse( reaction_text ).to_hundreds / 100.0 )
           expect( result.passage_type_id ).to eq( passage_wrongdata.passage_type_id )
           expect( result.meeting_individual_result_id ).to be nil
         end

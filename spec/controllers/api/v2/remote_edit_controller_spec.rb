@@ -108,7 +108,7 @@ RSpec.describe Api::V2::RemoteEditController, type: :controller, api: true do
         ).first
         expect( mrs ).to be_a( MeetingRelaySwimmer )
         expect( mrs.get_timing_instance.to_hundreds ).to eq( TimingParser.parse( timing_text ).to_hundreds )
-        expect( mrs.reaction_time ).to eq( TimingParser.parse( reaction_text ).to_hundreds / 100.0 )
+        expect( mrs.reaction_time.to_f ).to eq( TimingParser.parse( reaction_text ).to_hundreds / 100.0 )
         expect( mrs.badge_id ).to be > 0
         expect( mrs.stroke_type_id ).to be > 0
       end
@@ -224,7 +224,7 @@ RSpec.describe Api::V2::RemoteEditController, type: :controller, api: true do
         expect( min ).to eq( edited_passage.minutes ).or eq( edited_passage.minutes_from_start )
         expect( sec ).to eq( edited_passage.seconds ).or eq( edited_passage.seconds_from_start )
         expect( hun ).to eq( edited_passage.hundreds ).or eq( edited_passage.hundreds_from_start )
-        expect( edited_passage.reaction_time ).to eq( TimingParser.parse( reaction_text ).to_hundreds / 100.0 )
+        expect( edited_passage.reaction_time.to_f ).to eq( TimingParser.parse( reaction_text ).to_hundreds / 100.0 )
         # These should never change:
 # DEBUG
 #        puts "\r\n- edited_passage:\r\n#{ edited_passage.inspect }\r\n--- vs. ---\r\n#{ passage.inspect }"
