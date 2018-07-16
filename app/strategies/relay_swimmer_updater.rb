@@ -7,7 +7,7 @@ require 'common/validation_error_tools'
 
 = RelaySwimmerUpdater
 
-  - Goggles framework vers.:  6.347
+  - Goggles framework vers.:  6.353
   - author: Steve A.
 
  Single-row MeetingRelaySwimmer updater.
@@ -62,7 +62,7 @@ class RelaySwimmerUpdater
   # or +nil+ only in case of error during the update/create transaction.
   #
   def process!( mrr, relay_order, swimmer_id, incremental_timing_text_value, reaction_time_text )
-    return nil unless mrr && (relay_order.to_i > 0)
+    return nil unless mrr.instance_of?( MeetingRelayResult ) && (relay_order.to_i > 0)
     mrs = MeetingRelaySwimmer.where( meeting_relay_result_id: mrr.id, relay_order: relay_order ).first
 
     if mrs && swimmer_id.to_i < 1                   # --- DELETE ---
@@ -149,7 +149,7 @@ class RelaySwimmerUpdater
 #    puts "\r\nedit_existing_row( mrs.id: #{ mrs.id }, swimmer_id: #{ swimmer_id }, badge_id: #{ badge_id }, stroke_type_id: #{ stroke_type_id }, timing: #{ timing_instance }, reaction_time: #{ reaction_time_instance })"
 #    puts "before UPDATE"
 
-    if is_an_actual_update_of( mrs, swimmer_id, badge_id, timing_instance )
+    if is_an_actual_update_of( mrs, swimmer_id, badge_id, timing_instance, reaction_time_instance )
       mrs.update!(
         swimmer_id:     swimmer_id,
         badge_id:       badge_id,
@@ -224,8 +224,9 @@ class RelaySwimmerUpdater
   # Returns +true+ if the row has any actual changes when compared to the parameters;
   # false otherwise.
   #
-  def is_an_actual_update_of( mrs, swimmer_id, badge_id, timing )
+  def is_an_actual_update_of( mrs, swimmer_id, badge_id, timing, reaction_time )
     ( timing.instance_of?(Timing) && mrs.get_timing_instance.to_hundreds != timing.to_hundreds ) ||
+    ( reaction_time.instance_of?(Timing) && mrs.reaction_time.to_f != reaction_time.to_hundreds / 100.0 ) ||
     ( mrs.swimmer_id != swimmer_id.to_i ) ||
     ( mrs.badge_id != badge_id.to_i )
   end

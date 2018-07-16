@@ -11,3 +11,4 @@ en:
     some_relay_result_not_found: "Invalid relay result code specified. Some of the edits may have been ignored."
     changes_saved: "Edits saved!"
     relay_edit_disclaimer: "As a 'Team-manager' you are solely responsible of what you choose to edit in this page. Keep in mind that this will not alter the actual meeting result associated with the lap timings."
+    refresh_page_in_case_of_errors: "In case the drop-down list for the relay swimmer names does not appear while editing the name, simply reload the page to force a refresh of the list."

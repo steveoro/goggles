@@ -11,3 +11,4 @@ it:
     some_relay_result_not_found: "E' stato specificato un codice staffetta non valido. Alcuni dei cambiamenti sono stati ignorati."
     changes_saved: "Modifiche salvate!"
     relay_edit_disclaimer: "Come 'Team-manager' ti assumi responsabilità di quello che scegli di modificare in questa pagina. Tieni a mente che la scelta dei nuotatori o i tempi riportati non andranno ad intaccare il risultato effettivamente acquisito associato a questi passaggi."
+    refresh_page_in_case_of_errors: "Se l'elenco di scelta rapida degli staffettisti non dovesse comparire modificando il nome dell'atleta, ricarica la pagina per forzare un refresh dell'elenco."

@@ -56,6 +56,36 @@ describe RelaySwimmerUpdater, type: :strategy do
 
 
       context "for a valid user w/ valid parameters (full data)," do
+        let(:mrs_sample)    { MeetingRelaySwimmer.includes(:meeting_relay_result).joins(:meeting_relay_result).last(100).sample }
+        let(:new_reaction)  { "1\"#{ (0..99).to_a.sample }" }
+        let(:result) do
+# DEBUG
+#          puts "\r\nBEFORE process: #{ mrs_sample.inspect }"
+          subject.process!(
+            mrs_sample.meeting_relay_result,
+            mrs_sample.relay_order,
+            mrs_sample.swimmer_id,
+            mrs_sample.get_timing,
+            new_reaction
+          )
+        end
+
+        it "returns the created or updated MRS instance" do
+          expect( result ).to be_a( MeetingRelaySwimmer )
+        end
+        it "persists the specified values into the MeetingRelaySwimmer row specified by the keys" do
+          expect( result.minutes ).to eq( mrs_sample.minutes )
+          expect( result.seconds ).to eq( mrs_sample.seconds )
+          expect( result.hundreds ).to eq( mrs_sample.hundreds )
+          expect( result.reaction_time.to_f ).to eq( TimingParser.parse( new_reaction ).to_hundreds / 100.0 )
+          expect( result.swimmer_id ).to eq( mrs_sample.swimmer_id )
+          expect( result.badge_id ).to eq( mrs_sample.badge_id )
+          expect( result.stroke_type_id ).to eq( mrs_sample.stroke_type_id )
+        end
+      end
+
+
+      context "for a valid user w/ valid parameters (full data, changing only the reaction text)," do
         let(:result) do
           subject.process!( mrr_sample, relay_order, swimmer.id, timing_text, reaction_text )
         end
@@ -67,7 +97,7 @@ describe RelaySwimmerUpdater, type: :strategy do
           expect( result.minutes ).to eq( min )
           expect( result.seconds ).to eq( sec )
           expect( result.hundreds ).to eq( hun )
-          expect( result.reaction_time ).to eq( TimingParser.parse( reaction_text ).to_hundreds / 100.0 )
+          expect( result.reaction_time.to_f ).to eq( TimingParser.parse( reaction_text ).to_hundreds / 100.0 )
           expect( result.badge_id ).to be > 0
           expect( result.stroke_type_id ).to be > 0
         end
