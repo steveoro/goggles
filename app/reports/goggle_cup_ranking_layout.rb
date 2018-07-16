@@ -115,23 +115,26 @@ class GoggleCupRankingLayout
   # for all other values.
   #
   def self.get_medal_for( rank, options )
-    view_context = options[:view_context]
+#    view_context = options[:view_context]
     case rank.to_i
     when 1
       {
-        image: File.join( Rails.root, 'public', view_context.image_path("medal_gold_3.png") ),
+#        image: File.join( Rails.root, 'public', view_context.image_path("medal_gold_3.png") ),
+        image: File.join( Rails.root, 'public', 'images', 'medal_gold_3.png' ),
         scale: 0.6,
         position: :center
       }
     when 2
       {
-        image: File.join( Rails.root, 'public', view_context.image_path("medal_silver_3.png") ),
+#        image: File.join( Rails.root, 'public', view_context.image_path("medal_silver_3.png") ),
+        image: File.join( Rails.root, 'public', 'images', 'medal_silver_3.png' ),
         scale: 0.6,
         position: :center
       }
     when 3
       {
-        image: File.join( Rails.root, 'public', view_context.image_path("medal_bronze_3.png") ),
+#        image: File.join( Rails.root, 'public', view_context.image_path("medal_bronze_3.png") ),
+        image: File.join( Rails.root, 'public', 'images', 'medal_bronze_3.png' ),
         scale: 0.6,
         position: :center
       }
