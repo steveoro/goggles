@@ -77,6 +77,8 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
     vertical-align: middle;
 }
 
+label { margin-bottom: 0px }
+
 select, input[type="file"] {
 /* [Steve, 20161006] These values are not mobile-friendly:
     height: 22px;

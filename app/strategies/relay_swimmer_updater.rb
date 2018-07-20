@@ -7,7 +7,7 @@ require 'common/validation_error_tools'
 
 = RelaySwimmerUpdater
 
-  - Goggles framework vers.:  6.353
+  - Goggles framework vers.:  6.354
   - author: Steve A.
 
  Single-row MeetingRelaySwimmer updater.
@@ -87,24 +87,24 @@ class RelaySwimmerUpdater
 # DEBUG
 #      puts "timing: '#{ incremental_timing_text_value }' => #{ timing }\r\nreaction: '#{ reaction_time_text }' => #{ reaction_time }"
 
-      begin
-        MeetingRelaySwimmer.transaction do
-          if mrs                                    # --- UPDATE ---
+      MeetingRelaySwimmer.transaction do
+        if mrs                                    # --- UPDATE ---
 # DEBUG
-#            puts "before UPDATE"
-            edit_existing_row!( mrs, swimmer_id, badge.id, stroke_type_id, timing, reaction_time )
-          else                                      # --- CREATE ---
+#          puts "before UPDATE"
+          edit_existing_row!( mrs, swimmer_id, badge.id, stroke_type_id, timing, reaction_time )
+        else                                      # --- CREATE ---
 # DEBUG
-#            puts "before CREATE"
-            create_new_row!( mrr, relay_order, swimmer_id, badge.id, stroke_type_id, timing, reaction_time )
-          end
+#          puts "before CREATE"
+          create_new_row!( mrr, relay_order, swimmer_id, badge.id, stroke_type_id, timing, reaction_time )
         end
-      rescue
-# DEBUG
-        puts "RESCUE: '#{ $! }'"
-        return nil
       end
     end
+
+  rescue
+# DEBUG
+    puts "RESCUE: '#{ $! }'"
+    puts caller
+    return nil
   end
   #-- -------------------------------------------------------------------------
   #++

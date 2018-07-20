@@ -5,7 +5,7 @@
 
 = Api::V2::RemoteEditController
 
-  - version:  6.349
+  - version:  6.355
   - author:   Steve A.
 
   API v2 controller for Remote-editing of single, specific data rows via JSON requests.
@@ -127,7 +127,7 @@ class Api::V2::RemoteEditController < Api::BaseController
   #
   def update_passage
 # DEBUG
-    puts "\r\n--- #update_passage: ---\r\nPARAMS: #{ params.inspect }"
+#    puts "\r\n--- #update_passage: ---\r\nPARAMS: #{ params.inspect }"
     # Fetch params
     passage         = Passage.find_by_id( params['p'].to_i )
     timing_text     = params['time'].to_s
@@ -193,7 +193,9 @@ class Api::V2::RemoteEditController < Api::BaseController
   # - "skip"  => 'is_not_coming' ON=1 / OFF=0 <default> as smallint char digit; when '1' any detail row will be deleted
   # - "on"    => 'is_doing_this' ON=1 / OFF=0 <default> as smallint char digit
   # - "ok"    => 'has_confirmed' ON=1 / OFF=0 <default> as smallint char digit
-  # - "n"     => notes (used only for MeetingReservation and/or MeetingRelayReservation rows)
+  # - "rn"    => MeetingRelayReservation notes text
+  #              (relay specific, using the format "<relay name>';'<relay_order>")
+  # - "n"     => MeetingReservation notes text (common HEADER)
   #
   # === Returns:
   #
@@ -203,23 +205,30 @@ class Api::V2::RemoteEditController < Api::BaseController
 # DEBUG
 #    puts "\r\n--- #update_reservation: ---\r\nPARAMS: #{ params.inspect }"
     # Fetch params
+    meeting_id    = params['m']
+    badge_id      = params['b']
     event_id      = params['e']
-    badge_id      = params['b'].to_s
-    is_not_coming = (params['skip'].to_i > 0)
-    is_doing_this = (params['on'].to_i > 0)
-    has_confirmed = (params['ok'].to_i > 0)
+    is_not_coming = params['skip'].present? ? !!(params['skip'].to_s =~ /1|true|t/i) : nil
+    is_doing_this = params['on'].present? ? !!(params['on'].to_s =~ /1|true|t/i) : nil
+    has_confirmed = params['ok'].present? ? !!(params['ok'].to_s =~ /1|true|t/i) : nil
     timing_text   = params['time'].to_s
     notes         = params['n']
+    rel_notes     = params['rn']
 
-    if !event_id.present? && !badge_id.present?     # Nothing to do, bail out:
+    unless meeting_id.present? && badge_id.present? # Nothing to do, bail out:
+# DEBUG
+#      puts "update_reservation: meeting_id or badge_id MISSING"
       render( status: 400, json: { result: "error", message: I18n.t("api.errors.invalid_request") } ) and return
       return
     end
 
     updater = MeetingReservationUpdater.new( current_user )
-    result  = updater.process!( event_id, badge_id, is_doing_this, is_not_coming, has_confirmed, timing_text, notes )
+    result  = updater.process!( meeting_id, badge_id, event_id, is_doing_this,
+                                is_not_coming, has_confirmed, timing_text, notes, rel_notes )
 
     if result.nil?                                  # --- ERROR during CREATE/UPDATE ---
+# DEBUG
+#      puts "update_reservation: result is nil"
       render( status: 400, json: { result: "error", message: I18n.t("api.errors.unable_to_find_or_create_data_row") } ) and return
 
     elsif result                                    # --- CREATE / UPDATE / DELETE performed ---
@@ -254,13 +263,13 @@ class Api::V2::RemoteEditController < Api::BaseController
     new_text = if app_parameter.free_text_1.to_s.empty?
       updater.sql_diff_text_log
     else
-      "#{ app_parameter.free_text_1 }\r\n\r\n#{ updater.sql_diff_text_log }"
+      "#{ app_parameter.free_text_1 }\r\n#{ updater.sql_diff_text_log }"
     end
 
     app_parameter.update( free_text_1: new_text )
 # DEBUG
 #    app_parameter.reload
-#    puts "\r\n------------8<----------\r\n#{ app_parameter.free_text_1 }\r\n-----------------------"
+#    puts "\r\n------------8<----------\r\n#{ app_parameter.free_text_1 }\r\n------------8<----------"
   end
   #-- -------------------------------------------------------------------------
   #++

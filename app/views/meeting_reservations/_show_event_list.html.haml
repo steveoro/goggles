@@ -1,13 +1,13 @@
 %h3= t('meeting_reservation.show_event_list_title')
 %table.table.table-striped.table-bordered.table-hover.table-condensed
   %tbody
-    = render( partial: 'header_row', locals: { first_reservation: @reservations_events[@meeting_reservations.first.id], add_notes_column: false, add_session_name: false } )
+    = render( partial: 'header_row', locals: { meeting: @meeting, filter: :are_not_relays, add_notes_column: false } )
     -# Event Data rows:
     - swimmers_count = 0
     - @meeting_reservations.each do |reservation|
       -# Avoid showing rows for people who's not coming:
       - unless reservation.is_not_coming || (! @reservations_events[reservation.id].any?{|res_ev| res_ev.is_doing_this? })
-        - swimmers_count = swimmers_count + 1 
+        - swimmers_count = swimmers_count + 1
         %tr
           %td{ colspan: 2, class: 'info' }
             %a{'id'=>"swimmer#{reservation.swimmer_id}", 'href'=>"#{ swimmer_radio_path(id: reservation.swimmer_id) }", 'data-toggle'=>'tooltip', 'title'=>I18n.t('radiography.radio_tab_tooltip')}

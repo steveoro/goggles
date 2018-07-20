@@ -2,7 +2,7 @@
 .row{ class: @reservations_relays[@meeting_reservations.first.id].size < 3 ? 'col-xs-6' : '' }
   %table.table.table-striped.table-bordered.table-hover.table-condensed
     %tbody
-      = render( partial: 'header_row', locals: { first_reservation: @reservations_relays[@meeting_reservations.first.id], add_notes_column: false } )
+      = render( partial: 'header_row', locals: { meeting: @meeting, filter: :only_relays, add_notes_column: false } )
       -# Relay Data rows:
       - @meeting_reservations.each do |reservation|
         -# Avoid showing rows for people who's not coming:

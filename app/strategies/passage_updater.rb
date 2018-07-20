@@ -7,7 +7,7 @@ require 'common/validation_error_tools'
 
 = PassageUpdater
 
-  - Goggles framework vers.:  6.350
+  - Goggles framework vers.:  6.354
   - author: Steve A.
 
  Single-row Passage updater.
@@ -82,29 +82,23 @@ class PassageUpdater
       return delete_existing_row!( passage )
 
     elsif passage && timing_instance                  # --- UPDATE ---
-      begin
-        Passage.transaction do
-          edit_existing_row!( passage, timing_instance, reaction_time,
-                              meeting_program_id, swimmer_id, team_id )
-        end
-      rescue
-# DEBUG
-        puts "RESCUE: '#{ $! }'"
-        return nil
+      Passage.transaction do
+        edit_existing_row!( passage, timing_instance, reaction_time,
+                            meeting_program_id, swimmer_id, team_id )
       end
 
     elsif passage.nil? && timing_instance           # --- CREATE ---
-      begin
-        Passage.transaction do
-          create_new_row!( mir, passage_type_id, timing_instance, reaction_time,
-                           meeting_program_id, swimmer_id, team_id )
-        end
-      rescue
-# DEBUG
-        puts "RESCUE: '#{ $! }'"
-        return nil
+      Passage.transaction do
+        create_new_row!( mir, passage_type_id, timing_instance, reaction_time,
+                         meeting_program_id, swimmer_id, team_id )
       end
     end
+
+  rescue
+# DEBUG
+    puts "RESCUE: '#{ $! }'"
+    puts caller
+    return nil
   end
   #-- -------------------------------------------------------------------------
   #++

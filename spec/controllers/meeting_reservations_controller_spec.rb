@@ -134,38 +134,6 @@ RSpec.describe MeetingReservationsController, type: :controller do
     #-- -----------------------------------------------------------------------
     #++
 
-    describe "POST #update_events" do
-      context "for an unlogged user with invalid parameters," do
-        it "redirects to the Login page" do
-          post :update_events
-          expect(response).to redirect_to( "/users/sign_in" )
-        end
-      end
-
-      context "for a logged-in generic user," do
-        before :each do
-          login_user()
-        end
-        it "redirects to the Login page" do
-          post :update_events, params: { id: manageable_and_unreserved_meeting_id }
-          expect(response).to redirect_to( meetings_current_path )
-        end
-      end
-
-      context "for a logged-in valid user manager," do
-        before :each do
-          login_user( team_manager.user )
-        end
-        it "redirects to #edit_events" do
-          post :update_events, params: { id: manageable_and_unreserved_meeting_id }
-          expect(response).to redirect_to( meeting_reservations_edit_events_path(id: manageable_and_unreserved_meeting_id) )
-        end
-      end
-
-      # TODO Add more tests
-    end
-    #-- -----------------------------------------------------------------------
-    #++
 
     describe "GET #edit_relays" do
       context "for an unlogged user with invalid parameters," do
@@ -203,38 +171,6 @@ RSpec.describe MeetingReservationsController, type: :controller do
     #-- -----------------------------------------------------------------------
     #++
 
-    describe "POST #update_relays" do
-      context "for an unlogged user with invalid parameters," do
-        it "redirects to the Login page" do
-          post :update_relays
-          expect(response).to redirect_to( "/users/sign_in" )
-        end
-      end
-
-      context "for a logged-in generic user," do
-        before :each do
-          login_user()
-        end
-        it "redirects to the Login page" do
-          post :update_relays, params: { id: manageable_and_unreserved_meeting_id }
-          expect(response).to redirect_to( meetings_current_path )
-        end
-      end
-
-      context "for a logged-in valid user manager," do
-        before :each do
-          login_user( team_manager.user )
-        end
-        it "redirects to #edit_events" do
-          post :update_relays, params: { id: manageable_and_unreserved_meeting_id }
-          expect(response).to redirect_to( meeting_reservations_edit_relays_path(id: manageable_and_unreserved_meeting_id) )
-        end
-      end
-
-      # TODO Add more tests
-    end
-    #-- -----------------------------------------------------------------------
-    #++
 
     describe "GET #show" do
       context "for an unlogged user with invalid parameters," do
@@ -284,6 +220,7 @@ RSpec.describe MeetingReservationsController, type: :controller do
     #-- -------------------------------------------------------------------------
     #++
 
+
     describe "GET #printout_event_sheet" do
       context "for an unlogged user with invalid parameters," do
         it "redirects to the Login page" do
@@ -329,6 +266,7 @@ RSpec.describe MeetingReservationsController, type: :controller do
     #-- -------------------------------------------------------------------------
     #++
 
+
     describe "GET #relayometer" do
       context "for an unlogged user with invalid parameters," do
         it "redirects to the Login page" do
@@ -361,6 +299,7 @@ RSpec.describe MeetingReservationsController, type: :controller do
     end
     #-- -----------------------------------------------------------------------
     #++
+
 
     describe "POST #relayometer" do
       context "for an unlogged user with invalid parameters," do

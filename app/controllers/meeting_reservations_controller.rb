@@ -11,7 +11,7 @@ require 'reservations_csi_2_csv'
 
 = MeetingReservationsController
 
-  - version:  6.337
+  - version:  6.355
   - author:   Steve A.
 
 =end
@@ -26,19 +26,18 @@ class MeetingReservationsController < ApplicationController
   before_action :redirect_to_show_if_meeting_closed, except: [:show, :printout_event_sheet, :export_csi_csv]
 
 
-  # Edits the matrix of reservations for the selected meeting, for the whole team
+  # Edits the reservations for the selected meeting, for the whole team
   # of the currently logged-in user.
+  # The method filters out any relay event in order to shorten the width of
+  # the grid used to display the reservation cells.
   #
-  # If the user is a team manager, the whole matrix of rows is editable.
+  # If the user is a team manager, the whole matrix of rows is editable,
+  # indipendently if any reservations (either header or detail rows) are
+  # currently existing.
   #
-  # If no reservation rows are found, a new (empty but serialized on DB) matrix
-  # of events reservations is created, having a single MeetingReservationRow for
-  # each possibile event of the chosen meeting, for each and every one if the swimmers
-  # currently registered to the current user's team affiliation.
-  #
-  # This is a POST-only action due to the implied row insertions.
-  # No row deletions are currently permitted. This action recreates the whole matrix
-  # *only* if no rows are found.
+  # The method uses the API/v2/remote_edit controller (which, in turn, it uses the
+  # dedicated MeetingReservationUpdater strategy) to handle all modifications
+  # (any row creation, edit or deletion).
   #
   # == Params:
   # id: the meeting id to be processed
@@ -49,107 +48,43 @@ class MeetingReservationsController < ApplicationController
   #                (when also a team-manager, the whole matrix of rows should be editable)
   #
   def edit_events
-    # The creator will set-up a matrix of rows that can be edited and then persisted
-    # with the #update action
-    creator = MeetingEventReservationMatrixCreator.new(
-      meeting:          @meeting,
-      team_affiliation: @team_affiliation,
-      current_user:     current_user
-    )
-
-    # Launch the creator and send the diff file, if any:
-    perform_matrix_creation( creator, current_user, 'event' )
-
-    # Setup is done. Now we need to collect the lists of reservations for each athlete:
-    prepare_meeting_reservations( @meeting, @team_affiliation )  # Collect the created list of badge reservations
-    prepare_events_reservations( @meeting, @team_affiliation )   # collect the created matrix (badges x event rows) of event reservations
+    # meeting:          @meeting
+    # team_affiliation: @team_affiliation
+    # current_user:     current_user
+    get_badges_list()
+    get_events_list()
   end
   #-- -------------------------------------------------------------------------
   #++
 
 
-  # Edits the matrix of _relay_ reservations for the selected meeting, for the
-  # whole team of the currently logged-in user.
+  # Edits the reservations for the selected meeting, for the whole team
+  # of the currently logged-in user.
+  # The method filters out any individual event in order to shorten the width of
+  # the grid used to display the reservation cells.
   #
-  # See #edit_events for detailed info.
+  # If the user is a team manager, the whole matrix of rows is editable,
+  # indipendently if any reservations (either header or detail rows) are
+  # currently existing.
+  #
+  # The method uses the API/v2/remote_edit controller (which, in turn, it uses the
+  # dedicated MeetingReservationUpdater strategy) to handle all modifications
+  # (any row creation, edit or deletion).
+  #
+  # == Params:
+  # id: the meeting id to be processed
+  #
+  # == Implied parameters:
+  # current_user:  user must be logged-in and either be a team-manager or have an
+  #                associated swimmer (must be a "goggler").
+  #                (when also a team-manager, the whole matrix of rows should be editable)
   #
   def edit_relays
-    # The creator will set-up a matrix of rows that can be edited and then persisted
-    # with the #update action
-    creator = MeetingRelayReservationMatrixCreator.new(
-      meeting:          @meeting,
-      team_affiliation: @team_affiliation,
-      current_user:     current_user
-    )
-
-    # Launch the creator and send the diff file, if any:
-    perform_matrix_creation( creator, current_user, 'relay' )
-
-    # Setup is done. Now we need to collect the lists of reservations for each athlete:
-    prepare_meeting_reservations( @meeting, @team_affiliation )  # Collect the created list of badge reservations
-    prepare_relays_reservations( @meeting, @team_affiliation )   # collect the created matrix (badges x relays rows) of relay reservations
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-
-
-  # POSTs the update for the matrix of reservations for the selected meeting, for the whole team
-  # of the currently logged-in user.
-  #
-  # Posting updates for non-existing rows will fail silently.
-  #
-  # == Params:
-  # id: the meeting id to be processed
-  #
-  # == Implied parameters:
-  # current_user:  user must be logged-in and either be a team-manager or have an
-  #                associated swimmer (must be a "goggler").
-  #                (when also a team-manager, the whole matrix of rows should be editable)
-  #
-  def update_events
-# DEBUG
-#    logger.debug "\r\n\r\n!! ------ #{self.class.name}#update_events -----"
-#    logger.debug "> #{params.inspect}"
-    # XXX Sample POST output:
-    # <ActionController::Parameters {"utf8"=>"✓",
-    #   "authenticity_token"=>"<auth_string_token>",
-    #     "resNC_1"=>"false", "resCnf_1"=>"true", "chk_resCnf_1"=>"true", "evrChk_1"=>"false", "resNotes_1"=>"2 seats available",
-    #     "evrChk_2"=>"true", "chk_evrChk_2"=>"true", "evrChk_3"=>"false", "evrChk_4"=>"true",
-    #     "chk_evrChk_4"=>"true", "resNotes_1"=>"", "resNC_47"=>"true", "chk_resNC_47"=>"true",
-    #     "resCnf_47"=>"false",
-    #     # [...]
-    #   "commit"=>"Save", "id"=>"16216", "controller"=>"meeting_reservations",
-    #   "action"=>"update", "locale"=>"en"} permitted: false>
-
-    perform_matrix_update( params, current_user )
-    # At the end of the update we expect to remain in edit mode:
-    redirect_to( meeting_reservations_edit_events_url(id: @meeting.id) )
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-
-
-  # POSTs the update for the matrix of reservations for the selected meeting, for the whole team
-  # of the currently logged-in user.
-  #
-  # Posting updates for non-existing rows will fail silently.
-  #
-  # == Params:
-  # id: the meeting id to be processed
-  #
-  # == Implied parameters:
-  # current_user:  user must be logged-in and either be a team-manager or have an
-  #                associated swimmer (must be a "goggler").
-  #                (when also a team-manager, the whole matrix of rows should be editable)
-  #
-  def update_relays
-# DEBUG
-#    logger.debug "\r\n\r\n!! ------ #{self.class.name}#update_relays -----"
-#    logger.debug "> #{params.inspect}"
-
-    perform_matrix_update( params, current_user )
-    # At the end of the update we expect to remain in edit mode:
-    redirect_to( meeting_reservations_edit_relays_url(id: @meeting.id) )
+    # meeting:          @meeting
+    # team_affiliation: @team_affiliation
+    # current_user:     current_user
+    get_badges_list()
+    get_events_list( :only_relays )
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -383,6 +318,42 @@ class MeetingReservationsController < ApplicationController
   private
 
 
+  # Returns a list of (individual) MeetingEvents for the selected @meeting.
+  # Possible +:which_type+ values: [<:are_not_relays>|:only_relays]
+  #
+  # Returns an empty array in case of invalid parameter.
+  # Sets the internal member @event_list.
+  #
+  def get_events_list( which_type = :are_not_relays )
+    # Use memoization to avoid requering:
+    @event_list ||= if @meeting.instance_of?( Meeting )
+      @meeting.meeting_events.send( which_type.to_sym )
+        .joins(:meeting_session, :event_type)
+        .includes(:meeting_session, :event_type)
+        .order('meeting_sessions.session_order, meeting_events.event_order')
+        .all
+    else
+      []
+    end
+  end
+
+
+  # Returns a list of Badges for the selected @team_affiliation
+  # Returns an empty array in case of invalid parameter.
+  # Sets the internal member @badges_list.
+  #
+  def get_badges_list
+    # Use memoization to avoid requering:
+    @badges_list ||= if @team_affiliation.instance_of?( TeamAffiliation )
+      @team_affiliation.badges.all
+    else
+      []
+    end
+  end
+  #-- --------------------------------------------------------------------------
+  #++
+
+
   # Collects the list of @meeting_reservations for each Swimmer, given the specified
   # meeting and team_affiliation.
   #
@@ -461,136 +432,6 @@ class MeetingReservationsController < ApplicationController
       # like:
       #       mrr.event_type.i18n_short             for the event description
       #       mrr.meeting_session.scheduled_date    for the scheduled date
-    end
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-
-
-  # Calls the creator specified, then serializes the SQL diff file, whenever
-  # any processed row or error exists.
-  #
-  def perform_matrix_creation( creator, current_user, entity_simple_description )
-    creator.call
-    # Serialize creator.sql_diff_text_log in a dedicated log file:
-    if creator.processed_rows > 0 || creator.total_errors > 0
-      # Create the SQL diff file, and send it, when operated remotely:
-      output_dir = get_output_folder()
-      file_name = get_timestamped_env_filename( "create_#{ entity_simple_description }_res_#{ @meeting.code }_#{ current_user.id }.diff.sql" )
-      full_sql_diff_path = File.join( output_dir, file_name )
-
-      serialize_and_deliver_diff_file( creator, "create #{ entity_simple_description } RESERVATIONS", full_sql_diff_path )
-      # TODO Alternatively, make an asynch job that sends a whole batch of edits via mail
-
-      # Signal also locally if any error occurred during setup:
-      if creator.total_errors > 0
-        flash[:error] = I18n.t('meeting_reservation.error_during_creation')
-      # Everything OK?
-      # Only upon main reservation sheet creation, signal to each possible interested
-      # user that now he/she may be able to use the newly reservation sheet:
-      elsif (Rails.env == 'production') && (entity_simple_description != 'relay')
-        # Force cache update in production (generated development script doesn't really need this)
-        # by updating the meeting #updated_at attribute, in order to expire the cache key:
-        @meeting.touch
-        # Prepare a list of affiliated swimmers (then, search the gogglers):
-        team_swimmers = @team_affiliation.badges.map{ |badge| badge.swimmer_id }
-        # Extract all the Team's gogglers:
-        team_users = User.where("swimmer_id IN (?)", team_swimmers)
-            .select(:id).map{ |user| user.id }
-            .reject{ |e| e == current_user.id }
-        # Get only the interested gogglers from the team:
-        interested_users = @meeting.tags_by_user_list
-            .map{ |tag| User.find(tag.remove('u').to_i) }
-            .select{ |user| team_users.include?( user.id ) }
-        interested_users.each do |user|
-          # [Steve, 20170412] Actually the current_user could also be any user, not just the team manager
-          # (the message has been updated accordingly)
-          NewsletterMailer.custom_mail(
-            user,
-            I18n.t("newsletter_mailer.new_reservations.subject", meeting_name: @meeting.get_full_name),
-            I18n.t("newsletter_mailer.new_reservations.title"),
-            I18n.t(
-              "newsletter_mailer.new_reservations.contents",
-              team_manager_name: current_user.get_full_name,
-              meeting_name: @meeting.get_full_name,
-              manage_url: meeting_reservations_edit_events_url(id: @meeting.id)
-            )
-          ).deliver
-        end
-      end
-    end
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-
-
-  # Performs the update process given the parameters hash and the current user.
-  # Works indipendently for both ind. events and relays (including badge reservations).
-  #
-  def perform_matrix_update( params, current_user )
-    # The updater will parse the parameter and update the corresponding rows, while
-    # creating an SQL diff text to be serialized for database synchronization:
-    updater = MeetingReservationMatrixUpdater.new( params, current_user )
-    updater.call
-
-    # Serialize updater.sql_diff_text_log in a dedicated log file:
-    if updater.processed_rows > 0 || updater.total_errors > 0
-      # Create the SQL diff file, and send it, when operated remotely:
-      output_dir = get_output_folder()
-      file_name = get_timestamped_env_filename( "update_event_res_#{ @meeting.code }_#{ current_user.id }.diff.sql" )
-      full_sql_diff_path = File.join( output_dir, file_name )
-
-      serialize_and_deliver_diff_file( updater, "update RESERVATIONS", full_sql_diff_path )
-      # TODO Alternatively, make an asynch job that sends a whole batch of edits via mail
-
-      # Signal also locally if any error occurred during setup:
-      if updater.total_errors > 0
-        flash[:error] = I18n.t('meeting_reservation.error_during_save')
-      else
-        flash[:info] = I18n.t('meeting_reservation.changes_saved')
-        # Force cache update in production (generated development script doesn't really need this)
-        # by updating the meeting #updated_at attribute, in order to expire the cache key:
-        @meeting.touch
-      end
-    end
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-
-
-  # Creates the SQL diff file using an SqlConvertable-compatible instance (must respond
-  # to #sql_diff_text_log) and sends the file via mail if the current environment
-  # is in production mode.
-  #
-  def serialize_and_deliver_diff_file( sql_convertable, mail_title, full_diff_pathname )
-    sql_convertable.save_diff_file( full_diff_pathname )
-    base_filename = File.basename( full_diff_pathname )
-    logger.info( "\r\nLog file '#{ base_filename }' created" )
-    if Rails.env == 'production'
-      # Send the DB diff file to the SysOp
-      AgexMailer.action_notify_mail(
-        current_user,
-        mail_title,
-        "User #{current_user} has edited remotely the reservations for his/hers team, meeting ID #{@meeting.id}.\r\nThe attached log file must be synchronized locally.",
-        base_filename,
-        full_diff_pathname
-      ).deliver
-
-      # Send an additional mail message to the related team manager users (except the current user):
-      filtered_managers = @team_affiliation.team_managers.all.select{ |tm| tm.user_id != current_user.id }
-      filtered_managers.each do |team_manager|
-        NewsletterMailer.custom_mail(
-          team_manager.user,
-          I18n.t("newsletter_mailer.reservations.subject", meeting_name: @meeting.get_full_name),
-          I18n.t("newsletter_mailer.reservations.title"),
-          I18n.t(
-            "newsletter_mailer.reservations.contents",
-            user_name: current_user.get_full_name,
-            meeting_name: @meeting.get_full_name,
-            manage_url: meeting_reservations_edit_events_url(id: @meeting.id)
-          )
-        ).deliver
-      end
     end
   end
   #-- -------------------------------------------------------------------------

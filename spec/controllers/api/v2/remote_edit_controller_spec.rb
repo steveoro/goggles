@@ -284,8 +284,9 @@ RSpec.describe Api::V2::RemoteEditController, type: :controller, api: true do
           params: {
             u: @user.email,
             t: @user.authentication_token,
-            e: event_ind.id,
+            m: meeting_ind.id,
             b: badge_ind.id,
+            e: event_ind.id,
             skip: 0, on: 1, ok: 0,
             time: timing_text, n: fake_notes
           }
@@ -304,15 +305,39 @@ RSpec.describe Api::V2::RemoteEditController, type: :controller, api: true do
     #++
 
 
-    context "for an logged-in user w/ an incomplete JSON request (missing both badge & event)," do
+    context "for an logged-in user w/ an incomplete JSON request (missing meeting)," do
       before(:each) do
         login_user(@user)
         post( :update_reservation, format: :json,
           params: {
-            u: @user.email,
-            t: @user.authentication_token,
-            skip: 0, on: 1, ok: 0,
-            time: timing_text, n: fake_notes
+            u: @user.email, t: @user.authentication_token,
+            b: badge_ind.id, skip: 0, on: 1, ok: 0, time: timing_text, n: fake_notes
+          }
+        )
+      end
+      it_behaves_like "valid JSON request but with incomplete required parameters"
+    end
+
+    context "for an logged-in user w/ an incomplete JSON request (missing badge)," do
+      before(:each) do
+        login_user(@user)
+        post( :update_reservation, format: :json,
+          params: {
+            u: @user.email, t: @user.authentication_token,
+            m: meeting_ind.id, e: event_ind.id, skip: 0, on: 1, ok: 0, time: timing_text, n: fake_notes
+          }
+        )
+      end
+      it_behaves_like "valid JSON request but with incomplete required parameters"
+    end
+
+    context "for an logged-in user w/ an incomplete JSON request (missing both meeting & badge)," do
+      before(:each) do
+        login_user(@user)
+        post( :update_reservation, format: :json,
+          params: {
+            u: @user.email, t: @user.authentication_token,
+            e: event_ind.id, skip: 0, on: 1, ok: 0, time: timing_text, n: fake_notes
           }
         )
       end
@@ -327,8 +352,9 @@ RSpec.describe Api::V2::RemoteEditController, type: :controller, api: true do
           params: {
             u: @user.email,
             t: @user.authentication_token,
-            e: event_ind.id,
+            m: meeting_ind.id,
             b: badge_ind.id,
+            e: event_ind.id,
             skip: 0, on: 1, ok: 0,
             time: timing_text, n: fake_notes
           }
@@ -373,17 +399,21 @@ RSpec.describe Api::V2::RemoteEditController, type: :controller, api: true do
     end
 
 
-    context "for an logged-in user w/ a valid request (full data, RELAY result => CREATE or UPDATE)," do
+    context "for an logged-in user w/ a valid request (full data, RELAY result, no timing => CREATE or UPDATE)," do
+      let(:fake_hdr_notes)  { "Fake header notes #1" }
+      let(:fake_rel_notes)  { "Fake relay notes" }
       before(:each) do
         login_user(@user)
         post( :update_reservation, format: :json,
           params: {
             u: @user.email,
             t: @user.authentication_token,
-            e: event_rel.id,
+            m: meeting_rel.id,
             b: badge_rel.id,
+            e: event_rel.id,
             skip: 0, on: 1, ok: 0,
-            n: fake_notes
+            n: fake_hdr_notes,
+            rn: fake_rel_notes
           }
         )
       end
@@ -404,14 +434,14 @@ RSpec.describe Api::V2::RemoteEditController, type: :controller, api: true do
         expect( header_row.badge_id ).to eq( badge_rel.id )
         expect( header_row.is_not_coming ).to be false
         expect( header_row.has_confirmed ).to be false
-        expect( header_row.notes ).to eq( fake_notes )
+        expect( header_row.notes ).to eq( fake_hdr_notes )
         expect( header_row.user_id ).to eq( @user.id )
       end
 
       it "persists the specified values into the MeetingRelayReservation (DETAIL) row specified by the keys (creating it when not existing)" do
         result_row = MeetingRelayReservation.where( badge_id: badge_rel.id, meeting_event_id: event_rel.id ).first
         expect( result_row ).to be_a( MeetingRelayReservation )
-        expect( result_row.notes ).to eq( fake_notes )
+        expect( result_row.notes ).to eq( fake_rel_notes )
 
         expect( result_row.meeting_id ).to eq( meeting_rel.id )
         expect( result_row.team_id ).to eq( badge_rel.team_id )
@@ -433,8 +463,9 @@ RSpec.describe Api::V2::RemoteEditController, type: :controller, api: true do
           params: {
             u: @user.email,
             t: @user.authentication_token,
-            e: destroyable_mres.meeting_event_id,
+            m: destroyable_mres.meeting_id,
             b: destroyable_mres.badge_id,
+            e: destroyable_mres.meeting_event_id,
             skip: 1
           }
         )

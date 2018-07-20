@@ -7,7 +7,7 @@ require 'common/validation_error_tools'
 
 = MeetingReservationUpdater
 
-  - Goggles framework vers.:  6.347
+  - Goggles framework vers.:  6.355
   - author: Steve A.
 
  Single MeetingReservation + Meeting(Event/Relay)Reservation updater.
@@ -48,46 +48,58 @@ class MeetingReservationUpdater
   #++
 
 
-  # Process a single reservation tuple, identified by the keys event_id & badge_id.
+  # Process a single reservation tuple, identified by the keys meeting_id,
+  # event_id & badge_id.
+  # The event_id can be nil in case the processing involves only the header row
+  # of the reservation.
   #
-  # The tuple will be:
+  # The header and detail tuples will be:
   # - updated, when the row exists;
   # - created with the specified values, when not found;
-  # - deleted, when is_not_coming == true.
+  # - deleted (just the detail rows), when is_not_coming == true.
   #
-  # The method will act according to the presence of the first 3 parameters,
+  # The method will act according to the presence of the first 2 parameters,
   # the others are not required and can be nil.
   # The method updates also the internal SQL diff log file accordingly.
   #
   # == Returns:
   #
-  # The updated/created MeetingReservation instance, or +true+ in case of deletion;
+  # The updated/created Meeting/Event/Relay/Reservation instance,
+  # or +true+ in case of deletion;
   #
   # Result is +false+ when the row was not found and the deletion was skipped,
   # or +nil+ only in case of error during the update/create transaction.
   #
-  def process!( event_id, badge_id, is_doing_this, is_not_coming = false, has_confirmed = false,
-                timing_text_value = nil, notes = nil )
-    return nil unless badge_id.present? && event_id.present?
-    badge = Badge.find_by_id( badge_id )
-    event = MeetingEvent.joins(:event_type).includes(:event_type).find_by_id( event_id )
-    unless badge && event
+  def process!( meeting_id, badge_id, event_id, is_doing_this, is_not_coming = false, has_confirmed = false,
+                timing_text_value = nil, notes = nil, relay_notes = nil )
 # DEBUG
-#      puts "\r\nBadge or MeetingEvent NOT found!"
+#    puts "\r\nprocess!( meeting_id: #{ meeting_id }: badge_id: #{ badge_id }, event_id: #{ event_id }, is_doing_this: #{ is_doing_this }, is_not_coming: #{ is_not_coming }, has_confirmed: #{ has_confirmed }, time: #{ timing_text_value }, notes: '#{ notes }', relay_notes: '#{ relay_notes }')"
+    return nil unless meeting_id.present? && badge_id.present?
+    badge = Badge.find_by_id( badge_id )
+    event = event_id ? MeetingEvent.joins(:event_type).includes(:event_type).find_by_id( event_id ) : nil
+    unless badge
+# DEBUG
+#      puts "\r\nBadge NOT found!"
       return nil
     end
-    meeting_id = event.meeting_session.meeting_id
     mrs = MeetingReservation.where( meeting_id: meeting_id, badge_id: badge_id ).first
+# DEBUG
+#    puts "\r\nRESERVATION HEADER: #{ mrs.inspect }"
 
     #                                               # --- Header CREATE or UPDATE ---
     if mrs.nil?
-      create_new_header_row!( meeting_id, badge, is_not_coming, has_confirmed, notes )
+      mrs = create_new_header_row!( meeting_id, badge, is_not_coming, has_confirmed, notes )
     else
-      edit_existing_header_row!( mrs, is_not_coming, has_confirmed, notes )
+      mrs = edit_existing_header_row!( mrs, is_not_coming, has_confirmed, notes )
     end
+                                                    # --- DELETE detail row(s) ---
+    if is_not_coming ||
+       (event && !event.event_type.is_a_relay? && !timing_text_value.present?) ||
+       (event && event.event_type.is_a_relay? && !relay_notes.present?)
+      return delete_existing_rows!( meeting_id, badge_id, event_id )
 
-    if is_not_coming                                # --- DELETE detail rows ---
-      return delete_existing_rows!( badge_id, event_id )
+    elsif event.nil?                                # --- No event specified (only header row was involved) ---
+      return mrs
 
     else                                            # --- UPDATE or CREATE detail rows ---
       team_id    = badge.team_id
@@ -98,24 +110,24 @@ class MeetingReservationUpdater
 #      puts "timing: '#{ timing_text_value }' => #{ suggested_timing }; klass: #{ klass }, notes: '#{ notes }'"
       mres = klass.where( badge_id: badge_id, meeting_event_id: event_id ).first
 
-      begin
-        MeetingReservation.transaction do
-          if mres                                   # --- UPDATE ---
+      ActiveRecord::Base.transaction do
+        if mres                                   # --- UPDATE ---
 # DEBUG
 #            puts "before UPDATE (#{ klass })"
-            edit_existing_detail_row!( mres, event, is_doing_this, suggested_timing, notes )
-          else                                      # --- CREATE ---
+          edit_existing_detail_row!( mres, event, is_doing_this, suggested_timing, relay_notes )
+        else                                      # --- CREATE ---
 # DEBUG
 #            puts "before CREATE (#{ klass })"
-            create_new_detail_row!( meeting_id, badge, event, is_doing_this, suggested_timing, notes )
-          end
+          create_new_detail_row!( meeting_id, badge, event, is_doing_this, suggested_timing, relay_notes )
         end
-      rescue
-# DEBUG
-        puts "RESCUE: '#{ $! }'"
-        return nil
       end
     end
+
+  rescue
+# DEBUG
+    puts "RESCUE: '#{ $! }'"
+    puts caller
+    return nil
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -132,9 +144,9 @@ class MeetingReservationUpdater
   #
   # +true+ in case of deletion, raises an Exception in case of error.
   #
-  def delete_existing_rows!( badge_id, event_id )
-    delete_existing_detail_rows!( MeetingEventReservation, badge_id, event_id )
-    delete_existing_detail_rows!( MeetingRelayReservation, badge_id, event_id )
+  def delete_existing_rows!( meeting_id, badge_id, event_id )
+    delete_existing_detail_rows!( MeetingEventReservation, meeting_id, badge_id, event_id )
+    delete_existing_detail_rows!( MeetingRelayReservation, meeting_id, badge_id, event_id )
     true
   end
   #-- -------------------------------------------------------------------------
@@ -164,11 +176,15 @@ class MeetingReservationUpdater
         user_id:            @current_user.id
       )
       sql_attributes = mrs.attributes.select do |key|
-        [ 'id', 'is_not_coming:', 'has_confirmed', 'notes', 'user_id' ].include?( key.to_s )
+        [ 'id', 'is_not_coming', 'has_confirmed', 'notes', 'user_id' ].include?( key.to_s )
       end
       sql_diff_text_log << to_sql_update( mrs, false, sql_attributes, "\r\n" )
+# DEBUG
+#      puts "after HEADER UPDATE, resulting DIFF:"
+#      puts "\r\n------------8<----------\r\n#{ sql_diff_text_log }\r\n------------8<----------"
+#      puts "HEADER: #{ mrs.inspect }"
 
-    else # (log no-op)
+#    else # (log no-op)
 # DEBUG
 #      puts "No actual changes detected. Skipping header update."
     end
@@ -189,22 +205,22 @@ class MeetingReservationUpdater
   # Returns +nil+ only in case of no-operations.
   #
   def edit_existing_detail_row!( mres, event, is_doing_this, suggested_timing = nil, notes = nil )
-    return nil unless mres && event.instance_of?(MeetingEvent)
+    return nil unless event.instance_of?(MeetingEvent) && (mres.instance_of?(MeetingEventReservation) || mres.instance_of?(MeetingRelayReservation))
 # DEBUG
-#    puts "\r\nedit_existing_detail_row!( mres.id: #{ mres.id }, event: #{ event.get_full_name }, is_doing_this: #{ is_doing_this }, timing: #{ suggested_timing }, notes: '#{ notes }')"
+#    puts "\r\nedit_existing_detail_row!( #{ mres.class }: mres.id: #{ mres.id }, event: #{ event.get_full_name }, is_doing_this: #{ is_doing_this }, timing: #{ suggested_timing }, notes: '#{ notes }')"
 #    puts "before UPDATE"
 
     if is_an_actual_detail_update_of( mres, is_doing_this, suggested_timing, notes )
       sql_attributes = []
 # DEBUG
 #      puts "before detail UPDATE!"
-      mres = if event.event_type.is_a_relay?
+      if event.event_type.is_a_relay?
         mres.update!(
           is_doing_this:      is_doing_this,
           notes:              notes,
           user_id:            @current_user.id
         )
-        sql_attributes = mrs.attributes.select do |key|
+        sql_attributes = mres.attributes.select do |key|
           [ 'id', 'is_doing_this', 'notes', 'user_id' ].include?( key.to_s )
         end
       else
@@ -215,16 +231,19 @@ class MeetingReservationUpdater
           suggested_hundreds: suggested_timing ? suggested_timing.hundreds : nil,
           user_id:            @current_user.id
         )
-        sql_attributes = mrs.attributes.select do |key|
+        sql_attributes = mres.attributes.select do |key|
           [
             'id', 'is_doing_this', 'suggested_minutes', 'suggested_seconds', 'suggested_hundreds',
             'user_id'
           ].include?( key.to_s )
         end
       end
+# DEBUG
+#      puts "before sql_diff_text_log,"
+#      puts "mres: #{ mres.inspect }"
       sql_diff_text_log << to_sql_update( mres, false, sql_attributes, "\r\n" )
 
-    else # (log no-op)
+#    else # (log no-op)
 # DEBUG
 #      puts "No actual changes detected. Skipping update."
     end
@@ -258,7 +277,7 @@ class MeetingReservationUpdater
     )
 # DEBUG
 #    puts "before Res (header) SAVE!"
-    puts ValidationErrorTools.recursive_error_for( mrs ) unless mrs.valid?
+#    puts ValidationErrorTools.recursive_error_for( mrs ) unless mrs.valid?
     mrs.save!
     # Store Db-diff text for INSERT
     sql_diff_text_log << to_sql_insert( mrs, false, "\r\n" )
@@ -317,7 +336,7 @@ class MeetingReservationUpdater
 
 # DEBUG
 #    puts "before Res (detail) SAVE!"
-    puts ValidationErrorTools.recursive_error_for( mres ) unless mres.valid?
+#    puts ValidationErrorTools.recursive_error_for( mres ) unless mres.valid?
     mres.save!
     # Store Db-diff text for INSERT
     sql_diff_text_log << to_sql_insert( mres, false, "\r\n" )
@@ -339,10 +358,11 @@ class MeetingReservationUpdater
   #
   # +true+ in case of deletion, raises an Exception in case of error.
   #
-  def delete_existing_detail_rows!( klass, badge_id, event_id )
+  def delete_existing_detail_rows!( klass, meeting_id, badge_id, event_id )
 # DEBUG
-#    puts "before DELETE (klass: #{ klass }, badge_id: #{ badge_id }, event_id: #{ event_id })"
-    mrs = klass.where( badge_id: badge_id, meeting_event_id: event_id )
+#    puts "before DELETE (klass: #{ klass }, meeting_id: #{ meeting_id }, badge_id: #{ badge_id }, event_id: #{ event_id })"
+    mrs = event_id.present? ? klass.where( badge_id: badge_id, meeting_event_id: event_id ) :
+                              klass.where( meeting_id: meeting_id, badge_id: badge_id )
     if mrs.count > 0
 # DEBUG
 #      puts "Some rows for deletion FOUND."

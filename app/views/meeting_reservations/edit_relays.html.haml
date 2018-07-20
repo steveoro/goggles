@@ -1,222 +1,70 @@
 = render( partial: 'tabs_and_title' )
+= render( partial: 'goggles/spinner_modal_overflow' )
 
-= form_tag( meeting_reservations_update_relays_path(id: @meeting.id), method: :post, onsubmit: "$('#loadingIndicator').show();" )
+
 %table.table.table-striped.table-bordered.table-hover.table-condensed
   %tbody
-    = render( partial: 'header_row', locals: { first_reservation: @reservations_relays[@meeting_reservations.first.id], add_notes_column: true } )
+    = render( partial: 'header_row', locals: { meeting: @meeting, filter: :only_relays, add_notes_column: true } )
 
-    -# Data rows:
-    - @meeting_reservations.each do |reservation|
-      - res_events_ids = @reservations_relays[reservation.id].map{ |re| re.id }
-      - res_coming_id = "#{ MeetingReservationMatrixProcessor::DOM_PRE_RES_NOT_COMING }#{reservation.id}"
+    - @badges_list.each do |badge|
+      - reservation = find_or_new_badge_reservation( current_user, @meeting, @team_affiliation, badge )
+
       -# Avoid showing rows for people who's not coming:
-      - if @is_valid_team_manager || ( @swimmer && (@swimmer.id == reservation.swimmer_id)) # was: !reservation.is_not_coming
+      - if @is_valid_team_manager || ( @swimmer && (@swimmer.id == reservation.swimmer_id))
         %tr
-          %td{ colspan: 1, class: 'info' }
-            %a{'id'=>"swimmer#{reservation.swimmer_id}", 'href'=>"#{ swimmer_radio_path(id: reservation.swimmer_id) }", 'data-toggle'=>'tooltip', 'title'=>I18n.t('radiography.radio_tab_tooltip')}
-              %b= reservation.swimmer.get_full_name
-          %td{ colspan: 1, class: 'info' }
-            - if !@is_valid_team_manager            # Hide team manager controls for standard gogglers:
-              %small
-                %i
-                  = reservation.is_not_coming ? I18n.t('meeting_reservation.not_coming') : I18n.t('meeting_reservation.coming')
-                  = I18n.t('meeting_reservation.add_maybe') if !reservation.has_confirmed
-            - else                                  # Show full controls for team managers:
-              .row.col-xs-12
-                %small
-                  %i= I18n.t('meeting_reservation.is_not_coming')
-                &nbsp;&nbsp;
-                = hidden_field_tag( res_coming_id, reservation.is_not_coming )
-                = check_box_tag(                                                  |
-                    "chk_#{ res_coming_id }", true, reservation.is_not_coming,    |
-                    { disabled: !@is_valid_team_manager,                          |
-                      onclick: "toggleAllRowControls( #{ res_events_ids }, '#{ reservation.id }' );" |
-                  } )                                                             |
+          %td{ colspan: 2, class: 'info' }
+            = render( partial: 'header_row_first_cell', locals: { badge: badge, reservation: reservation, is_invalid_team_manager: !@is_valid_team_manager } )
 
-          -# Only team managers can edit any row; a simple swimmer can edit only his/her own row
-          -# (if the reservation is manageable):
-          -# At the same time, row controls are enabled only if the swimmer is coming to the meeting
-          - can_edit_events = (!reservation.is_not_coming) && TeamManagerValidator.is_reservation_manageable?( @meeting ) && (@is_valid_team_manager || ( @swimmer && (@swimmer.id == reservation.swimmer_id)))
-          - @reservations_relays[reservation.id].each do |relay_reservation|
-            %td{ 'data-toggle'=>'tooltip', 'title'=> relay_reservation.event_type.i18n_short }
-              .col-xs-12
-                .text-center{class: "switch_row_#{ reservation.id }"}
-                  - chkbox_id = "#{ MeetingReservationMatrixProcessor::DOM_PRE_RELAY_CHECKED }#{relay_reservation.id}"
-                  = hidden_field_tag( chkbox_id, relay_reservation.is_doing_this )
-                  = check_box_tag( "chk_#{ chkbox_id }", true, relay_reservation.is_doing_this,  |
-                        { disabled: !can_edit_events,                                            |
-                          onclick: "toggleSwitchValue(\"#{ relay_reservation.id }\");" } )       |
-              - note_id = "#{ MeetingReservationMatrixProcessor::DOM_PRE_RELAY_NOTES }#{relay_reservation.id}"
-              = hidden_field_tag( note_id, relay_reservation.notes )
-              .col-xs-7
-                %i= I18n.t('meeting_reservation.relay_codename_short_title')
-                = text_field_tag(                                                       |
-                  "code_#{ note_id }",                                                  |
-                  relay_reservation.is_doing_this && relay_reservation.notes.to_s.size > 0 ? relay_reservation.notes.to_s.split(';').first : nil, |
-                  maxlength: 5,                                                         |
-                  'class' => "relay-notes form-control",                                |
-                  disabled: !can_edit_events,                                           |
-                  onchange: "updateRelayNotes(\"#{ relay_reservation.id }\");",         |
-                  'data-toggle'=>'tooltip',                                             |
-                  'title'=> "#{ relay_reservation.event_type.i18n_short }, #{ I18n.t('meeting_reservation.relay_codename_tooltip') }" |
-                )                                                                       |
-              .col-xs-5
-                %i= I18n.t('meeting_reservation.relay_order_short_title')
-                = number_field_tag(                                                     |
-                  "num_#{ note_id }",                                                   |
-                  relay_reservation.is_doing_this && relay_reservation.notes.to_s.size > 0 ? relay_reservation.notes.to_s.split(';').last.to_i : nil,  |
-                  within: 1...8,                                                        |
-                  'class' => "form-control",                                            |
-                  disabled: !can_edit_events,                                           |
-                  onchange: "updateRelayNotes(\"#{ relay_reservation.id }\");",         |
-                  'data-toggle'=>'tooltip',                                             |
-                  'title'=> "#{ relay_reservation.event_type.i18n_short }, #{ I18n.t('meeting_reservation.relay_order_tooltip') }" |
-                )                                                                       |
+          -# Only team managers can edit any row; a simple swimmer can edit only his/her own row.
+          -# (if the reservation hasn't been already confirmed to the manager and the meeting
+          -#  is still manageable)
+          -# At the same time, row controls are editable only if the reservation hasn't been already confirmed or if the swimmer is not coming to the meeting
+          - can_edit_events = (!reservation.has_confirmed) && (!reservation.is_not_coming) && TeamManagerValidator.is_reservation_manageable?( @meeting ) && (@is_valid_team_manager || ( @swimmer && (@swimmer.id == reservation.swimmer_id)))
+
+          - @event_list.each do |event|
+            - event_reservation = find_or_new_meeting_relay_reservation( current_user, @meeting, @team_affiliation, badge, event )
+            - chkbox_id = "chk#{ badge.id }_#{ event.id }"
+            %td{ 'data-toggle'=>'tooltip', 'title'=> event_reservation.event_type.i18n_short }
+              .text-center
+                .switch-box.is-success
+                  %input{ id: chkbox_id, class: "switch-box-input resRow#{ badge.id }", |
+                          type: "checkbox", disabled: !can_edit_events,                 |
+                          checked: event_reservation.is_doing_this,                     |
+                          onclick: "toggleRelaySwitchValue(\"#{ badge.id }\", \"#{ event.id }\" );" |
+                  }                                                                     |
+                  %label{ for: chkbox_id, class: "switch-box-slider" }
+
+              .text-center
+                - default_code = event_reservation.is_doing_this && (event_reservation.notes.to_s.size > 0) ? event_reservation.notes.to_s.split(';').first : nil
+                - default_num  = event_reservation.is_doing_this && (event_reservation.notes.to_s.size > 0) ? event_reservation.notes.to_s.split(';').last.to_i : nil
+                .col-xs-7
+                  %i= I18n.t('meeting_reservation.relay_codename_short_title')
+                  = text_field_tag( "code#{ badge.id }_#{ event.id }",                    |
+                    default_code,                                                         |
+                    maxlength: 5,                                                         |
+                    'class' => "relay-notes form-control",                                |
+                    disabled: !can_edit_events,                                           |
+                    onchange: "updateRelayNoteValues(\"#{ badge.id }\", \"#{ event.id }\");", |
+                    'data-value' => default_code,                                         |
+                    'data-relcode' => default_code,                                       |
+                    'data-relnum' => default_num,                                         |
+                    'data-toggle'=>'tooltip',                                             |
+                    'title'=> "#{ event_reservation.event_type.i18n_short }, #{ I18n.t('meeting_reservation.relay_codename_tooltip') }" ) |
+                .col-xs-5
+                  %i= I18n.t('meeting_reservation.relay_order_short_title')
+                  = number_field_tag( "num#{ badge.id }_#{ event.id }",                   |
+                    default_num,                                                          |
+                    within: 1...8,                                                        |
+                    'class' => "form-control",                                            |
+                    disabled: !can_edit_events,                                           |
+                    onchange: "updateRelayNoteValues(\"#{ badge.id }\", \"#{ event.id }\");", |
+                    'data-value' => default_num,                                          |
+                    'data-relcode' => default_code,                                       |
+                    'data-relnum' => default_num,                                         |
+                    'data-toggle'=>'tooltip',                                             |
+                    'title'=> "#{ event_reservation.event_type.i18n_short }, #{ I18n.t('meeting_reservation.relay_order_tooltip') }" ) |
+
           %td
-            = text_area_tag(                                                                |
-              "#{ MeetingReservationMatrixProcessor::DOM_PRE_RES_NOTES }#{reservation.id}", |
-              reservation.notes,                                                            |
-              'class' => "text-left form-control",                                          |
-              disabled: !can_edit_events,                                                   |
-              'data-res' => reservation.id                                                  |
-            )                                                                               |
+            = render( partial: 'edit_cell_notes', locals: { badge_id: badge.id, default_value: reservation.notes, is_disabled: !can_edit_events } )
 
-.col-xs-12.goggles-category-gap
-  .col-xs-2
-    - can_save_form = TeamManagerValidator.is_reservation_manageable?( @meeting ) && ( @is_valid_team_manager || TeamManagerValidator.any_reservations_for?( current_user, @meeting ) )
-    = submit_tag( I18n.t(:save), id: 'btnSaveRelayReservation', disabled: !can_save_form,     |
-        data: { confirm: I18n.t('meeting_reservation.do_you_want_to_save_changes'),           |
-        disable_with: I18n.t(:please_wait), class: 'disabled' }, class: "btn btn-primary" )   |
-    %span(id='loadingIndicator' hidden='true')
-      = image_tag( 'indicator.gif' )
-
-.col-xs-12.goggles-category-gap
-  &nbsp;
-
-.col-xs-12.goggles-category-gap
-  %i= I18n.t('meeting_reservation.manage_meeting_disclaimer')
-
-.col-xs-12.goggles-category-gap
-  &nbsp;
-
-:javascript
-  /**
-   * Binds formatting event to key press, converting text input to uppercase.
-   */
-  $('input.relay-notes').bind('keyup', function (event) {
-      $(this).val( $(this).val().toUpperCase() );
-  });
-  // --------------------------------------------------------------------------
-
-  /**
-   * Sets (or resets) the checkbox and the hidden field associated with a single
-   * relay reservation id.
-   *
-   * Params:
-   * - relayReservationId: the id as a string of the current event reservation object
-   */
-  function toggleSwitchValue( relayReservationId ) {
-    var checkBox   = $("#chk_#{ MeetingReservationMatrixProcessor::DOM_PRE_RELAY_CHECKED }" + relayReservationId);
-    var hiddenFld  = $("##{ MeetingReservationMatrixProcessor::DOM_PRE_RELAY_CHECKED }" + relayReservationId);
-    var fieldValue = checkBox.prop('checked');
-    var isChecked  = (fieldValue == true) || (fieldValue == 'true') || (fieldValue == '1');
-    // Set the hidden field value according to current checkbox value (so that we can POST also false values):
-    hiddenFld.val( isChecked );
-  };
-  // --------------------------------------------------------------------------
-
-  /**
-   * Sets (or resets) the checkbox and the hidden field associated with a single
-   * relay reservation id.
-   *
-   * Params:
-   * - relayReservationId: the id as a string of the current event reservation object
-   */
-  function updateRelayNotes( relayReservationId ) {
-    var noteID = "#{ MeetingReservationMatrixProcessor::DOM_PRE_RELAY_NOTES }" + relayReservationId;
-    var codeText = $("#code_" + noteID);
-    var numField = $("#num_" + noteID);
-    var code = codeText.val();
-    var num  = numField.val();
-    // DEBUG
-    //console.log( "noteID: ", noteID );
-    //console.log( "codeText: ", codeText );
-    //console.log( "numField: ", numField );
-    console.log( "$(#noteID) val: ", $( '#'+noteID ).val() );
-    //console.log( "code: ", code );
-    //console.log( "num: ", num );
-    $( '#'+noteID ).val( code +";"+ num );
-    // DEBUG
-    console.log( "$(#noteID) val: ", $( '#'+noteID ).val() );
-  };
-  // --------------------------------------------------------------------------
-
-  /**
-   * Enables or disables both the edit and the checkbox associated with a single
-   * relay reservation id.
-   *
-   * Params:
-   * - relayReservationId: the id as a string of the current event reservation object
-   * - isDisabled: true or false value for the disabled property
-   */
-  function toggleRowControl( relayReservationId, isDisabled ) {
-    var checkBox = $("#chk_#{ MeetingReservationMatrixProcessor::DOM_PRE_RELAY_CHECKED }" + relayReservationId);
-    checkBox.prop( 'disabled', isDisabled );
-    var codeEdit = $("#code_#{ MeetingReservationMatrixProcessor::DOM_PRE_RELAY_NOTES }" + relayReservationId);
-    codeEdit.prop( 'disabled', isDisabled );
-    var numEdit = $("#num_#{ MeetingReservationMatrixProcessor::DOM_PRE_RELAY_NOTES }" + relayReservationId);
-    numEdit.prop( 'disabled', isDisabled );
-    //DEBUG
-    //console.log( "relayReservationId: ", relayReservationId );
-    //console.log( "isDisabled: ", isDisabled );
-    //console.log( "checkBox: ", checkBox );
-    //console.log( "checkBox.prop('checked'): ", checkBox.prop('checked') );
-    //console.log( "hidden field: ", $("##{ MeetingReservationMatrixProcessor::DOM_PRE_RELAY_CHECKED }"+relayReservationId).val() );
-  };
-  // --------------------------------------------------------------------------
-
-
-  /**
-   * Enables or disables (and clears) a whole row of edit and checkbox controls
-   * (each one associated with its composed DOM id to a single entity ID),
-   * given an array of event reservation IDs.
-   *
-   * Params:
-   * - relResIds: the array of relay reservation object IDs
-   * - reservationId: row ID of the "parent" (badge) reservation
-   */
-  function toggleAllRowControls( relResIds, reservationId ) {
-    var isNotComing = $("#chk_#{ MeetingReservationMatrixProcessor::DOM_PRE_RES_NOT_COMING }" + reservationId).prop('checked');
-    var textNotes   = $("##{ MeetingReservationMatrixProcessor::DOM_PRE_RES_NOTES }" + reservationId);
-    // Set the hidden fields value:
-    $( "##{ MeetingReservationMatrixProcessor::DOM_PRE_RES_NOT_COMING }" + reservationId ).val( isNotComing );
-    // Toggle row notes editability:
-    textNotes.prop( 'disabled', isNotComing );
-
-    // DEBUG
-    //console.log( "relResIds: ", relResIds );
-
-    // Toggle editability & clear/reset values:
-    for (var i = 0; i < relResIds.length; i++) {
-      // Toggle editability and set hidden field value:
-      toggleRowControl( relResIds[i], isNotComing );
-
-      // Clear edit boxes values and the reservation checkbox and the hidden field:
-      if ( isNotComing ) {
-        $("#code_#{ MeetingReservationMatrixProcessor::DOM_PRE_RELAY_NOTES }" + relResIds[i]).val(null);
-        $("#num_#{ MeetingReservationMatrixProcessor::DOM_PRE_RELAY_NOTES }" + relResIds[i]).val(null);
-        $("##{ MeetingReservationMatrixProcessor::DOM_PRE_RELAY_CHECKED }" + relResIds[i]).val( false );
-        $("#chk_#{ MeetingReservationMatrixProcessor::DOM_PRE_RELAY_CHECKED }" + relResIds[i]).prop( 'checked', false );
-      }
-    }
-
-    // (Here we must NOT hide the row controls when isConfirmed, since we need to see the actual resulting checkbox status)
-    // Hide or show all the row switches in one shot:
-    if ( isNotComing ) {
-      $( ".switch_row_" + reservationId ).hide();
-    }
-    else {
-      $( ".switch_row_" + reservationId ).show();
-    }
-  };
-  // --------------------------------------------------------------------------
+= render( partial: 'footer_row_with_js', locals: { meeting_id: @meeting.id } )

@@ -1,24 +1,11 @@
 %tr#header_row
-  - session_dates   = first_reservation.map{ |re| Format.a_date(re.meeting_session.scheduled_date) + ' ' + Format.a_time(re.meeting_session.begin_time) }
+  - session_dates   = meeting.meeting_events.send( filter.to_sym ).map{|me| Format.a_date(me.meeting_session.scheduled_date) + ' ' + Format.a_time(me.meeting_session.begin_time) }
   -# XXX Some Meeting sessions have been found with nil day_part_type_id! DEFAULT: code: 'M'
-  - session_orders  = first_reservation.map{ |re| "(#{ I18n.t('activerecord.models.session') } #{ re.meeting_session.session_order }) #{ re.meeting_session.day_part_type_id.nil? ? '???' : DayPartType.new(code: re.meeting_session.day_part_type.code).i18n_short }" }
+  - session_orders  = meeting.meeting_events.send( filter.to_sym ).map{|me| "(#{ I18n.t('activerecord.models.session') } #{ me.meeting_session.session_order }) #{ me.meeting_session.day_part_type_id.nil? ? '???' : DayPartType.new(code: me.meeting_session.day_part_type.code).i18n_short }" }
   - uniq_dates  = session_dates.uniq
   - uniq_orders = session_orders.uniq
-  -# Common header #1: session order + day part type
-  -# Leega - Disabled second header row (too verbose)
-  - if false
-    %tr.success.text-center
-      %td{ colspan: 2 }
-      - tot_columns = uniq_orders.map{ |order| session_orders.count(order) }
-      - uniq_orders.each_with_index do |session_order, index|
-        -# Avoid a thick border on the last column:
-        - is_not_last_item = index+1 < uniq_orders.count
-        %td{ colspan: tot_columns[index], id: (is_not_last_item ? "goggles-border-rx-thick" : nil) }
-          %i= session_order
-      - if add_notes_column
-        %td
-          &nbsp;
-  -# Common header #2: session date
+
+  -# Common header #1: session date
   %tr.success.text-center
     %td{ colspan: 2 }
       &nbsp;
@@ -31,20 +18,20 @@
     - if add_notes_column
       %td
         &nbsp;
-  -# Common header #3: event title
+  -# Common header #2: event title
   %tr.success.text-center
     %td{ colspan: 2 }
       %i= I18n.t('meeting_stats.swimmers')
     - curr_session_order = 1
-    - first_reservation.each do |event_reservation|
-      - out_of_race = event_reservation.meeting_event.is_out_of_race ? ' (FG)' : ''
-      - if event_reservation.meeting_session.session_order > curr_session_order
-        - curr_session_order = event_reservation.meeting_session.session_order
+    - meeting.meeting_events.send( filter.to_sym ).each do |meeting_event|
+      - out_of_race = meeting_event.is_out_of_race ? ' (FG)' : ''
+      - if meeting_event.meeting_session.session_order > curr_session_order
+        - curr_session_order = meeting_event.meeting_session.session_order
         %td#goggles-border-lx-thick
-          %b= event_reservation.event_type.i18n_short + out_of_race 
+          %b= meeting_event.event_type.i18n_short + out_of_race
       - else
-        %td{ class: event_reservation.meeting_event.is_out_of_race ? 'warning' : '' }
-          %b= event_reservation.event_type.i18n_short + out_of_race
+        %td{ class: meeting_event.is_out_of_race ? 'warning' : '' }
+          %b= meeting_event.event_type.i18n_short + out_of_race
     - if add_notes_column
       %td
         %i= I18n.t('meeting_reservation.free_notes')

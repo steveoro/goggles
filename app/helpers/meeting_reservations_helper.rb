@@ -8,9 +8,131 @@ require 'reservations_csi_2_csv'
 # Assorted helpers for clickable links rendering.
 #
 # @author   Steve A.
-# @version  6.084
+# @version  6.353
 #
 module MeetingReservationsHelper
+
+  # Returns either a new *badge* reservation instance or an existing one when found
+  # (according to the parameters).
+  #
+  # Assumes all parameters are valid instances of the respective classes.
+  # (Returns a new empty instance in case of invalid parameters)
+  #
+  def find_or_new_badge_reservation( current_user, meeting, team_affiliation, badge )
+    return MeetingReservation.new unless current_user.instance_of?(User) &&
+            meeting.instance_of?(Meeting) && team_affiliation.instance_of?(TeamAffiliation) &&
+            badge.instance_of?(Badge)
+
+    mr = MeetingReservation.where(
+      meeting_id:       meeting.id,
+      team_id:          team_affiliation.team_id,
+      swimmer_id:       badge.swimmer_id,
+      badge_id:         badge.id
+    ).first
+
+    if mr                                           # Existing?
+      mr
+    else                                            # NEW?
+      MeetingReservation.new(
+        meeting_id:       meeting.id,
+        team_id:          team_affiliation.team_id,
+        swimmer_id:       badge.swimmer_id,
+        badge_id:         badge.id,
+        user_id:          current_user.id,
+        is_not_coming:    false,
+        has_confirmed:    false
+      )
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  # Returns either a new *individual event* reservation instance or an existing one when found
+  # (according to the parameters).
+  #
+  # Assumes all parameters are valid instances of the respective classes.
+  # (Returns a new empty instance in case of invalid parameters)
+  #
+  def find_or_new_meeting_event_reservation( current_user, meeting, team_affiliation, badge, event )
+    return MeetingEventReservation.new unless current_user.instance_of?(User) &&
+            meeting.instance_of?(Meeting) && team_affiliation.instance_of?(TeamAffiliation) &&
+            badge.instance_of?(Badge) && event.instance_of?(MeetingEvent)
+
+    mer = MeetingEventReservation.where(
+      meeting_id:       meeting.id,
+      team_id:          team_affiliation.team_id,
+      swimmer_id:       badge.swimmer_id,
+      badge_id:         badge.id,
+      meeting_event_id: event.id
+    ).first
+
+    if mer                                          # Existing?
+      mer
+    else                                            # NEW?
+      swimmer = badge.swimmer
+      best_finder = SwimmerPersonalBestFinder.new( swimmer )
+      possible_best = best_finder.get_entry_best_timing(
+        badge,
+        meeting,
+        event.event_type,
+        meeting.pool_types.first,
+        true # convert_pool_type
+      )
+      MeetingEventReservation.new(
+        meeting_id:       meeting.id,
+        team_id:          team_affiliation.team_id,
+        swimmer_id:       swimmer.id,
+        badge_id:         badge.id,
+        meeting_event_id: event.id,
+        user_id:          current_user.id,
+        is_doing_this:    false,
+        suggested_minutes:  possible_best ? possible_best.minutes : 0,
+        suggested_seconds:  possible_best ? possible_best.seconds : 0,
+        suggested_hundreds: possible_best ? possible_best.hundreds : 0
+      )
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Returns either a new *relay* reservation instance or an existing one when found
+  # (according to the parameters).
+  #
+  # Assumes all parameters are valid instances of the respective classes.
+  # (Returns a new empty instance in case of invalid parameters)
+  #
+  def find_or_new_meeting_relay_reservation( current_user, meeting, team_affiliation, badge, event )
+    return MeetingRelayReservation.new unless current_user.instance_of?(User) &&
+            meeting.instance_of?(Meeting) && team_affiliation.instance_of?(TeamAffiliation) &&
+            badge.instance_of?(Badge) && event.instance_of?(MeetingEvent)
+
+    mrr = MeetingRelayReservation.where(
+      meeting_id:       meeting.id,
+      team_id:          team_affiliation.team_id,
+      swimmer_id:       badge.swimmer_id,
+      badge_id:         badge.id,
+      meeting_event_id: event.id
+    ).first
+
+    if mrr                                          # Existing?
+      mrr
+    else                                            # NEW?
+      swimmer = badge.swimmer
+      MeetingRelayReservation.new(
+        meeting_id:       meeting.id,
+        team_id:          team_affiliation.team_id,
+        swimmer_id:       badge.swimmer_id,
+        badge_id:         badge.id,
+        meeting_event_id: event.id,
+        user_id:          current_user.id,
+        is_doing_this:    false
+      )
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
 
   # Returns the HTML for the MeetingReservationsController#printout_event_sheet()
   # action for the specified Meeting instance.

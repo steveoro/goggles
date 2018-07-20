@@ -1,0 +1,53 @@
+.col-xs-12.goggles-category-gap
+  &nbsp;
+
+.col-xs-12.goggles-category-gap
+  %i= I18n.t('meeting_reservation.manage_meeting_disclaimer')
+
+.col-xs-12.goggles-category-gap
+  &nbsp;
+
+
+:javascript
+  /**
+   * Invokes the AJAX editing action for any reservation cell, passing the parameters.
+   *
+   * Params:
+   * - badge_id:   the badge_id used to identify the row
+   * - event_id:   the event_id used to identify the column; can be null
+   */
+  function handleEditReservation( badge_id, event_id ) {
+    // DEBUG
+    console.log('handleEditReservation: called.');
+    $('#spinner').removeClass('hide');
+
+    var timeEdit   = event_id ? $( "#time" + badge_id + "_" + event_id ) : [];
+    var relayCode  = event_id ? $( "#code" + badge_id + "_" + event_id ) : [];
+    var relayNum   = event_id ? $( "#num" + badge_id + "_" + event_id ) : [];
+    var isChecked  = event_id ? !!$( "#chk" + badge_id + "_" + event_id ).prop('checked') : null;
+    var isNotComing = !!$( "#skip" + badge_id ).prop('checked');
+    var isConfirmed = !!$( "#confirm" + badge_id ).prop('checked');
+
+    $.ajax({
+      type: "POST",
+      url: "#{ api_v2_remote_edit_update_reservation_path() }",
+      data: {
+        m:    #{ meeting_id },
+        b:    badge_id,
+        e:    event_id,
+        skip: isNotComing,
+        on:   isChecked,
+        ok:   isConfirmed,
+        time: timeEdit.length > 0 ? timeEdit.val() : null,
+        n:    $( "#notes" + badge_id ).val(),
+        rn:   (relayCode.length > 0 && relayNum.length > 0) ? relayCode.val() + ';' + relayNum.val() : null
+      },
+      dataType: "application/json"
+    }).always(function( result ) {
+      // DEBUG
+      console.log('handleEditReservation: Callback: always');
+      console.log( result.status );
+      $('#spinner').addClass('hide');
+    });
+  };
+  // --------------------------------------------------------------------------
