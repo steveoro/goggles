@@ -6,19 +6,27 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/steveoro/goggles/badge)](https://www.codefactor.io/repository/github/steveoro/goggles)
 [![Build Status](https://semaphoreci.com/api/v1/steveoro/goggles/branches/master/badge.svg)](https://semaphoreci.com/steveoro/goggles)
 
-Goggles is a Rails application developed to manage the storage of the results from any official
-Swimming competition as well as a lot more of anything else related to the "Master Swimming"
-way of life, implementing also basic social features for sharing swimming-pools and sporting venues
-reviews, informations, trainings, unofficial recorded data, lesson & training presence and a
-lot more.
 
-Goggles has a complex data-import sub-process able to parse results and starting-list files
-generated from several sources all over the net. This allows recurrent jobs to automatically update
-the underlying database with all the official and supported data sources.
+Goggles is a Rails application developed to manage and browse the results obtained
+dynamically from any official Swimming competition. The app is designed also to handle
+a lot more, as long as is related to Swimming.
 
-The official site is still in closed beta and reserved for a few selected Swimming Teams.
-The admin/data-import sub-app will be extracted and refactored from the main front-end app as
-soon as the site will be ready for open beta.
+It features some crude internal social features for handling and sharing reviews of
+swimming-pools and sporting venues, manage trainings, lessons, meeting reservations,
+custom internal championship cups and a lot more.
+
+Although open for browsing to the general public, the official site (master-goggles.org)
+is still used in closed beta and reserved as the Official Championship result publisher for
+only a few selected Swimming Teams from a Regional Championship in the north of Italy.
+
+The administration/data-import sub-app resides in a dedicated project (goggles_admin) and is
+typically deployed and used only locally, firewalled by a LAN.
+
+The GogglesAdmin app features a complex, mostly automated, data-import process with
+a custom Parser. This is able to parse several results and starting-list file formats,
+typically generated from various sources all over the net (mostly, Swimming Federations sites).
+This allows recurrent jobs and crawlers to automatically update the underlying database
+with all the supported data files.
 
 
 Official framework Wiki, [here](https://github.com/steveoro/goggles_admin/wiki)

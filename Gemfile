@@ -6,6 +6,8 @@ source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.1.4'
+# Vulnerability fix @ 20190726
+gem 'sprockets', '~> 3.7.2'
 
 gem 'mysql2'
 gem 'activerecord-session_store' # Needed to include a DB-based session store in Rails 4+
@@ -106,6 +108,8 @@ group :development do
   gem 'capistrano-bundler'
   gem 'capistrano-rails'
   gem 'capistrano-passenger'
+  gem 'capistrano-faster-assets'
+
   # [Steve, 20160919] Do we still need the following one anymore? Really?
 #  gem 'seed_dump' #, '~> 0.5.3'                       # [Steve, 20130926] Version greater than this one are ment only for Rails 4!!
 
