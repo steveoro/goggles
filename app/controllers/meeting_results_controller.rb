@@ -2,15 +2,13 @@
 require 'common/format'
 require 'meeting_finder'
 require 'wrappers/timing'
-require 'passages_batch_updater'
-require 'relay_swimmer_batch_updater'
 
 
 =begin
 
 = MeetingsController
 
-  - version:  6.359
+  - version:  6.361
   - author:   Steve A.
 
 =end

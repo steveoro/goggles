@@ -1,8 +1,6 @@
 # encoding: utf-8
 require 'common/format'
 require 'wrappers/timing'
-require 'meeting_event_reservation_matrix_creator'
-require 'meeting_relay_reservation_matrix_creator'
 require 'team_manager_validator'
 require 'reservations_csi_2_csv'
 
@@ -11,7 +9,7 @@ require 'reservations_csi_2_csv'
 
 = MeetingReservationsController
 
-  - version:  6.355
+  - version:  6.361
   - author:   Steve A.
 
 =end
