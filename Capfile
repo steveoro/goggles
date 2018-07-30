@@ -38,7 +38,8 @@ require "capistrano/rails/assets"
 require 'capistrano/faster_assets'
 
 require "capistrano/rails/migrations"
-require "capistrano/passenger"
+# We are using passenger stand-alone and this is not needed:
+#require "capistrano/passenger"
 
 # Loads custom tasks from `lib/capistrano/tasks' if you have any defined.
 Dir.glob('lib/capistrano/tasks/*.r*').each { |r| import r }
