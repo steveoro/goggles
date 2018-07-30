@@ -112,8 +112,11 @@ end
 
 
 # Make sure the monitors shut off while you are deploying and reloaded.
-before  'deploy', 'monit:unmonitor'
-before  'deploy', 'delayed_job:stop'
+
+# [Steve, 20180730] For 1st-time deploys, comment out the 2 "before 'deploy'" statements
+# that will fail when there's no service to unmonitor and the DelayedJob has not yet been started.
+# before  'deploy', 'monit:unmonitor'
+# before  'deploy', 'delayed_job:stop'
 after   'deploy', 'delayed_job:restart'
 
 before  'delayed_job:stop', 'monit:unmonitor'
