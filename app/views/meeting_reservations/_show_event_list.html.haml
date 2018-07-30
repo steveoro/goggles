@@ -5,8 +5,8 @@
     -# Event Data rows:
     - swimmers_count = 0
     - @meeting_reservations.each do |reservation|
-      -# Avoid showing rows for people who's not coming:
-      - unless reservation.is_not_coming || (! @reservations_events[reservation.id].any?{|res_ev| res_ev.is_doing_this? })
+      -# Avoid showing rows for people who are not coming:
+      - unless reservation.is_not_coming || (! @reservations_events[reservation.id].any?{ |row| row.is_doing_this? })
         - swimmers_count = swimmers_count + 1
         %tr
           %td{ colspan: 2, class: 'info' }
@@ -17,10 +17,11 @@
               %i
                 = I18n.t('meeting_reservation.add_maybe') if !reservation.has_confirmed?
 
-          - @reservations_events[reservation.id].each do |event_reservation|
-            %td{ 'data-toggle'=>'tooltip', 'title'=> "#{ event_reservation.event_type.i18n_short }, #{ reservation.swimmer.get_full_name }" }
+          - @meeting.meeting_events.are_not_relays.each do |meeting_event|
+            - event_reservation = @reservations_events[ reservation.id ].find{ |row| row.meeting_event_id == meeting_event.id }
+            %td{ 'data-toggle'=>'tooltip', 'title'=> "#{ meeting_event.event_type.i18n_short }, #{ reservation.swimmer.get_full_name }" }
               .text-center
-                - if event_reservation.is_doing_this?
+                - if event_reservation && event_reservation.is_doing_this?
                   = event_reservation.get_timing
                 - else
                   = "-"

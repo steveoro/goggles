@@ -18,7 +18,7 @@
    */
   function handleEditReservation( badge_id, event_id ) {
     // DEBUG
-    console.log('handleEditReservation: called.');
+    //console.log('handleEditReservation: called.');
     $('#spinner').removeClass('hide');
 
     var timeEdit   = event_id ? $( "#time" + badge_id + "_" + event_id ) : [];
@@ -45,8 +45,8 @@
       dataType: "application/json"
     }).always(function( result ) {
       // DEBUG
-      console.log('handleEditReservation: Callback: always');
-      console.log( result.status );
+      //console.log('handleEditReservation: Callback: always');
+      //console.log( result.status );
       $('#spinner').addClass('hide');
     });
   };
