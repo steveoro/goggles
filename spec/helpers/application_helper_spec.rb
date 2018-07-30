@@ -161,7 +161,7 @@ describe ApplicationHelper, type: :helper do
       expect( result.size ).to be >= 1
     end
     it "returns a text containing the integer part of the undecorated value" do
-      expect( result ).to include( score.to_i.to_s )
+      expect( result ).to include( sprintf("%02.2f", score.to_f) )
     end
     it "returns a text containing the image for the number of steps required" do
       if score > bias
