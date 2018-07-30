@@ -113,7 +113,7 @@ end
 # that will surely fail when the service to monitor DelayedJob has been newly created
 # by the 'monit:deploy_config' rake task.
 before  'deploy', 'monit:unmonitor'
-before  'deploy', 'delayed_job:stop'
+#before  'deploy', 'delayed_job:stop'
 
 after   'deploy', 'delayed_job:start'
 after   'deploy', 'monit:monitor'
