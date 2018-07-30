@@ -72,22 +72,18 @@ namespace :monit do
   end
 
 
-  desc 'UnMonitor the application'
+  desc 'UnMonitor all the services for the application'
   task :unmonitor do
     on roles( delayed_job_roles ) do
-      (0..(fetch(:delayed_job_workers, 1).to_i) - 1).each do |idx|
-        execute( "sudo monit unmonitor #{ fetch(:application) }_djob_#{ idx }", raise_on_non_zero_exit: false )
-      end
+      execute( "sudo monit unmonitor all", raise_on_non_zero_exit: false )
     end
   end
 
 
-  desc 'Monitor the application'
+  desc 'Monitor all the services for the application'
   task :monitor do
     on roles( delayed_job_roles ) do
-      (0..(fetch(:delayed_job_workers, 1).to_i) - 1).each do |idx|
-        execute( "sudo monit monitor #{fetch(:application)}_djob_#{idx}", raise_on_non_zero_exit: false )
-      end
+      execute( "sudo monit monitor all", raise_on_non_zero_exit: false )
     end
   end
 
@@ -113,10 +109,11 @@ end
 
 # Make sure the monitors shut off while you are deploying and reloaded.
 
-# [Steve, 20180730] For 1st-time deploys, comment out the 2 "before 'deploy'" statements
-# that will fail when there's no service to unmonitor and the DelayedJob has not yet been started.
-# before  'deploy', 'monit:unmonitor'
-# before  'deploy', 'delayed_job:stop'
+# [Steve, 20180730] For 1st-time deploys, comment out at least the first "before 'deploy'" statement
+# that will surely fail when the service to monitor DelayedJob has been newly created
+# by the 'monit:deploy_config' rake task.
+before  'deploy', 'monit:unmonitor'
+before  'deploy', 'delayed_job:stop'
 after   'deploy', 'delayed_job:restart'
 
 before  'delayed_job:stop', 'monit:unmonitor'

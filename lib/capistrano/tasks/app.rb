@@ -154,6 +154,12 @@ namespace :app do
           as( user: :root ) do
             execute :chown, "-R #{fetch(:runner_user)}:#{fetch(:runner_group)} log"
             execute :chmod, "0755 log"
+            # Make sure the required log files exist, before updating their permissions:
+            execute :touch, "log/production.log"
+            execute :touch, "log/access.log"
+            execute :touch, "log/error.log"
+            execute :touch, "log/delayed_job.log"
+            execute :chmod, "0666 log/*.log"
             execute :chown, "-R #{fetch(:runner_user)}:#{fetch(:runner_group)} tmp"
           end
         end
