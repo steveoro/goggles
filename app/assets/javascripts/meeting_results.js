@@ -2,14 +2,14 @@
  * Formats the current value as a timing.
  */
 function _formatTiming( currentValue, targetNode ) {
-    // Remove formatting:
-    var newValue = currentValue.replace( /[\'\.\:\"\,]/g, "" );
-    // Enforce formatting:
-    newValue = newValue.replace( /(?=(\d{2})$)/g, "\"" );
-    newValue = newValue.replace( /(?=\B(\d{2})\D\d{2}$)/g, "\'" );
-    targetNode.val( newValue );
+  // Remove formatting:
+  var newValue = currentValue.replace( /[\'\.\:\"\,]/g, "" );
+  // Enforce formatting:
+  newValue = newValue.replace( /(?=(\d{2})$)/g, "\"" );
+  newValue = newValue.replace( /(?=\B(\d{2})\D\d{2}$)/g, "\'" );
+  targetNode.value = newValue;
 
-    return true;
+  return true;
 };
 // --------------------------------------------------------------------------
 
@@ -117,16 +117,24 @@ function initTypeAheadForRelaySwimmers() {
 /**
  * Detects a change in the values and calls the remote editing action.
  * This can only be used by the text edits for the timing and the reaction time.
+ *
+ * [Steve, 20180730] As of the Bootstrap 3.x version that we are currently using
+ * seems that:
+ *
+ * - onchange event: fired correctly in Firefox, yields an error (for Bootstrap) in Chrome
+ * - onfocusout event: fired correctly in Chrome, seems not firing in Firefox
+ *
+ * Thus, we will use both events to in order to support both browsers.
  */
 function handleEditRelaySwimmer( currNode ) {
   // DEBUG
-  //console.log('handleEditRelaySwimmer: called.');
+  console.log('handleEditRelaySwimmer: called.');
   //console.log( currNode.dataset['value'] );
   //console.log( currNode.value );
 
   if ( currNode.dataset['value'] != currNode.value ) {
     // DEBUG
-    //console.log('Changed! => ' + currNode.value);
+    console.log('Changed! => ' + currNode.value);
     performEditRelaySwimmer( currNode );
   }
 

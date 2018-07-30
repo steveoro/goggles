@@ -7,7 +7,7 @@ function _formatTiming( currentValue, targetNode ) {
   // Enforce formatting:
   newValue = newValue.replace( /(?=(\d{2})$)/g, "\"" );
   newValue = newValue.replace( /(?=\B(\d{2})\D\d{2}$)/g, "\'" );
-  targetNode.val( newValue );
+  targetNode.value = newValue;
 
   return true;
 };

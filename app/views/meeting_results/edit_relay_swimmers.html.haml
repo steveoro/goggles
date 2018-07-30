@@ -58,8 +58,9 @@
                 = text_field_tag( timing_dom_id,                            |
                   curr_value,                                               |
                   'class' => "input-mini text-right timing",                |
-                  'onkeyup' => "_formatTiming( $(this).val(), $(this) );",  |
+                  'onkeyup' => "_formatTiming( this.value, this );",        |
                   'onfocusout' => "handleEditRelaySwimmer(this);",          |
+                  'onchange' => "handleEditRelaySwimmer(this);",            |
                   'data-swimmer' => relay_swimmer.swimmer_id,               |
                   'data-mrr'     => mrr.id,                                 |
                   'data-order'   => relay_swimmer.relay_order,              |
@@ -73,8 +74,9 @@
                 = text_field_tag( reaction_dom_id,                          |
                   curr_value,                                               |
                   'class' => "input-mini text-right timing",                |
-                  'onkeyup' => "_formatTiming( $(this).val(), $(this) );",  |
+                  'onkeyup' => "_formatTiming( this.value, this );",        |
                   'onfocusout' => "handleEditRelaySwimmer(this);",          |
+                  'onchange' => "handleEditRelaySwimmer(this);",            |
                   'data-swimmer' => relay_swimmer.swimmer_id,               |
                   'data-mrr'     => mrr.id,                                 |
                   'data-order'   => relay_swimmer.relay_order,              |

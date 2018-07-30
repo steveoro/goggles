@@ -32,7 +32,7 @@
                   default_value,                                                        |
                   'class' => "input-mini form-control text-right timing resRow#{ badge.id }",       |
                   disabled: !can_edit_events,                                           |
-                  'onkeyup' => "_formatTiming( $(this).val(), $(this) );",              |
+                  'onkeyup' => "_formatTiming( this.value, this );",              |
                   'onfocusout' => "updateReservationTiming(\"#{ badge.id }\", \"#{ event.id }\");", |
                   'data-toggle' => 'tooltip',                                           |
                   'title'=> event_reservation.event_type.i18n_short,                    |

@@ -41,8 +41,9 @@
                   "new_#{mir.id}_#{passage_type.id}",                             |
                   curr_value,                                                     |
                   'class' => "input-mini text-right timing",                      |
-                  'onkeyup' => "_formatTiming( $(this).val(), $(this) );",        |
+                  'onkeyup' => "_formatTiming( this.value, this );",              |
                   'onfocusout' => "handleEditPassage(this);",                     |
+                  'onchange' => "handleEditPassage(this);",                       |
                   'data-passage' => curr_passage ? curr_passage.id : nil,         |
                   'data-mir' => mir.id,                                           |
                   'data-value' => curr_value,                                     |
@@ -57,8 +58,9 @@
                   "auto_#{mir.id}_#{passage_type.id}",                            |
                   mir.get_timing,                                                 |
                   'class' => "input-mini text-right timing",                      |
-                  'onkeyup' => "_formatTiming( $(this).val(), $(this) );",        |
+                  'onkeyup' => "_formatTiming( this.value, this );",              |
                   'onfocusout' => "handleEditPassage(this);",                     |
+                  'onchange' => "handleEditPassage(this);",                       |
                   'data-mir' => mir.id,                                           |
                   'data-value' => mir.get_timing,                                 |
                   'data-passage-type' => passage_type.id                          |
@@ -77,6 +79,14 @@
 :javascript
   /**
    * Invokes the remote editing action for editing the lap-times/timings (Passage)
+   *
+   * [Steve, 20180730] As of the Bootstrap 3.x version that we are currently using
+   * seems that:
+   *
+   * - onchange event: fired correctly in Firefox, yields an error (for Bootstrap) in Chrome
+   * - onfocusout event: fired correctly in Chrome, seems not firing in Firefox
+   *
+   * Thus, we will use both events to in order to support both browsers.
    */
   function handleEditPassage( obj ) {
     // DEBUG
@@ -86,7 +96,7 @@
 
     if ( obj.dataset['value'] != obj.value ) {
       // DEBUG
-      //console.log('Changed!');
+      console.log('Changed!');
 
       $('#spinner').removeClass('hide');
       obj.dataset['value'] = obj.value;
