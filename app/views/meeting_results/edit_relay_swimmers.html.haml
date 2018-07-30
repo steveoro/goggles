@@ -46,6 +46,8 @@
                     relay_swimmer.swimmer ? relay_swimmer.swimmer.get_full_name : nil,    |
                     'class' => "input-sm typeahead relay_swimmer",          |
                      autocomplete: 'off', "data-provide" => "typeahead",    |
+                    'onfocusout' => "handleEditRelaySwimmer(this);",        |
+                    'onchange' => "handleEditRelaySwimmer(this);",          |
                     'data-swimmer' => relay_swimmer.swimmer_id,             |
                     'data-mrr'     => mrr.id,                               |
                     'data-order'   => relay_swimmer.relay_order,            |
@@ -143,18 +145,32 @@
     // DEBUG
     //console.log('performEditRelaySwimmer: called.');
     //console.log( currNode.value );
+    //console.log( $("#" + currNode.dataset['swimmer_dom_id']).val() );
+    //console.log( document.getElementById( currNode.dataset['swimmer_dom_id'] ).dataset['swimmer'] );
     //console.log( $("#" + currNode.dataset['timing_dom_id']).val() );
     //console.log( $("#" + currNode.dataset['reaction_dom_id']).val() );
 
     $('#spinner').removeClass('hide');
     currNode.dataset['value'] = currNode.value;
+    if ( currNode.id == currNode.dataset['swimmer_dom_id'] ) {
+      // DEBUG
+      //console.log('Editing swimmer...');
+      if ( currNode.value.length < 1 ) {
+        // DEBUG
+        //console.log('Clearing local swimmer ID parameter...');
+        currNode.dataset['swimmer'] = "";
+        $("#" + currNode.dataset['timing_dom_id']).val("");
+        $("#" + currNode.dataset['reaction_dom_id']).val("");
+      }
+    }
+
     $.ajax({
       type: "POST",
       url: "#{ api_v2_remote_edit_update_relay_swimmer_path() }",
       data: {
         mrr:  currNode.dataset['mrr'],
         o:    currNode.dataset['order'],
-        s:    currNode.dataset['swimmer'],
+        s:    document.getElementById( currNode.dataset['swimmer_dom_id'] ).dataset['swimmer'],
         time: $( "#" + currNode.dataset['timing_dom_id'] ).val(),
         r:    $( "#" + currNode.dataset['reaction_dom_id'] ).val()
       },

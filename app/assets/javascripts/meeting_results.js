@@ -84,11 +84,11 @@ function transformRelaySwimmerNamesResponse( data ) {
  */
 function initTypeAheadForRelaySwimmers() {
   // DEBUG
-  console.log('Destroying Typeahead');
+  //console.log('Destroying Typeahead');
   $('.typeahead').typeahead('destroy');
 
   // DEBUG
-  console.log('Initializing Typeahead');
+  //console.log('Initializing Typeahead');
   // Define the typeahead callback handlers:
   $(".relay_swimmer").typeahead(
     { minLength: 3, highlight: true },
@@ -128,13 +128,14 @@ function initTypeAheadForRelaySwimmers() {
  */
 function handleEditRelaySwimmer( currNode ) {
   // DEBUG
-  console.log('handleEditRelaySwimmer: called.');
+  //console.log('handleEditRelaySwimmer: called.');
+  //console.log( currNode );
   //console.log( currNode.dataset['value'] );
   //console.log( currNode.value );
 
   if ( currNode.dataset['value'] != currNode.value ) {
     // DEBUG
-    console.log('Changed! => ' + currNode.value);
+    //console.log('Changed! => ' + currNode.value);
     performEditRelaySwimmer( currNode );
   }
 

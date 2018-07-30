@@ -7,7 +7,7 @@ require 'common/validation_error_tools'
 
 = RelaySwimmerUpdater
 
-  - Goggles framework vers.:  6.359
+  - Goggles framework vers.:  6.363
   - author: Steve A.
 
  Single-row MeetingRelaySwimmer updater.
@@ -70,9 +70,9 @@ class RelaySwimmerUpdater
   # and the relay order.
   #
   # The row will be:
-  # - updated, when the row exists;
-  # - created with the specified values, when not found;
-  # - deleted, when the timing specified is nil and the row itself is existing.
+  # - updated, when the row exists; (must provide a valid swimmer_id)
+  # - created with the specified values, when not found; (must provide a valid swimmer_id)
+  # - deleted, when the swimmer_id specified is nil and the row itself is existing.
   #
   # The method will act according to the presence of the first 3 parameters,
   # the others are not required and can be nil.
@@ -90,10 +90,13 @@ class RelaySwimmerUpdater
     return nil unless mrr.instance_of?( MeetingRelayResult ) && (relay_order.to_i > 0)
     mrs = MeetingRelaySwimmer.where( meeting_relay_result_id: mrr.id, relay_order: relay_order ).first
 
+    # Nothing to do, bail out:
+    return false if mrs.nil? && (swimmer_id.to_i < 1) && (!incremental_timing_text_value.present?) && (!reaction_time_text.present?)
+
     if mrs && swimmer_id.to_i < 1                   # --- DELETE ---
       return delete_existing_row!( mrs )
 
-    else                                            # --- UPDATE or CREATE ---
+    else                                            # --- UPDATE or CREATE (Assuming swimmer_id is provided) ---
       team_id   = mrr.team_id
       season_id = mrr.season.id
 # DEBUG
