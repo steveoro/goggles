@@ -10,7 +10,7 @@ require 'relay_swimmer_batch_updater'
 
 = MeetingsController
 
-  - version:  6.352
+  - version:  6.359
   - author:   Steve A.
 
 =end
@@ -100,7 +100,7 @@ class MeetingResultsController < ApplicationController
           MeetingRelaySwimmer.new(
             meeting_relay_result_id: mrr.id,
             relay_order:             index,
-            stroke_type_id:          RelaySwimmerBatchUpdater.get_fractionist_stroke_type_id_by( mrr.event_type.stroke_type_id, index )
+            stroke_type_id:          RelaySwimmerUpdater.get_fractionist_stroke_type_id_by( mrr.event_type.stroke_type_id, index )
           )
         )
       end

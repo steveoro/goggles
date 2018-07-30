@@ -120,4 +120,38 @@ describe RelaySwimmerUpdater, type: :strategy do
   end
   #-- -------------------------------------------------------------------------
   #++
+
+
+  describe "self.get_fractionist_stroke_type_id_by()" do
+    context "for a non-mixed relay ID," do
+      [
+        StrokeType::FREESTYLE_ID, StrokeType::BUTTERFLY_ID, StrokeType::BACKSTROKE_ID,
+        StrokeType::BREASTSTROKE_ID, StrokeType::MIXED_ID
+      ].each do |stroke_type_id|
+        it "returns the stroke type ID specified as parameter" do
+          (1..8).each do |relay_phase|
+            expect(
+              RelaySwimmerUpdater.get_fractionist_stroke_type_id_by( stroke_type_id, relay_phase )
+            ).to eq( stroke_type_id )
+          end
+        end
+      end
+    end
+
+    context "for a mixed relay ID," do
+      it "returns the standard mixed relay stroke type ID for the corresponding relay phase" do
+        expected_stroke_type_sequence = [
+          StrokeType::BACKSTROKE_ID, StrokeType::BREASTSTROKE_ID,
+          StrokeType::BUTTERFLY_ID, StrokeType::FREESTYLE_ID
+        ]
+        (1..4).each do |relay_phase|
+          expect(
+            RelaySwimmerUpdater.get_fractionist_stroke_type_id_by( StrokeType::MIXED_RELAY_ID, relay_phase )
+          ).to eq( expected_stroke_type_sequence[relay_phase-1] )
+        end
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 end

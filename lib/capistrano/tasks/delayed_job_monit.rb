@@ -114,12 +114,12 @@ end
 # by the 'monit:deploy_config' rake task.
 before  'deploy', 'monit:unmonitor'
 before  'deploy', 'delayed_job:stop'
-after   'deploy', 'delayed_job:restart'
+
+after   'deploy', 'delayed_job:start'
+after   'deploy', 'monit:monitor'
 
 before  'delayed_job:stop', 'monit:unmonitor'
-before  'delayed_job:start', 'monit:monitor'
 after   'delayed_job:restart', 'monit:reload'
-
 after   'monit:reload', 'monit:monitor'
 #-- ---------------------------------------------------------------------------
 #++

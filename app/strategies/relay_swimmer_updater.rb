@@ -7,7 +7,7 @@ require 'common/validation_error_tools'
 
 = RelaySwimmerUpdater
 
-  - Goggles framework vers.:  6.354
+  - Goggles framework vers.:  6.359
   - author: Steve A.
 
  Single-row MeetingRelaySwimmer updater.
@@ -15,8 +15,7 @@ require 'common/validation_error_tools'
  Allows to find or create and update a single MeetingRelaySwimmer row given some key
  parameters.
 
- This class can be used by any user, whereas its sister class RelaySwimmerBatchUpdater
- can only be invoked by a valid TeamManager user.
+ This class can be used by any user.
 
  The resulting DB edits will be serialized into a dedicated AppParameter row,
  using the text field 'free_text_1'.
@@ -36,6 +35,32 @@ class RelaySwimmerUpdater
   def initialize( current_user )
     raise ArgumentError.new('current_user must be defined!') unless current_user.instance_of?( User )
     @current_user = current_user
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Returns the expected stroke_type.id for a specific relay phase (in standard order),
+  # according to the MeetingRelayResult's stroke_type.
+  #
+  # (This is obviously needed only by mixed-style relays but it can be safely called
+  #  by any relay stroke type.)
+  #
+  def self.get_fractionist_stroke_type_id_by( mrr_stroke_type_id, relay_order )
+    if mrr_stroke_type_id == StrokeType::MIXED_RELAY_ID
+      case relay_order
+      when 1
+        return StrokeType::BACKSTROKE_ID
+      when 2
+        return StrokeType::BREASTSTROKE_ID
+      when 3
+        return StrokeType::BUTTERFLY_ID
+      else
+        return StrokeType::FREESTYLE_ID
+      end
+    else
+      return mrr_stroke_type_id
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -74,7 +99,7 @@ class RelaySwimmerUpdater
 # DEBUG
 #      puts "MRR #{ mrr.id }. Seeking badge for team: #{ team_id }, season: #{ season_id }, swimmer: #{ swimmer_id }"
       badge     = Badge.where( team_id: team_id, season_id: season_id, swimmer_id: swimmer_id ).first
-      stroke_type_id = RelaySwimmerBatchUpdater.get_fractionist_stroke_type_id_by( mrr.event_type.stroke_type_id, relay_order )
+      stroke_type_id = RelaySwimmerUpdater.get_fractionist_stroke_type_id_by( mrr.event_type.stroke_type_id, relay_order )
 
       unless badge && stroke_type_id
 # DEBUG
