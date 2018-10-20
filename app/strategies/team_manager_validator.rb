@@ -89,7 +89,7 @@ class TeamManagerValidator
   # This just checks the presence of any already existing reservations for the
   # specified (user, meeting) touple.
   #
-  # Returns +true+ if the current user has any reservations for the specified meeting.
+  # Returns +true+ if the current user team has any reservations for the specified meeting.
   # (Supposedly, only the TeamManager can create the reservations.)
   #
   # === Params:
@@ -97,8 +97,10 @@ class TeamManagerValidator
   # - meeting : a valid Meeting instance
   #
   def self.any_reservations_for?( current_user, meeting )
-    return false if current_user.nil? || meeting.nil?
-    MeetingReservation.where( meeting_id: meeting.id, swimmer_id: current_user.swimmer_id ).exists?
+    #return false if current_user.nil? || meeting.nil?
+    #MeetingReservation.where( meeting_id: meeting.id, swimmer_id: current_user.swimmer_id ).exists?
+    return false if current_user.nil? || meeting.nil? || !current_user.swimmer.badges.where( season_id: meeting.season_id ).exists?
+    MeetingReservation.where( meeting_id: meeting.id, team_id: current_user.swimmer.badges.where( season_id: meeting.season_id ).first.team_id ).exists?
   end
   #-- --------------------------------------------------------------------------
   #++
