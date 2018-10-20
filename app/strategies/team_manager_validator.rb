@@ -99,7 +99,15 @@ class TeamManagerValidator
   def self.any_reservations_for?( current_user, meeting )
     #return false if current_user.nil? || meeting.nil?
     #MeetingReservation.where( meeting_id: meeting.id, swimmer_id: current_user.swimmer_id ).exists?
-    return false if current_user.nil? || meeting.nil? || !current_user.swimmer.badges.where( season_id: meeting.season_id ).exists?
+    return false if current_user.nil? || 
+      meeting.nil? ||
+      current_user.swimmer.nil? 
+      current_user.swimmer.badges.where( season_id: meeting.season_id ).exists?
+      
+#      (!current_user.team_managers.exists? && 
+#        (current_user.swimmer.nil? || 
+#        !current_user.swimmer.badges.where( season_id: meeting.season_id ).exists? ))
+      
     MeetingReservation.where( meeting_id: meeting.id, team_id: current_user.swimmer.badges.where( season_id: meeting.season_id ).first.team_id ).exists?
   end
   #-- --------------------------------------------------------------------------
