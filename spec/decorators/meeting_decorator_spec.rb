@@ -209,7 +209,7 @@ describe MeetingDecorator, type: :model do
       let(:badge)         { create( :badge, season_id: meeting.season_id ) }
       let(:user)          { create( :user, swimmer_id: badge.swimmer_id ) }
       subject do
-        create( :meeting_reservation, swimmer_id: badge.swimmer_id, meeting_id: meeting.id )
+        create( :meeting_reservation, swimmer_id: badge.swimmer_id, meeting_id: meeting.id, team_id: badge.team_id )
         meeting.decorate
       end
 
