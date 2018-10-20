@@ -20,7 +20,8 @@ RSpec.describe MeetingReservationsController, type: :controller do
   end
   let(:future_manageable_meeting) do
     meeting = create( :meeting,
-      season: future_ending_season
+      season: future_ending_season,
+      header_date: DateTime.now + (1).days
     )
     expect( meeting ).to be_a( Meeting )
     meeting
