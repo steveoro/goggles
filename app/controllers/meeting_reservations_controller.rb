@@ -343,7 +343,7 @@ class MeetingReservationsController < ApplicationController
   def get_badges_list
     # Use memoization to avoid requering:
     @badges_list ||= if @team_affiliation.instance_of?( TeamAffiliation )
-      @team_affiliation.badges.all
+      @team_affiliation.badges.sort_by_swimmer('ASC').all
     else
       []
     end
