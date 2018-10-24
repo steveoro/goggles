@@ -41,23 +41,49 @@ class MeetingResultsController < ApplicationController
   #
   def edit_passages
     # Collect the list of managed Teams:
-    @managed_teams = current_user.team_managers.map{ |tm| tm.team }.uniq
+    # Leega: Managed teams are always referred to the meeting season 
+    @managed_teams = current_user
+      .team_managers
+      .joins( :team_affiliation )
+      .where( ['team_affiliations.season_id = ?', @meeting.season_id] )
+      .map{ |tm| tm.team }
+      .uniq
     @managed_team_ids = @managed_teams.map{ |team| team.id }
 
     # Collect the list of available/editable Passages, for each available MIR
     # for the managed affiliations by the current user.
     # The "editable stuff" is returned as an ordered array of Hash, where each
     # Hash item has as key the related MIR and as value its list of passages.
-    @editable_stuff = @meeting.meeting_individual_results
-        .sort_by_event_and_timing
-        .joins( :event_type, :pool_type )
+    
+    
+#    @editable_stuff = @meeting.meeting_individual_results.unscope(:order)
+#        .joins( meeting_session: :pool_type, meeting_event: :event_type )
+#        .where( [
+#          '(meeting_individual_results.team_id IN (?)) AND (event_types.length_in_meters > pool_types.length_in_meters)',
+#          @managed_team_ids
+#        ] )
+#        .sort_by_event_and_timing
+#        .includes( :passages )
+#        .to_a
+#        .map{ |mir| { mir => mir.passages } }
+
+
+    @editable_stuff = MeetingIndividualResult
+        .joins( meeting_program: [meeting_event: [:event_type, meeting_session: :pool_type]]  )
         .where( [
-          '(meeting_individual_results.team_id IN (?)) AND (event_types.length_in_meters > pool_types.length_in_meters)',
-          @managed_team_ids
+          'meeting_sessions.meeting_id = ? AND (meeting_individual_results.team_id IN (?)) AND (event_types.length_in_meters > pool_types.length_in_meters)',
+          @meeting.id, @managed_team_ids
         ] )
+        .order('meeting_sessions.session_order, meeting_events.event_order, meeting_individual_results.is_disqualified, meeting_individual_results.minutes DESC, meeting_individual_results.seconds DESC, meeting_individual_results.hundreds DESC' )
         .includes( :passages )
         .to_a
         .map{ |mir| { mir => mir.passages } }
+#        .includes( :passages, [meeting_program: [meeting_event: [:event_type, meeting_session: :pool_type]]] )
+#        .order('meeting_sessions.session_order, meeting_events.event_order').order( :is_disqualified, minutes: :DESC, seconds: :DESC, hundreds: :DESC )
+
+
+
+
 # DEBUG
 #    puts "\r\n\r\n--- @editable_stuff: ---\r\n#{ @editable_stuff.inspect }\r\n"
     # TODO Use a dedicated DAO class instead of this ugly Hash
