@@ -80,9 +80,10 @@ gem "nokogiri"                                      # Used for HTML DOCModel eas
 gem 'generator'
 gem 'zip'
 
-# [Steve, 20171117] Fix for potential vulnerability w/ specific version:
-gem 'rubyzip', '~> 1.2.1', require: 'zip/zip'
-gem 'rubocop', '~> 0.49.0', require: false                       # [Steve] For style checking
+# [Steve, 20181027] Fix for potential vulnerability w/ specific version:
+gem 'rubyzip', '~> 1.2.2', require: 'zip/zip'
+
+gem 'rubocop', require: false                       # [Steve] For style checking
 
 gem "recaptcha", require: "recaptcha/rails"
 gem 'kaminari'

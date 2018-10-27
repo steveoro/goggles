@@ -423,7 +423,7 @@ GEM
     ruby-progressbar (1.9.0)
     ruby_parser (3.11.0)
       sexp_processor (~> 4.9)
-    rubyzip (1.2.1)
+    rubyzip (1.2.2)
     ruport (1.6.3)
       fastercsv
       pdf-writer (= 1.1.8)
@@ -573,8 +573,8 @@ DEPENDENCIES
   rest-client
   rspec
   rspec-rails
-  rubocop (~> 0.49.0)
-  rubyzip (~> 1.2.1)
+  rubocop
+  rubyzip (~> 1.2.2)
   sass-rails (~> 5)
   selenium-webdriver
   simple-navigation

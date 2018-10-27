@@ -272,7 +272,7 @@ class PassageUpdater
 
     if mir.instance_of?( MeetingIndividualResult )
 # DEBUG
-#      puts "Passage->MIR link valid"
+      puts "Passage->MIR link valid"
       passage.meeting_program_id = mir.meeting_program_id
       passage.meeting_individual_result_id = mir.id
       passage.swimmer_id = mir.swimmer_id
@@ -282,7 +282,7 @@ class PassageUpdater
       prev_timing_instance = passage.get_previous_passage ? passage.get_previous_passage.compute_incremental_time : nil
     else
 # DEBUG
-#      puts "Passage->MIR link NULL"
+      puts "Passage->MIR link NULL"
       passage.meeting_program_id = meeting_program_id if meeting_program_id.present?
       passage.swimmer_id = swimmer_id if swimmer_id.present?
       passage.team_id    = team_id if team_id.present?
@@ -297,6 +297,8 @@ class PassageUpdater
     is_delta = PassageUpdater.is_delta?( passage )
 
     if is_delta == true
+      # DEBUG
+      puts "is_delta? == TRUE"
       # timing_instance is "delta".
       # Should calculate time from start:
       passage.minutes  = timing_instance.minutes
@@ -306,6 +308,8 @@ class PassageUpdater
       passage.seconds_from_start  = timing_instance.seconds + ( prev_timing_instance ? prev_timing_instance.seconds : 0 )
       passage.hundreds_from_start = timing_instance.hundreds + ( prev_timing_instance ? prev_timing_instance.hundreds : 0 )
     else
+      # DEBUG
+      puts "is_delta? == FALSE"
       # timing_instance is "incremental".
       # Should calculate delta time:
       delta_timing_instance = prev_timing_instance ? timing_instance - prev_timing_instance : timing_instance
@@ -317,7 +321,7 @@ class PassageUpdater
       passage.hundreds_from_start = timing_instance.hundreds
     end
 # DEBUG
-#    puts "\r\n- prepare_passage_fields(mir: #{mir ? mir.id : 'nil'}): " << passage.inspect
+    puts "\r\n- prepare_passage_fields(mir: #{mir ? mir.id : 'nil'}): " << passage.inspect
 
     passage
   end
