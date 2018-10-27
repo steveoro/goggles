@@ -18,12 +18,16 @@
 
             - @meeting.meeting_events.only_relays.each do |meeting_event|
               - event_reservation = @reservations_relays[ reservation.id ].find{ |row| row.meeting_event_id == meeting_event.id }
-              %td{ 'data-toggle'=>'tooltip', 'title'=> "#{ event_reservation.event_type.i18n_short }, #{ reservation.swimmer.get_full_name }" }
-                .text-center
-                  = show_tag( true ) if event_reservation && event_reservation.is_doing_this?
-                  - if event_reservation && event_reservation.notes.to_s.size > 0
-                    = event_reservation.notes.to_s.split(';').first
-                    = ","
-                    &nbsp;
-                    = "#"
-                    = event_reservation.notes.to_s.split(';').last.to_i
+              - if event_reservation
+                %td{ 'data-toggle'=>'tooltip', 'title'=> "#{ event_reservation.event_type.i18n_short }, #{ reservation.swimmer.get_full_name }" }
+                  .text-center
+                    = show_tag( true ) if event_reservation && event_reservation.is_doing_this?
+                    - if event_reservation && event_reservation.notes.to_s.size > 0
+                      = event_reservation.notes.to_s.split(';').first
+                      = ","
+                      &nbsp;
+                      = "#"
+                      = event_reservation.notes.to_s.split(';').last.to_i
+              - else
+                %td
+                  &nbsp;
