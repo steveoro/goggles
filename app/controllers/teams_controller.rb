@@ -50,7 +50,7 @@ class TeamsController < ApplicationController
       Season.is_not_ended.map{ |season| season.id }
     end
     @affiliations = @team.team_affiliations.where( ['season_id in (?)', @last_seasons] )
-    current_badges = @team.badges.where( ['season_id in (?)', @last_seasons] ) if @last_seasons && @team.badges
+    current_badges = @team.badges.where( ['season_id in (?)', @last_seasons] ).includes( :swimmer ) if @last_seasons && @team.badges
     @swimmers = if current_badges.nil?
       []
     else

@@ -1,3 +1,4 @@
+# Team manager management
 class TeamManagementController < ApplicationController
   def edit_team
   end
