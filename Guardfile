@@ -13,7 +13,7 @@
 
 rspec_options = {
   results_file: Dir.pwd + "/tmp/guard_rspec_results.txt", # This option must match the path in engine_plan.rb
-  cmd: "spring rspec --color -f progress -t ~type:performance",
+  cmd: "spring rspec --color -f progress --order rand --fail-fast -t ~type:performance",
   all_after_pass: false,
   failed_mode: :focus
 }

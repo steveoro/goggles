@@ -83,8 +83,6 @@ gem 'zip'
 # [Steve, 20181027] Fix for potential vulnerability w/ specific version:
 gem 'rubyzip', '~> 1.2.2', require: 'zip/zip'
 
-gem 'rubocop', require: false                       # [Steve] For style checking
-
 gem "recaptcha", require: "recaptcha/rails"
 gem 'kaminari'
 gem 'bootstrap-kaminari-views'
@@ -99,6 +97,8 @@ group :development do
   gem 'guard-shell'
 #  gem 'rspec_api_blueprint', require: false
 #  gem "airbrussh", require: false
+
+  gem 'rubocop', require: false                       # [Steve] For style checking
 
   # Although Capistrano + seed_dump are strictly development-related gems,
   # including them into the test environment also allows Semaphore CI to
@@ -143,6 +143,7 @@ group :development, :test do
   # Adds support for Capybara system testing and selenium driver
   gem 'capybara', '~> 2.13'
   gem 'selenium-webdriver'
+  gem 'bullet'
 end
 
 

@@ -93,6 +93,17 @@ Rails.application.routes.draw do
       get 'search/smart_with_captcha'
       get 'search/meetings'
 
+      # === Team Management ===
+      get 'team_management/edit_team'
+      post 'team_management/update_team'
+      get 'team_management/edit_affiliation'
+      post 'team_management/update_affiliation'
+      get 'team_management/edit_badges'
+      post 'team_management/create_badge'
+      post 'team_management/update_badges'
+      get 'team_management/edit_lap_template'
+      post 'team_management/update_app_template'
+
       # === Records ===
       get  "records/for_season_type",           to: "records#for_season_type"
       get  "records/for_team",                  to: "records#for_team"
