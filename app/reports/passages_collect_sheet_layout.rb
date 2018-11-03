@@ -161,9 +161,11 @@ class PassagesCollectSheetLayout
              reservations_relays[ event.id ].size > 0 ) ||
            ( reservations_events[ event.id ] && reservations_events[ event.id ].size > 0 )
           # Get the pool type and the passage types:
-          pool_type = meeting.event_types.where( id: event.event_type_id ).first
-            .pool_types
-            .first || event.meeting_session.swimming_pool.pool_type
+          #pool_type = meeting.event_types.where( id: event.event_type_id ).first
+          #  .pool_types
+          #  .first || event.meeting_session.swimming_pool.pool_type
+          # Leega. Pool type should be catched always from the event
+          pool_type =  event.meeting_session.swimming_pool.pool_type
 
           is_team_template_present = ( team.team_passage_templates
             .for_event_type( event.event_type )
