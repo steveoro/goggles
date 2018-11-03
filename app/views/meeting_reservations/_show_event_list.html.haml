@@ -4,10 +4,14 @@
     = render( partial: 'header_row', locals: { meeting: @meeting, filter: :are_not_relays, add_notes_column: false } )
     -# Event Data rows:
     - swimmers_count = 0
+    - event_res_count = 0
+    - event_stats = {}
+    - @event_list.each do |meeting_event|
+      - event_stats[meeting_event.event_type.code] = 0
     - @meeting_reservations.each do |reservation|
       -# Avoid showing rows for people who are not coming:
       - unless reservation.is_not_coming || (! @reservations_events[reservation.id].any?{ |row| row.is_doing_this? })
-        - swimmers_count = swimmers_count + 1
+        - swimmers_count += 1
         %tr
           %td{ colspan: 2, class: 'info' }
             %a{'id'=>"swimmer#{reservation.swimmer_id}", 'href'=>"#{ swimmer_radio_path(id: reservation.swimmer_id) }", 'data-toggle'=>'tooltip', 'title'=>I18n.t('radiography.radio_tab_tooltip')}
@@ -23,14 +27,26 @@
               .text-center
                 - if event_reservation && event_reservation.is_doing_this?
                   = event_reservation.get_timing
+                  - event_stats[meeting_event.event_type.code] += 1 
                 - else
                   = "-"
           -# %td
           -#   %small
           -#     %i= reservation.notes
-    %tr
-      %td
+    %tr.success
+      %td{ colspan: 2 }
         %b= t('total')
+      - event_stats.each_value do |total|
+        - event_res_count += total
+        %td.goggles-centeralign
+          %b= total
+    %tr.success
       %td
+        %b= t('meeting_stats.swimmers')
+      %td.goggles-rightalign
         %b= swimmers_count
-      %td{ colspan: @reservations_events[@meeting_reservations.first.id].count }
+    %tr.success
+      %td
+        %b= t('general.meetings')
+      %td.goggles-rightalign
+        %b= event_res_count

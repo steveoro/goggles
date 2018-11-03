@@ -97,6 +97,7 @@ class MeetingReservationsController < ApplicationController
       flash[:error] = I18n.t(:no_result_to_show)
       redirect_to( meetings_current_path() ) and return
     end
+    get_events_list()
     prepare_events_reservations( @meeting, @team_affiliation )   # collect the created matrix (badges x event rows) of event reservations
     prepare_relays_reservations( @meeting, @team_affiliation )   # collect the created matrix (badges x relays rows) of relay reservations
   end
