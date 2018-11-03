@@ -117,7 +117,7 @@ Rails.application.configure do
     # }
 
     # Add warnings directly to the Rails log:
-    Bullet.rails_logger = true
+    Bullet.rails_logger = false
 
     # Add other notifications:
     # Bullet.honeybadger = true
@@ -131,6 +131,7 @@ Rails.application.configure do
 
     # Stacktrace inclusion / exclusions:
     # Bullet.stacktrace_includes = ['your_gem', 'your_middleware']
+    Bullet.stacktrace_includes = ['goggles_core']
     # Bullet.stacktrace_excludes = [
     #   'their_gem',
     #   'their_middleware',
