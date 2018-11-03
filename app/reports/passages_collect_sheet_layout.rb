@@ -164,7 +164,7 @@ class PassagesCollectSheetLayout
           #pool_type = meeting.event_types.where( id: event.event_type_id ).first
           #  .pool_types
           #  .first || event.meeting_session.swimming_pool.pool_type
-          # Leega. Pool type should be catched always from the event
+          # Leega. Pool type should be catched always from the event (why not?)
           pool_type =  event.meeting_session.swimming_pool.pool_type
 
           is_team_template_present = ( team.team_passage_templates
