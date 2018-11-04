@@ -23,6 +23,9 @@ describe TeamManagerValidator, type: :strategy do
     )
   end
 
+  let(:managed_team) { team_manager.team_affiliation.team }
+  let(:new_team)     { create(:team) }
+
 
   describe "self.can_manage?" do
     context "with a nil current user and a valid Meeting," do
@@ -159,6 +162,40 @@ describe TeamManagerValidator, type: :strategy do
       it "returns true" do
         expect(
           TeamManagerValidator.any_reservations_for?( user_for_reservation, meeting_with_reservation )
+        ).to be true
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  describe "self.can_manage_team?" do
+    context "with a nil current user and a valid Team," do
+      it "returns false" do
+        expect(
+          TeamManagerValidator.can_manage_team?( nil, new_team )
+        ).to be false
+      end
+    end
+    context "with a valid user/team-manager but a nil team," do
+      it "returns false" do
+        expect(
+          TeamManagerValidator.can_manage_team?( team_manager.user, nil )
+        ).to be false
+      end
+    end
+    context "with a valid user/team-manager that can't manage the team," do
+      it "returns true" do
+        expect(
+          TeamManagerValidator.can_manage_team?( User.find(2), new_team )
+        ).to be false
+      end
+    end
+    context "with a valid user/team-manager that can manage the team," do
+      it "returns true" do
+        expect(
+          TeamManagerValidator.can_manage_team?( team_manager.user, managed_team )
         ).to be true
       end
     end

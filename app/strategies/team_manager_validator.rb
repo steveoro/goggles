@@ -112,4 +112,25 @@ class TeamManagerValidator
   end
   #-- --------------------------------------------------------------------------
   #++
+
+
+  # Returns true if the current user can manage a specified team,
+  # false otherwise.
+  #
+  # Only the team affiliation of the team manager is checked. That is, "a current user
+  # can manage the chosen team if exists at least a managed team affilation for that team".
+  #
+  # === Params:
+  # - current_user : a valid User instance
+  # - team : a valid Team instance
+  #
+  def self.can_manage_team?( current_user, team )
+    # For a valid User & Team, the user must be a team-manager
+    # of the chosen team.
+    current_user.instance_of?( User ) &&
+    team.instance_of?( Team ) &&
+    current_user.team_managers.joins( :team_affiliation ).where( 'team_affiliations.team_id = ?', team.id ).exists?
+  end
+  #-- --------------------------------------------------------------------------
+  #++
 end
