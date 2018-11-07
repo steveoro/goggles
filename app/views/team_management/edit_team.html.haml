@@ -1,2 +1,43 @@
 %h1 TeamManagement#edit_team
 %p Find me in app/views/team_management/edit_team.html.haml
+
+
+-# (Multipart is required for image upload using file_field_tag)
+= form_for( @team, url: team_management_update_team_path(id: @team.id), html: { method: :put, multipart: true } ) do |f|
+  .form-row
+    .col-xs-6.form-group
+      = label_tag( :address, t('activerecord.attributes.team.address'), for: :address, class: 'control-label' )
+      = text_field_tag( :address, @team.address, class: 'form-control input-large' )
+    .col-xs-2.form-group
+      = label_tag( :zip, t('activerecord.attributes.team.zip'), for: :zip, class: 'control-label' )
+      = text_field_tag( :zip, @team.zip, class: 'form-control input-large' )
+    .col-xs-4.form-group
+      = label_tag( :city_id, t('activerecord.attributes.team.city_id'), for: :city_id, class: 'control-label' )
+      .select-wrapper= select_tag( :city_id, options_from_collection_for_select(   |
+        City.all.order(:name), :id, :get_full_name, @team.city_id ), |
+        { include_blank: false } )      |      
+  .form-row
+    .col-xs-8.form-group
+      = label_tag( :home_page_url, t('activerecord.attributes.team.home_page_url'), for: :home_page_url, class: 'control-label' )
+      = text_field_tag( :home_page_url, @team.home_page_url, class: 'form-control input-medium' )
+    .col-xs-4.form-group
+      = label_tag( :e_mail, t('activerecord.attributes.team.e_mail'), for: :e_mail, class: 'control-label' )
+      = text_field_tag( :e_mail, @team.e_mail, class: 'form-control input-medium' )
+  .form-row
+    .col-xs-4.form-group
+      = label_tag( :contact_name, t('activerecord.attributes.team.contact_name'), for: :contact_name, class: 'control-label' )
+      = text_field_tag( :contact_name, @team.contact_name, class: 'form-control input-medium' )
+    .col-xs-4.form-group
+      = label_tag( :phone_number, t('activerecord.attributes.team.phone_number'), for: :phone_number, class: 'control-label' )
+      = text_field_tag( :phone_number, @team.phone_number, class: 'form-control input-small' )
+    .col-xs-4.form-group
+      = label_tag( :phone_mobile, t('activerecord.attributes.team.phone_mobile'), for: :phone_mobile, class: 'control-label' )
+      = text_field_tag( :phone_mobile, @team.phone_mobile, class: 'form-control input-small' )
+  .form-row
+    .col-xs-12.form-group
+      = label_tag( :notes, t('activerecord.attributes.team.notes'), for: :notes, class: 'control-label' )
+      = text_field_tag( :notes, @team.notes, class: 'form-control input-large' )
+  .form-row
+    .col-xs-12.form-group.text-center
+      = f.button( I18n.t('save'), type: "submit", class: "btn btn-primary", |
+                  data: { confirm:  'Confermi i dati inseriti?' } ) |

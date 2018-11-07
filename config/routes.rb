@@ -94,8 +94,8 @@ Rails.application.routes.draw do
       get 'search/meetings'
 
       # === Team Management ===
-      get 'team_management/edit_team'
-      post 'team_management/update_team'
+      get 'team_management/edit_team/:id',            to: "team_management#edit_team",           as: "team_management_edit_team"
+      put 'team_management/update_team/:id',          to: "team_management#update_team",         as: "team_management_update_team"
       get 'team_management/edit_affiliation'
       post 'team_management/update_affiliation'
       get 'team_management/edit_badges'

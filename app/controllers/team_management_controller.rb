@@ -32,6 +32,18 @@ class TeamManagementController < ApplicationController
   end
 
   def update_team
+    if request.put?
+      if @team.update( team_params )
+        flash[:info] = I18n.t('changes_saved_ok')
+      redirect_to( team_radio_path(id: @team.id) ) and return
+      else
+        flash[:error] = I18n.t('changes_saved_error')
+      end
+
+    else
+      flash[:error] = I18n.t(:invalid_action_request)
+      redirect_to( team_radio_path(id: @team.id) ) and return
+    end    
   end
 
   def edit_affiliation
@@ -110,4 +122,15 @@ class TeamManagementController < ApplicationController
   #-- -------------------------------------------------------------------------
   #++
 
+  # Strong parameters checking for the team update parameters
+  def team_params
+    params.permit(
+      :address, :zip, :city_id,
+      :home_page_url, :e_mail,
+      :contact_name, :phone_number, :phone_mobile, :fax_number,
+      :notes
+    )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 end
