@@ -1,9 +1,10 @@
 = text_area_tag(                                              |
   "notes#{ badge_id }",                                       |
   default_value,                                              |
-  'class' => "text-left form-control resRow#{ badge_id }",    |
-  'onkeyup' => "$(this).val( $(this).val().toUpperCase() );", |
-  'onfocusout' => "if ($(this).val() != $(this).data('value')) { handleEditReservation(\"#{ badge_id }\", null); };", |
-  disabled: is_disabled,                                      |
+  class:      "text-left form-control resRow#{ badge_id }",   |
+  onkeyup:    "$(this).val( $(this).val().toUpperCase() );",  |
+  onfocusout: "if ($(this).val() != $(this).data('value')) { handleEditReservation(\"#{ badge_id }\", null); };", |
+  onchange:   "if ($(this).val() != $(this).data('value')) { handleEditReservation(\"#{ badge_id }\", null); };", |
+  disabled:   is_disabled,                                    |
   'data-value' => default_value                               |
 )                                                             |

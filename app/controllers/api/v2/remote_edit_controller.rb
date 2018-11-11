@@ -202,8 +202,8 @@ class Api::V2::RemoteEditController < Api::BaseController
   # A JSON response (either :success or :error).
   #
   def update_reservation
-# DEBUG
-#    puts "\r\n--- #update_reservation: ---\r\nPARAMS: #{ params.inspect }"
+    # DEBUG
+    puts "\r\n--- #update_reservation: ---\r\nPARAMS: #{ params.inspect }"
     # Fetch params
     meeting_id    = params['m']
     badge_id      = params['b']

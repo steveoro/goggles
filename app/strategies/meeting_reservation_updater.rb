@@ -7,7 +7,7 @@ require 'common/validation_error_tools'
 
 = MeetingReservationUpdater
 
-  - Goggles framework vers.:  6.355
+  - Goggles framework vers.:  6.373
   - author: Steve A.
 
  Single MeetingReservation + Meeting(Event/Relay)Reservation updater.

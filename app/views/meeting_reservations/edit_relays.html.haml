@@ -42,26 +42,28 @@
                   = text_field_tag( "code#{ badge.id }_#{ event.id }",                    |
                     default_code,                                                         |
                     maxlength: 5,                                                         |
-                    'class' => "relay-notes form-control",                                |
-                    disabled: !can_edit_events,                                           |
-                    onchange: "updateRelayNoteValues(\"#{ badge.id }\", \"#{ event.id }\");", |
-                    'data-value' => default_code,                                         |
+                    class:      "relay-notes form-control",                               |
+                    disabled:   !can_edit_events,                                         |
+                    onfocusout: "updateRelayNoteValues(\"#{ badge.id }\", \"#{ event.id }\");", |
+                    onchange:   "updateRelayNoteValues(\"#{ badge.id }\", \"#{ event.id }\");", |
+                    'data-value'   => default_code,                                       |
                     'data-relcode' => default_code,                                       |
-                    'data-relnum' => default_num,                                         |
-                    'data-toggle'=>'tooltip',                                             |
+                    'data-relnum'  => default_num,                                        |
+                    'data-toggle'  =>'tooltip',                                           |
                     'title'=> "#{ event_reservation.event_type.i18n_short }, #{ I18n.t('meeting_reservation.relay_codename_tooltip') }" ) |
                 .col-xs-5
                   %i= I18n.t('meeting_reservation.relay_order_short_title')
                   = number_field_tag( "num#{ badge.id }_#{ event.id }",                   |
                     default_num,                                                          |
                     within: 1...8,                                                        |
-                    'class' => "form-control",                                            |
-                    disabled: !can_edit_events,                                           |
-                    onchange: "updateRelayNoteValues(\"#{ badge.id }\", \"#{ event.id }\");", |
-                    'data-value' => default_num,                                          |
+                    class:      "form-control",                                           |
+                    disabled:   !can_edit_events,                                         |
+                    onfocusout: "updateRelayNoteValues(\"#{ badge.id }\", \"#{ event.id }\");", |
+                    onchange:   "updateRelayNoteValues(\"#{ badge.id }\", \"#{ event.id }\");", |
+                    'data-value'   => default_num,                                        |
                     'data-relcode' => default_code,                                       |
-                    'data-relnum' => default_num,                                         |
-                    'data-toggle'=>'tooltip',                                             |
+                    'data-relnum'  => default_num,                                        |
+                    'data-toggle'  => 'tooltip',                                          |
                     'title'=> "#{ event_reservation.event_type.i18n_short }, #{ I18n.t('meeting_reservation.relay_order_tooltip') }" ) |
 
           %td

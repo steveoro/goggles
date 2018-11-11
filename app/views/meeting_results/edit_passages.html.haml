@@ -10,7 +10,9 @@
         - individual_result = hash_item.keys.first
         - has_passages = ( hash_item.values.first.count > 0 )
         - mir = MeetingIndividualResultDecorator.decorate( individual_result )
-        - passage_types = mir.team.team_passage_templates.for_event_type( mir.event_type ).for_pool_type( mir.pool_type ).exists? ? TeamPassageTemplate.get_default_passage_types_for( mir.event_type.length_in_meters, mir.pool_type.length_in_meters ) : TeamPassageTemplate.get_template_passage_types_for( mir.team, mir.event_type, mir.pool_type )
+        - passage_types = TeamPassageTemplate.get_template_passage_types_for( mir.team, mir.event_type, mir.pool_type )
+        - if passage_types.count < 1
+          - passage_types = TeamPassageTemplate.get_default_passage_types_for( mir.event_type.length_in_meters, mir.pool_type.length_in_meters )
         - if previous_event != mir.meeting_event
           - previous_event = mir.meeting_event
           %th.info
@@ -40,10 +42,10 @@
                 = text_field_tag(                                                 |
                   "new_#{mir.id}_#{passage_type.id}",                             |
                   curr_value,                                                     |
-                  'class' => "input-mini text-right timing",                      |
-                  'onkeyup' => "_formatTiming( this.value, this );",              |
-                  'onfocusout' => "handleEditPassage(this);",                     |
-                  'onchange' => "handleEditPassage(this);",                       |
+                  class:      "input-mini text-right timing",                     |
+                  onkeyup:    "_formatTiming( this.value, this );",               |
+                  onfocusout: "handleEditPassage(this);",                         |
+                  onchange:   "handleEditPassage(this);",                         |
                   'data-passage' => curr_passage ? curr_passage.id : nil,         |
                   'data-mir' => mir.id,                                           |
                   'data-value' => curr_value,                                     |
@@ -57,10 +59,10 @@
                 = text_field_tag(                                                 |
                   "auto_#{mir.id}_#{passage_type.id}",                            |
                   mir.get_timing,                                                 |
-                  'class' => "input-mini text-right timing",                      |
-                  'onkeyup' => "_formatTiming( this.value, this );",              |
-                  'onfocusout' => "handleEditPassage(this);",                     |
-                  'onchange' => "handleEditPassage(this);",                       |
+                  class:      "input-mini text-right timing",                     |
+                  onkeyup:    "_formatTiming( this.value, this );",               |
+                  onfocusout: "handleEditPassage(this);",                         |
+                  onchange:   "handleEditPassage(this);",                         |
                   'data-mir' => mir.id,                                           |
                   'data-value' => mir.get_timing,                                 |
                   'data-passage-type' => passage_type.id                          |
@@ -113,7 +115,7 @@
       }).always(function( result ) {
         // DEBUG
         console.log('handleEditPassage: Callback: always');
-        console.log( result.status );
+        console.log( result );
         $('#spinner').addClass('hide');
       });
     }

@@ -279,7 +279,17 @@ class PassageUpdater
       passage.team_id = mir.team_id
       # [Steve, 20180712] passage.get_previous_passage() works only if the Passage
       # instance has a MIR associated.
-      prev_timing_instance = passage.get_previous_passage ? passage.get_previous_passage.compute_incremental_time : nil
+      prev_timing_instance = if passage.get_previous_passage
+        passage.get_previous_passage.compute_incremental_time
+      else
+        nil
+      end
+# DEBUG
+      puts "passage.get_previous_passage....: #{ passage.get_previous_passage.inspect }"
+      puts "passage.get_total_distance......: #{ passage.get_total_distance }"
+      puts "passage.get_passage_distance....: #{ passage.get_passage_distance }"
+      puts "passage.get_passages count......: #{ passage.get_passages.count }"
+      puts "passage.get_passages filtered...: #{ passage.get_passages.where( 'length_in_meters < ?', passage.get_passage_distance ).count }"
     else
 # DEBUG
       puts "Passage->MIR link NULL"
@@ -304,9 +314,14 @@ class PassageUpdater
       passage.minutes  = timing_instance.minutes
       passage.seconds  = timing_instance.seconds
       passage.hundreds = timing_instance.hundreds
-      passage.minutes_from_start  = timing_instance.minutes + ( prev_timing_instance ? prev_timing_instance.minutes : 0 )
-      passage.seconds_from_start  = timing_instance.seconds + ( prev_timing_instance ? prev_timing_instance.seconds : 0 )
-      passage.hundreds_from_start = timing_instance.hundreds + ( prev_timing_instance ? prev_timing_instance.hundreds : 0 )
+      timing_instance += Timing.new(
+        prev_timing_instance.hundreds,
+        prev_timing_instance.seconds,
+        prev_timing_instance.minutes
+      ) if prev_timing_instance
+      passage.minutes_from_start  = timing_instance.minutes
+      passage.seconds_from_start  = timing_instance.seconds
+      passage.hundreds_from_start = timing_instance.hundreds
     else
       # DEBUG
       puts "is_delta? == FALSE"

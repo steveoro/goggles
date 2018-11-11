@@ -30,13 +30,14 @@
                 = text_field_tag(                                                       |
                   "time#{ badge.id }_#{ event.id }",                                    |
                   default_value,                                                        |
-                  'class' => "input-mini form-control text-right timing resRow#{ badge.id }",       |
-                  disabled: !can_edit_events,                                           |
-                  'onkeyup' => "_formatTiming( this.value, this );",              |
-                  'onfocusout' => "updateReservationTiming(\"#{ badge.id }\", \"#{ event.id }\");", |
+                  class:      "input-mini form-control text-right timing resRow#{ badge.id }",  |
+                  disabled:   !can_edit_events,                                         |
+                  onkeyup:    "_formatTiming( this.value, this );",                     |
+                  onfocusout: "updateReservationTiming(\"#{ badge.id }\", \"#{ event.id }\");", |
+                  onchange:   "updateReservationTiming(\"#{ badge.id }\", \"#{ event.id }\");", |
                   'data-toggle' => 'tooltip',                                           |
-                  'title'=> event_reservation.event_type.i18n_short,                    |
-                  'data-value' => default_value                                         |
+                  'title'       => event_reservation.event_type.i18n_short,             |
+                  'data-value'  => default_value                                        |
                 )                                                                       |
               .text-center
                 %small
@@ -44,7 +45,7 @@
                 %br/
                 .switch-box.is-success
                   %input{ id: chkbox_id, class: "switch-box-input resRow#{ badge.id }", |
-                          type: "checkbox", disabled: !can_edit_events,                 |
+                          type:    "checkbox", disabled: !can_edit_events,              |
                           checked: event_reservation.is_doing_this,                     |
                           onclick: "toggleEventSwitchValue(\"#{ badge.id }\", \"#{ event.id }\", \"#{ escape_javascript( event_reservation.get_timing ) }\");" |
                   }                                                                     |

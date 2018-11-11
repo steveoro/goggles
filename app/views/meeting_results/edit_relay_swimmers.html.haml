@@ -44,10 +44,10 @@
               %td
                 = text_field_tag( swimmer_dom_id,                                         |
                     relay_swimmer.swimmer ? relay_swimmer.swimmer.get_full_name : nil,    |
-                    'class' => "input-sm typeahead relay_swimmer",          |
-                     autocomplete: 'off', "data-provide" => "typeahead",    |
-                    'onfocusout' => "handleEditRelaySwimmer(this);",        |
-                    'onchange' => "handleEditRelaySwimmer(this);",          |
+                    class:        "input-sm typeahead relay_swimmer",       |
+                    autocomplete: 'off', "data-provide" => "typeahead",     |
+                    onfocusout:   "handleEditRelaySwimmer(this);",          |
+                    onchange:     "handleEditRelaySwimmer(this);",          |
                     'data-swimmer' => relay_swimmer.swimmer_id,             |
                     'data-mrr'     => mrr.id,                               |
                     'data-order'   => relay_swimmer.relay_order,            |
@@ -59,14 +59,14 @@
                 - curr_value = relay_swimmer.get_timing != "00\"00" ? relay_swimmer.get_timing : nil
                 = text_field_tag( timing_dom_id,                            |
                   curr_value,                                               |
-                  'class' => "input-mini text-right timing",                |
-                  'onkeyup' => "_formatTiming( this.value, this );",        |
-                  'onfocusout' => "handleEditRelaySwimmer(this);",          |
-                  'onchange' => "handleEditRelaySwimmer(this);",            |
+                  class:      "input-mini text-right timing",               |
+                  onkeyup:    "_formatTiming( this.value, this );",         |
+                  onfocusout: "handleEditRelaySwimmer(this);",              |
+                  onchange:   "handleEditRelaySwimmer(this);",              |
                   'data-swimmer' => relay_swimmer.swimmer_id,               |
                   'data-mrr'     => mrr.id,                                 |
                   'data-order'   => relay_swimmer.relay_order,              |
-                  'data-value' => curr_value,                               |
+                  'data-value'   => curr_value,                             |
                   'data-swimmer_dom_id'  => swimmer_dom_id,                 |
                   'data-timing_dom_id'   => timing_dom_id,                  |
                   'data-reaction_dom_id' => reaction_dom_id                 |
@@ -75,14 +75,14 @@
                 - curr_value = relay_swimmer.reaction_time > 0 ? relay_swimmer.reaction_time : nil
                 = text_field_tag( reaction_dom_id,                          |
                   curr_value,                                               |
-                  'class' => "input-mini text-right timing",                |
-                  'onkeyup' => "_formatTiming( this.value, this );",        |
-                  'onfocusout' => "handleEditRelaySwimmer(this);",          |
-                  'onchange' => "handleEditRelaySwimmer(this);",            |
+                  class:      "input-mini text-right timing",               |
+                  onkeyup:    "_formatTiming( this.value, this );",         |
+                  onfocusout: "handleEditRelaySwimmer(this);",              |
+                  onchange:   "handleEditRelaySwimmer(this);",              |
                   'data-swimmer' => relay_swimmer.swimmer_id,               |
                   'data-mrr'     => mrr.id,                                 |
                   'data-order'   => relay_swimmer.relay_order,              |
-                  'data-value' => curr_value,                               |
+                  'data-value'   => curr_value,                             |
                   'data-swimmer_dom_id'  => swimmer_dom_id,                 |
                   'data-timing_dom_id'   => timing_dom_id,                  |
                   'data-reaction_dom_id' => reaction_dom_id                 |

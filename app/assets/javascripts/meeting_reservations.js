@@ -114,7 +114,6 @@ function updateReservationTiming( badge_id, event_id ) {
   if ( textEdit.data('value') != textEdit.val() ) {
     // DEBUG
     //console.log('Changed!');
-    $('#spinner').removeClass('hide');
     textEdit.data( 'value', textEdit.val() );
 
     handleEditReservation( badge_id, event_id );
@@ -195,7 +194,6 @@ function updateRelayNoteValues( badge_id, event_id ) {
        (objNum.data('value') != objNum.val()) ) {
     // DEBUG
     //console.log('Changed!');
-    $('#spinner').removeClass('hide');
     objCode.data( 'value', objCode.val() );
     objNum.data( 'value', objNum.val() );
     var isNotComing = !!$( "#skip" + badge_id ).prop('checked');
