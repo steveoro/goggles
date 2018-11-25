@@ -5,7 +5,7 @@
 
 = Api::V2::RemoteEditController
 
-  - version:  6.355
+  - version:  6.375
   - author:   Steve A.
 
   API v2 controller for Remote-editing of single, specific data rows via JSON requests.
@@ -80,7 +80,7 @@ class Api::V2::RemoteEditController < Api::BaseController
 
     elsif result                                    # --- CREATE / UPDATE / DELETE performed ---
       # Add SQL text to AppParameter:
-      serialize_into_app_parameters!( updater )
+      serialize_into_app_parameters!( updater, I18n.t('passages.relay_athlete').upcase )
       # Launch delayed Job to send the DB-diff to the SysOp using the remote-editing
       # dedicated named queue ('edit'):
       SendDbDiffJob.set( queue: :edit, wait: WAIT_MINS_BEFORE_JOB_CREATE ).perform_later
@@ -152,7 +152,7 @@ class Api::V2::RemoteEditController < Api::BaseController
 
     elsif result                                    # --- CREATE / UPDATE / DELETE performed ---
       # Add SQL text to AppParameter:
-      serialize_into_app_parameters!( updater )
+      serialize_into_app_parameters!( updater, I18n.t('passages.index_title').upcase )
       # Launch delayed Job to send the DB-diff to the SysOp using the remote-editing
       # dedicated named queue ('edit'):
       SendDbDiffJob.set( queue: :edit, wait: WAIT_MINS_BEFORE_JOB_CREATE ).perform_later
@@ -233,7 +233,7 @@ class Api::V2::RemoteEditController < Api::BaseController
 
     elsif result                                    # --- CREATE / UPDATE / DELETE performed ---
       # Add SQL text to AppParameter:
-      serialize_into_app_parameters!( updater )
+      serialize_into_app_parameters!( updater, I18n.t('meeting_reservation.manage_button_title').upcase )
       # Launch delayed Job to send the DB-diff to the SysOp using the remote-editing
       # dedicated named queue ('edit'):
       SendDbDiffJob.set( queue: :edit, wait: WAIT_MINS_BEFORE_JOB_CREATE ).perform_later
@@ -255,7 +255,7 @@ class Api::V2::RemoteEditController < Api::BaseController
   #
   # The updater is supposed to respond to the SqlConvertable interface.
   #
-  def serialize_into_app_parameters!( updater )
+  def serialize_into_app_parameters!( updater, edit_description )
 # DEBUG
 #   puts "\r\nserialize_into_app_parameters for code: #{ 100000 + current_user.id }"
     app_parameter = AppParameter.find_or_create_by!( code: 100000 + current_user.id )
@@ -267,6 +267,10 @@ class Api::V2::RemoteEditController < Api::BaseController
     end
 
     app_parameter.update( free_text_1: new_text )
+    # Store descriptions of the editings
+    app_parameter.update(
+      free_text_2: (app_parameter.free_text_2.to_s.split(', ') << edit_description).uniq.join(', ')
+    )
 # DEBUG
 #    app_parameter.reload
 #    puts "\r\n------------8<----------\r\n#{ app_parameter.free_text_1 }\r\n------------8<----------"

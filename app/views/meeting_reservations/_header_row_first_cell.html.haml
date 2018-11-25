@@ -11,7 +11,7 @@
     - skip_dom_id = "skip#{ badge.id }"
     .switch-box.is-danger
       %input{ id: skip_dom_id, class: "switch-box-input", type: "checkbox",     |
-              disabled: is_invalid_team_manager,                                |
+              disabled: is_invalid_team_manager && reservation.has_confirmed,   |
               checked: reservation.is_not_coming,                               |
               onclick: "toggleSkipRowControls( #{ badge.id } );" }              |
       %label{ for: skip_dom_id, class: "switch-box-slider" }

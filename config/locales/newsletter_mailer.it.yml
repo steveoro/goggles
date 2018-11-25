@@ -20,3 +20,7 @@ it:
       title: "Creazione PRENOTAZIONI GARA"
       subject: "Creazione PRENOTAZIONI GARA per '%{meeting_name}'"
       contents: "Il tuo compagno di squadra <i>%{team_manager_name}</i> ha creato o aggiornato il foglio dove puoi segnarti le gare che vorresti fare per '<b>%{meeting_name}</b>'.<br/>Puoi controllarle direttamente <a href=\"%{manage_url}\">qui</a>.<br/><br/><p><i>Ti abbiamo inviato questa mail per avvisarti, semplicemente perché avevi segnato il Meeting fra i tuoi preferiti.</i></p>"
+    remote_edit:
+      title: "Aggiornamento %{what}"
+      subject: "Aggiornamento %{what}"
+      contents: "I seguenti utenti:<br/><i>%{user_names}</i><br/>hanno modificato su Goggles i dati in oggetto."

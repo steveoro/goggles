@@ -1,6 +1,6 @@
 it:
   passages:
-    index_title: "Gestione passaggi gara"
+    index_title: "Passaggi gara"
     title_show: "Passaggi gara"
     passage_deleted: "Passaggio eliminato!"
     passages_individual_tab_label: "Passaggi Individuali"
