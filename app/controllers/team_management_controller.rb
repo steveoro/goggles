@@ -28,8 +28,10 @@ class TeamManagementController < ApplicationController
   # Verify if valid team maneger:
   before_action :verify_team_manageability
 
+
   def edit_team
   end
+
 
   def update_team
     if request.put?
@@ -43,32 +45,40 @@ class TeamManagementController < ApplicationController
     else
       flash[:error] = I18n.t(:invalid_action_request)
       redirect_to( team_radio_path(id: @team.id) ) and return
-    end    
+    end
   end
+
 
   def edit_affiliation
   end
 
+
   def update_affiliation
   end
+
 
   def edit_badges
   end
 
+
   def create_badge
   end
+
 
   def update_badges
   end
 
+
   def edit_lap_template
   end
+
 
   def update_app_template
   end
 
 
   private
+
 
   # Verifies that a team id is provided as parameter
   # Else, returns an invalid action request.
@@ -109,6 +119,7 @@ class TeamManagementController < ApplicationController
     end
   end
 
+
   # Verifies that a team id is provided as a parameter to this controller.
   # Assigns the @team instance when successful.
   #
@@ -121,6 +132,7 @@ class TeamManagementController < ApplicationController
   end
   #-- -------------------------------------------------------------------------
   #++
+
 
   # Strong parameters checking for the team update parameters
   def team_params

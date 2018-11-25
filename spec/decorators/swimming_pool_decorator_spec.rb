@@ -4,7 +4,7 @@ require 'rails_helper'
 describe SwimmingPoolDecorator, type: :model do
   include Rails.application.routes.url_helpers
 
-  subject { SwimmingPool.find( ((rand * 50) % 50).to_i + 1 ).decorate }
+  subject { SwimmingPool.all.limit(50).sample.decorate }
 
   context "[implemented methods]" do
     it_behaves_like "(the existance of a method returning non-empty strings)", [
