@@ -1,6 +1,6 @@
 %a{'id'=>"swimmer#{ badge.swimmer_id }", 'href'=>"#{ swimmer_radio_path(id: badge.swimmer_id) }", 'data-toggle'=>'tooltip', 'title'=>I18n.t('radiography.radio_tab_tooltip')}
   %b= badge.swimmer.get_full_name
-- if is_invalid_team_manager                        # Hide team manager controls for standard gogglers:
+- if is_invalid_team_manager && reservation.has_confirmed  # Hide team manager controls for confirmed athletes:
   %br/
   %small
     %i
@@ -18,14 +18,15 @@
       %label{ for: skip_dom_id, class: "switch-box-label" }
         %small
           %i= I18n.t('meeting_reservation.is_not_coming')
-  .row-fluid
-    - confirm_dom_id = "confirm#{ badge.id }"
-    .switch-box.is-success
-      %input{ id: confirm_dom_id, class: "switch-box-input", type: "checkbox",  |
-              disabled: is_invalid_team_manager,                                |
-              checked: reservation.has_confirmed,                               |
-              onclick: "toggleConfirmSwitchValue( #{ badge.id } );" }           |
-      %label{ for: confirm_dom_id, class: "switch-box-slider" }
-      %label{ for: confirm_dom_id, class: "switch-box-label" }
-        %small
-          %i= I18n.t('meeting_reservation.has_confirmed')
+  - unless is_invalid_team_manager
+    .row-fluid
+      - confirm_dom_id = "confirm#{ badge.id }"
+      .switch-box.is-success
+        %input{ id: confirm_dom_id, class: "switch-box-input", type: "checkbox",  |
+                disabled: is_invalid_team_manager,                                |
+                checked: reservation.has_confirmed,                               |
+                onclick: "toggleConfirmSwitchValue( #{ badge.id } );" }           |
+        %label{ for: confirm_dom_id, class: "switch-box-slider" }
+        %label{ for: confirm_dom_id, class: "switch-box-label" }
+          %small
+            %i= I18n.t('meeting_reservation.has_confirmed')
