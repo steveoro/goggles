@@ -105,7 +105,14 @@ class MeetingResultsController < ApplicationController
   #
   def edit_relay_swimmers
     # Collect the list of managed Teams:
-    @managed_teams = current_user.team_managers.map{ |tm| tm.team }.uniq
+    # Leega: Managed teams are always referred to the meeting season 
+    #@managed_teams = current_user.team_managers.map{ |tm| tm.team }.uniq
+    @managed_teams = current_user
+      .team_managers
+      .joins( :team_affiliation )
+      .where( ['team_affiliations.season_id = ?', @meeting.season_id] )
+      .map{ |tm| tm.team }
+      .uniq
     @managed_team_ids = @managed_teams.map{ |team| team.id }
     @mrrs = @meeting.meeting_relay_results
       .includes(:team, :meeting_event, :event_type, :pool_type, :season)
