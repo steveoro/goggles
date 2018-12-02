@@ -23,4 +23,4 @@ en:
     remote_edit:
       title: "%{what} updated"
       subject: "%{what} updated"
-      contents: "The following user:<br/><i>%{user_names}</i><br/>have edited on Goggles the data enlisted in the subject."
+      contents: "The following user:<br/><i>%{user_names}</i><br/>have edited on Goggles the data enlisted in the subject.<br/><br/>\r\nEditing locations:<br/>\r\n<ul>%{base_uris}</ul>"

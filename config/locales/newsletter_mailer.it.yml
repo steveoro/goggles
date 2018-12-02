@@ -23,4 +23,4 @@ it:
     remote_edit:
       title: "Aggiornamento %{what}"
       subject: "Aggiornamento %{what}"
-      contents: "I seguenti utenti:<br/><i>%{user_names}</i><br/>hanno modificato su Goggles i dati in oggetto."
+      contents: "I seguenti utenti:<br/><i>%{user_names}</i><br/>hanno modificato su Goggles i dati in oggetto.<br/><br/>\r\nPunti di intervento:<br/>\r\n<ul>%{base_uris}</ul>"

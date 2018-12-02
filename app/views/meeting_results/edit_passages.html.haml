@@ -109,7 +109,8 @@
           p:    obj.dataset['passage'],
           mir:  obj.dataset['mir'],
           pt:   obj.dataset['passageType'],
-          time: obj.value
+          time: obj.value,
+          l:    document.baseURI
         },
         dataType: "application/json"
       }).always(function( result ) {

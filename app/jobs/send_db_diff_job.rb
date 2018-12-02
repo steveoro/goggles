@@ -2,7 +2,7 @@
 
 = SendDbDiffJob
 
-  - Goggles framework vers.:  6.375
+  - Goggles framework vers.:  6.377
   - author: Steve A.
 
  Job dedicated to process & "consume" any DB data difference stored in dedicated rows
@@ -79,6 +79,7 @@ class SendDbDiffJob < ApplicationJob
   #       TM.user1.id => {
   #           tm_user: TM.user1,
   #           users: [editor_user1, editor_user2, ...],
+  #           urls:  [req_url1_1, req_url1_2, ..., req_url2_1, ...],
   #           description: remote_edit_type_description
   #       },
   #
@@ -88,6 +89,7 @@ class SendDbDiffJob < ApplicationJob
   def collect_db_diff_text_and_user_data( app_parameter_rows )
     # Prepare a list of unique editor users and associated TM data:
     editor_users = []
+    req_urls = []
     team_managers_data = {}
 
     # Scan all serialized row values and move them on a file to be sent via e-mail:
@@ -115,12 +117,16 @@ class SendDbDiffJob < ApplicationJob
             if team_managers_data.has_key?( tm_user.id )
               team_managers_data[ tm_user.id ][:users] << user_from_code
               team_managers_data[ tm_user.id ][:description].to_s << ", #{ app_parameter_row.free_text_2 }"
+              # Add the list of baseURIs to the current TM's and make it unique in each row:
+              team_managers_data[ tm_user.id ][:urls] += app_parameter_row.free_text_3.to_s.split("\r\n")
+              team_managers_data[ tm_user.id ][:urls].uniq!
 
             # New TM? Initialize hash data:
             else
               team_managers_data[ tm_user.id ] = {
                 tm_user:      tm_user,
                 users:        [ user_from_code ],
+                urls:         app_parameter_row.free_text_3.to_s.split("\r\n"),
                 description:  app_parameter_row.free_text_2.to_s
               }
             end
@@ -130,6 +136,7 @@ class SendDbDiffJob < ApplicationJob
         # Clear the DB field used for serialization of this user's actions:
         app_parameter_row.update( free_text_1: '' )
         app_parameter_row.update( free_text_2: '' )
+        app_parameter_row.update( free_text_3: '' )
       end
     end
 
@@ -177,6 +184,7 @@ class SendDbDiffJob < ApplicationJob
   #       TM.user1.id => {
   #           tm_user: TM.user1,
   #           users: [editor_user1, editor_user2, ...],
+  #           urls:  [req_url1_1, req_url1_2, ..., req_url2_1, ...],
   #           description: remote_edit_type_description
   #       },
   #
@@ -192,13 +200,23 @@ class SendDbDiffJob < ApplicationJob
     team_managers_data.each do |tm_id, tm_data|
       dest_user = tm_data[:tm_user]
       # Filter self from list of editors:
-      editors   = tm_data[:users].reject { |user| user.id == dest_user.id }.map { |user| user.swimmer.get_full_name }
+      editors   = tm_data[:users].reject { |user| user.id == dest_user.id }
+                                 .map { |user| user.swimmer.get_full_name }
+                                 .uniq
+      base_uris = tm_data[:urls].uniq
+                                .map { |s| "<li><a href=\"#{ s }\">#{ s.split(/\/meeting_/).last }</a></li>" }
+                                .join("\r\n")
+
       # If there are editors left, compile the newsletter mailer for the notification:
       if editors.size > 0
         logger.info( "Preparing notification for '#{ dest_user.email }'..." )
         subject   = I18n.t('newsletter_mailer.remote_edit.title', what: tm_data[:description])
         title     = I18n.t('newsletter_mailer.remote_edit.subject', what: tm_data[:description].downcase.camelcase)
-        contents  = I18n.t('newsletter_mailer.remote_edit.contents', user_names: editors.join(', '))
+        contents  = I18n.t(
+          'newsletter_mailer.remote_edit.contents',
+          user_names: editors.join(', '),
+          base_uris:  base_uris
+        )
         NewsletterMailer.custom_mail( dest_user, subject, title, contents ).deliver
       end
     end

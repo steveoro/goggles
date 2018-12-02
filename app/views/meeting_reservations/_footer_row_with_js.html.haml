@@ -40,7 +40,8 @@
         ok:   isConfirmed,
         time: timeEdit.length > 0 ? timeEdit.val() : null,
         n:    $( "#notes" + badge_id ).val(),
-        rn:   (relayCode.length > 0 && relayNum.length > 0) ? relayCode.val() + ';' + relayNum.val() : null
+        rn:   (relayCode.length > 0 && relayNum.length > 0) ? relayCode.val() + ';' + relayNum.val() : null,
+        l:    document.baseURI
       },
       dataType: "application/json"
     }).always(function( result ) {

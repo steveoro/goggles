@@ -172,7 +172,8 @@
         o:    currNode.dataset['order'],
         s:    document.getElementById( currNode.dataset['swimmer_dom_id'] ).dataset['swimmer'],
         time: $( "#" + currNode.dataset['timing_dom_id'] ).val(),
-        r:    $( "#" + currNode.dataset['reaction_dom_id'] ).val()
+        r:    $( "#" + currNode.dataset['reaction_dom_id'] ).val(),
+        l:    document.baseURI
       },
       dataType: "application/json"
     }).always( function( result ) {

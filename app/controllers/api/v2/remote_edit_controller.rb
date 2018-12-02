@@ -5,7 +5,7 @@
 
 = Api::V2::RemoteEditController
 
-  - version:  6.375
+  - version:  6.377
   - author:   Steve A.
 
   API v2 controller for Remote-editing of single, specific data rows via JSON requests.
@@ -25,7 +25,7 @@ class Api::V2::RemoteEditController < Api::BaseController
 
 
   # Default asynch wait period before creating a new ActiveJob instance
-  WAIT_MINS_BEFORE_JOB_CREATE = 3.minutes
+  WAIT_MINS_BEFORE_JOB_CREATE = 5.minutes
   #-- -------------------------------------------------------------------------
   #++
 
@@ -54,6 +54,7 @@ class Api::V2::RemoteEditController < Api::BaseController
   # === Additional Parameters:
   # - "time" => incremental timing value as text (e.g.: "1'15\"00")
   # - "r"    => reaction_time as text (e.g.: "0\"65")
+  # - "l"    => Request href/document.location
   #
   # === Returns:
   #
@@ -66,6 +67,7 @@ class Api::V2::RemoteEditController < Api::BaseController
     swimmer_id  = params['s'].to_i
     timing_text   = params['time'].to_s
     reaction_text = params['r'].to_s
+    req_url       = params['l'].to_s
 
     unless mrr && (relay_order > 0)                 # Nothing to do, bail out:
       render( status: 400, json: { result: "error", message: I18n.t("api.errors.invalid_request") } ) and return
@@ -80,7 +82,7 @@ class Api::V2::RemoteEditController < Api::BaseController
 
     elsif result                                    # --- CREATE / UPDATE / DELETE performed ---
       # Add SQL text to AppParameter:
-      serialize_into_app_parameters!( updater, I18n.t('passages.relay_athlete').upcase )
+      serialize_into_app_parameters!( updater, I18n.t('passages.relay_athlete').upcase, req_url )
       # Launch delayed Job to send the DB-diff to the SysOp using the remote-editing
       # dedicated named queue ('edit'):
       SendDbDiffJob.set( queue: :edit, wait: WAIT_MINS_BEFORE_JOB_CREATE ).perform_later
@@ -120,6 +122,7 @@ class Api::V2::RemoteEditController < Api::BaseController
   # - "s"    => Swimmer.id
   # - "te"   => Team.id
   # - "mir"  => MeetingIndividualResult ID (when available)
+  # - "l"    => Request href/document.location
   #
   # === Returns:
   #
@@ -137,6 +140,7 @@ class Api::V2::RemoteEditController < Api::BaseController
     swimmer_id      = params['s']
     team_id         = params['te']
     mir_id          = params['mir']
+    req_url         = params['l'].to_s
 
     if passage.nil? && !timing_text.present?        # Nothing to do, bail out:
       render( status: 400, json: { result: "error", message: I18n.t("api.errors.invalid_request") } ) and return
@@ -152,7 +156,7 @@ class Api::V2::RemoteEditController < Api::BaseController
 
     elsif result                                    # --- CREATE / UPDATE / DELETE performed ---
       # Add SQL text to AppParameter:
-      serialize_into_app_parameters!( updater, I18n.t('passages.index_title').upcase )
+      serialize_into_app_parameters!( updater, I18n.t('passages.index_title').upcase, req_url )
       # Launch delayed Job to send the DB-diff to the SysOp using the remote-editing
       # dedicated named queue ('edit'):
       SendDbDiffJob.set( queue: :edit, wait: WAIT_MINS_BEFORE_JOB_CREATE ).perform_later
@@ -196,6 +200,7 @@ class Api::V2::RemoteEditController < Api::BaseController
   # - "rn"    => MeetingRelayReservation notes text
   #              (relay specific, using the format "<relay name>';'<relay_order>")
   # - "n"     => MeetingReservation notes text (common HEADER)
+  # - "l"     => Request href/document.location
   #
   # === Returns:
   #
@@ -214,6 +219,7 @@ class Api::V2::RemoteEditController < Api::BaseController
     timing_text   = params['time'].to_s
     notes         = params['n']
     rel_notes     = params['rn']
+    req_url       = params['l'].to_s
 
     unless meeting_id.present? && badge_id.present? # Nothing to do, bail out:
 # DEBUG
@@ -233,7 +239,7 @@ class Api::V2::RemoteEditController < Api::BaseController
 
     elsif result                                    # --- CREATE / UPDATE / DELETE performed ---
       # Add SQL text to AppParameter:
-      serialize_into_app_parameters!( updater, I18n.t('meeting_reservation.manage_button_title').upcase )
+      serialize_into_app_parameters!( updater, I18n.t('meeting_reservation.manage_button_title').upcase, req_url )
       # Launch delayed Job to send the DB-diff to the SysOp using the remote-editing
       # dedicated named queue ('edit'):
       SendDbDiffJob.set( queue: :edit, wait: WAIT_MINS_BEFORE_JOB_CREATE ).perform_later
@@ -255,7 +261,7 @@ class Api::V2::RemoteEditController < Api::BaseController
   #
   # The updater is supposed to respond to the SqlConvertable interface.
   #
-  def serialize_into_app_parameters!( updater, edit_description )
+  def serialize_into_app_parameters!( updater, edit_description, req_url )
 # DEBUG
 #   puts "\r\nserialize_into_app_parameters for code: #{ 100000 + current_user.id }"
     app_parameter = AppParameter.find_or_create_by!( code: 100000 + current_user.id )
@@ -267,9 +273,13 @@ class Api::V2::RemoteEditController < Api::BaseController
     end
 
     app_parameter.update( free_text_1: new_text )
-    # Store descriptions of the editings
+    # Store editing descriptions:
     app_parameter.update(
-      free_text_2: (app_parameter.free_text_2.to_s.split(', ') << edit_description).uniq.join(', ')
+      free_text_2: ( app_parameter.free_text_2.to_s.split(', ') << edit_description ).uniq.join(', ')
+    )
+    # Store Request URL:
+    app_parameter.update(
+      free_text_3: ( app_parameter.free_text_3.to_s.split("\r\n") + req_url.to_s.split("\r\n") ).uniq.join("\r\n")
     )
 # DEBUG
 #    app_parameter.reload
