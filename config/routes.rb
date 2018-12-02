@@ -81,6 +81,7 @@ Rails.application.routes.draw do
       get 'meeting_reservations/show'
       get 'meeting_reservations/printout_event_sheet'
       get 'meeting_reservations/export_csi_csv'
+      get 'meeting_reservations/export_fin_csv_matrix'
       get 'meeting_reservations/relayometer'
       post 'meeting_reservations/relayometer'
 

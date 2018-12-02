@@ -203,3 +203,6 @@ en:
     export_csi_csv_no_reservations_found_error: "There are reservations data to be exported!"
     relayometer_title: "Relay-o-meter"
     relayometer_description: "The Relay-o-meter analyzes the current relay availability of all the Team's swimmers, and proposes new relay configuration solutions, optimized mainly for performance. When the result is presented, you can either accept some or none of the resulting configurations. Each configuration can then be edited endlessly in the dedicated tab page."
+    export_fin_csv_button_title: "&nbsp;Export FIN data in CSV"
+    export_fin_csv_button_tooltip: "Click to download in CSV format the reservation data for this FIN Supermaster Meeting."
+    export_fin_csv_invalid_meeting_error: "Not a valid Meeting for FIN reservations data-export!"

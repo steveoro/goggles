@@ -201,6 +201,7 @@ it:
         contact_name: "Contatto"
         badge_number: "N.Cartellino"
         zip: CAP
+        home_page_url: "Sito internet"
       training:
         title: "Titolo"
         description: "Descrizione"

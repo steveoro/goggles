@@ -203,3 +203,6 @@ it:
     export_csi_csv_no_reservations_found_error: "Non ci sono dati di prenotazione da esportare!"
     relayometer_title: "Staffettometro"
     relayometer_description: "Lo Staffettometro analizza la disponibilità corrente alle staffette di tutti gli atleti in squadra e cerca di proporre nuove configurazioni di staffetta, ottimizzate principalmente in base alle performance. Un volta presentati i risultati, puoi sia accettare alcuni o nessuno dei risultati proposti. Ogni configurazione può poi essere modificata in seguito manualmente, ogni volta che si vuole, nella pagina (a fianco) apposta."
+    export_fin_csv_button_title: "&nbsp;Esporta dati FIN in CSV"
+    export_fin_csv_button_tooltip: "Clicca per scaricare in formato CSV i dati di prenotazione per questo meeting del Circuito Supermaster FIN"
+    export_fin_csv_invalid_meeting_error: "Non è un Meeting valido per l'esportazione dati prenotazioni FIN!"

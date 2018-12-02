@@ -3,6 +3,7 @@ require 'common/format'
 require 'wrappers/timing'
 require 'team_manager_validator'
 require 'reservations_csi_2_csv'
+require 'reservations_fin_2_csv_matrix'
 
 
 =begin
@@ -21,7 +22,7 @@ class MeetingReservationsController < ApplicationController
   # Parse parameters:
   before_action :verify_meeting_and_association
 
-  before_action :redirect_to_show_if_meeting_closed, except: [:show, :printout_event_sheet, :export_csi_csv]
+  before_action :redirect_to_show_if_meeting_closed, except: [:show, :printout_event_sheet, :export_csi_csv, :export_fin_csv_matrix]
 
 
   # Edits the reservations for the selected meeting, for the whole team
@@ -256,6 +257,38 @@ class MeetingReservationsController < ApplicationController
 
     send_data(                                      # == Send the collected data:
         csi_2_csv.output_text,
+        type: 'text/csv',
+        filename: @meeting.get_data_import_file_name('isc', 'csv')
+    )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Collects the reservation data for the specified Meeting ID and outputs a
+  # custom CSV text file, used as exchange data format in between C.S.I. regional organizations.
+  #
+  # This is a Team-manager restricted action.
+  #
+  def export_fin_csv_matrix
+    unless TeamManagerValidator.can_manage?( current_user, @meeting )
+      flash[:error] = I18n.t('meeting.errors.invalid_team_manager_or_no_swimmer')
+      redirect_to( meetings_current_path() ) and return
+    end
+    unless ReservationsFin2CsvMatrix.is_a_valid_meeting( @meeting )
+      flash[:error] = I18n.t('meeting_reservation.export_fin_csv_invalid_meeting_error')
+      redirect_to( meetings_current_path() ) and return
+    end
+    fin_2_csv = ReservationsFin2CsvMatrix.new( @meeting, @team )
+    fin_2_csv.collect()
+
+    if fin_2_csv.fin_data_rows.size < 1
+      flash[:warning] = I18n.t('meeting_reservation.export_fin_csv_no_reservations_found_error')
+      redirect_to( meetings_current_path() ) and return
+    end
+
+    send_data(                                      # == Send the collected data:
+        fin_2_csv.output_text,
         type: 'text/csv',
         filename: @meeting.get_data_import_file_name('isc', 'csv')
     )
