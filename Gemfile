@@ -81,7 +81,7 @@ gem 'generator'
 gem 'zip'
 
 
-# [Steve, 20181221] Security update:
+# [Steve, 20181221] *** Security updates: ***
 gem "ffi", "~> 1.9.25"
 gem 'rubyzip', '~> 1.2.2', require: 'zip/zip'
 
