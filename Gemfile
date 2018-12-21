@@ -80,8 +80,11 @@ gem "nokogiri"                                      # Used for HTML DOCModel eas
 gem 'generator'
 gem 'zip'
 
-# [Steve, 20181027] Fix for potential vulnerability w/ specific version:
+
+# [Steve, 20181221] Security update:
+gem "ffi", "~> 1.9.25"
 gem 'rubyzip', '~> 1.2.2', require: 'zip/zip'
+
 
 gem "recaptcha", require: "recaptcha/rails"
 gem 'kaminari'

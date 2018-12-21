@@ -208,7 +208,7 @@ GEM
       railties (>= 3.0.0)
     fastercsv (1.5.5)
     ffaker (2.8.0)
-    ffi (1.9.18)
+    ffi (1.9.25)
     font-awesome-rails (4.7.0.2)
       railties (>= 3.2, < 5.2)
     formatador (0.2.5)
@@ -550,6 +550,7 @@ DEPENDENCIES
   execjs
   factory_bot_rails
   ffaker
+  ffi (~> 1.9.25)
   font-awesome-rails
   generator
   goggles_core!
