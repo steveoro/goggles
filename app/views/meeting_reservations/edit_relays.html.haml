@@ -13,7 +13,7 @@
       - if @is_valid_team_manager || ( @swimmer && (@swimmer.id == reservation.swimmer_id))
         %tr
           %td{ colspan: 2, class: 'info' }
-            = render( partial: 'header_row_first_cell', locals: { badge: badge, reservation: reservation, is_invalid_team_manager: !@is_valid_team_manager } )
+            = render( partial: 'header_row_first_cell', locals: { badge: badge, reservation: reservation, is_invalid_team_manager: !@is_valid_team_manager, is_relays_reservation: true } )
 
           -# Only team managers can edit any row; a simple swimmer can edit only his/her own row.
           -# (if the reservation hasn't been already confirmed to the manager and the meeting

@@ -7,17 +7,18 @@
       = reservation.is_not_coming ? I18n.t('meeting_reservation.not_coming') : I18n.t('meeting_reservation.coming')
       = I18n.t('meeting_reservation.add_maybe') if !reservation.has_confirmed
 - else                                  # Show full controls for team managers:
-  .row-fluid
-    - skip_dom_id = "skip#{ badge.id }"
-    .switch-box.is-danger
-      %input{ id: skip_dom_id, class: "switch-box-input", type: "checkbox",     |
-              disabled: is_invalid_team_manager && reservation.has_confirmed,   |
-              checked: reservation.is_not_coming,                               |
-              onclick: "toggleSkipRowControls( #{ badge.id } );" }              |
-      %label{ for: skip_dom_id, class: "switch-box-slider" }
-      %label{ for: skip_dom_id, class: "switch-box-label" }
-        %small
-          %i= I18n.t('meeting_reservation.is_not_coming')
+  - unless is_relays_reservation
+    .row-fluid
+      - skip_dom_id = "skip#{ badge.id }"
+      .switch-box.is-danger
+        %input{ id: skip_dom_id, class: "switch-box-input", type: "checkbox",     |
+                disabled: is_invalid_team_manager && reservation.has_confirmed,   |
+                checked: reservation.is_not_coming,                               |
+                onclick: "toggleSkipRowControls( #{ badge.id } );" }              |
+        %label{ for: skip_dom_id, class: "switch-box-slider" }
+        %label{ for: skip_dom_id, class: "switch-box-label" }
+          %small
+            %i= I18n.t('meeting_reservation.is_not_coming')
   - unless is_invalid_team_manager
     .row-fluid
       - confirm_dom_id = "confirm#{ badge.id }"
