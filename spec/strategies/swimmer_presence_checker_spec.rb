@@ -13,11 +13,16 @@ describe SwimmerPresenceChecker, type: :strategy do
 
   let(:fix_meeting )    { Meeting.find( [18101,18205,18102,17224,18224,17205].sample ) }
   let(:new_meeting )    { create( :meeting ) }
+  let(:carpi )          { Meeting.find( 18101 ) }
+  let(:parma )          { Meeting.find( 18102 ) }
+
+  let(:fix_season )     { Season.find( 181 ) }
 
   subject { SwimmerPresenceChecker.new(fix_swimmer, fix_date) }
 
   describe "[a well formed instance]" do
     it_behaves_like( "(the existance of a method returning non-empty strings)", [
+      :header_year,
       :get_current_header_year
     ])
     
@@ -103,7 +108,6 @@ describe SwimmerPresenceChecker, type: :strategy do
     it "return true for a swimmer with entries and w/o results" do
       # Federico Attolini has only entries for csiprova1 2018 (Carpi)
       attolini = Swimmer.find(51)
-      carpi = Meeting.find(18101)
       spc = SwimmerPresenceChecker.new(attolini, date_1819)
       expect( spc.has_swimmer_attended_meeting(carpi) ).to eq(true)
     end
@@ -197,6 +201,54 @@ describe SwimmerPresenceChecker, type: :strategy do
       yes_relays = Meeting.find( 18234 )
       spc = SwimmerPresenceChecker.new(leega, date_1819)
       expect( spc.count_swimmer_relays(yes_relays) ).to eq(2)
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  describe "#count_swimmer_events" do
+    it "returns 0 for a new meeting" do
+      expect( subject.count_swimmer_events( new_meeting ) ).to eq(0)
+    end
+
+    it "returns 0 for a new swimmer" do
+      spc = SwimmerPresenceChecker.new( new_swimmer, fix_date)
+      expect( spc.count_swimmer_events(fix_meeting) ).to eq(0)
+    end
+
+    it "return 1 for a swimmer who swam only one event" do
+      # Ganga swam only 1 event in csi prova 2 (Parma)
+      spc = SwimmerPresenceChecker.new(ganga, date_1819)
+      expect( spc.count_swimmer_events( parma ) ).to eq(1)
+    end
+
+    it "return 2 for a swimmer who swam only one event but reserverd two" do
+      # Ganga swam only 1 event but reserved 2 in csi prova 1 (Carpi)
+      spc = SwimmerPresenceChecker.new(ganga, date_1819)
+      expect( spc.count_swimmer_events( carpi ) ).to eq(2)
+    end
+
+    it "return 2 for a swimmer who swam two events" do
+      # Leega swam CSI relays
+      spc = SwimmerPresenceChecker.new(leega, date_1819)
+      two_events = Meeting.find( [18101, 18102, 18224, 18234].sample )
+      expect( spc.count_swimmer_events(two_events) ).to eq(2)
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  describe "#scan_season" do
+    it "returns a number" do
+      expect( subject.scan_season( fix_season ) ).to be >= 0
+    end
+
+    it "returns no more than season total meetings" do
+      expect( subject.scan_season( fix_season ) ).to be <= fix_season.meetings.has_results.count
+    end
+
+    it "returns at least 2 meetings for Leega/attolini/Steve/Ganga in 2018/2019 CSI" do
+      expect( subject.scan_season( fix_season ) ).to be >= 2
     end
   end
   #-- -------------------------------------------------------------------------

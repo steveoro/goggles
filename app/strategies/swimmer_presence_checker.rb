@@ -93,16 +93,14 @@ class SwimmerPresenceChecker
   # The swimmer events are the highest in entries, individual results and confirmed reservation events
   #
   def count_swimmer_events( meeting )
-    events = 0
-
     # Count meeting individual results
     mir_events = MeetingIndividualResult.joins( :meeting_session ).where( ['meeting_individual_results.swimmer_id = ? and meeting_sessions.meeting_id = ?', @swimmer.id, meeting.id] ).count
     # Count meeting entries
     entry_events = MeetingEntry.joins( :meeting_session ).where( ['meeting_entries.swimmer_id = ? and meeting_sessions.meeting_id = ?', @swimmer.id, meeting.id] ).count
     # Count confirmed reservation
-    res_events = MeetingEventReservation.where( ['meeting_event_reservations.swimmer_id = ? and meeting_event_reservations.meeting_id = ? and meeting_event_reservations.is_doing_this', @swimmer.id, meeting.id] ).exists?
-
-    events
+    res_events = MeetingEventReservation.joins("INNER JOIN meeting_reservations ON meeting_reservations.swimmer_id = meeting_event_reservations.swimmer_id AND meeting_reservations.meeting_id = meeting_event_reservations.meeting_id").where( ['meeting_event_reservations.swimmer_id = ? and meeting_event_reservations.meeting_id = ? and meeting_event_reservations.is_doing_this and meeting_reservations.has_confirmed', @swimmer.id, meeting.id] ).count
+    # Find max value
+    [mir_events, entry_events, res_events].max
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -111,6 +109,24 @@ class SwimmerPresenceChecker
   #
   def count_swimmer_relays( meeting )
     MeetingRelayResult.joins( :meeting_session, :meeting_relay_swimmers ).where( ['meeting_relay_swimmers.swimmer_id = ? and meeting_sessions.meeting_id = ?', @swimmer.id, meeting.id] ).count
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+  
+  # Scan a season to find meeting with swimmer presence
+  # Returns numeber of attended meeting found
+  #
+  def scan_season( season )
+    season.meetings.has_results.each do |meeting|
+      if has_swimmer_attended_meeting( meeting )
+        mp = SwimmerPresenceDAO::MeetingPresenceDAO.new( meeting )
+        mp.was_present = true
+        mp.events_count = count_swimmer_events( meeting )
+        mp.relays_count = count_swimmer_relays( meeting )
+        @swimmer_presence_dao.add_meeting( mp )
+      end
+    end
+    @swimmer_presence_dao.meetings.count
   end
   #-- -------------------------------------------------------------------------
   #++
