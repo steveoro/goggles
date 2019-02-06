@@ -12,6 +12,7 @@
   = show_tab_link( params, 'best_timings', t('radiography.best_timings_tab'), swimmer_best_timings_path(id: @swimmer.id) )
   = show_tab_link( params, 'full_history_1', t('radiography.full_history_by_date'), swimmer_full_history_1_path(id: @swimmer.id) )
   = show_tab_link( params, 'full_history_2', t('radiography.full_history_by_event'), swimmer_full_history_2_path(id: @swimmer.id) )
+  = show_tab_link( params, 'presence', t('radiography.presence'), swimmer_presence_path(id: @swimmer.id) )
   -#= show_tab_link( params, 'trainings', t('radiography.trainings_tab'), swimmer_trainings_path(id: @swimmer.id) )
 
 .col-xs-12.goggles-category-gap

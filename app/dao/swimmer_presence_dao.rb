@@ -16,31 +16,66 @@ class SwimmerPresenceDAO
   class MeetingPresenceDAO
    
     # These must be initialized on creation:
-    attr_reader :meeting
+    attr_reader :season_id, :season_name, :meeting_id, :header_date, :description, :meeting_fee, :event_fee, :relay_fee
   
     # These can be edited later on:
     attr_accessor :was_present, 
                   :events_count, :relays_count, 
-                  :det_reservations_count, :det_entries_count, :det_results_count,
-                  :total_fee,
-                  :meeting_fee, :events_fee, :relays_fee 
+                  :det_reservations_count, :det_entries_count, :det_results_count
     #-- -------------------------------------------------------------------------
     #++
   
     # Creates a new instance
     #
-    def initialize( meeting )    
-      @meeting = meeting
+    def initialize( meeting, season )    
+      @season_id   = season.id
+      @season_name = season.description
+      @meeting_id  = meeting.id
+      @header_date = meeting.header_date
+      @description = meeting.description
+
+      @meeting_fee = meeting.meeting_fee ? meeting.meeting_fee : 0
+      @event_fee   = meeting.event_fee ? meeting.event_fee : 0
+      @relay_fee   = meeting.relay_fee ? meeting.relay_fee : 0
+
+      # Defaults
+      @was_present = false
+      @events_count = 0
+      @relays_count = 0 
+      @det_reservations_count = 0
+      @det_entries_count = 0
+      @det_results_count = 0
     end
     #-- -------------------------------------------------------------------------
     #++
+
+    # Calculate events fee
+    # Returns 0 if no data
+    #
+    def get_events_fee
+      @event_fee * ( @events_count ? @events_count : 0) 
+    end
+    
+    # Calculate relays fee
+    # Returns 0 if no data
+    #
+    def get_relays_fee
+      @relay_fee * ( @relays_count ? @relays_count : 0) 
+    end
+    
+    # Calculate total fee
+    # Returns 0 if no data
+    #
+    def get_total_fee
+      @meeting_fee + get_events_fee + get_relays_fee
+    end
   end
     
   # These must be initialized on creation:
-  attr_reader :swimmer, :header_year
+  attr_reader :swimmer_id, :complete_name, :evaluation_date, :header_year
 
   # These can be edited later on:
-  attr_accessor :seasons, :meetings
+  attr_accessor :meetings
   #-- -------------------------------------------------------------------------
   #++
 
@@ -49,11 +84,12 @@ class SwimmerPresenceDAO
   # header_year is the season header year of the seasons to inspect. If nil 
   # takes the current seasons 
   #
-  def initialize( swimmer, header_year )    
-    @swimmer     = swimmer
-    @header_year = header_year 
-    @seasons     = []
-    @meetings    = []
+  def initialize( swimmer, evaluation_date, header_year )    
+    @swimmer_id      = swimmer.id
+    @complete_name   = swimmer.complete_name
+    @evaluation_date = evaluation_date 
+    @header_year     = header_year 
+    @meetings        = []
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -70,29 +106,47 @@ class SwimmerPresenceDAO
 
   # Create a CSV file (; delimited) with swimmer presence data
   #
-  def to_csv( csv_file_name = 'SwimmerPresence_' + @swimmer.id.to_s )
-    rows = []
-
-    File.open( csv_file_name + '.csv', 'w' ) do |f|
-      file_titles = ['season_type', 'meeting_date', 'meeting_name', 'events_count', 'relays_count', 'meeting_fee', 'events_fee', 'relays_fee', 'total_fee']
-      rows << file_titles.join(';')
+  def to_csv( csv_file_name = 'SwimmerPresence_' + @swimmer_id.to_s )
+    # Check if at least one meeting present
+    done = false
+    if @meetings.size > 0
+      rows = []
       
-      @meetings.each do |meeting| 
-        file_row = []
-        file_row << meeting.meeting.season.season_type.code
-        file_row << meeting.meeting.header_date
-        file_row << meeting.meeting.description
-        file_row << meeting.events_count
-        file_row << meeting.relays_count
-        file_row << meeting.meeting_fee
-        file_row << meeting.events_fee
-        file_row << meeting.relays_fee
-        file_row << meeting.total_fee
-        rows << file_row.join(';')
+      File.open( csv_file_name + '.csv', 'w' ) do |f|
+        # Define file column headers
+        file_titles = []
+        file_titles << 'complete_name'
+        file_titles << 'season_type'
+        file_titles << 'meeting_date'
+        file_titles << 'meeting_name'
+        file_titles << 'events_count'
+        file_titles << 'relays_count'
+        file_titles << 'meeting_fee'
+        file_titles << 'events_fee'
+        file_titles << 'relays_fee'
+        file_titles << 'total_fee'
+        rows << file_titles.join(';')
+        
+        @meetings.each do |mpDAO| 
+          file_row = []
+          file_row << mpDAO.complete_name
+          file_row << mpDAO.season_name
+          file_row << mpDAO.header_date
+          file_row << mpDAO.description
+          file_row << mpDAO.events_count
+          file_row << mpDAO.relays_count
+          file_row << mpDAO.meeting_fee
+          file_row << mpDAO.events_fee
+          file_row << mpDAO.relays_fee
+          file_row << mpDAO.total_fee
+          rows << file_row.join(';')
+        end
+  
+        f.puts rows.map{ |row| row }
       end
-
-      f.puts rows.map{ |row| row }
+      done = true
     end
+    done
   end
   #-- -------------------------------------------------------------------------
   #++

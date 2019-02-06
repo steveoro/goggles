@@ -23,7 +23,7 @@ describe SwimmerPresenceChecker, type: :strategy do
   describe "[a well formed instance]" do
     it_behaves_like( "(the existance of a method returning non-empty strings)", [
       :header_year,
-      :get_current_header_year
+      :get_date_header_year
     ])
     
     it_behaves_like( "(the existance of a method with parameters, returning boolean values)", [
@@ -39,15 +39,18 @@ describe SwimmerPresenceChecker, type: :strategy do
   #-- -------------------------------------------------------------------------
   #++
   
-  describe "#get_current_header_year" do
-    it "returns a string current year" do
-      expect( subject.get_current_header_year ).to include( Date.today().year.to_s )
+  describe "#get_date_header_year" do
+    it "returns a string containing the current year if no date given" do
+      expect( subject.get_date_header_year ).to include( Date.today().year.to_s )
+    end
+    it "returns a string containing the year of the given date" do
+      expect( subject.get_date_header_year(fix_date) ).to include( fix_date.year.to_s )
     end
     it "returns a string containing / separator" do
-      expect( subject.get_current_header_year ).to include( '/' )
+      expect( subject.get_date_header_year ).to include( '/' )
     end
     it "returns a string 9 cars long" do
-      expect( subject.get_current_header_year.length ).to eq( 9 )
+      expect( subject.get_date_header_year.length ).to eq( 9 )
     end
   end
   #-- -------------------------------------------------------------------------

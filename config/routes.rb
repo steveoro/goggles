@@ -129,6 +129,7 @@ Rails.application.routes.draw do
       get  "swimmer/regionalercsi/:id",         to: "swimmers#regionalercsi",           as: "swimmer_regionalercsi"
       get  "swimmer/trainings/:id",             to: "swimmers#trainings",               as: "swimmer_trainings"
       get  "swimmer/closed_goggle_cup/:id",     to: "swimmers#closed_goggle_cup",       as: "swimmer_closed_goggle_cup"
+      get  "swimmer/presence/:id",              to: "swimmers#presence",                as: "swimmer_presence"
 
       # === Taggings (Meeting or Swimmer) ===
       post 'taggings/meeting_for_user/:id',     to: "taggings#meeting_for_user",        as: "taggings_meeting_for_user"

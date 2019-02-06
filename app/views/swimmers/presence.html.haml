@@ -1,0 +1,22 @@
+= render( partial: 'tabs_and_title' )
+
+.col-xs-12.goggles-category-gap#swimmer_goggle_cup
+  %table.table.table-striped.table-bordered.table-hover.table-condensed
+    %tbody
+      %tr{'class'=>'info'}
+        %td.text-center
+          I18n.t('presence')
+      %tr{'class'=>'info'}
+        %td.text-center
+          I18n.t('date')
+        %td.text-center
+          %b= I18n.t('meeting')
+
+
+      - @spDAO.meetings.each do |mpDAO|
+        %tr
+          %td
+            %b= mpDAO.header_date
+          %td
+            %b= mpDAO.description
+  

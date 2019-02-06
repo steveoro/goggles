@@ -4,7 +4,7 @@ require 'wrappers/timing'
 # == SwimmerPresenceChecker
 #
 # Pattern to calcolate swimmer presence to meetings
-# A presence to a meeting is defined by an entry, an individuale result or a relay result
+# A presence to a meeting is defined by a confirmed reservation, an entry, an individual result or a relay result
 #
 # @author   Leega
 # @version  6.093
@@ -12,25 +12,24 @@ require 'wrappers/timing'
 class SwimmerPresenceChecker
 
   # These must be initialized on creation:
-  attr_reader :swimmer, :evaluation_date
+  attr_reader :swimmer, :evaluation_date, :header_year
 
   # These can be edited later on:
-  attr_accessor :header_year, :swimmer_presence_dao
+  attr_accessor :swimmer_presence_dao
 
   # Initialization
   #
   # == Params:
   # The swimmer to check for
   # The evaluation date to chek for (default today)
-  # The evaluation date determines the seasons to consider
+  # The header_year of seasons to consider (default the header_year according to evaluation_date)
   #
-  def initialize( swimmer, evaluation_date = Date.today() )
+  def initialize( swimmer, evaluation_date = Date.today(), header_year = get_date_header_year() )
     @swimmer         = swimmer
     @evaluation_date = evaluation_date
-    @header_year     = get_current_header_year()
+    @header_year     = header_year
 
-
-    @swimmer_presence_dao = SwimmerPresenceDAO.new( @swimmer, @header_year )
+    @swimmer_presence_dao = SwimmerPresenceDAO.new( @swimmer, @evaluation_date, @header_year )
   end
   #-- --------------------------------------------------------------------------
   #++
@@ -38,8 +37,8 @@ class SwimmerPresenceChecker
   # Get the current header year using given date
   # Use current date if no date given
   #
-  def get_current_header_year()
-    year = @evaluation_date.month < 10 ? @evaluation_date.year - 1 : @evaluation_date.year
+  def get_date_header_year( evaluation_date = Date.today() )
+    year = evaluation_date.month < 10 ? evaluation_date.year - 1 : evaluation_date.year
     "#{year}/#{year+1}"   
   end
   #-- -------------------------------------------------------------------------
@@ -56,7 +55,7 @@ class SwimmerPresenceChecker
   # Get the seasons for the given header year where swimmer has badge
   #
   def get_swimmer_current_seasons()
-    Season.where( header_year: get_current_header_year() ).where( ['exists (select 1 from badges where season_id = seasons.id and swimmer_id=?)', @swimmer.id] )  
+    Season.where( header_year: @header_year ).where( ['exists (select 1 from badges where season_id = seasons.id and swimmer_id=?)', @swimmer.id] )  
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -119,10 +118,11 @@ class SwimmerPresenceChecker
   def scan_season( season )
     season.meetings.has_results.each do |meeting|
       if has_swimmer_attended_meeting( meeting )
-        mp = SwimmerPresenceDAO::MeetingPresenceDAO.new( meeting )
+        mp = SwimmerPresenceDAO::MeetingPresenceDAO.new( meeting, season )
         mp.was_present = true
         mp.events_count = count_swimmer_events( meeting )
         mp.relays_count = count_swimmer_relays( meeting )
+        
         @swimmer_presence_dao.add_meeting( mp )
       end
     end

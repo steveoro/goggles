@@ -688,6 +688,24 @@ class SwimmersController < ApplicationController
   #-- -------------------------------------------------------------------------
   #++
 
+  # Radiography for a specified swimmer id: "Presence" tab rendering.
+  # Show swimmer presence in the current seasons
+  #
+  # == Params:
+  # id: the swimmer id to be processed
+  #
+  def presence
+    # --- "Presence" tab: ---
+    @tab_title = I18n.t('radiography.presence_tab')
+
+    spc = SwimmerPresenceChecker.new(@swimmer, Date.today())
+    @current_seasons = spc.get_swimmer_current_seasons()
+    @current_seasons.each do |season|
+      spc.scan_season( season )
+    end 
+    @spDAO = spc.swimmer_presence_dao
+  end
+
 
   private
 
