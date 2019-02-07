@@ -88,18 +88,41 @@ class SwimmerPresenceChecker
   #-- -------------------------------------------------------------------------
   #++
     
+  # Count swimmer events swam for the given meeting
+  # The swimmer events swam are the number of individual results
+  #
+  def count_swimmer_mirs( meeting )
+    # Count meeting individual results
+    MeetingIndividualResult.joins( :meeting_session ).where( ['meeting_individual_results.swimmer_id = ? and meeting_sessions.meeting_id = ?', @swimmer.id, meeting.id] ).count
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+  
+  # Count swimmer entries for the given meeting
+  # Note that entries aren't always managed
+  #
+  def count_swimmer_entries( meeting )
+    # Count meeting entries
+    MeetingEntry.joins( :meeting_session ).where( ['meeting_entries.swimmer_id = ? and meeting_sessions.meeting_id = ?', @swimmer.id, meeting.id] ).count
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+  
+  # Count swimmer reservations for the given meeting
+  # Note that reservations aren't always managed
+  #
+  def count_swimmer_reservations( meeting )
+    # Count meeting entries
+    MeetingEventReservation.joins("INNER JOIN meeting_reservations ON meeting_reservations.swimmer_id = meeting_event_reservations.swimmer_id AND meeting_reservations.meeting_id = meeting_event_reservations.meeting_id").where( ['meeting_event_reservations.swimmer_id = ? and meeting_event_reservations.meeting_id = ? and meeting_event_reservations.is_doing_this and meeting_reservations.has_confirmed', @swimmer.id, meeting.id] ).count
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+  
   # Count swimmer events for the given meeting
   # The swimmer events are the highest in entries, individual results and confirmed reservation events
   #
   def count_swimmer_events( meeting )
-    # Count meeting individual results
-    mir_events = MeetingIndividualResult.joins( :meeting_session ).where( ['meeting_individual_results.swimmer_id = ? and meeting_sessions.meeting_id = ?', @swimmer.id, meeting.id] ).count
-    # Count meeting entries
-    entry_events = MeetingEntry.joins( :meeting_session ).where( ['meeting_entries.swimmer_id = ? and meeting_sessions.meeting_id = ?', @swimmer.id, meeting.id] ).count
-    # Count confirmed reservation
-    res_events = MeetingEventReservation.joins("INNER JOIN meeting_reservations ON meeting_reservations.swimmer_id = meeting_event_reservations.swimmer_id AND meeting_reservations.meeting_id = meeting_event_reservations.meeting_id").where( ['meeting_event_reservations.swimmer_id = ? and meeting_event_reservations.meeting_id = ? and meeting_event_reservations.is_doing_this and meeting_reservations.has_confirmed', @swimmer.id, meeting.id] ).count
-    # Find max value
-    [mir_events, entry_events, res_events].max
+    [count_swimmer_mirs( meeting ), count_swimmer_entries( meeting ), count_swimmer_reservations( meeting )].max
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -115,12 +138,15 @@ class SwimmerPresenceChecker
   # Scan a season to find meeting with swimmer presence
   # Returns numeber of attended meeting found
   #
-  def scan_season( season )
+  def scan_season( season, compute_costs = false )
     season.meetings.has_results.each do |meeting|
       if has_swimmer_attended_meeting( meeting )
-        mp = SwimmerPresenceDAO::MeetingPresenceDAO.new( meeting, season )
-        mp.was_present = true
-        mp.events_count = count_swimmer_events( meeting )
+        mp = SwimmerPresenceDAO::MeetingPresenceDAO.new( meeting, season, compute_costs )
+        mp.det_reservations_count = count_swimmer_reservations( meeting )
+        mp.det_entries_count = count_swimmer_entries( meeting )
+        mp.det_results_count = count_swimmer_mirs( meeting )
+        mp.was_present = (mp.det_results_count > 0) 
+        mp.events_count = [mp.det_reservations_count, mp.det_entries_count, mp.det_results_count].max  # Maybe better move logic to DAO
         mp.relays_count = count_swimmer_relays( meeting )
         
         @swimmer_presence_dao.add_meeting( mp )

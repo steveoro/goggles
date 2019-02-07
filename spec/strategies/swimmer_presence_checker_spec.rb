@@ -33,6 +33,9 @@ describe SwimmerPresenceChecker, type: :strategy do
 
     it_behaves_like( "(the existance of a method with parameters, returning numeric values)", [
       :count_swimmer_relays,
+      :count_swimmer_mirs,
+      :count_swimmer_entries,
+      :count_swimmer_reservations,
       :count_swimmer_events
     ], Meeting.find(18224))
   end
@@ -222,12 +225,18 @@ describe SwimmerPresenceChecker, type: :strategy do
     it "return 1 for a swimmer who swam only one event" do
       # Ganga swam only 1 event in csi prova 2 (Parma)
       spc = SwimmerPresenceChecker.new(ganga, date_1819)
+      expect( spc.count_swimmer_reservations( parma ) ).to eq(1)
+      expect( spc.count_swimmer_entries( parma ) ).to eq(1)
+      expect( spc.count_swimmer_mirs( parma ) ).to eq(1)
       expect( spc.count_swimmer_events( parma ) ).to eq(1)
     end
 
     it "return 2 for a swimmer who swam only one event but reserverd two" do
       # Ganga swam only 1 event but reserved 2 in csi prova 1 (Carpi)
       spc = SwimmerPresenceChecker.new(ganga, date_1819)
+      expect( spc.count_swimmer_reservations( carpi ) ).to eq(2)
+      expect( spc.count_swimmer_entries( carpi ) ).to eq(2)
+      expect( spc.count_swimmer_mirs( carpi ) ).to eq(1)
       expect( spc.count_swimmer_events( carpi ) ).to eq(2)
     end
 

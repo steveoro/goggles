@@ -40,7 +40,7 @@ class MeetingDecorator < Draper::Decorator
   #
   def get_logo_for_season_type
     if object.season_type && object.season_type.code =~ /CSI/i
-      h.image_tag( 'logo_csi.png', size: '20x16' )
+      h.image_tag( 'logo_csi.png', size: '25x16' )
     elsif object.season_type && object.season_type.code =~ /FIN/i
       h.image_tag( 'logo_fin.png', size: '40x16' )
     elsif object.season_type && object.season_type.code =~ /UISP/i
@@ -59,6 +59,15 @@ class MeetingDecorator < Draper::Decorator
   #
   def get_linked_full_name
     h.link_to( get_full_name, meeting_show_full_path(id: object.id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.show_results_tooltip') } )
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  # Retrieves the meeting description
+  # with link to meeting result show full
+  #
+  def get_linked_full_name_with_logo
+    h.link_to( get_logo_for_season_type + ' ' + get_full_name, meeting_show_full_path(id: object.id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('meeting.show_results_tooltip') } )
   end
   #-- -------------------------------------------------------------------------
   #++

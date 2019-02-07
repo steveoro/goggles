@@ -701,8 +701,13 @@ class SwimmersController < ApplicationController
     spc = SwimmerPresenceChecker.new(@swimmer, Date.today())
     @current_seasons = spc.get_swimmer_current_seasons()
     @current_seasons.each do |season|
-      spc.scan_season( season )
+      current_badge = @swimmer.badges.where( season_id: season.id ).first
+      spc.scan_season( season, current_badge.has_to_pay_fees )
     end 
+
+    # Check if cost has to be shown
+    @costs = ( spc.get_swimmer_current_badges().where( :has_to_pay_fees == true ).count > 0 )
+    
     @spDAO = spc.swimmer_presence_dao
   end
 

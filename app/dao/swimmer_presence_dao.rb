@@ -16,7 +16,7 @@ class SwimmerPresenceDAO
   class MeetingPresenceDAO
    
     # These must be initialized on creation:
-    attr_reader :season_id, :season_name, :meeting_id, :header_date, :description, :meeting_fee, :event_fee, :relay_fee
+    attr_reader :season_id, :season_name, :season_type_logo, :meeting_id, :header_date, :description, :meeting_fee, :event_fee, :relay_fee
   
     # These can be edited later on:
     attr_accessor :was_present, 
@@ -27,16 +27,24 @@ class SwimmerPresenceDAO
   
     # Creates a new instance
     #
-    def initialize( meeting, season )    
-      @season_id   = season.id
-      @season_name = season.description
-      @meeting_id  = meeting.id
-      @header_date = meeting.header_date
-      @description = meeting.description
+    def initialize( meeting, season, compute_costs = false )    
+      @season_id        = season.id
+      @season_name      = season.description
+      @meeting_id       = meeting.id
+      @header_date      = meeting.header_date
+      
+      decorated_meeting = meeting.decorate
+      @description      = decorated_meeting.get_linked_full_name_with_logo
 
-      @meeting_fee = meeting.meeting_fee ? meeting.meeting_fee : 0
-      @event_fee   = meeting.event_fee ? meeting.event_fee : 0
-      @relay_fee   = meeting.relay_fee ? meeting.relay_fee : 0
+      if compute_costs
+        @meeting_fee = meeting.meeting_fee ? meeting.meeting_fee : 0.00
+        @event_fee   = meeting.event_fee ? meeting.event_fee : 0.00
+        @relay_fee   = meeting.relay_fee ? meeting.relay_fee : 0.00
+      else
+        @meeting_fee = 0.00
+        @event_fee   = 0.00
+        @relay_fee   = 0.00
+      end
 
       # Defaults
       @was_present = false
@@ -69,10 +77,43 @@ class SwimmerPresenceDAO
     def get_total_fee
       @meeting_fee + get_events_fee + get_relays_fee
     end
+    
+    # Returns meeting fee formatted
+    #
+    def get_meeting_fee_to_s
+      format_euro( @meeting_fee )  
+    end
+
+    # Returns events fee formatted
+    #
+    def get_events_fee_to_s
+      format_euro( get_events_fee )
+    end
+    
+    # Returns relays fee formatted
+    #
+    def get_relays_fee_to_s
+      format_euro( get_relays_fee )
+    end
+    
+    # Returns total fee formatted
+    #
+    def get_total_fee_to_s
+      format_euro( get_total_fee )
+    end
+
+    # Returns a formatted string rappresenting an Euro import
+    # If expose_zero, "0.00" if zero, "" otherwise
+    #
+    def format_euro( import, expose_zero = false, zero_filler = '--' )
+      import > 0 || expose_zero ? sprintf( "%02.2f", import ) : zero_filler  
+    end
   end
     
   # These must be initialized on creation:
-  attr_reader :swimmer_id, :complete_name, :evaluation_date, :header_year
+  attr_reader :swimmer_id, :complete_name, :evaluation_date, :header_year,
+              :tot_events, :tot_relays, :tot_was_presents,
+              :tot_meeting_fees, :tot_event_fees, :tot_relay_fees, :tot_total_fees
 
   # These can be edited later on:
   attr_accessor :meetings
@@ -90,6 +131,15 @@ class SwimmerPresenceDAO
     @evaluation_date = evaluation_date 
     @header_year     = header_year 
     @meetings        = []
+    
+    # Computated values
+    @tot_events       = 0
+    @tot_relays       = 0
+    @tot_was_presents = 0
+    @tot_meeting_fees = 0
+    @tot_event_fees   = 0
+    @tot_relay_fees   = 0
+    @tot_total_fees   = 0
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -99,6 +149,16 @@ class SwimmerPresenceDAO
   #
   def add_meeting( meeting_presence )    
     @meetings << meeting_presence
+
+    # Calculated values to increase speed
+    @tot_events       += meeting_presence.events_count
+    @tot_relays       += meeting_presence.relays_count
+    @tot_was_presents += 1 if meeting_presence.was_present
+    @tot_meeting_fees += meeting_presence.meeting_fee
+    @tot_event_fees   += meeting_presence.get_events_fee
+    @tot_relay_fees   += meeting_presence.get_relays_fee
+    @tot_total_fees   += meeting_presence.get_total_fee
+
     @meetings.count
   end
   #-- -------------------------------------------------------------------------

@@ -1,35 +1,58 @@
 = render( partial: 'tabs_and_title' )
 
+- columns = @costs ? 8 : 5
+
 .col-xs-12.goggles-category-gap#swimmer_goggle_cup
   %table.table.table-striped.table-bordered.table-hover.table-condensed
     %tbody
       %tr{'class'=>'info'}
-        %td.text-center{'colspan'=>'4'}
+        %td.text-center{'colspan'=>'5'}
           %b= I18n.t('presences.partecipation')
+        - if @costs
+          %td.text-center{'colspan'=>'4'}
+            %b= I18n.t('presences.costs')
       %tr{'class'=>'info'}
         %td
           %b= I18n.t('presences.date')
         %td
           %b= I18n.t('presences.meeting')
-        %td.text-right
+        %td.text-right{'data-toggle'=>'tooltip', 'title'=>"#{I18n.t('presences.event_explanation')}"}
           %b= I18n.t('presences.events')
         %td.text-right
           %b= I18n.t('presences.relays')
+        %td.text-center{'data-toggle'=>'tooltip', 'title'=>"#{I18n.t('presences.was_present_explanation')}"}
+          %b= I18n.t('presences.done')
+        - if @costs
+          %td.text-right
+            %b= I18n.t('presences.meeting')
+          %td.text-right{'data-toggle'=>'tooltip', 'title'=>"#{I18n.t('presences.event_explanation')}"}
+            %b= I18n.t('presences.events')
+          %td.text-right
+            %b= I18n.t('presences.relays')
+          %td.text-right
+            %b= I18n.t('presences.tot')
 
-      - tot_events_count = 0
-      - tot_relays_count = 0
-      - @spDAO.meetings.each do |mpDAO|
-        - tot_events_count += mpDAO.events_count
-        - tot_relays_count += mpDAO.relays_count
+      - @spDAO.meetings.sort{ |n,p| n.header_date <=> p.header_date }.each do |mpDAO|
         %tr
           %td
-            %b= mpDAO.header_date.to_s
+            = Format.a_date( mpDAO.header_date )
           %td
-            %b= mpDAO.description
+            = mpDAO.description
           %td.text-right
-            %b= mpDAO.events_count
+            = mpDAO.events_count
           %td.text-right
-            %b= mpDAO.relays_count
+            = mpDAO.relays_count
+          %td.text-center
+            = show_tag( mpDAO.was_present )
+          - if @costs
+            %td.text-right
+              = mpDAO.get_meeting_fee_to_s
+            %td.text-right
+              = mpDAO.get_events_fee_to_s
+            %td.text-right
+              = mpDAO.get_relays_fee_to_s
+            %td.text-right
+              = mpDAO.get_total_fee_to_s
   
       %tr{'class'=>'info'}
         %td
@@ -37,6 +60,17 @@
         %td
           %b= @spDAO.meetings.size
         %td.text-right
-          %b= tot_events_count
+          %b= @spDAO.tot_events
         %td.text-right
-          %b= tot_relays_count
+          %b= @spDAO.tot_relays
+        %td.text-right
+          %b= @spDAO.tot_was_presents
+        - if @costs
+          %td.text-right
+            %b= sprintf( "%02.2f", @spDAO.tot_meeting_fees )
+          %td.text-right
+            %b= sprintf( "%02.2f", @spDAO.tot_event_fees )
+          %td.text-right
+            %b= sprintf( "%02.2f", @spDAO.tot_relay_fees )
+          %td.text-right
+            %b= sprintf( "%02.2f", @spDAO.tot_total_fees )
