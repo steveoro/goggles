@@ -4,19 +4,39 @@
   %table.table.table-striped.table-bordered.table-hover.table-condensed
     %tbody
       %tr{'class'=>'info'}
-        %td.text-center
-          I18n.t('presence')
+        %td.text-center{'colspan'=>'4'}
+          %b= I18n.t('presences.partecipation')
       %tr{'class'=>'info'}
-        %td.text-center
-          I18n.t('date')
-        %td.text-center
-          %b= I18n.t('meeting')
+        %td
+          %b= I18n.t('presences.date')
+        %td
+          %b= I18n.t('presences.meeting')
+        %td.text-right
+          %b= I18n.t('presences.events')
+        %td.text-right
+          %b= I18n.t('presences.relays')
 
-
+      - tot_events_count = 0
+      - tot_relays_count = 0
       - @spDAO.meetings.each do |mpDAO|
+        - tot_events_count += mpDAO.events_count
+        - tot_relays_count += mpDAO.relays_count
         %tr
           %td
-            %b= mpDAO.header_date
+            %b= mpDAO.header_date.to_s
           %td
             %b= mpDAO.description
+          %td.text-right
+            %b= mpDAO.events_count
+          %td.text-right
+            %b= mpDAO.relays_count
   
+      %tr{'class'=>'info'}
+        %td
+          %b= I18n.t('presences.totals')
+        %td
+          %b= @spDAO.meetings.size
+        %td.text-right
+          %b= tot_events_count
+        %td.text-right
+          %b= tot_relays_count

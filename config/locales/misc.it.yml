@@ -1,7 +1,7 @@
 it:
   misc_main_menu:
     title: "Varie"
-    caledar: "Calendario"
+    calendar: "Calendario"
     pools: "Piscine"
     trainings: "Modelli Allenamento"
     user_trainings: "Allenamenti Utente"

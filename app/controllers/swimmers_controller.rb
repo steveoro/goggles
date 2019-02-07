@@ -696,7 +696,7 @@ class SwimmersController < ApplicationController
   #
   def presence
     # --- "Presence" tab: ---
-    @tab_title = I18n.t('radiography.presence_tab')
+    @tab_title = I18n.t('presences.title')
 
     spc = SwimmerPresenceChecker.new(@swimmer, Date.today())
     @current_seasons = spc.get_swimmer_current_seasons()

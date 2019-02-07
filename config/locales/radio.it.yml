@@ -97,3 +97,15 @@ it:
     ranking_rules: "Estratto del regolamento per il calcolo della classifica individuale"
     how_to_meeting_score: 'Il punteggio di ogni prova è calcolato prendendo in considerazione il piazzamento (max 100 punti), il valore della performance (punteggio tabellare su base 100) ed il miglioramento individuale (max 10 punti). Per ogni prova si considera la specialità che ha ottenuto il punteggio complessivo migliore. Al punteggio della specialità si aggiunge il bonus per i doppi podi (max 10 punti) ed il bonus per le gare particolarmente impegnative (max 8 punti).'
     how_to_individual_ranking: 'La classifica individuale prende in considerazione i 5 migliori punteggi ottenuti sulle 6 prove della stagione.'
+
+  presences:
+    presences_tab: "Presenze"
+    title: "Presenza alle gare della stagione"
+    partecipation: "Partecipazione"
+    season_type: "Circuito"
+    date: "Data"
+    meeting: "Prova"
+    events: "Individuali"
+    relays: "Staffette"
+    totals: "Totali"
+    
