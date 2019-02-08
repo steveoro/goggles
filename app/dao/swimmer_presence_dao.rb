@@ -39,7 +39,7 @@ class SwimmerPresenceDAO
       if compute_costs
         @meeting_fee = meeting.meeting_fee ? meeting.meeting_fee : 0.00
         @event_fee   = meeting.event_fee ? meeting.event_fee : 0.00
-        @relay_fee   = meeting.relay_fee ? meeting.relay_fee : 0.00
+        @relay_fee   = meeting.relay_fee ? ( meeting.relay_fee / 4 ) : 0.00  # Assumes relay is a 4xsomething
       else
         @meeting_fee = 0.00
         @event_fee   = 0.00
