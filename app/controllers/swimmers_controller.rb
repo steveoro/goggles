@@ -700,20 +700,35 @@ class SwimmersController < ApplicationController
     # --- "Presence" tab: ---
     @tab_title = I18n.t('presences.title')
     @costs = false
-
+    @cash = []
+    payment_badges = []
+    
     spc = SwimmerPresenceChecker.new(@swimmer, Date.today())
-    @current_seasons = spc.get_swimmer_current_seasons()
-    @current_seasons.each do |season|
-      current_badge = @swimmer.badges.where( season_id: season.id ).first
-
+    current_badges = spc.get_swimmer_current_badges()
+    current_badges.each do |badge|
+      current_season = badge.season
+      
       # Check if cost has to be shown
-      show_costs = (( current_badge.has_to_pay_fees || current_badge.has_to_pay_badge ) && current_user == @swimmer.associated_user ) 
-      is_team_manager = TeamManagerValidator.can_manage_badge?( current_user, current_badge )
-      @costs = true if ( show_costs || is_team_manager )
+      get_costs = ( badge.has_to_pay_fees || badge.has_to_pay_badge ) 
+      is_team_manager = TeamManagerValidator.can_manage_badge?( current_user, badge )
   
-      spc.scan_season( season, show_costs || is_team_manager )
+      spc.scan_season( current_season, get_costs )
+      
+      # Check for payments
+      if (( get_costs && current_user == @swimmer.associated_user ) || is_team_manager )
+        @costs = true
+        payment_badges << badge.id
+        
+        if badge.has_to_pay_badge
+          cash_row = {}
+          cash_row[:issue]   = I18n.t('presences.badge') + ' ' + current_season.season_type.federation_type.code 
+          cash_row[:amount] = -current_season.badge_fee
+          @cash << cash_row
+        end
+      end
     end 
     
+    @badge_payments = BadgePayment.where( badge_id: payment_badges ).sort_by_date('ASC')
     @spDAO = spc.swimmer_presence_dao
   end
 

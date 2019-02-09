@@ -113,4 +113,12 @@ it:
     totals: "Totali"
     costs: "Costi"
     tot: "Tot"
+    payments: "Versamenti"
+    amount: "Importo"
+    notes: "Note"
+    payments_total: "Totale versato"
+    summary: "Riepilogo costi"
+    badge: "Tesseramento"
+    meetings: "Gare"
+    cash: "Saldo"
     
