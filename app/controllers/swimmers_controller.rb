@@ -690,6 +690,8 @@ class SwimmersController < ApplicationController
 
   # Radiography for a specified swimmer id: "Presence" tab rendering.
   # Show swimmer presence in the current seasons
+  # Show costs only to team manager (for managed team's swimemrs) 
+  # and logged swimmers (for himselves)
   #
   # == Params:
   # id: the swimmer id to be processed
@@ -697,16 +699,20 @@ class SwimmersController < ApplicationController
   def presence
     # --- "Presence" tab: ---
     @tab_title = I18n.t('presences.title')
+    @costs = false
 
     spc = SwimmerPresenceChecker.new(@swimmer, Date.today())
     @current_seasons = spc.get_swimmer_current_seasons()
     @current_seasons.each do |season|
       current_badge = @swimmer.badges.where( season_id: season.id ).first
-      spc.scan_season( season, current_badge.has_to_pay_fees )
-    end 
 
-    # Check if cost has to be shown
-    @costs = ( spc.get_swimmer_current_badges().where( :has_to_pay_fees == true ).count > 0 )
+      # Check if cost has to be shown
+      show_costs = (( current_badge.has_to_pay_fees || current_badge.has_to_pay_badge ) && current_user == @swimmer.associated_user ) 
+      is_team_manager = TeamManagerValidator.can_manage_badge?( current_user, current_badge )
+      @costs = true if ( show_costs || is_team_manager )
+  
+      spc.scan_season( season, show_costs || is_team_manager )
+    end 
     
     @spDAO = spc.swimmer_presence_dao
   end

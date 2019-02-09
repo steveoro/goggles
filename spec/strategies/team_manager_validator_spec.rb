@@ -26,6 +26,9 @@ describe TeamManagerValidator, type: :strategy do
   let(:managed_team) { team_manager.team_affiliation.team }
   let(:new_team)     { create(:team) }
 
+  let(:managed_badge) { create(:badge, team_affiliation_id: team_manager.team_affiliation_id, team_id: team_manager.team_affiliation.team_id ) }
+  let(:new_badge)     { create(:badge) }
+
 
   describe "self.can_manage?" do
     context "with a nil current user and a valid Meeting," do
@@ -196,6 +199,39 @@ describe TeamManagerValidator, type: :strategy do
       it "returns true" do
         expect(
           TeamManagerValidator.can_manage_team?( team_manager.user, managed_team )
+        ).to be true
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  describe "self.can_manage_badge?" do
+    context "with a nil current user and a valid Badge," do
+      it "returns false" do
+        expect(
+          TeamManagerValidator.can_manage_badge?( nil, new_badge )
+        ).to be false
+      end
+    end
+    context "with a valid user/team-manager but a nil badge," do
+      it "returns false" do
+        expect(
+          TeamManagerValidator.can_manage_badge?( team_manager.user, nil )
+        ).to be false
+      end
+    end
+    context "with a valid user/team-manager that can't manage the badge," do
+      it "returns true" do
+        expect(
+          TeamManagerValidator.can_manage_badge?( User.find(2), new_badge )
+        ).to be false
+      end
+    end
+    context "with a valid user/team-manager that can manage the badge," do
+      it "returns true" do
+        expect(
+          TeamManagerValidator.can_manage_badge?( team_manager.user, managed_badge )
         ).to be true
       end
     end
