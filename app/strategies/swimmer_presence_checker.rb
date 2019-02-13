@@ -138,10 +138,10 @@ class SwimmerPresenceChecker
   # Scan a season to find meeting with swimmer presence
   # Returns numeber of attended meeting found
   #
-  def scan_season( season, compute_costs = false )
+  def scan_season( season, individual_costs = false, relay_costs = false )
     season.meetings.has_results.each do |meeting|
       if has_swimmer_attended_meeting( meeting )
-        mp = SwimmerPresenceDAO::MeetingPresenceDAO.new( meeting, season, compute_costs )
+        mp = SwimmerPresenceDAO::MeetingPresenceDAO.new( meeting, season, individual_costs, relay_costs )
         mp.det_reservations_count = count_swimmer_reservations( meeting )
         mp.det_entries_count = count_swimmer_entries( meeting )
         mp.det_results_count = count_swimmer_mirs( meeting )

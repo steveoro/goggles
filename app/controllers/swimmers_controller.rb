@@ -709,11 +709,12 @@ class SwimmersController < ApplicationController
       current_season = badge.season
       
       # Check if cost has to be shown
-      get_costs = ( badge.has_to_pay_fees || badge.has_to_pay_badge ) 
+      get_costs = ( badge.has_to_pay_badge || badge.has_to_pay_fees || badge.has_to_pay_relays ) 
       is_team_manager = TeamManagerValidator.can_manage_badge?( current_user, badge )
   
-      spc.scan_season( current_season, get_costs )
+      spc.scan_season( current_season, badge.has_to_pay_fees, badge.has_to_pay_relays )
       
+      # TODO maybe create startegy and DAO for payments too
       # Check for payments
       if (( get_costs && current_user == @swimmer.associated_user ) || is_team_manager )
         @costs = true
@@ -730,6 +731,9 @@ class SwimmersController < ApplicationController
     
     @badge_payments = BadgePayment.where( badge_id: payment_badges ).sort_by_date('ASC')
     @spDAO = spc.swimmer_presence_dao
+
+    # Check for last payments update
+    @last_payment_update = BadgePayment.where( badge_id: current_badges.map{ |b| b.id }).sort_by_date('ASC').last.payment_date if @badge_payments.count > 0 
   end
 
 

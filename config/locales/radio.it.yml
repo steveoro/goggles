@@ -121,4 +121,5 @@ it:
     badge: "Tesseramento"
     meetings: "Gare"
     cash: "Saldo"
+    no_payments: "Nessun versamento registrato"
     

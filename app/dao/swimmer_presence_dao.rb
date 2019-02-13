@@ -27,7 +27,7 @@ class SwimmerPresenceDAO
   
     # Creates a new instance
     #
-    def initialize( meeting, season, compute_costs = false )    
+    def initialize( meeting, season, individual_costs = false, relay_costs = false )    
       @season_id        = season.id
       @season_name      = season.description
       @meeting_id       = meeting.id
@@ -36,13 +36,17 @@ class SwimmerPresenceDAO
       decorated_meeting = meeting.decorate
       @description      = decorated_meeting.get_linked_full_name_with_logo
 
-      if compute_costs
+      if individual_costs
         @meeting_fee = meeting.meeting_fee ? meeting.meeting_fee : 0.00
         @event_fee   = meeting.event_fee ? meeting.event_fee : 0.00
-        @relay_fee   = meeting.relay_fee ? ( meeting.relay_fee / 4 ) : 0.00  # Assumes relay is a 4xsomething
       else
         @meeting_fee = 0.00
         @event_fee   = 0.00
+      end
+
+      if relay_costs
+        @relay_fee   = meeting.relay_fee ? ( meeting.relay_fee / 4 ) : 0.00  # Assumes relay is a 4xsomething
+      else
         @relay_fee   = 0.00
       end
 
