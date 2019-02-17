@@ -701,6 +701,7 @@ class SwimmersController < ApplicationController
     @tab_title = I18n.t('presences.title')
     @costs = false
     @cash = []
+    @notes = {}
     payment_badges = []
     
     spc = SwimmerPresenceChecker.new(@swimmer, Date.today())
@@ -726,9 +727,12 @@ class SwimmersController < ApplicationController
           cash_row[:amount] = -current_season.badge_fee
           @cash << cash_row
         end
+        
+        # Check for fee notes
+        @notes[badge.team.editable_name] = badge.team.notes if badge.team.notes && badge.team.notes.length > 0  
       end
     end 
-    
+
     @badge_payments = BadgePayment.where( badge_id: payment_badges ).sort_by_date('ASC')
     @spDAO = spc.swimmer_presence_dao
 

@@ -143,3 +143,7 @@
               %b= I18n.t('presences.cash')
             %td.text-right
               %b= sprintf( "%02.2f", saldo)
+
+  .col-xs-12.goggles-category-gap#swimmer_payments_notes
+    - @notes.each do |key,value|
+      = key + ": " + value 
