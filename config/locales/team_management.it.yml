@@ -1,0 +1,13 @@
+it:
+  team_management:
+    team: "Squadra"
+    edit_team: "Modifica dati squadra"
+    
+    pending_reservations: "Iscrizioni non confermate"
+    pending_reservations_tab: "Prenotazioni"
+    date: "Data"
+    entry_deadline: "Scadenza"
+    meeting: "Gara"
+    swimmer: "Master"
+    event: "Specialità"
+    entry_time: "Tempo"

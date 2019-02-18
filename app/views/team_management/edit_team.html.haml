@@ -1,6 +1,4 @@
-%h1 TeamManagement#edit_team
-%p Find me in app/views/team_management/edit_team.html.haml
-
+= render( partial: 'teams/tabs_and_title' )
 
 -# (Multipart is required for image upload using file_field_tag)
 = form_for( @team, url: team_management_update_team_path(id: @team.id), html: { method: :put, multipart: true } ) do |f|

@@ -28,8 +28,24 @@ class TeamManagementController < ApplicationController
   # Verify if valid team maneger:
   before_action :verify_team_manageability
 
+  # Show pending reservations
+  # Shows meeting reservations not confirmed
+  # Pending reservations are those not cionfirmed for meeting without results
+  #
+  def show_pending_reservations
+    @tab_title = I18n.t('team_management.pending_reservations')
+    
+    @pending_reservations = MeetingEventReservation.
+      joins( :meeting, :swimmer, meeting_event: :event_type ).
+      joins("INNER JOIN meeting_reservations on meeting_reservations.meeting_id = meeting_event_reservations.meeting_id and meeting_reservations.badge_id = meeting_event_reservations.badge_id").
+      where( is_doing_this: true, team_id: 1, meeting_reservations: {has_confirmed: false}, meetings: {are_results_acquired: false} ).
+      select( :meeting_id, :swimmer_id, :suggested_minutes, :suggested_seconds, :suggested_hundreds, "meetings.header_date", "meetings.entry_deadline", "meetings.description", "swimmers.complete_name", "event_types.code").
+      order("meetings.header_date", "swimmers.complete_name")
+    
+  end
 
   def edit_team
+    @tab_title = I18n.t('team_management.edit_team')
   end
 
 
@@ -75,7 +91,6 @@ class TeamManagementController < ApplicationController
 
   def update_app_template
   end
-
 
   private
 

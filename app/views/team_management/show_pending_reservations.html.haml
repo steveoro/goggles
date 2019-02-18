@@ -1,0 +1,34 @@
+= render( partial: 'teams/tabs_and_title' )
+
+.col-xs-12.goggles-category-gap#pending_reservations
+  %table.table.table-striped.table-bordered.table-hover.table-condensed
+    %tbody
+      %tr{'class'=>'info'}
+        %td
+          %b= I18n.t('team_management.date')
+        %td
+          %b= I18n.t('team_management.meeting')
+        %td
+          %b= I18n.t('team_management.entry_deadline')
+        %td
+          %b= I18n.t('team_management.swimmer')
+        %td
+          %b= I18n.t('team_management.event')
+        %td.text-right
+          %b= I18n.t('team_management.entry_time')
+
+      - @pending_reservations.each do |reservation|
+        - time = ( reservation.suggested_minutes.to_i > 0 ? "#{reservation.suggested_minutes}'" : '' ) + sprintf("%02.0f\"", reservation.suggested_seconds) + sprintf("%02.0f", reservation.suggested_hundreds)
+        %tr
+          %td
+            = Format.a_date( reservation.header_date )
+          %td
+            = reservation.description
+          %td
+            = Format.a_date( reservation.entry_deadline )
+          %td
+            = reservation.complete_name
+          %td
+            = reservation.code
+          %td.text-right
+            = time   
