@@ -36,12 +36,34 @@ class TeamManagementController < ApplicationController
     @tab_title = I18n.t('team_management.pending_reservations')
     
     @pending_reservations = MeetingEventReservation.
-      joins( :meeting, :swimmer, meeting_event: :event_type ).
+      joins( :meeting, :swimmer, meeting_event: [:event_type, meeting_session: :swimming_pool] ).
       joins("INNER JOIN meeting_reservations on meeting_reservations.meeting_id = meeting_event_reservations.meeting_id and meeting_reservations.badge_id = meeting_event_reservations.badge_id").
       where( is_doing_this: true, team_id: 1, meeting_reservations: {has_confirmed: false}, meetings: {are_results_acquired: false} ).
-      select( :meeting_id, :swimmer_id, :suggested_minutes, :suggested_seconds, :suggested_hundreds, "meetings.header_date", "meetings.entry_deadline", "meetings.description", "swimmers.complete_name", "event_types.code").
-      order("meetings.header_date", "swimmers.complete_name")
+      select( :meeting_id, :swimmer_id, :suggested_minutes, :suggested_seconds, :suggested_hundreds, "meetings.header_date", "meetings.entry_deadline", "meetings.description", "swimmers.complete_name", "meeting_events.event_type_id", "event_types.code", "'' as notes", "swimming_pools.pool_type_id").
+      order("meetings.header_date", "swimmers.complete_name").to_a
     
+    @pending_reservations.each do |reservation|
+      if MeetingIndividualResult.joins( meeting_event: { meeting_session: { swimming_pool: [:city, :pool_type] }} ).
+        where([ "meeting_events.event_type_id = ? and pool_types.id = ?", reservation.event_type_id, reservation.pool_type_id ]).
+        where(
+          swimmer_id: reservation.swimmer_id, 
+          minutes: reservation.suggested_minutes, 
+          seconds: reservation.suggested_seconds, 
+          hundreds: reservation.suggested_hundreds ).exists?
+        mir = MeetingIndividualResult.joins( meeting_event: { meeting_session: { swimming_pool: [:city, :pool_type] }} ).
+          where([ "meeting_events.event_type_id = ? and pool_types.id = ?", reservation.event_type_id, reservation.pool_type_id ]).
+          where(
+            swimmer_id: reservation.swimmer_id, 
+            minutes: reservation.suggested_minutes, 
+            seconds: reservation.suggested_seconds, 
+            hundreds: reservation.suggested_hundreds ).
+            select("meeting_sessions.scheduled_date", "cities.name", "pool_types.code").
+            order( :created_at ).last
+        reservation[:notes] = Format.a_date( mir.scheduled_date ) + ' ' + mir.name + ' (' + mir.code + ')'
+      else
+        reservation[:notes] = I18n.t('team_management.manual')
+      end
+    end
   end
 
   def edit_team

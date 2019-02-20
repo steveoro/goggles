@@ -2,6 +2,7 @@ it:
   team_management:
     team: "Squadra"
     edit_team: "Modifica dati squadra"
+    edit_team_tab: "Profilo"
     
     pending_reservations: "Iscrizioni non confermate"
     pending_reservations_tab: "Prenotazioni"
@@ -11,3 +12,7 @@ it:
     swimmer: "Master"
     event: "Specialità"
     entry_time: "Tempo"
+    notes: "Note"
+    csi_time: "Tempo (CSI)"
+    manual: "Manuale"
+    reservation_link: "Vai alla pagina delle prenotazioni per il meeting"
