@@ -1,39 +1,44 @@
 = render( partial: 'teams/tabs_and_title' )
 
 .col-xs-12.goggles-category-gap#pending_reservations
-  %table.table.table-striped.table-bordered.table-hover.table-condensed
-    %tbody
-          
-      - meeting_id = 0
-      - @pending_reservations.each do |reservation|
-        - if meeting_id != reservation.meeting_id
-          - meeting_id = reservation.meeting_id
-          %tr{'class'=>'success'}
-            %td{'colspan'=>'5'}
-              %a{ href: "#{ meeting_reservations_edit_events_path(:id=>reservation.meeting_id) }", 'data-toggle' => 'tooltip', title: I18n.t('team_management.reservation_link') }
-                %b= Format.a_date( reservation.header_date ) + ' - ' + reservation.description + ' (' + Format.a_date( reservation.entry_deadline ) + ')' 
-          %tr{'class'=>'info'}
+
+  - if @pending_reservations.count == 0
+    %b= I18n.t('team_management.no_pendings')  
+  
+  - else
+    %table.table.table-striped.table-bordered.table-hover.table-condensed
+      %tbody
+            
+        - meeting_id = 0
+        - @pending_reservations.each do |reservation|
+          - if meeting_id != reservation.meeting_id
+            - meeting_id = reservation.meeting_id
+            %tr{'class'=>'success'}
+              %td{'colspan'=>'5'}
+                %a{ href: "#{ meeting_reservations_edit_events_path(:id=>reservation.meeting_id) }", 'data-toggle' => 'tooltip', title: I18n.t('team_management.reservation_link') }
+                  %b= Format.a_date( reservation.header_date ) + ' - ' + reservation.description + ' (' + Format.a_date( reservation.entry_deadline ) + ')' 
+            %tr{'class'=>'info'}
+              %td
+                %b= I18n.t('team_management.swimmer')
+              %td
+                %b= I18n.t('team_management.event')
+              %td.text-right
+                %b= I18n.t('team_management.entry_time')
+              %td
+                %b= I18n.t('team_management.notes')
+              %td
+                %b= I18n.t('team_management.csi_time')
+                
+          - time = ( reservation.suggested_minutes.to_i > 0 ? "#{reservation.suggested_minutes}'" : '' ) + sprintf("%02.0f\"", reservation.suggested_seconds) + sprintf("%02.0f", reservation.suggested_hundreds)
+          - csi_time = sprintf("%02.0f:", reservation.suggested_minutes) + sprintf("%02.0f.", reservation.suggested_seconds) + sprintf("%02.0f", reservation.suggested_hundreds)
+          %tr
             %td
-              %b= I18n.t('team_management.swimmer')
+              = reservation.complete_name
             %td
-              %b= I18n.t('team_management.event')
+              = reservation.code
             %td.text-right
-              %b= I18n.t('team_management.entry_time')
+              = time   
             %td
-              %b= I18n.t('team_management.notes')
+              = reservation.notes 
             %td
-              %b= I18n.t('team_management.csi_time')
-              
-        - time = ( reservation.suggested_minutes.to_i > 0 ? "#{reservation.suggested_minutes}'" : '' ) + sprintf("%02.0f\"", reservation.suggested_seconds) + sprintf("%02.0f", reservation.suggested_hundreds)
-        - csi_time = sprintf("%02.0f:", reservation.suggested_minutes) + sprintf("%02.0f.", reservation.suggested_seconds) + sprintf("%02.0f", reservation.suggested_hundreds)
-        %tr
-          %td
-            = reservation.complete_name
-          %td
-            = reservation.code
-          %td.text-right
-            = time   
-          %td
-            = reservation.notes 
-          %td
-            = csi_time
+              = csi_time

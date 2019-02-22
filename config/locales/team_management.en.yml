@@ -1,0 +1,19 @@
+it:
+  team_management:
+    team: "Team"
+    edit_team: "Edit Team profile"
+    edit_team_tab: "Profile"
+    
+    pending_reservations: "Pending reservations"
+    pending_reservations_tab: "Reservations"
+    date: "Date"
+    entry_deadline: "Deadline"
+    meeting: "Meeting"
+    swimmer: "Swimmer"
+    event: "Event"
+    entry_time: "Time"
+    notes: "Notes"
+    csi_time: "Time (CSI)"
+    manual: "Manual"
+    reservation_link: "Go to meeting's reservations"
+    no_pendings: "No pending reservations found"

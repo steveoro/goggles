@@ -16,3 +16,4 @@ it:
     csi_time: "Tempo (CSI)"
     manual: "Manuale"
     reservation_link: "Vai alla pagina delle prenotazioni per il meeting"
+    no_pendings: "Non sono presenti prenotazioni non confermate"

@@ -1,4 +1,4 @@
-%a{'id'=>"swimmer#{ badge.swimmer_id }", 'href'=>"#{ swimmer_radio_path(id: badge.swimmer_id) }", 'data-toggle'=>'tooltip', 'title'=>I18n.t('radiography.radio_tab_tooltip')}
+%a{'id'=>"swimmer#{ badge.swimmer_id }", 'href'=>"#{ swimmer_full_history_1_path(id: badge.swimmer_id) }", 'data-toggle'=>'tooltip', 'title'=>I18n.t('radiography.full_history_by_date_tooltip')}
   %b= badge.swimmer.get_full_name
 - if is_invalid_team_manager && reservation.has_confirmed  # Hide team manager controls for confirmed athletes:
   %br/

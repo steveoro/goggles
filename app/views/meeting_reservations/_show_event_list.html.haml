@@ -1,7 +1,7 @@
 %h3= t('meeting_reservation.show_event_list_title')
 %table.table.table-striped.table-bordered.table-hover.table-condensed
   %tbody
-    = render( partial: 'header_row', locals: { meeting: @meeting, filter: :are_not_relays, add_notes_column: false } )
+    = render( partial: 'header_row', locals: { meeting: @meeting, filter: :are_not_relays, add_notes_column: false, suppress_sessions: false } )
     -# Event Data rows:
     - swimmers_count = 0
     - event_res_count = 0
@@ -33,6 +33,9 @@
           -# %td
           -#   %small
           -#     %i= reservation.notes
+
+    = render( partial: 'header_row', locals: { meeting: @meeting, filter: :are_not_relays, add_notes_column: false, suppress_sessions: true } )
+
     %tr.success
       %td{ colspan: 2 }
         %b= t('total')

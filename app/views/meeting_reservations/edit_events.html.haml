@@ -4,7 +4,7 @@
 
 %table.table.table-striped.table-bordered.table-hover.table-condensed
   %tbody
-    = render( partial: 'header_row', locals: { meeting: @meeting, filter: :are_not_relays, add_notes_column: true } )
+    = render( partial: 'header_row', locals: { meeting: @meeting, filter: :are_not_relays, add_notes_column: true, suppress_sessions: false } )
 
     - @badges_list.each do |badge|
       - reservation = find_or_new_badge_reservation( current_user, @meeting, @team_affiliation, badge )
@@ -52,5 +52,7 @@
                   %label{ for: chkbox_id, class: "switch-box-slider" }
           %td
             = render( partial: 'edit_cell_notes', locals: { badge_id: badge.id, default_value: reservation.notes, is_disabled: !can_edit_events } )
+
+    = render( partial: 'header_row', locals: { meeting: @meeting, filter: :are_not_relays, add_notes_column: true, suppress_sessions: true } )
 
 = render( partial: 'footer_row_with_js', locals: { meeting_id: @meeting.id } )

@@ -66,6 +66,7 @@ class TeamManagementController < ApplicationController
     end
   end
 
+
   def edit_team
     @tab_title = I18n.t('team_management.edit_team')
   end
