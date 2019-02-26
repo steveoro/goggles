@@ -14,9 +14,11 @@
           - if meeting_id != reservation.meeting_id
             - meeting_id = reservation.meeting_id
             %tr{'class'=>'success'}
-              %td{'colspan'=>'5'}
+              %td{'colspan'=>'4'}
                 %a{ href: "#{ meeting_reservations_edit_events_path(:id=>reservation.meeting_id) }", 'data-toggle' => 'tooltip', title: I18n.t('team_management.reservation_link') }
                   %b= Format.a_date( reservation.header_date ) + ' - ' + reservation.description + ' (' + Format.a_date( reservation.entry_deadline ) + ')' 
+              %td.text-right{'colspan'=>'4'}
+                %b= @pending_reservations.count{ |r| r.meeting_id == meeting_id }
             %tr{'class'=>'info'}
               %td
                 %b= I18n.t('team_management.swimmer')
