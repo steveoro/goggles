@@ -71,12 +71,47 @@ class PendingReservationFinder
     end
     
     @pending_reservations = MeetingEventReservation.
-      joins( :meeting, :swimmer, :badge, meeting_event: [:event_type, meeting_session: :swimming_pool] ).
+      joins( :swimmer, :badge, meeting_event: [:event_type, meeting_session: :swimming_pool], meeting: [season: [season_type: :federation_type]] ).
       joins("INNER JOIN meeting_reservations on meeting_reservations.meeting_id = meeting_event_reservations.meeting_id and meeting_reservations.badge_id = meeting_event_reservations.badge_id").
       where( is_doing_this: true, meeting_reservations: {has_confirmed: false}, meeting_id: @meetings_ids, badges: {team_affiliation_id: @team_affiliations_ids} ).
-      select( :meeting_id, :swimmer_id, :suggested_minutes, :suggested_seconds, :suggested_hundreds, "meetings.header_date", "meetings.entry_deadline", "meetings.description", "swimmers.complete_name", "meeting_events.event_type_id", "event_types.code", "'' as notes", "swimming_pools.pool_type_id", "badges.team_affiliation_id").
+      select( :meeting_id, 
+              :swimmer_id, 
+              :suggested_minutes, 
+              :suggested_seconds, 
+              :suggested_hundreds, 
+              "meetings.header_date", 
+              "meetings.entry_deadline", 
+              "meetings.description", 
+              "swimmers.complete_name", 
+              "meeting_events.event_type_id", 
+              "event_types.code as event", 
+              "swimming_pools.pool_type_id", 
+              "badges.team_affiliation_id",
+              "federation_types.code as federation_code",
+              #"'' as notes").  # Do it with a single query 
+              "(SELECT concat_ws(' ', date_format(t_ms.scheduled_date, '%d/%m/%Y'), t_c.name, t_pt.code) as notes 
+                FROM meeting_individual_results t_mir
+                  INNER JOIN meeting_programs t_mp ON t_mp.id = t_mir.meeting_program_id 
+                  INNER JOIN meeting_events t_me ON t_me.id = t_mp.meeting_event_id
+                  INNER JOIN meeting_sessions t_ms ON t_ms.id = t_me.meeting_session_id
+                  INNER JOIN swimming_pools t_sp ON t_sp.id = t_ms.swimming_pool_id
+                  INNER JOIN cities t_c ON t_c.id = t_sp.city_id
+                  INNER JOIN pool_types t_pt ON t_pt.id = t_sp.pool_type_id
+                WHERE t_me.event_type_id = event_types.id 
+                  AND t_pt.id = swimming_pools.pool_type_id
+                  AND t_mir.swimmer_id = swimmers.id 
+                  AND t_mir.minutes = meeting_event_reservations.suggested_minutes  
+                  AND t_mir.seconds = meeting_event_reservations.suggested_seconds
+                  AND t_mir.hundreds = meeting_event_reservations.suggested_hundreds
+                ORDER BY t_ms.scheduled_date DESC LIMIT 1) as notes").
       order("meetings.header_date", "meetings.id", "swimmers.complete_name").to_a
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 
+  # Find out where and when the time has been swam
+  # Deprecated. Use the above single query to obtain value and manage Manaul value at runtime
+  def find_time_swam()
     @pending_reservations.each do |reservation|
       if MeetingIndividualResult.joins( meeting_event: { meeting_session: { swimming_pool: [:city, :pool_type] }} ).
         where([ "meeting_events.event_type_id = ? and pool_types.id = ?", reservation.event_type_id, reservation.pool_type_id ]).
@@ -100,7 +135,4 @@ class PendingReservationFinder
       end
     end
   end
-  #-- -------------------------------------------------------------------------
-  #++
-  
 end
