@@ -10,6 +10,7 @@ it:
     entry_deadline: "Scadenza"
     meeting: "Gara"
     swimmer: "Master"
+    badge_number: "Tessera"
     event: "Specialità"
     entry_time: "Tempo"
     notes: "Note"

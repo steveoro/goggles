@@ -86,7 +86,7 @@ class PendingReservationFinder
     end
     
     @pending_reservations = MeetingEventReservation.
-      joins( :swimmer, meeting_event: [:event_type, meeting_session: :swimming_pool], meeting: [season: [season_type: :federation_type]] ).
+      joins( :swimmer, :badge, meeting_event: [:event_type, meeting_session: :swimming_pool], meeting: [season: [season_type: :federation_type]] ).
       joins("INNER JOIN meeting_reservations on meeting_reservations.meeting_id = meeting_event_reservations.meeting_id and meeting_reservations.badge_id = meeting_event_reservations.badge_id").
       where( is_doing_this: true, meeting_reservations: {has_confirmed: false}, meeting_id: @meetings_ids ).
       select( :id,
@@ -100,6 +100,8 @@ class PendingReservationFinder
               "meetings.description", 
               "swimmers.complete_name", 
               "event_types.code as event",
+              "badges.number as badge_number",
+              "meeting_events.event_order",
               "meetings.season_id", 
               "federation_types.code as federation_code",
               #"'' as notes").  # Do it with a single query 
@@ -118,7 +120,7 @@ class PendingReservationFinder
                   AND t_mir.seconds = meeting_event_reservations.suggested_seconds
                   AND t_mir.hundreds = meeting_event_reservations.suggested_hundreds
                 ORDER BY t_ms.scheduled_date DESC LIMIT 1) as notes").
-      order("meetings.header_date", "meetings.id", "swimmers.complete_name").to_a
+      order("meetings.header_date", "meetings.id", "swimmers.complete_name", "meeting_events.event_order").to_a
   end
   #-- -------------------------------------------------------------------------
   #++

@@ -19,7 +19,7 @@
           - if meeting_id != reservation.meeting_id
             - meeting_id = reservation.meeting_id
             %tr{'class'=>'success'}
-              %td{'colspan'=>'3'}
+              %td{'colspan'=>'4'}
                 %a{ href: "#{ meeting_reservations_edit_events_path(:id=>reservation.meeting_id) }", 'data-toggle' => 'tooltip', title: I18n.t('team_management.reservation_link') }
                   %b= Format.a_date( reservation.header_date ) + ' - ' + reservation.description + ' (' + Format.a_date( reservation.entry_deadline ) + ')' 
               %td.text-right
@@ -27,6 +27,8 @@
             %tr{'class'=>'info'}
               %td
                 %b= I18n.t('team_management.swimmer')
+              %td
+                %b= I18n.t('team_management.badge_number')
               %td
                 %b= I18n.t('team_management.event')
               %td.text-right
@@ -40,6 +42,8 @@
           %tr
             %td
               = reservation.complete_name
+            %td
+              = reservation.badge_number
             %td
               = reservation.event
             %td.text-right

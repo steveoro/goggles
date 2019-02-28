@@ -10,6 +10,7 @@ it:
     entry_deadline: "Deadline"
     meeting: "Meeting"
     swimmer: "Swimmer"
+    badge_number: "Badge"
     event: "Event"
     entry_time: "Time"
     notes: "Notes"
