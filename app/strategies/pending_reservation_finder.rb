@@ -61,7 +61,7 @@ class PendingReservationFinder
     @meetings_ids = Meeting.
       where( are_results_acquired: false ).
       where( season_id: @seasons_ids ).
-      where(['meetings.header_date >= ? and (meetings.entry_deadline is null or meetings.entry_deadline > ?)', check_date, check_date] ).
+      where(['meetings.header_date >= ? and (meetings.entry_deadline is null or meetings.entry_deadline >= ?)', check_date, check_date] ).
       select( :id ).
       map{ |m| m.id }
   end
