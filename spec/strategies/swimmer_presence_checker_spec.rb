@@ -27,8 +27,8 @@ describe SwimmerPresenceChecker, type: :strategy do
     ])
     
     it_behaves_like( "(the existance of a method with parameters, returning boolean values)", [
-      :has_swimmer_attended_meeting,
-      :has_swimmer_swam_relay
+      :has_swimmer_attended_meeting?,
+      :has_swimmer_swam_relay?
     ], Meeting.find(18224))
 
     it_behaves_like( "(the existance of a method with parameters, returning numeric values)", [
@@ -101,55 +101,55 @@ describe SwimmerPresenceChecker, type: :strategy do
   #-- -------------------------------------------------------------------------
   #++
   
-  describe "#has_swimmer_attended_meeting" do
+  describe "#has_swimmer_attended_meeting?" do
     it "returns false for a new meeting" do
-      expect( subject.has_swimmer_attended_meeting(new_meeting) ).to eq(false)
+      expect( subject.has_swimmer_attended_meeting?(new_meeting) ).to eq(false)
     end
     
     it "returns false for a new swimmer" do
       spc = SwimmerPresenceChecker.new( new_swimmer, fix_date)
-      expect( spc.has_swimmer_attended_meeting(fix_meeting) ).to eq(false)
+      expect( spc.has_swimmer_attended_meeting?(fix_meeting) ).to eq(false)
     end
     
     it "return true for a swimmer with entries and w/o results" do
       # Federico Attolini has only entries for csiprova1 2018 (Carpi)
       attolini = Swimmer.find(51)
       spc = SwimmerPresenceChecker.new(attolini, date_1819)
-      expect( spc.has_swimmer_attended_meeting(carpi) ).to eq(true)
+      expect( spc.has_swimmer_attended_meeting?(carpi) ).to eq(true)
     end
 
     it "return true for a swimmer with results and w/o entries" do
       # Leega has only results for Riccione 2018
       riccione = Meeting.find(18224)
       spc = SwimmerPresenceChecker.new(leega, date_1819)
-      expect( spc.has_swimmer_attended_meeting(riccione) ).to eq(true)
+      expect( spc.has_swimmer_attended_meeting?(riccione) ).to eq(true)
     end
 
     it "return true for a swimmer with only reservations" do
       # Leega has only reservations for Ravenna 2018
       ravenna = Meeting.find(18243)
       spc = SwimmerPresenceChecker.new(leega, date_1819)
-      expect( spc.has_swimmer_attended_meeting(ravenna) ).to eq(true)
+      expect( spc.has_swimmer_attended_meeting?(ravenna) ).to eq(true)
     end
 
     it "return false for a swimmer w/o results and w/o entries" do
       # Leega hasn't entry or results for Viareggio 2018
       viareggio = Meeting.find(18205)
       spc = SwimmerPresenceChecker.new(leega, date_1819)
-      expect( spc.has_swimmer_attended_meeting(viareggio) ).to eq(false)
+      expect( spc.has_swimmer_attended_meeting?(viareggio) ).to eq(false)
     end
   end
   #-- -------------------------------------------------------------------------
   #++
   
-  describe "#has_swimmer_swam_relay" do
+  describe "#has_swimmer_swam_relay?" do
     it "returns false for a new meeting" do
-      expect( subject.has_swimmer_swam_relay( new_meeting ) ).to eq(false)
+      expect( subject.has_swimmer_swam_relay?( new_meeting ) ).to eq(false)
     end
 
     it "returns false for a new swimmer" do
       spc = SwimmerPresenceChecker.new( new_swimmer, fix_date)
-      expect( spc.has_swimmer_swam_relay(fix_meeting) ).to eq(false)
+      expect( spc.has_swimmer_swam_relay?(fix_meeting) ).to eq(false)
     end
 
     it "return false for a swimmer that didn't swam on a relay" do
@@ -157,14 +157,14 @@ describe SwimmerPresenceChecker, type: :strategy do
       attolini = Swimmer.find(51)
       no_relays = Meeting.find( [18101, 18224, 18205, 18243].sample )
       spc = SwimmerPresenceChecker.new(attolini, date_1819)
-      expect( spc.has_swimmer_swam_relay(no_relays) ).to eq(false)
+      expect( spc.has_swimmer_swam_relay?(no_relays) ).to eq(false)
     end
 
     it "return true for a swimmer who swam relay" do
       # Leega swam CSI relays
       yes_relays = Meeting.find( [18101, 18102, 18234].sample )
       spc = SwimmerPresenceChecker.new(leega, date_1819)
-      expect( spc.has_swimmer_swam_relay(yes_relays) ).to eq(true)
+      expect( spc.has_swimmer_swam_relay?(yes_relays) ).to eq(true)
     end
   end
   #-- -------------------------------------------------------------------------

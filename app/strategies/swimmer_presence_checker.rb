@@ -63,26 +63,26 @@ class SwimmerPresenceChecker
   # Check if the swimmer has attended the given meeting
   # The swimmer has attended when there is an entry or an individual result or a confirmed reservation
   #
-  def has_swimmer_attended_meeting( meeting )
-    is_present = false
+  def has_swimmer_attended_meeting?( meeting )
+    has_attended = false
     # Check for meeting individual results
     if MeetingIndividualResult.joins( :meeting_session ).where( ['meeting_individual_results.swimmer_id = ? and meeting_sessions.meeting_id = ?', @swimmer.id, meeting.id] ).exists?
-      is_present = true
+      has_attended = true
     # Check for meeting entries
     elsif MeetingEntry.joins( :meeting_session ).where( ['meeting_entries.swimmer_id = ? and meeting_sessions.meeting_id = ?', @swimmer.id, meeting.id] ).exists?
-      is_present = true
+      has_attended = true
     # Check for confirmed reservation
     elsif MeetingReservation.is_coming.where( ['has_confirmed and swimmer_id = ? and meeting_id = ?', @swimmer.id, meeting.id] ).exists?
-      is_present = true
+      has_attended = true
     end  
-    is_present
+    has_attended
   end
   #-- -------------------------------------------------------------------------
   #++
   
   # Check if the swimmer swam in a relay for a given meeting
   #
-  def has_swimmer_swam_relay( meeting )
+  def has_swimmer_swam_relay?( meeting )
     MeetingRelayResult.joins( :meeting_session, :meeting_relay_swimmers ).where( ['meeting_relay_swimmers.swimmer_id = ? and meeting_sessions.meeting_id = ?', @swimmer.id, meeting.id] ).exists?
   end
   #-- -------------------------------------------------------------------------
@@ -138,9 +138,10 @@ class SwimmerPresenceChecker
   # Scan a season to find meeting with swimmer presence
   # Returns numeber of attended meeting found
   #
-  def scan_season( season, individual_costs = false, relay_costs = false )
-    season.meetings.has_results.each do |meeting|
-      if has_swimmer_attended_meeting( meeting )
+  def scan_season( season, individual_costs = false, relay_costs = false, check_date = Date.today() )
+    #season.meetings.has_results.each do |meeting|
+    season.meetings.where(['meetings.are_results_acquired or meetings.header_date < ? or (meetings.entry_deadline is not null and meetings.entry_deadline < ?)', check_date, check_date] ).each do |meeting|
+      if has_swimmer_attended_meeting?( meeting )
         mp = SwimmerPresenceDAO::MeetingPresenceDAO.new( meeting, season, individual_costs, relay_costs )
         mp.det_reservations_count = count_swimmer_reservations( meeting )
         mp.det_entries_count = count_swimmer_entries( meeting )

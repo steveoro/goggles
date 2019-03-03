@@ -124,31 +124,4 @@ class PendingReservationFinder
   end
   #-- -------------------------------------------------------------------------
   #++
-
-  # Find out where and when the time has been swam
-  # Deprecated. Use the above single query to obtain value and manage Manaul value at runtime
-  def find_time_swam()
-    @pending_reservations.each do |reservation|
-      if MeetingIndividualResult.joins( meeting_event: { meeting_session: { swimming_pool: [:city, :pool_type] }} ).
-        where([ "meeting_events.event_type_id = ? and pool_types.id = ?", reservation.event_type_id, reservation.pool_type_id ]).
-        where(
-          swimmer_id: reservation.swimmer_id, 
-          minutes: reservation.suggested_minutes, 
-          seconds: reservation.suggested_seconds, 
-          hundreds: reservation.suggested_hundreds ).exists?
-        mir = MeetingIndividualResult.joins( meeting_event: { meeting_session: { swimming_pool: [:city, :pool_type] }} ).
-          where([ "meeting_events.event_type_id = ? and pool_types.id = ?", reservation.event_type_id, reservation.pool_type_id ]).
-          where(
-            swimmer_id: reservation.swimmer_id, 
-            minutes: reservation.suggested_minutes, 
-            seconds: reservation.suggested_seconds, 
-            hundreds: reservation.suggested_hundreds ).
-            select("meeting_sessions.scheduled_date", "cities.name", "pool_types.code").
-            order( :created_at ).last
-        reservation[:notes] = Format.a_date( mir.scheduled_date ) + ' ' + mir.name + ' (' + mir.code + ')'
-      else
-        reservation[:notes] = I18n.t('team_management.manual')
-      end
-    end
-  end
 end
