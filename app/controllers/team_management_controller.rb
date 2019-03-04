@@ -39,6 +39,18 @@ class TeamManagementController < ApplicationController
   end
 
 
+  # Update confirmed pending reservations
+  #
+  def update_pending_reservations
+    if request.xhr? && request.post?                   # === AJAX POST: ===
+      params.inspect
+    
+      flash[:info] = I18n.t('team_management.reservation_updated')
+      redirect_to( show_pending_reservations_path(id: @team.id) ) and return
+    end
+  end
+
+
   def edit_team
     @tab_title = I18n.t('team_management.edit_team')
   end

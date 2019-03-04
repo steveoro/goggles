@@ -15,6 +15,9 @@ it:
     entry_time: "Tempo"
     notes: "Note"
     csi_time: "Tempo (CSI)"
+    confirm: "Conferma"
     manual: "Manuale"
     reservation_link: "Vai alla pagina delle prenotazioni per il meeting"
     no_pendings: "Non sono presenti prenotazioni non confermate"
+    confirm_selected: "Conferma le prenotazioni selezionate"
+    

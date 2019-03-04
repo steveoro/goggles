@@ -96,6 +96,7 @@ Rails.application.routes.draw do
 
       # === Team Management ===
       get 'team_management/show_pending_reservations/:id', to: "team_management#show_pending_reservations", as: "team_management_show_pending_reservations"
+      post 'team_management/show_pending_reservations/:id', to: "team_management#update_pending_reservations", as: "team_management_update_pending_reservations"
       get 'team_management/edit_team/:id',                 to: "team_management#edit_team",                 as: "team_management_edit_team"
       put 'team_management/update_team/:id',               to: "team_management#update_team",               as: "team_management_update_team"
       get 'team_management/edit_affiliation'
