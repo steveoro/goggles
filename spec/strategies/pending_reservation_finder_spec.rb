@@ -60,7 +60,7 @@ describe PendingReservationFinder, type: :strategy do
     
     it "finds at least one new meeting" do
       ms = subject.find_manageable_seasons(Date.new(2019, 02, 26))
-      new_meeting = create( :meeting, { header_date: Date.today + (rand * 20).to_i, are_results_acquired: false , entry_deadline: Date.today + (rand * 20).to_i, season_id: ms.sample }) 
+      new_meeting = create( :meeting, { header_date: Date.today + 1 + (rand * 20).to_i, are_results_acquired: false , entry_deadline: Date.today + (rand * 20).to_i, season_id: ms.sample }) 
  
       expect( new_meeting.header_date ).to be > Date.today()
       expect( new_meeting.are_results_acquired ).to eq( false )

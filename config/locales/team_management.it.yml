@@ -20,4 +20,5 @@ it:
     reservation_link: "Vai alla pagina delle prenotazioni per il meeting"
     no_pendings: "Non sono presenti prenotazioni non confermate"
     confirm_selected: "Conferma le prenotazioni selezionate"
+    reservations_updated: 'Prenotazioni confermate'
     

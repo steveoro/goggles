@@ -20,3 +20,4 @@ it:
     reservation_link: "Go to meeting's reservations"
     no_pendings: "No pending reservations found"
     confirm_selected: "Confirm selected reservations"
+    reservations_updated: 'Reservations updated'

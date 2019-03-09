@@ -42,11 +42,26 @@ class TeamManagementController < ApplicationController
   # Update confirmed pending reservations
   #
   def update_pending_reservations
-    if request.xhr? && request.post?                   # === AJAX POST: ===
-      params.inspect
+    @reservation_ids = []
     
-      flash[:info] = I18n.t('team_management.reservation_updated')
-      redirect_to( show_pending_reservations_path(id: @team.id) ) and return
+    if request.xhr? && request.post?                   # === AJAX POST: ===
+      # Check out reservation to update
+      params.each do |key,value|
+        if key.start_with?('meeting_reservation_id:')
+          #puts "\r\n-" << key + "-" + value
+          @reservation_ids << key.slice(23..key.length).to_i
+        end
+      end  
+        
+      #@reservation_ids.each do |id| 
+      #  puts id.to_s
+      #end  
+      
+      # Update reservations
+      MeetingReservation.connection.update("update meeting_reservations set has_confirmed=true where id in (#{@reservation_ids.join(',')})")
+    
+      flash[:info] = I18n.t('team_management.reservations_updated')
+      redirect_to( team_management_show_pending_reservations_path(id: @team.id) )
     end
   end
 

@@ -90,6 +90,7 @@ class PendingReservationFinder
       joins("INNER JOIN meeting_reservations on meeting_reservations.meeting_id = meeting_event_reservations.meeting_id and meeting_reservations.badge_id = meeting_event_reservations.badge_id").
       where( is_doing_this: true, meeting_reservations: {has_confirmed: false}, meeting_id: @meetings_ids ).
       select( :id,
+              "meeting_reservations.id as meeting_reservation_id",
               :meeting_id, 
               :swimmer_id, 
               :suggested_minutes, 

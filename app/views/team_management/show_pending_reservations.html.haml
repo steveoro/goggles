@@ -13,12 +13,13 @@
         %tbody
               
           - meeting_id = 0
+          - prev_res_id = 0
           - @pending_reservations.each do |reservation|
             - if reservation.federation_code != 'CSI'
               - time = ( reservation.suggested_minutes.to_i > 0 ? "#{reservation.suggested_minutes}'" : '' ) + sprintf("%02.0f\"", reservation.suggested_seconds) + sprintf("%02.0f", reservation.suggested_hundreds)
             - else
               - time = sprintf("%02.0f:", reservation.suggested_minutes) + sprintf("%02.0f.", reservation.suggested_seconds) + sprintf("%02.0f", reservation.suggested_hundreds)
-  
+
             - if meeting_id != reservation.meeting_id
               - meeting_id = reservation.meeting_id
               %tr{'class'=>'success'}
@@ -58,9 +59,12 @@
                   = reservation.notes
                 - else
                   = I18n.t('team_management.manual')
-              %td.text-center
-                .control-group
-                  = check_box_tag( reservation.id, true )
+              
+              - if reservation.meeting_reservation_id != prev_res_id
+                - prev_res_id = reservation.meeting_reservation_id 
+                %td.text-center
+                  .control-group
+                    = check_box_tag( "meeting_reservation_id:#{reservation.meeting_reservation_id}", true )
 
       .col-xs-12.goggles-category-gap#confirm_button
       = submit_tag( I18n.t('team_management.confirm_selected'), id: "btn_submit", data: {disable_with: I18n.t(:please_wait), class: 'btn disabled'}, class: 'btn btn-primary' )
