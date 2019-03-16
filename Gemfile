@@ -5,9 +5,10 @@ end
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 5.1.4'
-# Vulnerability fix @ 20190726
-gem 'sprockets', '~> 3.7.2'
+gem 'rails', '~> 5.1.6'
+# Vulnerability fixes:
+gem "actionview", "~> 5.1.6.2"
+gem 'sprockets'
 
 gem 'mysql2'
 gem 'activerecord-session_store' # Needed to include a DB-based session store in Rails 4+
