@@ -3,7 +3,7 @@ it:
     team: "Team"
     edit_team: "Edit Team profile"
     edit_team_tab: "Profile"
-    
+
     pending_reservations: "Pending reservations"
     pending_reservations_tab: "Reservations"
     date: "Date"
@@ -21,3 +21,16 @@ it:
     no_pendings: "No pending reservations found"
     confirm_selected: "Confirm selected reservations"
     reservations_updated: 'Reservations updated'
+
+    fin_supermaster: 'FIN Supermaster'
+    tot_points: 'Tot.'
+    points: 'Score'
+    events: 'Events'
+    details: 'Details'
+    event: 'Event'
+    time: 'Time'
+    everage: 'Everage'
+    tot_individuals: 'Tot. individual events'
+    tot_winter_relays: 'Tot. winter relays'
+    tot_summer_relays: 'Tot. summer relays'
+    no_supermaster: "No valid results for FIN Supermaster ranking"

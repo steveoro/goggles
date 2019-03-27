@@ -106,6 +106,7 @@ Rails.application.routes.draw do
       post 'team_management/update_badges'
       get 'team_management/edit_lap_template'
       post 'team_management/update_app_template'
+      get 'team_management/supermaster/:id',    to: "team_management#supermaster",    as: "team_management_supermaster"
 
       # === Records ===
       get  "records/for_season_type",           to: "records#for_season_type"

@@ -3,7 +3,7 @@ it:
     team: "Squadra"
     edit_team: "Modifica dati squadra"
     edit_team_tab: "Profilo"
-    
+
     pending_reservations: "Iscrizioni non confermate"
     pending_reservations_tab: "Prenotazioni"
     date: "Data"
@@ -21,4 +21,16 @@ it:
     no_pendings: "Non sono presenti prenotazioni non confermate"
     confirm_selected: "Conferma le prenotazioni selezionate"
     reservations_updated: 'Prenotazioni confermate'
-    
+
+    fin_supermaster: 'FIN Supermaster'
+    tot_points: 'Tot.'
+    points: 'Punti'
+    events: 'Gare'
+    details: 'Dettaglio'
+    event: 'Specialità'
+    time: 'Tempo'
+    everage: 'Media'
+    tot_individuals: 'Totale gare individuali'
+    tot_winter_relays: 'Totale staffette invernali'
+    tot_summer_relays: 'Totale staffette estive'
+    no_supermaster: "Nessun master ha rislutati validi per la classifica di società supermaster"

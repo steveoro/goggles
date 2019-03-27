@@ -1,16 +1,15 @@
 = render( partial: 'teams/tabs_and_title' )
 
-.col-xs-12.goggles-category-gap#pending_reservations
+.col-xs-12.goggles-category-gap#supermaster
 
-  - if @pending_reservations.count == 0
-    %b= I18n.t('team_management.no_pendings')  
-  
+  - if @team_supermaster_scores.count == 0
+    %b= I18n.t('team_management.no_supermaster')
+
   - else
     %table.table.table-striped.table-bordered.table-hover.table-condensed
       %tbody
-            
-        - meeting_id = 0
-        - @pending_reservations.each do |reservation|
+        - @team_supermaster_scores.each do |supermaster|
+
           - if reservation.federation_code != 'CSI'
             - time = ( reservation.suggested_minutes.to_i > 0 ? "#{reservation.suggested_minutes}'" : '' ) + sprintf("%02.0f\"", reservation.suggested_seconds) + sprintf("%02.0f", reservation.suggested_hundreds)
           - else
@@ -21,8 +20,8 @@
             %tr{'class'=>'success'}
               %td{'colspan'=>'4'}
                 %a{ href: "#{ meeting_reservations_edit_events_path(:id=>reservation.meeting_id) }", 'data-toggle' => 'tooltip', title: I18n.t('team_management.reservation_link') }
-                  %b= Format.a_date( reservation.header_date ) + ' - ' + reservation.description + ' (' + Format.a_date( reservation.entry_deadline ) + ')' 
-              %td.text-right
+                  %b= Format.a_date( reservation.header_date ) + ' - ' + reservation.description + ' (' + Format.a_date( reservation.entry_deadline ) + ')'
+              %td.text-right{'colspan'=>'2'}
                 %b= @pending_reservations.count{ |r| r.meeting_id == meeting_id }
             %tr{'class'=>'info'}
               %td
@@ -38,7 +37,9 @@
                   %b= I18n.t('team_management.csi_time')
               %td
                 %b= I18n.t('team_management.notes')
-          
+              %td
+                %b= I18n.t('team_management.confirm')
+
           %tr
             %td
               = reservation.complete_name
@@ -52,4 +53,4 @@
               - if reservation.notes
                 = reservation.notes
               - else
-                = I18n.t('team_management.manual') 
+                = I18n.t('team_management.manual')

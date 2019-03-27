@@ -33,7 +33,7 @@ class TeamManagementController < ApplicationController
   #
   def show_pending_reservations
     @tab_title = I18n.t('team_management.pending_reservations')
-    
+
     prf = PendingReservationFinder.new(current_user)
     @pending_reservations = prf.get_pending_reservations()
   end
@@ -43,7 +43,7 @@ class TeamManagementController < ApplicationController
   #
   def update_pending_reservations
     @reservation_ids = []
-    
+
     if request.xhr? && request.post?                   # === AJAX POST: ===
       # Check out reservation to update
       params.each do |key,value|
@@ -51,15 +51,15 @@ class TeamManagementController < ApplicationController
           #puts "\r\n-" << key + "-" + value
           @reservation_ids << key.slice(23..key.length).to_i
         end
-      end  
-        
-      #@reservation_ids.each do |id| 
+      end
+
+      #@reservation_ids.each do |id|
       #  puts id.to_s
-      #end  
-      
+      #end
+
       # Update reservations
       MeetingReservation.connection.update("update meeting_reservations set has_confirmed=true where id in (#{@reservation_ids.join(',')})")
-    
+
       flash[:info] = I18n.t('team_management.reservations_updated')
       redirect_to( team_management_show_pending_reservations_path(id: @team.id) )
     end
@@ -84,6 +84,16 @@ class TeamManagementController < ApplicationController
       flash[:error] = I18n.t(:invalid_action_request)
       redirect_to( team_radio_path(id: @team.id) ) and return
     end
+  end
+
+  # View FIN Supermaster team score (status)
+  def supermaster
+    @tab_title = I18n.t('team_management.fin_supermaster')
+
+    # Find out steam affiliation. Fix-ME
+    team_affiliation = @team.team_affiliations.where("season_id = 182")
+    @tsc = TeamSupermasterCalculator.new(fix_team_affiliation)
+    @team_supermaster_scores = @tsc.get_swimmer_results()
   end
 
 
