@@ -50,7 +50,7 @@ describe SupermasterTeamSwimmerDAO, type: :model do
     ])
 
     it_behaves_like( "(the existance of a method returning numeric values)", [
-      :get_results_count, :get_total_score
+      :get_results_count, :get_total_score, :get_everage_score
     ])
 
     describe "#set_swimmer_data" do

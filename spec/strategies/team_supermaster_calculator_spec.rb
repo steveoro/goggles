@@ -22,6 +22,9 @@ describe TeamSupermasterCalculator, type: :strategy do
 
   let(:leega)             { Swimmer.find( 23 ) }
   let(:steve)             { Swimmer.find( 142 ) }
+  let(:barbarina)         { Swimmer.find( 98 ) }
+  let(:elena)             { Swimmer.find( 192 ) }
+  let(:monica)            { Swimmer.find( 138 ) }
 
   subject { TeamSupermasterCalculator.new(fix_team_affiliation) }
 
@@ -113,13 +116,16 @@ describe TeamSupermasterCalculator, type: :strategy do
       swimmer_count = subject.parse_swimmer_results()
       expect( subject.team_supermaster_dao ).to all(be_an_instance_of( SupermasterTeamSwimmerDAO ) )
     end
-    it "finds results for Steve and Leega in Ober Ferrari FIN seasons" do
+    it "finds results for Steve, Barbarina, Monica, Elena and Leega in Ober Ferrari FIN seasons" do
       tsc = TeamSupermasterCalculator.new(fin_Ober_season)
       swimmer_count = tsc.parse_swimmer_results()
       expect( swimmer_count ).to be > 5
       expect( swimmer_count ).to be < 50
       expect( tsc.team_supermaster_dao.index{|sd| sd.swimmer_id == leega.id } ).to be >= 0
       expect( tsc.team_supermaster_dao.index{|sd| sd.swimmer_id == steve.id } ).to be >= 0
+      expect( tsc.team_supermaster_dao.index{|sd| sd.swimmer_id == barbarina.id } ).to be >= 0
+      expect( tsc.team_supermaster_dao.index{|sd| sd.swimmer_id == elena.id } ).to be >= 0
+      expect( tsc.team_supermaster_dao.index{|sd| sd.swimmer_id == monica.id } ).to be >= 0
     end
   end
   #-- -------------------------------------------------------------------------

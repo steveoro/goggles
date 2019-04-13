@@ -88,4 +88,12 @@ class SupermasterTeamSwimmerDAO
   end
   #-- -------------------------------------------------------------------------
   #++
+
+  # Gets everage score
+  #
+  def get_everage_score
+    (@total_score / @results_count).round(2)
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 end

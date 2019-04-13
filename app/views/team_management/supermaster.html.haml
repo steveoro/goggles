@@ -6,51 +6,78 @@
     %b= I18n.t('team_management.no_supermaster')
 
   - else
+    - tot_individual_score = 0
+    - tot_considered = [@full_events_swimmers, @ranking_context].min
     %table.table.table-striped.table-bordered.table-hover.table-condensed
       %tbody
+        %tr{'class'=>'info'}
+          %td.text-right
+            %b= I18n.t('team_management.number')
+          %td
+            %b= I18n.t('team_management.swimmer')
+          %td.text-center
+            %b= I18n.t('team_management.events')
+          %td.text-right
+            %b= I18n.t('team_management.tot_points')
+          %td.text-right
+            %b= I18n.t('team_management.everage')
+          %td.text-center{id:"goggles-border-rx-thick"}
+            %b= ""
+          %td.text-center{'colspan'=>'9', id:"goggles-border-rx-thick"}
+            %b= I18n.t('team_management.details')
+
+        - count = 0
         - @team_supermaster_scores.each do |supermaster|
-
-          - if reservation.federation_code != 'CSI'
-            - time = ( reservation.suggested_minutes.to_i > 0 ? "#{reservation.suggested_minutes}'" : '' ) + sprintf("%02.0f\"", reservation.suggested_seconds) + sprintf("%02.0f", reservation.suggested_hundreds)
-          - else
-            - time = sprintf("%02.0f:", reservation.suggested_minutes) + sprintf("%02.0f.", reservation.suggested_seconds) + sprintf("%02.0f", reservation.suggested_hundreds)
-
-          - if meeting_id != reservation.meeting_id
-            - meeting_id = reservation.meeting_id
-            %tr{'class'=>'success'}
-              %td{'colspan'=>'4'}
-                %a{ href: "#{ meeting_reservations_edit_events_path(:id=>reservation.meeting_id) }", 'data-toggle' => 'tooltip', title: I18n.t('team_management.reservation_link') }
-                  %b= Format.a_date( reservation.header_date ) + ' - ' + reservation.description + ' (' + Format.a_date( reservation.entry_deadline ) + ')'
-              %td.text-right{'colspan'=>'2'}
-                %b= @pending_reservations.count{ |r| r.meeting_id == meeting_id }
-            %tr{'class'=>'info'}
-              %td
-                %b= I18n.t('team_management.swimmer')
-              %td
-                %b= I18n.t('team_management.badge_number')
-              %td
-                %b= I18n.t('team_management.event')
-              %td.text-right
-                - if reservation.federation_code != 'CSI'
-                  %b= I18n.t('team_management.entry_time')
-                - else
-                  %b= I18n.t('team_management.csi_time')
-              %td
-                %b= I18n.t('team_management.notes')
-              %td
-                %b= I18n.t('team_management.confirm')
-
+          - count += 1
+          - is_considered = ( count <= tot_considered )
+          - tot_individual_score += supermaster.get_total_score if is_considered
           %tr
-            %td
-              = reservation.complete_name
-            %td
-              = reservation.badge_number
-            %td
-              = reservation.event
             %td.text-right
-              = time
+              = count
             %td
-              - if reservation.notes
-                = reservation.notes
-              - else
-                = I18n.t('team_management.manual')
+              = supermaster.complete_name
+            %td.text-center
+              = supermaster.get_results_count
+            %td.text-right
+              = sprintf( "%02.2f", supermaster.get_total_score)
+            %td.text-right
+              = sprintf( "%02.2f", supermaster.get_everage_score)
+            %td.text-center{id:"goggles-border-rx-thick"}
+              = show_tag( is_considered )
+            - supermaster.results.sort{ |p,n| n.standard_points <=> p.standard_points }.each do |swimmer_result|
+              %td.text-center
+                = swimmer_result.event_type_code
+              %td.text-right
+                = swimmer_result.time_swam.to_s
+              %td.text-right{id:"goggles-border-rx-thick"}
+                = sprintf( "%02.2f", swimmer_result.standard_points)
+            - if supermaster.get_results_count < 3
+              - num_empty_col = (3 - supermaster.get_results_count) * 3
+              %td{'colspan'=>num_empty_col, id:"goggles-border-rx-thick"}
+                = ""
+
+    .col-xs-6.goggles-category-gap#summary
+      %table.table.table-striped.table-bordered.table-hover.table-condensed
+        %tbody
+          %tr{'class'=>'info'}
+            %td
+              %b= I18n.t('team_management.range') + @ranking_range
+            %td.text-right
+              %b= I18n.t('team_management.tot_points')
+            %td.text-right
+              %b= I18n.t('team_management.number')
+            %td.text-right
+              %b= I18n.t('team_management.everage_swimmer')
+            %td.text-right
+              %b= I18n.t('team_management.everage_event')
+          %tr
+            %td{'class'=>'info'}
+              %b= I18n.t('team_management.tot_individuals')
+            %td.text-right
+              = sprintf( "%02.2f", tot_individual_score)
+            %td.text-right
+              = tot_considered
+            %td.text-right
+              = sprintf( "%02.2f", (tot_individual_score / tot_considered).round(2) )
+            %td.text-right
+              = sprintf( "%02.2f", (tot_individual_score / tot_considered / 3).round(2) )

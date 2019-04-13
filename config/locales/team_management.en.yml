@@ -23,6 +23,7 @@ it:
     reservations_updated: 'Reservations updated'
 
     fin_supermaster: 'FIN Supermaster'
+    number: 'N.'
     tot_points: 'Tot.'
     points: 'Score'
     events: 'Events'
@@ -30,6 +31,9 @@ it:
     event: 'Event'
     time: 'Time'
     everage: 'Everage'
+    range: 'Range '
+    everage_swimmer: 'Swimmers everage'
+    everage_event: 'Event everage'
     tot_individuals: 'Tot. individual events'
     tot_winter_relays: 'Tot. winter relays'
     tot_summer_relays: 'Tot. summer relays'

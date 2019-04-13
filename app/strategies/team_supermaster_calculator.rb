@@ -20,7 +20,7 @@ class TeamSupermasterCalculator
   attr_reader :team_affiliation
 
   # These can be edited later on:
-  attr_accessor :team, :season, :team_supermaster_dao, :u25_year, :min_m25_date, :got_swimmer_results
+  attr_accessor :team, :season, :team_supermaster_dao, :u25_year, :min_m25_date, :got_swimmer_results, :full_events_swimmers
 
   # Initialization
   #
@@ -38,6 +38,7 @@ class TeamSupermasterCalculator
     @got_swimmer_results  = false
     @swimmer_results      = []
     @team_supermaster_dao = []
+    @full_events_swimmers = 0
   end
   #-- --------------------------------------------------------------------------
   #++
@@ -70,12 +71,12 @@ class TeamSupermasterCalculator
       group("meeting_individual_results.swimmer_id, swimmers.complete_name, event_types.code, category_types.code").
       select("meeting_individual_results.swimmer_id,
         swimmers.complete_name,
-        category_types.code as category_type_code,
-        event_types.code as event_type_code,
+        category_types.code as category_code,
+        event_types.code as event_code,
         meeting_individual_results.meeting_program_id,
         max(meeting_individual_results.standard_points) as standard_points,
         max(concat(lpad(meeting_individual_results.standard_points, 7, '0'), ';', lpaD(meeting_individual_results.minutes, 2, '0'), ':', lpaD(meeting_individual_results.seconds, 2, '0'), ':', lpaD(meeting_individual_results.hundreds, 2, '0'), ';', meeting_sessions.meeting_id, ';', date_format(meeting_sessions.scheduled_date, '%Y-%m-%d'))) as event_detail").
-      order(2, 5).
+      order("swimmers.complete_name, meeting_individual_results.standard_points desc").
       to_a
   end
   #-- -------------------------------------------------------------------------
@@ -91,7 +92,7 @@ class TeamSupermasterCalculator
     if @swimmer_results.size > 0
       prev_swimmer_id = @swimmer_results[0].swimmer_id
       sts = SupermasterTeamSwimmerDAO.new( prev_swimmer_id )
-      sts.set_swimmer_data( @swimmer_results[0].complete_name, @swimmer_results[0].category_type_code )
+      sts.set_swimmer_data( @swimmer_results[0].complete_name, @swimmer_results[0].category_code )
       @swimmer_results.each do |swimmer_result|
         if swimmer_result.swimmer_id != prev_swimmer_id
           # Collect swimmer datas
@@ -101,17 +102,19 @@ class TeamSupermasterCalculator
           # Creates new swimmer element
           prev_swimmer_id = swimmer_result.swimmer_id
           sts = SupermasterTeamSwimmerDAO.new( swimmer_result.swimmer_id )
-          sts.set_swimmer_data( swimmer_result.complete_name, swimmer_result.category_type_code )
+          sts.set_swimmer_data( swimmer_result.complete_name, swimmer_result.category_code )
         end
 
         # Checks if max event number has been reached
         if sts.get_results_count < num_events
           # Adds event result details
           details = extract_event_detail( swimmer_result.event_detail )
-          sts.add_result_detail( details[:meeting_id], details[:scheduled_date], swimmer_result.event_type_code, details[:time_swam], swimmer_result.standard_points )
+          if sts.add_result_detail( details[:meeting_id], details[:scheduled_date], swimmer_result.event_code, details[:time_swam], swimmer_result.standard_points ) == num_events
+            @full_events_swimmers += 1
+          end
         end
       end
-      
+
       # Collect last swimmer
       @team_supermaster_dao << sts
       swimmer_count += 1

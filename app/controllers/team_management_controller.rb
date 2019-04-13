@@ -91,9 +91,43 @@ class TeamManagementController < ApplicationController
     @tab_title = I18n.t('team_management.fin_supermaster')
 
     # Find out steam affiliation. Fix-ME
-    team_affiliation = @team.team_affiliations.where("season_id = 182")
-    @tsc = TeamSupermasterCalculator.new(fix_team_affiliation)
-    @team_supermaster_scores = @tsc.get_swimmer_results()
+    team_affiliation = @team.team_affiliations.includes(:season).where("season_id = 182").first
+    tsc = TeamSupermasterCalculator.new(team_affiliation)
+    tot_swimmers = tsc.parse_swimmer_results()
+    @team_supermaster_scores = tsc.team_supermaster_dao.sort{|p,n| (n.get_results_count*10000 + n.get_total_score) <=> (p.get_results_count*10000 + p.get_total_score) }
+    @full_events_swimmers = tsc.full_events_swimmers
+    @ranking_context = 9999
+    @ranking_range = "A"
+
+    # Determines the ranking context based on full_events_swimmer count
+    # TODO - Store range on DB
+    case @full_events_swimmers
+    # Range F 0-25
+    when 0..30
+      @ranking_context = 25
+      @ranking_range = "F"
+    # Range E 26-50
+    when 31..55
+      @ranking_context = 50
+      @ranking_range = "E"
+    # Range D 51-75
+    when 56..80
+      @ranking_context = 75
+      @ranking_range = "D"
+    # Range C 76-100
+    when 81..105
+      @ranking_context = 100
+      @ranking_range = "C"
+    # Range B 101-125
+    when 106..130
+      @ranking_context = 125
+      @ranking_range = "B"
+    # Range A more than 126
+    else
+      @ranking_context = 9999
+      @ranking_range = "A"
+    end
+
   end
 
 
