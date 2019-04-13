@@ -72,6 +72,7 @@ class TeamSupermasterCalculator
         swimmers.complete_name,
         category_types.code as category_type_code,
         event_types.code as event_type_code,
+        meeting_individual_results.meeting_program_id,
         max(meeting_individual_results.standard_points) as standard_points,
         max(concat(lpad(meeting_individual_results.standard_points, 7, '0'), ';', lpaD(meeting_individual_results.minutes, 2, '0'), ':', lpaD(meeting_individual_results.seconds, 2, '0'), ':', lpaD(meeting_individual_results.hundreds, 2, '0'), ';', meeting_sessions.meeting_id, ';', date_format(meeting_sessions.scheduled_date, '%Y-%m-%d'))) as event_detail").
       order(2, 5).
@@ -85,23 +86,37 @@ class TeamSupermasterCalculator
   # A swimmer is included in team score if num_events valid events swam
   #
   def parse_swimmer_results( num_events = 3 )
-    prev_swimmers = 0
-    get_swimmer_results if @swimmer_results.size == 0
-    @swimmer_results.each do |swimmer_result|
-      if swimmer_result.swimmer_id != prev_swimmers
-        # Creates new swimmer element
-        prev_swimmers = swimmer_result.swimmer_id
-        sts = SupermasterTeamSwimmerDAO.new( swimmer_result.swimmer_id )
-        sts.set_swimmer_data( swimmer_result.complete_name, swimmer_result.category_type_code )
-      end
+    swimmer_count = 0
+    get_swimmer_results if !@got_swimmer_results
+    if @swimmer_results.size > 0
+      prev_swimmer_id = @swimmer_results[0].swimmer_id
+      sts = SupermasterTeamSwimmerDAO.new( prev_swimmer_id )
+      sts.set_swimmer_data( @swimmer_results[0].complete_name, @swimmer_results[0].category_type_code )
+      @swimmer_results.each do |swimmer_result|
+        if swimmer_result.swimmer_id != prev_swimmer_id
+          # Collect swimmer datas
+          @team_supermaster_dao << sts
+          swimmer_count += 1
 
-      # Checks if max event number has been reached
-      if sts.get_results_count < num_events
-        # Adds event result details
-        details = extract_event_detail( swimmer_result.event_detail )
-        sts.add_result_detail( details[:meeting_id], details[:scheduled_date], swimmer_result.event_type_code, details[:time_swam], swimmer_result.standard_points )
+          # Creates new swimmer element
+          prev_swimmer_id = swimmer_result.swimmer_id
+          sts = SupermasterTeamSwimmerDAO.new( swimmer_result.swimmer_id )
+          sts.set_swimmer_data( swimmer_result.complete_name, swimmer_result.category_type_code )
+        end
+
+        # Checks if max event number has been reached
+        if sts.get_results_count < num_events
+          # Adds event result details
+          details = extract_event_detail( swimmer_result.event_detail )
+          sts.add_result_detail( details[:meeting_id], details[:scheduled_date], swimmer_result.event_type_code, details[:time_swam], swimmer_result.standard_points )
+        end
       end
+      
+      # Collect last swimmer
+      @team_supermaster_dao << sts
+      swimmer_count += 1
     end
+    swimmer_count
   end
 
   # Extracts event details from concat sql response
