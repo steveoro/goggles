@@ -44,7 +44,7 @@
               = sprintf( "%02.2f", supermaster.get_everage_score)
             %td.text-center{id:"goggles-border-rx-thick"}
               = show_tag( is_considered )
-            - supermaster.results.sort{ |p,n| n.standard_points <=> p.standard_points }.each do |swimmer_result|
+            - supermaster.results.each do |swimmer_result|
               %td.text-center
                 = swimmer_result.event_type_code
               %td.text-right
