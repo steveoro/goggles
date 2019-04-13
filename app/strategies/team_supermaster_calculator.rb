@@ -20,7 +20,7 @@ class TeamSupermasterCalculator
   attr_reader :team_affiliation
 
   # These can be edited later on:
-  attr_accessor :team, :season, :team_supermaster_dao, :u25_year, :min_m25_date
+  attr_accessor :team, :season, :team_supermaster_dao, :u25_year, :min_m25_date, :got_swimmer_results
 
   # Initialization
   #
@@ -35,6 +35,7 @@ class TeamSupermasterCalculator
     @u25_year = season.end_date.year - 25
     @min_m25_date = Date.new( season.end_date.year, 1, 1 )
 
+    @got_swimmer_results  = false
     @swimmer_results      = []
     @team_supermaster_dao = []
   end
@@ -61,6 +62,7 @@ class TeamSupermasterCalculator
   #
   def get_swimmer_results()
     # Find out valid results
+    @got_swimmer_results  = true
     @swimmer_results = @team_affiliation.
       meeting_individual_results.
       joins( :swimmer, meeting_program: [:category_type, meeting_event: [:event_type, :meeting_session]] ).
@@ -71,19 +73,20 @@ class TeamSupermasterCalculator
         category_types.code as category_type_code,
         event_types.code as event_type_code,
         max(meeting_individual_results.standard_points) as standard_points,
-        max(concat(lpad(meeting_individual_results.standard_points, 7, '0'), '-', lpaD(meeting_individual_results.minutes, 2, '0'), '''', lpaD(meeting_individual_results.seconds, 2, '0'), '\"', lpaD(meeting_individual_results.hundreds, 2, '0'), '-', meeting_sessions.meeting_id, '-', date_format(meeting_sessions.scheduled_date, '%d/%m/%Y'))) as event_detail").
+        max(concat(lpad(meeting_individual_results.standard_points, 7, '0'), ';', lpaD(meeting_individual_results.minutes, 2, '0'), ':', lpaD(meeting_individual_results.seconds, 2, '0'), ':', lpaD(meeting_individual_results.hundreds, 2, '0'), ';', meeting_sessions.meeting_id, ';', date_format(meeting_sessions.scheduled_date, '%Y-%m-%d'))) as event_detail").
       order(2, 5).
       to_a
   end
   #-- -------------------------------------------------------------------------
   #++
 
-  # Organize swimemr results in a dao
-  # Consider only max num_enets results for score calculation
+  # Organize swimmer results in a dao
+  # Consider only max num_events results for score calculation
   # A swimmer is included in team score if num_events valid events swam
   #
   def parse_swimmer_results( num_events = 3 )
     prev_swimmers = 0
+    get_swimmer_results if @swimmer_results.size == 0
     @swimmer_results.each do |swimmer_result|
       if swimmer_result.swimmer_id != prev_swimmers
         # Creates new swimmer element
@@ -96,7 +99,7 @@ class TeamSupermasterCalculator
       if sts.get_results_count < num_events
         # Adds event result details
         details = extract_event_detail( swimmer_result.event_detail )
-        sts.add_result_detail( details(:meeting_id), details(:scheduled_date), swimmer_result.event_type_code, details(:time_swam), swimmer_result.standard_points )
+        sts.add_result_detail( details[:meeting_id], details[:scheduled_date], swimmer_result.event_type_code, details[:time_swam], swimmer_result.standard_points )
       end
     end
   end
@@ -104,12 +107,17 @@ class TeamSupermasterCalculator
   # Extracts event details from concat sql response
   # Structure:
   # - standard_points
-  # - time_swam (string mm'ss"cc)
+  # - time_swam (string mm:ss:cc)
   # - meeting_id
-  # - scheduled_date (string '%d/%m/%Y')
+  # - scheduled_date (string '%Y/%m/%d')
   #
   def extract_event_detail( sql_response )
-    details = sql_response.split('-')
-    { :standard_points => details[0], :time_swam => details[1], :meeting_id => details[2], scheduled_date => details[3] }
+    details = sql_response.split(';')
+    standard_points = details[0].to_f
+    time_swam_detail = details[1].split(':')
+    time_swam = Timing.new( time_swam_detail[2], time_swam_detail[1], time_swam_detail[0] )
+    meeting_id = details[2].to_i
+    scheduled_date = Date.parse( details[3] )
+    { :standard_points => standard_points, :time_swam => time_swam, :meeting_id => meeting_id, :scheduled_date => scheduled_date }
   end
 end

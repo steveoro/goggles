@@ -48,7 +48,7 @@ class SupermasterTeamSwimmerDAO
     @complete_name = ""
     @category_type_code = ""
     @results = []
-    @result_count = 0
+    @results_count = 0
     @total_score = 0.00
   end
   #-- -------------------------------------------------------------------------
@@ -66,9 +66,9 @@ class SupermasterTeamSwimmerDAO
   # Adds a result
   #
   def add_result_detail( meeting_id, scheduled_date, event_type_code, time_swam, standard_points )
-    @results_count ++
-    @total_score += standard_points
     @results << SupermasterEventDetailDAO.new( meeting_id, scheduled_date, event_type_code, time_swam, standard_points )
+    @total_score += standard_points
+    @results_count += 1
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -83,7 +83,7 @@ class SupermasterTeamSwimmerDAO
 
   # Gets total score
   #
-  def get_results_count
+  def get_total_score
     @total_score
   end
   #-- -------------------------------------------------------------------------
