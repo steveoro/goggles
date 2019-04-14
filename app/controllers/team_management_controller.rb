@@ -96,6 +96,8 @@ class TeamManagementController < ApplicationController
     tot_swimmers = tsc.parse_swimmer_results()
     @team_supermaster_scores = tsc.team_supermaster_dao.sort{|p,n| (n.get_results_count*10000 + n.get_total_score) <=> (p.get_results_count*10000 + p.get_total_score) }
     @full_events_swimmers = tsc.full_events_swimmers
+    @ranking_min = 0
+    @ranking_max = 9999
     @ranking_context = 9999
     @ranking_range = "A"
 
@@ -104,26 +106,38 @@ class TeamManagementController < ApplicationController
     case @full_events_swimmers
     # Range F 0-25
     when 0..30
+      @ranking_min = 0
+      @ranking_max = 30
       @ranking_context = 25
       @ranking_range = "F"
     # Range E 26-50
     when 31..55
+      @ranking_min = 25
+      @ranking_max = 55
       @ranking_context = 50
       @ranking_range = "E"
     # Range D 51-75
     when 56..80
+      @ranking_min = 50
+      @ranking_max = 80
       @ranking_context = 75
       @ranking_range = "D"
     # Range C 76-100
     when 81..105
+      @ranking_min = 75
+      @ranking_max = 105
       @ranking_context = 100
       @ranking_range = "C"
     # Range B 101-125
     when 106..130
+      @ranking_min = 100
+      @ranking_max = 130
       @ranking_context = 125
       @ranking_range = "B"
     # Range A more than 126
     else
+      @ranking_min = 125
+      @ranking_max = 9999
       @ranking_context = 9999
       @ranking_range = "A"
     end

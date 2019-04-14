@@ -32,7 +32,7 @@ class TeamManagerValidator
     #( current_user.team_managers.exists? ) &&
     #(! current_user.team_managers.find{|tm| tm.team_affiliation.season_id == meeting.season_id }.nil?)
     ( current_user.team_managers.joins( :team_affiliation ).where( 'team_affiliations.season_id = ?', meeting.season_id ).exists? )
-    
+
   end
   #-- --------------------------------------------------------------------------
   #++
@@ -99,15 +99,15 @@ class TeamManagerValidator
   def self.any_reservations_for?( current_user, meeting )
     #return false if current_user.nil? || meeting.nil?
     #MeetingReservation.where( meeting_id: meeting.id, swimmer_id: current_user.swimmer_id ).exists?
-    return false if current_user.nil? || 
+    return false if current_user.nil? ||
       meeting.nil? ||
-      current_user.swimmer.nil? 
+      current_user.swimmer.nil?
       current_user.swimmer.badges.where( season_id: meeting.season_id ).exists?
-      
-#      (!current_user.team_managers.exists? && 
-#        (current_user.swimmer.nil? || 
+
+#      (!current_user.team_managers.exists? &&
+#        (current_user.swimmer.nil? ||
 #        !current_user.swimmer.badges.where( season_id: meeting.season_id ).exists? ))
-      
+
     MeetingReservation.where( meeting_id: meeting.id, team_id: current_user.swimmer.badges.where( season_id: meeting.season_id ).first.team_id ).exists?
   end
   #-- --------------------------------------------------------------------------
@@ -126,10 +126,11 @@ class TeamManagerValidator
   #
   def self.can_manage_team?( current_user, team )
     # For a valid User & Team, the user must be a team-manager
-    # of the chosen team.
+    # of the chosen team or admin.
     current_user.instance_of?( User ) &&
     team.instance_of?( Team ) &&
-    current_user.team_managers.joins( :team_affiliation ).where( 'team_affiliations.team_id = ?', team.id ).exists?
+    (current_user.team_managers.joins( :team_affiliation ).where( 'team_affiliations.team_id = ?', team.id ).exists? ||
+     current_user.id <= 2)
   end
   #-- --------------------------------------------------------------------------
   #++

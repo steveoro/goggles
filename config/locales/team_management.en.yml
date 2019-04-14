@@ -23,6 +23,7 @@ it:
     reservations_updated: 'Reservations updated'
 
     fin_supermaster: 'FIN Supermaster'
+    fin_supermaster_tab: 'FIN Supermaster'
     number: 'N.'
     tot_points: 'Tot.'
     points: 'Score'
@@ -37,4 +38,7 @@ it:
     tot_individuals: 'Tot. individual events'
     tot_winter_relays: 'Tot. winter relays'
     tot_summer_relays: 'Tot. summer relays'
+    swimmer_supermaster_link: "Go to swimmer's supermaster"
     no_supermaster: "No valid results for FIN Supermaster ranking"
+    detail_nav: 'Results detail'
+    summary_nav: 'Summary'

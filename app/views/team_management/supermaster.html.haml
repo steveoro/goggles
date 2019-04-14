@@ -1,13 +1,21 @@
 = render( partial: 'teams/tabs_and_title' )
 
-.col-xs-12.goggles-category-gap#supermaster
-
+.col-xs-12.goggles-category-gap#pageTop
   - if @team_supermaster_scores.count == 0
     %b= I18n.t('team_management.no_supermaster')
 
   - else
     - tot_individual_score = 0
     - tot_considered = [@full_events_swimmers, @ranking_context].min
+
+    %ul.col-xs-offset-10.col-xs-2.col-sm-offset-11.col-sm-1.col-md-offset-11.col-md-1.nav.nav-pills.nav-stacked.navbar-fixed-bottom.goggles-divlist-odd.navpill_side
+      %li
+        = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+          = I18n.t('team_management.detail_nav')
+        %li
+          = link_to("#summary", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+            = I18n.t('team_management.summary_nav')
+
     %table.table.table-striped.table-bordered.table-hover.table-condensed
       %tbody
         %tr{'class'=>'info'}
@@ -35,7 +43,8 @@
             %td.text-right
               = count
             %td
-              = supermaster.complete_name
+              %a{ href: "#{ swimmer_supermaster_path(:id=>supermaster.swimmer_id) }", 'data-toggle' => 'tooltip', title: I18n.t('team_management.swimmer_supermaster_link') }
+                = supermaster.complete_name
             %td.text-center
               = supermaster.get_results_count
             %td.text-right
@@ -56,28 +65,83 @@
               %td{'colspan'=>num_empty_col, id:"goggles-border-rx-thick"}
                 = ""
 
-    .col-xs-6.goggles-category-gap#summary
-      %table.table.table-striped.table-bordered.table-hover.table-condensed
-        %tbody
-          %tr{'class'=>'info'}
-            %td
-              %b= I18n.t('team_management.range') + @ranking_range
-            %td.text-right
-              %b= I18n.t('team_management.tot_points')
-            %td.text-right
-              %b= I18n.t('team_management.number')
-            %td.text-right
-              %b= I18n.t('team_management.everage_swimmer')
-            %td.text-right
-              %b= I18n.t('team_management.everage_event')
-          %tr
-            %td{'class'=>'info'}
-              %b= I18n.t('team_management.tot_individuals')
-            %td.text-right
-              = sprintf( "%02.2f", tot_individual_score)
-            %td.text-right
-              = tot_considered
-            %td.text-right
-              = sprintf( "%02.2f", (tot_individual_score / tot_considered).round(2) )
-            %td.text-right
-              = sprintf( "%02.2f", (tot_individual_score / tot_considered / 3).round(2) )
+    .col-xs-12.goggles-category-gap#summary
+      .col-xs-7
+        %table.table.table-striped.table-bordered.table-hover.table-condensed
+          %tbody
+            %tr.text-center{'class'=>'info'}
+              %td{'class'=>'success'}
+                %b= I18n.t('team_management.range') + @ranking_range + " #{@ranking_min}-#{@ranking_context}"
+              %td.text-right
+                %b= I18n.t('team_management.tot_points')
+              %td.text-right
+                %b= I18n.t('team_management.number')
+              %td.text-right
+                %b= I18n.t('team_management.everage_swimmer')
+              %td.text-right
+                %b= I18n.t('team_management.everage_event')
+            %tr
+              %td{'class'=>'info'}
+                %b= I18n.t('team_management.tot_individuals')
+              %td.text-right
+                %b= sprintf( "%02.2f", tot_individual_score)
+              %td.text-right
+                %b= tot_considered
+              %td.text-right
+                = sprintf( "%02.2f", (tot_individual_score / tot_considered).round(2) )
+              %td.text-right
+                = sprintf( "%02.2f", (tot_individual_score / tot_considered / 3).round(2) )
+            %tr
+              %td{'class'=>'info'}
+                %b= I18n.t('team_management.tot_winter_relays')
+              %td.text-right
+              %td.text-right
+              %td.text-right
+              %td.text-right
+            %tr
+              %td{'class'=>'info'}
+                %b= I18n.t('team_management.tot_summer_relays')
+              %td.text-right
+              %td.text-right
+              %td.text-right
+              %td.text-right
+
+      .col-xs-5
+        .col-xs-8
+          .div{'align' => 'center', 'id' => 'team_supermaster_chart' }
+
+.col-xs-12.goggles-category-gap#pageBottom
+
+:javascript
+  google.charts.load('current', {'packages':['gauge']});
+  google.charts.setOnLoadCallback(drawChart);
+
+  function drawChart() {
+    var sm_score = Number.parseFloat( "#{@full_events_swimmers}" );
+    var gf = Number.parseFloat( "#{@ranking_context - 10}" );
+    var gt = Number.parseFloat( "#{@ranking_context}" );
+    var yf = Number.parseFloat( "#{@ranking_context}" );
+    var yt = Number.parseFloat( "#{@ranking_context + 3}" );
+    var rf = Number.parseFloat( "#{@ranking_context + 3}" );
+    var rt = Number.parseFloat( "#{@ranking_context + 5}" );
+    var rmin = Number.parseFloat( "#{@ranking_min}" );
+    var rmax = Number.parseFloat( "#{@ranking_max}" );
+
+    var dataSM = google.visualization.arrayToDataTable([
+      ['Label', 'Value'],
+      ['Masters', sm_score]
+    ]);
+
+    var optionsSM = {
+      greenFrom: gf, greenTo: gt,
+      yellowFrom:yf, yellowTo: yt,
+      redFrom: rf, redTo: rt,
+      min: rmin, max: rmax,
+      majorTicks: [rmin, '', '', gf, '', '', rmax],
+      minorTicks: 5
+    };
+
+    var chartSM = new google.visualization.Gauge(document.getElementById('team_supermaster_chart'));
+
+    chartSM.draw(dataSM, optionsSM);
+  };

@@ -189,9 +189,9 @@ describe TeamManagerValidator, type: :strategy do
       end
     end
     context "with a valid user/team-manager that can't manage the team," do
-      it "returns true" do
+      it "returns false" do
         expect(
-          TeamManagerValidator.can_manage_team?( User.find(2), new_team )
+          TeamManagerValidator.can_manage_team?( User.find(4), new_team )
         ).to be false
       end
     end
@@ -199,6 +199,13 @@ describe TeamManagerValidator, type: :strategy do
       it "returns true" do
         expect(
           TeamManagerValidator.can_manage_team?( team_manager.user, managed_team )
+        ).to be true
+      end
+    end
+    context "with an admin user that can't manage the team," do
+      it "returns true" do
+        expect(
+          TeamManagerValidator.can_manage_team?( User.find(2), new_team )
         ).to be true
       end
     end

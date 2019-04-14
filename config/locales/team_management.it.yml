@@ -23,6 +23,7 @@ it:
     reservations_updated: 'Prenotazioni confermate'
 
     fin_supermaster: 'FIN Supermaster'
+    fin_supermaster_tab: 'FIN Supermaster'
     number: 'N.'
     tot_points: 'Tot.'
     points: 'Punti'
@@ -37,4 +38,7 @@ it:
     tot_individuals: 'Totale gare individuali'
     tot_winter_relays: 'Totale staffette invernali'
     tot_summer_relays: 'Totale staffette estive'
+    swimmer_supermaster_link: "Vai alla pagina della classifica supermaster del nuotatore"
     no_supermaster: "Nessun master ha rislutati validi per la classifica di società supermaster"
+    detail_nav: 'Dettaglio risultati'
+    summary_nav: 'Sommario'

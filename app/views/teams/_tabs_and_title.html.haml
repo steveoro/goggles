@@ -2,6 +2,8 @@
 %ul.nav.nav-tabs{role: "tablist"}
   = show_tab_link( params, 'radio', t('radiography.radio_tab'), team_radio_path(id: @team.id) )
   = show_tab_link( params, 'current_swimmers', t('radiography.team_current_swimmers_tab'), team_current_swimmers_path(id: @team.id) )
+  - if current_user && TeamManagerValidator.can_manage_team?( current_user, @team )
+    = show_tab_link( params, 'supermaster', t('team_management.fin_supermaster_tab'), team_management_supermaster_path(id: @team.id) )
   - if @team.meeting_individual_results.exists?
     = show_tab_link( params, 'best_timings', t('radiography.precalc_best_timings_tab'), team_best_timings_path(id: @team.id) )
     = show_tab_link( params, 'palmares', t('radiography.palmares_tab'), team_palmares_path(id: @team.id) )
@@ -9,7 +11,7 @@
     = show_tab_link( params, 'goggle_cup_all_of_fame', t('radiography.goggle_cup_all_of_fame_tab'), team_goggle_cup_all_of_fame_path(id: @team.id) )
   - if current_user && TeamManagerValidator.can_manage_team?( current_user, @team )
     = show_tab_link( params, 'show_pending_reservations', t('team_management.pending_reservations_tab'), team_management_show_pending_reservations_path(id: @team.id) )
-  
+
 .col-xs-12.goggles-category-gap
 .col-xs-12.alert.alert-success.goggles-div-centeralign
   %h4
