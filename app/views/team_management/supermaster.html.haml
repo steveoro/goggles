@@ -6,6 +6,7 @@
 
   - else
     - tot_individual_score = 0
+    - tot_team_score = 0
     - tot_considered = [@full_events_swimmers, @ranking_context].min
 
     %ul.col-xs-offset-10.col-xs-2.col-sm-offset-11.col-sm-1.col-md-offset-11.col-md-1.nav.nav-pills.nav-stacked.navbar-fixed-bottom.goggles-divlist-odd.navpill_side
@@ -45,7 +46,7 @@
             %td
               %a{ href: "#{ swimmer_supermaster_path(:id=>supermaster.swimmer_id) }", 'data-toggle' => 'tooltip', title: I18n.t('team_management.swimmer_supermaster_link') }
                 = supermaster.complete_name
-            %td.text-center
+            %td.text-center{'class'=> supermaster.get_results_count == 3 ? 'success' : supermaster.get_results_count == 2 ? 'warning' : ''}
               = supermaster.get_results_count
             %td.text-right
               = sprintf( "%02.2f", supermaster.get_total_score)
@@ -67,6 +68,8 @@
 
     .col-xs-12.goggles-category-gap#summary
       .col-xs-7
+        - tot_team_score += tot_individual_score
+        - ind_everage = tot_individual_score / tot_considered
         %table.table.table-striped.table-bordered.table-hover.table-condensed
           %tbody
             %tr.text-center{'class'=>'info'}
@@ -88,9 +91,9 @@
               %td.text-right
                 %b= tot_considered
               %td.text-right
-                = sprintf( "%02.2f", (tot_individual_score / tot_considered).round(2) )
+                = sprintf( "%02.2f", ind_everage.round(2) )
               %td.text-right
-                = sprintf( "%02.2f", (tot_individual_score / tot_considered / 3).round(2) )
+                = sprintf( "%02.2f", (ind_everage / 3).round(2) )
             %tr
               %td{'class'=>'info'}
                 %b= I18n.t('team_management.tot_winter_relays')
@@ -107,8 +110,10 @@
               %td.text-right
 
       .col-xs-5
-        .col-xs-8
-          .div{'align' => 'center', 'id' => 'team_supermaster_chart' }
+        .col-xs-6
+          .div{'align' => 'center', 'id' => 'num_masters_chart' }
+        .col-xs-6
+          .div{'align' => 'center', 'id' => 'everage_score_chart' }
 
 .col-xs-12.goggles-category-gap#pageBottom
 
@@ -117,7 +122,7 @@
   google.charts.setOnLoadCallback(drawChart);
 
   function drawChart() {
-    var sm_score = Number.parseFloat( "#{@full_events_swimmers}" );
+    var num_masters = Number.parseFloat( "#{@full_events_swimmers}" );
     var gf = Number.parseFloat( "#{@ranking_context - 10}" );
     var gt = Number.parseFloat( "#{@ranking_context}" );
     var yf = Number.parseFloat( "#{@ranking_context}" );
@@ -126,13 +131,18 @@
     var rt = Number.parseFloat( "#{@ranking_context + 5}" );
     var rmin = Number.parseFloat( "#{@ranking_min}" );
     var rmax = Number.parseFloat( "#{@ranking_max}" );
+    var ind_everage = Number.parseFloat( "#{ind_everage.round(2)}" );
 
-    var dataSM = google.visualization.arrayToDataTable([
+    var dataNM = google.visualization.arrayToDataTable([
       ['Label', 'Value'],
-      ['Masters', sm_score]
+      ['Nuotatori', num_masters]
+    ]);
+    var dataSE = google.visualization.arrayToDataTable([
+      ['Label', 'Value'],
+      ['Media', ind_everage]
     ]);
 
-    var optionsSM = {
+    var optionsNM = {
       greenFrom: gf, greenTo: gt,
       yellowFrom:yf, yellowTo: yt,
       redFrom: rf, redTo: rt,
@@ -140,8 +150,18 @@
       majorTicks: [rmin, '', '', gf, '', '', rmax],
       minorTicks: 5
     };
+    var optionsSE = {
+      greenFrom: 2100, greenTo: 2400,
+      yellowFrom: 2400, yellowTo: 2700,
+      redFrom: 2700, redTo: 3000,
+      min: 1500, max: 3000,
+      majorTicks: [1500, 1800, 210, 2400, 2700, 3000],
+      minorTicks: 5
+    };
 
-    var chartSM = new google.visualization.Gauge(document.getElementById('team_supermaster_chart'));
+    var chartNM = new google.visualization.Gauge(document.getElementById('num_masters_chart'));
+    var chartSE = new google.visualization.Gauge(document.getElementById('everage_score_chart'));
 
-    chartSM.draw(dataSM, optionsSM);
+    chartNM.draw(dataNM, optionsNM);
+    chartSE.draw(dataSE, optionsSE);
   };
