@@ -43,8 +43,8 @@ gem 'jbuilder', '~> 2.5'
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
-gem "json"
-gem "haml-rails"
+gem 'json'
+gem 'haml-rails', '~> 2'
 
 # XXX When using ssh key use the protocol below:
 #gem "goggles_core", git: "git@github.com:steveoro/goggles_core", branch: "rails5"
