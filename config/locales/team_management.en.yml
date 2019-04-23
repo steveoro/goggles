@@ -4,6 +4,8 @@ it:
     edit_team: "Edit Team profile"
     edit_team_tab: "Profile"
 
+    error_no_team_swimmer: "Only team swimmers can access"
+
     pending_reservations: "Pending reservations"
     pending_reservations_tab: "Reservations"
     date: "Date"

@@ -215,6 +215,35 @@ class TeamManagementController < ApplicationController
   end
 
 
+  # Verifies that the current user is the team_manager of the selected team
+  # or a current swimmer of selected team.
+  # Else, returns an invalid action request.
+  #
+  # Sets/assigns:
+  # - @is_team_swimmer, either +true+ or +false+
+  #
+  # == Implied parameters:
+  # current_user:  user must be logged-in
+  # team:  selected team
+  #
+  def verify_teamship
+    # Bail out unless the user is a valid team manager:
+    # To be a valid team manager
+    # a user must be:
+    # - enabled to manage the selected team
+    @is_team_swimmer = false
+    if verify_team_manageability
+      @is_team_swimmer = true
+    else
+      @is_team_swimmer = current_user.swimmer.badges.where(["team_id = ? and season_id = 182", @team_id])
+    end
+    unless ( @is_team_swimmer )
+      flash[:error] = I18n.t(:invalid_action_request) + ' - ' + I18n.t('team_management.error_no_team_swimmer')
+      redirect_to( team_radio_path(id: @team.id) ) and return
+    end
+  end
+
+
   # Verifies that a team id is provided as a parameter to this controller.
   # Assigns the @team instance when successful.
   #

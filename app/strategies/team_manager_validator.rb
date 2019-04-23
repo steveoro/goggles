@@ -101,8 +101,8 @@ class TeamManagerValidator
     #MeetingReservation.where( meeting_id: meeting.id, swimmer_id: current_user.swimmer_id ).exists?
     return false if current_user.nil? ||
       meeting.nil? ||
-      current_user.swimmer.nil?
-      current_user.swimmer.badges.where( season_id: meeting.season_id ).exists?
+      current_user.swimmer.nil? ||
+      !current_user.swimmer.badges.where( season_id: meeting.season_id ).exists?
 
 #      (!current_user.team_managers.exists? &&
 #        (current_user.swimmer.nil? ||

@@ -4,6 +4,8 @@ it:
     edit_team: "Modifica dati squadra"
     edit_team_tab: "Profilo"
 
+    error_no_team_swimmer: "Accesso riservato ai soli nuotatori della squadra"
+
     pending_reservations: "Iscrizioni non confermate"
     pending_reservations_tab: "Prenotazioni"
     date: "Data"
