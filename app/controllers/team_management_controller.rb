@@ -104,39 +104,39 @@ class TeamManagementController < ApplicationController
     # Determines the ranking context based on full_events_swimmer count
     # TODO - Store range on DB
     case @full_events_swimmers
-    # Range F 0-25
-    when 0..30
-      @ranking_min = 0
+    # Range F 25
+    when 1..30
+      @ranking_min = 1
       @ranking_max = 30
       @ranking_context = 25
       @ranking_range = "F"
-    # Range E 26-50
+    # Range E 50
     when 31..55
-      @ranking_min = 25
+      @ranking_min = 31
       @ranking_max = 55
       @ranking_context = 50
       @ranking_range = "E"
-    # Range D 51-75
-    when 56..80
-      @ranking_min = 50
-      @ranking_max = 80
+    # Range D 75
+    when 56..85
+      @ranking_min = 56
+      @ranking_max = 85
       @ranking_context = 75
       @ranking_range = "D"
-    # Range C 76-100
-    when 81..105
-      @ranking_min = 75
-      @ranking_max = 105
+    # Range C 100
+    when 86..110
+      @ranking_min = 86
+      @ranking_max = 110
       @ranking_context = 100
       @ranking_range = "C"
-    # Range B 101-125
-    when 106..130
-      @ranking_min = 100
-      @ranking_max = 130
+    # Range B 125
+    when 111..140
+      @ranking_min = 111
+      @ranking_max = 140
       @ranking_context = 125
       @ranking_range = "B"
-    # Range A more than 126
+    # Range A more than 125
     else
-      @ranking_min = 125
+      @ranking_min = 140
       @ranking_max = 9999
       @ranking_context = 9999
       @ranking_range = "A"
