@@ -15,9 +15,9 @@ GIT
 
 GIT
   remote: https://github.com/steveoro/goggles_core
-  revision: dcf69fa1d96f9c1288a850b03b8ce72ec148f204
+  revision: 0d9899add44affdf7f04c3a4e07b720a09894d7b
   specs:
-    goggles_core (1.3.91)
+    goggles_core (1.3.95)
       actionview (~> 5.1.6.2)
       active_hash_relation
       active_model_serializers
@@ -238,10 +238,10 @@ GEM
       guard (~> 2.0)
       guard-compat (~> 1.1)
       spring
-    haml (5.0.4)
+    haml (5.1.1)
       temple (>= 0.8.0)
       tilt
-    haml-rails (2.0.0)
+    haml-rails (2.0.1)
       actionpack (>= 5.1)
       activesupport (>= 5.1)
       haml (>= 4.0.6, < 6.0)
@@ -314,7 +314,7 @@ GEM
     net-ssh (4.2.0)
     netrc (0.11.0)
     nio4r (2.3.1)
-    nokogiri (1.10.2)
+    nokogiri (1.10.3)
       mini_portile2 (~> 2.4.0)
     notiffany (0.1.1)
       nenv (~> 0.1)
