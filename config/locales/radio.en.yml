@@ -120,3 +120,8 @@ en:
     meetings: "Meetings"
     cash: "Cash"
     no_payments: "No registered payments"
+    badge_shorted: "Badge"
+    num: "N."
+    last_operation: 'Last operation'
+    presences_link: 'Goto swimmer's presence tab'
+    season: 'Season'

@@ -11,6 +11,7 @@
     = show_tab_link( params, 'goggle_cup_all_of_fame', t('radiography.goggle_cup_all_of_fame_tab'), team_goggle_cup_all_of_fame_path(id: @team.id) )
   - if current_user && TeamManagerValidator.can_manage_team?( current_user, @team )
     = show_tab_link( params, 'show_pending_reservations', t('team_management.pending_reservations_tab'), team_management_show_pending_reservations_path(id: @team.id) )
+    = show_tab_link( params, 'show_presence', t('presences.presences_tab'), team_management_show_presence_path(id: @team.id) )
 
 .col-xs-12.goggles-category-gap
 .col-xs-12.alert.alert-success.goggles-div-centeralign

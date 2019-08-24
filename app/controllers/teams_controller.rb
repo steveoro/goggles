@@ -44,13 +44,14 @@ class TeamsController < ApplicationController
   def current_swimmers
     params.permit! # (No unsafe params can be passed)
     @tab_title = I18n.t('radiography.team_current_swimmers_tab')
-    @last_seasons = if params['header_year'].present?
-      Season.where( "header_year LIKE '%#{ params['header_year'] }%'" ).to_a
-    else
-      Season.is_not_ended.map{ |season| season.id }
-    end
+    #@last_seasons = if params['header_year'].present?
+    #  Season.where( "header_year LIKE '%#{ params['header_year'] }%'" ).to_a
+    #else
+    #  Season.is_not_ended.map{ |season| season.id }
+    #end
+    @last_seasons = get_searched_seasons
     @affiliations = @team.team_affiliations.where( ['season_id in (?)', @last_seasons] )
-    current_badges = @team.badges.where( ['season_id in (?)', @last_seasons] ).includes( :swimmer ) if @last_seasons && @team.badges
+    current_badges = @team.badges.where( ['season_id in (?)', @last_seasons] ).includes( :swimmer ) if @last_seasons && @team.badges.exists?
     @swimmers = if current_badges.nil?
       []
     else
@@ -412,6 +413,21 @@ class TeamsController < ApplicationController
   def set_team
     @team = Team.find_by_id( params[:id].to_i )
     @team = @team.decorate if @team
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+
+  # Get current seasons
+  # If parameters contains an header year, searched seasons are those with header year containing given one
+  # otherwise searched seasons are those not ended
+  def get_searched_seasons
+    current_seasons = if params['header_year'].present?
+      Season.where( "header_year LIKE '%#{ params['header_year'] }%'" )
+    else
+      Season.is_not_ended
+    end
+    current_seasons.map{ |season| season.id }
   end
   #-- -------------------------------------------------------------------------
   #++

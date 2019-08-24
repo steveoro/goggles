@@ -95,10 +95,10 @@ Rails.application.routes.draw do
       get 'search/meetings'
 
       # === Team Management ===
-      get 'team_management/show_pending_reservations/:id', to: "team_management#show_pending_reservations", as: "team_management_show_pending_reservations"
+      get 'team_management/show_pending_reservations/:id',  to: "team_management#show_pending_reservations",   as: "team_management_show_pending_reservations"
       post 'team_management/show_pending_reservations/:id', to: "team_management#update_pending_reservations", as: "team_management_update_pending_reservations"
-      get 'team_management/edit_team/:id',                 to: "team_management#edit_team",                 as: "team_management_edit_team"
-      put 'team_management/update_team/:id',               to: "team_management#update_team",               as: "team_management_update_team"
+      get 'team_management/edit_team/:id',                  to: "team_management#edit_team",                   as: "team_management_edit_team"
+      put 'team_management/update_team/:id',                to: "team_management#update_team",                 as: "team_management_update_team"
       get 'team_management/edit_affiliation'
       post 'team_management/update_affiliation'
       get 'team_management/edit_badges'
@@ -106,7 +106,8 @@ Rails.application.routes.draw do
       post 'team_management/update_badges'
       get 'team_management/edit_lap_template'
       post 'team_management/update_app_template'
-      get 'team_management/supermaster/:id',    to: "team_management#supermaster",    as: "team_management_supermaster"
+      get 'team_management/supermaster/:id',                to: "team_management#supermaster",                 as: "team_management_supermaster"
+      get 'team_management/show_presence/:id',              to: "team_management#show_presence",               as: "team_management_show_presence"
 
       # === Records ===
       get  "records/for_season_type",           to: "records#for_season_type"

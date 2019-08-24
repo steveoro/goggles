@@ -122,4 +122,8 @@ it:
     meetings: "Gare"
     cash: "Saldo"
     no_payments: "Nessun versamento registrato"
-    
+    badge_shorted: "Tess"
+    num: "N."
+    last_operation: 'Ultimo movimento'
+    presences_link: 'Val al dettaglio delle presenze del nuotatore'
+    season: 'Stagione'
