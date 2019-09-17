@@ -38,8 +38,8 @@ FactoryBot.reload
 # require only the support files necessary.
 #
 # Add support files directly from Core engine and then from current app:
-Dir[GogglesCore::Engine.root.join("spec/support/**/*.rb")].each { |f| require f }
-Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
+Dir[GogglesCore::Engine.root.join('spec', 'support', '**', '*.rb')].each { |f| require f }
+Dir[Rails.root.join('spec', 'support', '**', '*.rb')].each { |f| require f }
 
 Rails.backtrace_cleaner.remove_silencers!
 
@@ -50,7 +50,7 @@ ActiveRecord::Migration.maintain_test_schema!
 
 RSpec.configure do |config|
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
-  config.fixture_path = "#{::Rails.root}/spec/fixtures"
+  config.fixture_path = Rails.root.join('spec', 'fixtures')
 
   config.include( Devise::Test::ControllerHelpers, type: :controller )
   config.include( Devise::Test::ControllerHelpers, type: :view )

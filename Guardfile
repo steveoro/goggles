@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # A sample Guardfile
 # More info at https://github.com/guard/guard#readme
 
@@ -10,14 +12,27 @@
 #  * zeus: 'zeus rspec' (requires the server to be started separetly)
 #  * 'just' rspec: 'rspec'
 
+# Watch files that imply a bundle update:
+guard :bundler do
+  watch('Gemfile')
+end
+
+guard 'spring', bundler: true do
+  watch('Gemfile.lock')
+  watch(%r{^config/})
+  watch(%r{^spec/(support|factories)/})
+  watch(%r{^spec/factory.rb})
+end
 
 rspec_options = {
-  results_file: Dir.pwd + "/tmp/guard_rspec_results.txt", # This option must match the path in engine_plan.rb
-  cmd: "spring rspec --color -f progress --order rand --fail-fast -t ~type:performance",
+  cmd: 'spring rspec',
+  # Exclude performance tests; to make it fail-fast, add option "--fail-fast":
+  cmd_additional_args: ' --color --profile 10 -f progress --order rand -t ~type:performance',
+  # (Zeus only) The following option must match the path in engine_plan.rb:
+  results_file: File.join(Dir.pwd, 'tmp', 'guard_rspec_results.txt'),
   all_after_pass: false,
   failed_mode: :focus
 }
-
 
 guard :rspec, rspec_options do
   require "guard/rspec/dsl"
@@ -76,10 +91,19 @@ guard :rspec, rspec_options do
   end
 end
 
+rubocop_options = {
+  cmd: 'rubocop',
 
-guard 'spring', bundler: true do
-  watch('Gemfile.lock')
-  watch(%r{^config/})
-  watch(%r{^spec/(support|factories)/})
-  watch(%r{^spec/factory.rb})
+  # With fuubar, offenses and warnings tot.:
+  # cli: "-R -E -P -f fu -f o -f w"
+  # [Steve, 20190609] (Do not turn on autocorrect when using Guard)
+  # With rails cops enabled:
+  cli: '-D --require rubocop-rails'
+}
+
+# Watch Ruby files for changes and run RuboCop:
+# [See https://github.com/yujinakayama/guard-rubocop for all options]
+guard :rubocop, rubocop_options do
+  watch(/.+\.rb$/)
+  watch(%r{(?:.+/)?\.rubocop(?:_todo)?\.yml$}) { |m| File.dirname(m[0]) }
 end
