@@ -168,8 +168,8 @@ class TeamManagementController < ApplicationController
     (case when prm.badge_id is not null then sum(prm.rel) else 0 end) as rel_count,
     (case when bdg.has_to_pay_badge and ssn.badge_fee > 0 then ssn.badge_fee else 0 end) as badge_fee,
     sum(case when bdg.has_to_pay_fees and mtg.meeting_fee > 0 and (prm.mir + prm.res) > 0 then mtg.meeting_fee else 0 end) as mtg_fee,
-    (case when bdg.has_to_pay_fees and mtg.event_fee > 0 then sum((case when prm.mir >= prm.res then prm.mir else prm.res end) * mtg.event_fee) else 0 end) as mir_fee,
-    (case when bdg.has_to_pay_relays and prm.badge_id is not null then round(sum(prm.rel * mtg.relay_fee / 4), 2) else 0 end) as rel_fee,
+    sum(case when bdg.has_to_pay_fees and mtg.event_fee > 0 then (case when prm.mir >= prm.res then prm.mir else prm.res end) * mtg.event_fee else 0 end) as mir_fee,
+    sum(case when bdg.has_to_pay_relays and prm.badge_id is not null then round(prm.rel * mtg.relay_fee / 4, 2) else 0 end) as rel_fee,
     (case when bdg.has_to_pay_fees then (select sum(bp.amount) from badge_payments bp where bp.badge_id = bdg.id) else 0 end) as payments,
     (case when bdg.has_to_pay_fees then (select max(bp.payment_date) from badge_payments bp where bp.badge_id = bdg.id) else null end) as last_payment,
     (case when bdg.has_to_pay_fees then (select count(bp.id) from badge_payments bp where bp.badge_id = bdg.id) else 0 end) as num_payments
