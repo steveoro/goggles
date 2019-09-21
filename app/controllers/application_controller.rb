@@ -204,7 +204,7 @@ class ApplicationController < ActionController::Base
   # and PDF files that may be downloaded by the user or sent directly via mail.
   #
   def get_output_folder
-    Rails.root.join('public', 'output')
+    File.join( Rails.root, 'public', 'output' )
   end
 
 

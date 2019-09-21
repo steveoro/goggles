@@ -15,9 +15,9 @@ GIT
 
 GIT
   remote: https://github.com/steveoro/goggles_core
-  revision: dc61e9adce4c527f2f9ed41cb40545ba8b6b81b7
+  revision: cb6d1d06e2838233d01d0403bfec3680513baefb
   specs:
-    goggles_core (1.5.00)
+    goggles_core (1.3.97)
       actionview (~> 5.1.6.2)
       active_hash_relation
       active_model_serializers
@@ -65,9 +65,9 @@ GEM
       rails-html-sanitizer (~> 1.0, >= 1.0.3)
     active_hash_relation (1.4.1)
       activerecord
-    active_model_serializers (0.10.10)
-      actionpack (>= 4.1, < 6.1)
-      activemodel (>= 4.1, < 6.1)
+    active_model_serializers (0.10.9)
+      actionpack (>= 4.1, < 6)
+      activemodel (>= 4.1, < 6)
       case_transform (>= 0.2)
       jsonapi-renderer (>= 0.1.1.beta1, < 0.3)
     activejob (5.1.6.2)
@@ -98,14 +98,13 @@ GEM
       activerecord (~> 5.0)
     acts_as_reportable (1.1.1)
       ruport (>= 1.6.0)
-    acts_as_votable (0.12.1)
+    acts_as_votable (0.12.0)
     addressable (2.5.2)
       public_suffix (>= 2.0.2, < 4.0)
     airbrussh (1.3.0)
       sshkit (>= 1.6.1, != 1.7.0)
     arel (8.0.0)
-    ast (2.4.0)
-    backports (3.15.0)
+    ast (2.3.0)
     bcrypt (3.1.13)
     better_errors (2.4.0)
       coderay (>= 1.0.0)
@@ -174,31 +173,7 @@ GEM
     country_select (3.1.1)
       countries (~> 2.0)
       sort_alphabetical (~> 1.0)
-    crack (0.4.3)
-      safe_yaml (~> 1.0.0)
     crass (1.0.4)
-    cucumber (3.1.2)
-      builder (>= 2.1.2)
-      cucumber-core (~> 3.2.0)
-      cucumber-expressions (~> 6.0.1)
-      cucumber-wire (~> 0.0.1)
-      diff-lcs (~> 1.3)
-      gherkin (~> 5.1.0)
-      multi_json (>= 1.7.5, < 2.0)
-      multi_test (>= 0.1.2)
-    cucumber-core (3.2.1)
-      backports (>= 3.8.0)
-      cucumber-tag_expressions (~> 1.1.0)
-      gherkin (~> 5.0)
-    cucumber-expressions (6.0.1)
-    cucumber-rails (1.8.0)
-      capybara (>= 2.12, < 4)
-      cucumber (>= 3.0.2, < 4)
-      mime-types (>= 2.0, < 4)
-      nokogiri (~> 1.8)
-      railties (>= 4.2, < 7)
-    cucumber-tag_expressions (1.1.1)
-    cucumber-wire (0.0.1)
     daemons (1.2.6)
     debug_inspector (0.0.3)
     delayed_job (4.1.4)
@@ -206,13 +181,13 @@ GEM
     delayed_job_active_record (4.1.2)
       activerecord (>= 3.0, < 5.2)
       delayed_job (>= 3.0, < 5)
-    devise (4.7.1)
+    devise (4.6.2)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
-      railties (>= 4.1.0)
+      railties (>= 4.1.0, < 6.0)
       responders
       warden (~> 1.2.3)
-    devise-i18n (1.8.2)
+    devise-i18n (1.8.0)
       devise (>= 4.6)
     diff-lcs (1.3)
     docile (1.1.5)
@@ -240,7 +215,6 @@ GEM
     formatador (0.2.5)
     fuzzy-string-match_pure (0.9.5)
     generator (0.0.1)
-    gherkin (5.1.0)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
     guard (2.14.2)
@@ -252,22 +226,11 @@ GEM
       pry (>= 0.9.12)
       shellany (~> 0.0)
       thor (>= 0.18.1)
-    guard-bundler (2.2.1)
-      bundler (>= 1.3.0, < 3)
-      guard (~> 2.2)
-      guard-compat (~> 1.1)
     guard-compat (1.2.1)
-    guard-cucumber (1.5.4)
-      cucumber (>= 1.3.0)
-      guard-compat (~> 1.0)
-      nenv (~> 0.1)
     guard-rspec (4.7.3)
       guard (~> 2.1)
       guard-compat (~> 1.1)
       rspec (>= 2.99.0, < 4.0)
-    guard-rubocop (1.3.0)
-      guard (~> 2.0)
-      rubocop (~> 0.20)
     guard-shell (0.7.1)
       guard (>= 2.0.0)
       guard-compat (~> 1.0)
@@ -275,7 +238,7 @@ GEM
       guard (~> 2.0)
       guard-compat (~> 1.1)
       spring
-    haml (5.1.2)
+    haml (5.1.1)
       temple (>= 0.8.0)
       tilt
     haml-rails (2.0.1)
@@ -284,7 +247,6 @@ GEM
       haml (>= 4.0.6, < 6.0)
       html2haml (>= 1.0.1)
       railties (>= 5.1)
-    hashdiff (1.0.0)
     html2haml (2.2.0)
       erubis (~> 2.7.0)
       haml (>= 4.0, < 6)
@@ -295,11 +257,10 @@ GEM
     i18n (0.9.5)
       concurrent-ruby (~> 1.0)
     i18n_data (0.8.0)
-    jaro_winkler (1.5.3)
     jbuilder (2.7.0)
       activesupport (>= 4.2.0)
       multi_json (>= 1.2)
-    jquery-rails (4.3.5)
+    jquery-rails (4.3.3)
       rails-dom-testing (>= 1, < 3)
       railties (>= 4.2.0)
       thor (>= 0.14, < 2.0)
@@ -309,7 +270,7 @@ GEM
     jquery-ui-rails (6.0.1)
       railties (>= 3.2.16)
     json (2.1.0)
-    jsonapi-renderer (0.2.2)
+    jsonapi-renderer (0.2.0)
     kaminari (1.1.1)
       activesupport (>= 4.1.0)
       kaminari-actionview (= 1.1.1)
@@ -340,34 +301,34 @@ GEM
     mime-types (3.1)
       mime-types-data (~> 3.2015)
     mime-types-data (3.2016.0521)
-    mini_mime (1.0.2)
+    mini_mime (1.0.1)
     mini_portile2 (2.4.0)
     minitest (5.11.3)
     money (6.10.1)
       i18n (>= 0.6.4, < 1.0)
     multi_json (1.13.1)
-    multi_test (0.1.2)
     mysql2 (0.4.10)
     nenv (0.3.0)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
     net-ssh (4.2.0)
     netrc (0.11.0)
-    nio4r (2.5.1)
-    nokogiri (1.10.4)
+    nio4r (2.3.1)
+    nokogiri (1.10.3)
       mini_portile2 (~> 2.4.0)
     notiffany (0.1.1)
       nenv (~> 0.1)
       shellany (~> 0.0)
     orm_adapter (0.5.0)
-    parallel (1.17.0)
-    parser (2.6.4.1)
-      ast (~> 2.4.0)
+    parallel (1.12.1)
+    parser (2.4.0.2)
+      ast (~> 2.3)
     pdf-core (0.7.0)
     pdf-writer (1.1.8)
       color (>= 1.4.0)
       transaction-simple (~> 1.3)
     power_assert (1.1.1)
+    powerpack (0.1.1)
     prawn (2.2.2)
       pdf-core (~> 0.7.0)
       ttfunk (~> 1.5)
@@ -400,7 +361,7 @@ GEM
     rails-dom-testing (2.0.3)
       activesupport (>= 4.2.0)
       nokogiri (>= 1.6)
-    rails-html-sanitizer (1.2.0)
+    rails-html-sanitizer (1.0.4)
       loofah (~> 2.2, >= 2.2.2)
     rails_best_practices (1.19.0)
       activesupport
@@ -416,8 +377,9 @@ GEM
       method_source
       rake (>= 0.8.7)
       thor (>= 0.18.1, < 2.0)
-    rainbow (3.0.0)
-    rake (12.3.3)
+    rainbow (2.2.2)
+      rake
+    rake (12.3.2)
     rb-fsevent (0.10.2)
     rb-inotify (0.9.10)
       ffi (>= 0.5.0, < 2)
@@ -427,9 +389,9 @@ GEM
     request_store (1.4.1)
       rack (>= 1.4)
     require_all (1.5.0)
-    responders (3.0.0)
-      actionpack (>= 5.0)
-      railties (>= 5.0)
+    responders (2.4.1)
+      actionpack (>= 4.2.0, < 6.0)
+      railties (>= 4.2.0, < 6.0)
     rest-client (2.0.2)
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 4.0)
@@ -455,26 +417,20 @@ GEM
       rspec-mocks (~> 3.7.0)
       rspec-support (~> 3.7.0)
     rspec-support (3.7.0)
-    rubocop (0.74.0)
-      jaro_winkler (~> 1.5.1)
+    rubocop (0.49.1)
       parallel (~> 1.10)
-      parser (>= 2.6)
-      rainbow (>= 2.2.2, < 4.0)
+      parser (>= 2.3.3.1, < 3.0)
+      powerpack (~> 0.1)
+      rainbow (>= 1.99.1, < 3.0)
       ruby-progressbar (~> 1.7)
-      unicode-display_width (>= 1.4.0, < 1.7)
-    rubocop-rails (2.3.2)
-      rack (>= 1.1)
-      rubocop (>= 0.72.0)
-    rubocop-rspec (1.35.0)
-      rubocop (>= 0.60.0)
-    ruby-progressbar (1.10.1)
+      unicode-display_width (~> 1.0, >= 1.0.1)
+    ruby-progressbar (1.9.0)
     ruby_parser (3.13.1)
       sexp_processor (~> 4.9)
     rubyzip (1.2.2)
     ruport (1.6.3)
       fastercsv
       pdf-writer (= 1.1.8)
-    safe_yaml (1.0.5)
     sass (3.5.5)
       sass-listen (~> 4.0.0)
     sass-listen (4.0.0)
@@ -499,9 +455,9 @@ GEM
     simple_form (3.5.0)
       actionpack (> 4, < 5.2)
       activemodel (> 4, < 5.2)
-    simple_token_authentication (1.16.0)
-      actionmailer (>= 3.2.6, < 7)
-      actionpack (>= 3.2.6, < 7)
+    simple_token_authentication (1.15.1)
+      actionmailer (>= 3.2.6, < 6)
+      actionpack (>= 3.2.6, < 6)
       devise (>= 3.2, < 6)
     simplecov (0.15.1)
       docile (~> 1.1.0)
@@ -513,8 +469,6 @@ GEM
       unicode_utils (>= 1.2.2)
     spring (2.0.2)
       activesupport (>= 4.2)
-    spring-commands-cucumber (1.0.1)
-      spring (>= 0.9.1)
     spring-commands-rspec (1.0.4)
       spring (>= 0.9.1)
     spring-watcher-listen (2.0.1)
@@ -530,7 +484,7 @@ GEM
     sshkit (1.15.1)
       net-scp (>= 1.1.2)
       net-ssh (>= 2.8.0)
-    temple (0.8.2)
+    temple (0.8.1)
     test-unit (3.2.7)
       power_assert
     therubyracer (0.12.3)
@@ -551,7 +505,7 @@ GEM
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.4)
-    unicode-display_width (1.6.0)
+    unicode-display_width (1.3.0)
     unicode_utils (1.4.0)
     uniform_notifier (1.12.1)
     warden (1.2.8)
@@ -561,17 +515,9 @@ GEM
       activemodel (>= 5.0)
       bindex (>= 0.4.0)
       railties (>= 5.0)
-    webdrivers (4.1.2)
-      nokogiri (~> 1.6)
-      rubyzip (~> 1.0)
-      selenium-webdriver (>= 3.0, < 4.0)
-    webmock (3.7.4)
-      addressable (>= 2.3.6)
-      crack (>= 0.3.2)
-      hashdiff (>= 0.4.0, < 2.0.0)
     websocket-driver (0.6.5)
       websocket-extensions (>= 0.1.0)
-    websocket-extensions (0.1.4)
+    websocket-extensions (0.1.3)
     xpath (3.0.0)
       nokogiri (~> 1.8)
     zip (2.0.2)
@@ -595,16 +541,14 @@ DEPENDENCIES
   capistrano-passenger
   capistrano-rails
   capistrano-rvm
-  capybara
+  capybara (~> 2.13)
   cocoon
   codeclimate-test-reporter
   coffee-rails (~> 4.2)
   country_select
-  cucumber-rails
   daemons
   delayed_job_active_record
   documatic!
-  draper
   execjs
   factory_bot_rails
   ffaker
@@ -613,10 +557,7 @@ DEPENDENCIES
   generator
   goggles_core!
   guard
-  guard-bundler
-  guard-cucumber
   guard-rspec
-  guard-rubocop
   guard-shell
   guard-spring
   haml-rails (~> 2)
@@ -641,8 +582,6 @@ DEPENDENCIES
   rspec
   rspec-rails
   rubocop
-  rubocop-rails
-  rubocop-rspec
   rubyzip (~> 1.2.2)
   sass-rails (~> 5)
   selenium-webdriver
@@ -651,18 +590,15 @@ DEPENDENCIES
   simple_form
   simplecov
   spring
-  spring-commands-cucumber
   spring-commands-rspec
-  spring-watcher-listen
+  spring-watcher-listen (~> 2.0.0)
   sprockets
   test-unit
   therubyracer
   turbolinks (~> 5)
   uglifier (>= 1.3.0)
   web-console
-  webdrivers
-  webmock
   zip
 
 BUNDLED WITH
-   2.0.2
+   1.17.3

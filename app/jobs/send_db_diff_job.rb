@@ -150,9 +150,9 @@ class SendDbDiffJob < ApplicationJob
   #
   def prepare_and_deliver_db_diff_file()
     logger.info("Saving DB-diff text...")
-    output_dir = Rails.root.join('public', 'output')
+    output_dir = File.join( Rails.root, 'public', 'output' )
     file_name  = "#{ DateTime.now().strftime('%Y%m%d%H%M') }#{ Rails.env == 'production' ? 'dev' : 'prod' }_remote_edit.diff.sql"
-    full_diff_pathname  = File.join(output_dir, file_name)
+    full_diff_pathname  = File.join( output_dir, file_name )
     base_filename       = File.basename( full_diff_pathname )
     # Save the text into a file & send it (but only in production mode)
     save_diff_file( full_diff_pathname )
