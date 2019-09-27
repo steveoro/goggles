@@ -152,9 +152,13 @@ class TeamManagementController < ApplicationController
     # Define an hash for swimmer_id - [presenceDAO, balance]
     @swimmers_presence = {}
 
+    # TODO Find out managed seasons
+    hyp = HeaderYearPicker.new()
+    @season_list = hyp.find(2018)
+
     # Find out current seasons for team
     @current_seasons = if params['header_year'].present?
-      Season.where( "header_year LIKE '%#{ params['header_year'] }%'" ).includes(season_type: :federation_type)
+      Season.where( "header_year LIKE '#{ params['header_year'].to_i }%'" ).includes(season_type: :federation_type)
     else
       Season.is_not_ended.includes(season_type: :federation_type)
     end

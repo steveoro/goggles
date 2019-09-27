@@ -48,11 +48,11 @@ class SwimmersController < ApplicationController
     # --- "Radiography" tab: ---
     #@team_ids = @swimmer.teams.collect{|row| row.id }.uniq
     @tab_title = I18n.t('radiography.radio_tab')
-    
+
     @swimmer_name = @swimmer.get_full_name
     @ssd = SwimmerStatsDAO.new( @swimmer )
     @ssd.calculate_stats
-    
+
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -292,7 +292,7 @@ class SwimmersController < ApplicationController
         found_idx = event_by_date.rindex{ |meeting_hash| meeting_hash[:meeting] == meeting_individual_result.meeting }
         mir_with_pass = { :mir => meeting_individual_result }
         mir_with_pass[:passages] = meeting_individual_result.passages if meeting_individual_result.passages.exists?
-        
+
         # If it's the first meeting result found, we create a new element:
         if found_idx
           event_by_date[ found_idx ][ event_code ] = mir_with_pass
@@ -317,7 +317,7 @@ class SwimmersController < ApplicationController
             :data  => 1
           }
         end
-        
+
         # Keep distinct events list
         event_list << event_code if !event_list.include?( event_code )
       end
@@ -690,7 +690,7 @@ class SwimmersController < ApplicationController
 
   # Radiography for a specified swimmer id: "Presence" tab rendering.
   # Show swimmer presence in the current seasons
-  # Show costs only to team manager (for managed team's swimemrs) 
+  # Show costs only to team manager (for managed team's swimemrs)
   # and logged swimmers (for himselves)
   #
   # == Params:
@@ -702,42 +702,50 @@ class SwimmersController < ApplicationController
     @costs = false
     @cash = []
     @notes = {}
+
+    # TODO Find out managed seasons
+    hyp = HeaderYearPicker.new()
+    @season_list = hyp.find(2018)
+
     payment_badges = []
-    
-    spc = SwimmerPresenceChecker.new(@swimmer, Date.today())
+
+    # Find out current seasons for team
+    date_to_use = params['header_year'].present? ? Date.parse(params['header_year'].slice(5, 4) + "0101") : Date.today()
+
+    spc = SwimmerPresenceChecker.new(@swimmer, date_to_use)
     current_badges = spc.get_swimmer_current_badges()
     current_badges.each do |badge|
       current_season = badge.season
-      
+
       # Check if cost has to be shown
-      get_costs = ( badge.has_to_pay_badge || badge.has_to_pay_fees || badge.has_to_pay_relays ) 
+      get_costs = ( badge.has_to_pay_badge || badge.has_to_pay_fees || badge.has_to_pay_relays )
       is_team_manager = TeamManagerValidator.can_manage_badge?( current_user, badge )
-  
+
       spc.scan_season( current_season, badge.has_to_pay_fees, badge.has_to_pay_relays )
-      
+
       # TODO maybe create startegy and DAO for payments too
       # Check for payments
       if (( get_costs && current_user == @swimmer.associated_user ) || is_team_manager )
         @costs = true
         payment_badges << badge.id
-        
+
         if badge.has_to_pay_badge
           cash_row = {}
-          cash_row[:issue]   = I18n.t('presences.badge') + ' ' + current_season.season_type.federation_type.code 
+          cash_row[:issue]   = I18n.t('presences.badge') + ' ' + current_season.season_type.federation_type.code
           cash_row[:amount] = -current_season.badge_fee
           @cash << cash_row
         end
-        
+
         # Check for fee notes
-        @notes[badge.team.editable_name] = badge.team.notes if badge.team.notes && badge.team.notes.length > 0  
+        @notes[badge.team.editable_name] = badge.team.notes if badge.team.notes && badge.team.notes.length > 0
       end
-    end 
+    end
 
     @badge_payments = BadgePayment.where( badge_id: payment_badges ).sort_by_date('ASC')
     @spDAO = spc.swimmer_presence_dao
 
     # Check for last payments update
-    @last_payment_update = BadgePayment.where( badge_id: current_badges.map{ |b| b.id }).sort_by_date('ASC').last.payment_date if @badge_payments.count > 0 
+    @last_payment_update = BadgePayment.where( badge_id: current_badges.map{ |b| b.id }).sort_by_date('ASC').last.payment_date if @badge_payments.count > 0
   end
 
 

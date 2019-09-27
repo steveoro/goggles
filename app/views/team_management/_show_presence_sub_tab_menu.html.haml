@@ -1,0 +1,8 @@
+- if @season_list.count > 1
+  %ul.nav.nav-tabs{role: "seasonlist"}
+    - first_year = @season_list.last.to_i
+    - last_year  = @season_list.first.to_i
+    - @season_list.each do |season_tab|
+      - action_name = params['header_year'] == season_tab ? params[:action] : season_tab
+      = show_tab_link( params, action_name, season_tab, team_management_show_presence_path( id: @team.id, header_year: season_tab ) )
+  .col-xs-12.goggles-category-gap

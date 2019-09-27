@@ -1,4 +1,5 @@
 = render( partial: 'tabs_and_title' )
+= render( partial: 'swimmers/presence_sub_tab_menu' )
 
 - columns = @costs ? 8 : 5
 
@@ -53,7 +54,7 @@
               = mpDAO.get_relays_fee_to_s
             %td.text-right
               = mpDAO.get_total_fee_to_s
-  
+
       %tr{'class'=>'info'}
         %td
           %b= I18n.t('presences.totals')
@@ -92,7 +93,7 @@
                 %b= I18n.t('presences.notes')
               %td.text-right
                 %b= I18n.t('presences.amount')
-  
+
             - @badge_payments.each do |payment|
               - payments_sum += payment.amount
               %tr
@@ -102,7 +103,7 @@
                   = payment.notes
                 %td.text-right
                   = sprintf( "%02.2f", payment.amount )
-  
+
           %tr{'class'=>'info'}
             %td.text-center{'colspan'=>'2'}
               %b= I18n.t('presences.payments_total')
@@ -117,7 +118,7 @@
           %tr{'class'=>'info'}
             %td.text-center{'colspan'=>'2'}
               %b= I18n.t('presences.summary')
-  
+
           - saldo = payments_sum - @spDAO.tot_total_fees
           - @cash.each do |cash_issue|
             - saldo += cash_issue[:amount]
@@ -146,4 +147,4 @@
 
   .col-xs-12.goggles-category-gap#swimmer_payments_notes
     - @notes.each do |key,value|
-      = key + ": " + value 
+      = key + ": " + value
