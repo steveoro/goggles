@@ -44,13 +44,12 @@ class HeaderYearPicker
     #@season_list << '2019-2020' if Date.today() >= Date.parse('20191001')
     #@season_list << '2020-2021' if Date.today() >= Date.parse('20201001')
     season_list = []
-    if starting_from <= ending_at
-      (starting_from..ending_at).to_a.each do |year|
-        header_year = year.to_s + '-' + (year + 1).to_s
-        season_list << header_year
-      end
+    (starting_from..ending_at).to_a.each do |year|
+      header_year = year.to_s + '-' + (year + 1).to_s
+      season_list << header_year
     end
-    season_list
+    # In reverse order
+    season_list.reverse
   end
 
   # Pick handled header years reading from DB

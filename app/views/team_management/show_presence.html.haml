@@ -77,71 +77,71 @@
           %tr
             %td{'colspan' => '6'}
 
-- if @swimmers_summary.count > 0
-  - tot_costs = 0
-  - num_payments = 0
-  - tot_payments = 0
-  - last_payment = nil
-  - tot_cash = 0
-  .col-xs-12
-    &nbsp;
-  .row#swimmers_summary
-    %table.table.table-striped.table-bordered.table-hover.table-condensed
-      %tbody
-        %tr{'class'=>'info'}
-          %td.text-center{'colspan' => '6'}
-            %b= I18n.t('presences.summary')
-        %tr{'class'=>'info'}
-          %td.text-center{'rowspan' => '2'}
-            %b= I18n.t(:name)
-          %td.text-right{'rowspan' => '2'}
-            %b= I18n.t('presences.costs')
-          %td.text-center{'colspan' => '3'}
-            %b= I18n.t('presences.payments')
-          %td.text-right{'rowspan' => '2'}
-            %b= I18n.t('presences.cash')
-        %tr{'class'=>'info'}
-          %td.text-center
-            %b= I18n.t('presences.num')
-          %td.text-center
-            %b= I18n.t('presences.amount')
-          %td.text-center
-            %b= I18n.t('presences.last_operation')
-        - @swimmers_summary.each do |swimmer_summary|
-          - swimmer_cash = swimmer_summary['payments'] - swimmer_summary['tot_costs']
-          - cash_class = swimmer_cash < 0 ? 'warning' : 'success'
-          - tot_costs += swimmer_summary['tot_costs']
-          - num_payments += swimmer_summary['num_payments']
-          - tot_payments += swimmer_summary['payments']
-          - last_payment = swimmer_summary['last_payment'] if !swimmer_summary['last_payment'].nil? && (last_payment.nil? || last_payment < swimmer_summary['last_payment'])
-          - tot_cash += swimmer_cash
-          %tr
-            %td.text-right
-              %a{ href: "#{ swimmer_presence_path(:id=>swimmer_summary['swimmer_id']) }", 'data-toggle' => 'tooltip', title: I18n.t('presences.presences_link') }
-                = swimmer_summary['complete_name']
-            %td.text-right
-              = sprintf( "%02.2f", swimmer_summary['tot_costs'] )
+  - if @swimmers_summary.count > 0
+    - tot_costs = 0
+    - num_payments = 0
+    - tot_payments = 0
+    - last_payment = nil
+    - tot_cash = 0
+    .col-xs-12
+      &nbsp;
+    .row#swimmers_summary
+      %table.table.table-striped.table-bordered.table-hover.table-condensed
+        %tbody
+          %tr{'class'=>'info'}
+            %td.text-center{'colspan' => '6'}
+              %b= I18n.t('presences.summary')
+          %tr{'class'=>'info'}
+            %td.text-center{'rowspan' => '2'}
+              %b= I18n.t(:name)
+            %td.text-right{'rowspan' => '2'}
+              %b= I18n.t('presences.costs')
+            %td.text-center{'colspan' => '3'}
+              %b= I18n.t('presences.payments')
+            %td.text-right{'rowspan' => '2'}
+              %b= I18n.t('presences.cash')
+          %tr{'class'=>'info'}
             %td.text-center
-              = swimmer_summary['num_payments']
-            %td.text-right
-              = sprintf( "%02.2f", swimmer_summary['payments'] )
+              %b= I18n.t('presences.num')
             %td.text-center
-              = Format.a_date( swimmer_summary['last_payment'] )
-            %td.text-right{'class'=>cash_class}
-              %b= sprintf( "%02.2f", swimmer_cash )
-        %tr{'class'=>'success'}
-          %td.text-right
-            %b= I18n.t('presences.summary')
-          %td.text-center
-            %b= sprintf( "%02.2f", tot_costs )
-          %td.text-center
-            %b= num_payments
-          %td.text-right
-            %b= sprintf( "%02.2f", tot_payments )
-          %td.text-center
-            %b= Format.a_date( last_payment )
-          %td.text-right
-            %b= sprintf( "%02.2f", tot_cash )
+              %b= I18n.t('presences.amount')
+            %td.text-center
+              %b= I18n.t('presences.last_operation')
+          - @swimmers_summary.each do |swimmer_summary|
+            - swimmer_cash = swimmer_summary['payments'] - swimmer_summary['tot_costs']
+            - cash_class = swimmer_cash < 0 ? 'warning' : 'success'
+            - tot_costs += swimmer_summary['tot_costs']
+            - num_payments += swimmer_summary['num_payments']
+            - tot_payments += swimmer_summary['payments']
+            - last_payment = swimmer_summary['last_payment'] if !swimmer_summary['last_payment'].nil? && (last_payment.nil? || last_payment < swimmer_summary['last_payment'])
+            - tot_cash += swimmer_cash
+            %tr
+              %td.text-right
+                %a{ href: "#{ swimmer_presence_path(:id=>swimmer_summary['swimmer_id']) }", 'data-toggle' => 'tooltip', title: I18n.t('presences.presences_link') }
+                  = swimmer_summary['complete_name']
+              %td.text-right
+                = sprintf( "%02.2f", swimmer_summary['tot_costs'] )
+              %td.text-center
+                = swimmer_summary['num_payments']
+              %td.text-right
+                = sprintf( "%02.2f", swimmer_summary['payments'] )
+              %td.text-center
+                = Format.a_date( swimmer_summary['last_payment'] )
+              %td.text-right{'class'=>cash_class}
+                %b= sprintf( "%02.2f", swimmer_cash )
+          %tr{'class'=>'success'}
+            %td.text-right
+              %b= I18n.t('presences.summary')
+            %td.text-center
+              %b= sprintf( "%02.2f", tot_costs )
+            %td.text-center
+              %b= num_payments
+            %td.text-right
+              %b= sprintf( "%02.2f", tot_payments )
+            %td.text-center
+              %b= Format.a_date( last_payment )
+            %td.text-right
+              %b= sprintf( "%02.2f", tot_cash )
 
 .col-xs-12
   &nbsp;
