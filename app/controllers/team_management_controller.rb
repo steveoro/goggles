@@ -155,7 +155,7 @@ class TeamManagementController < ApplicationController
 
     # TODO Find out managed seasons
     hyp = HeaderYearPicker.new()
-    @season_list = hyp.find(2018)
+    @season_list = hyp.find(2015)
 
     # Find out current seasons for team
     @current_seasons = if params['header_year'].present?

@@ -705,7 +705,7 @@ class SwimmersController < ApplicationController
 
     # TODO Find out managed seasons
     hyp = HeaderYearPicker.new()
-    @season_list = hyp.find(2018)
+    @season_list = hyp.find(2015)
 
     payment_badges = []
 
