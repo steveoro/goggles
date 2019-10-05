@@ -127,3 +127,4 @@ it:
     last_operation: 'Ultimo movimento'
     presences_link: 'Val al dettaglio delle presenze del nuotatore'
     season: 'Stagione'
+    no_data: 'Mmmmh... Non trovo nessun dato registrato per la stagione sportiva selezionata'

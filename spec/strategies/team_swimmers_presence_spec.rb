@@ -13,7 +13,7 @@ describe TeamSwimmersPresence, type: :strategy do
     subject { TeamSwimmersPresence.new( team ) }
 
     it_behaves_like( "(the existance of a method)", [
-      :team_id, :current_seasons, :presence_data
+      :team_id, :current_seasons, :presence_data, :swimmers_summary
     ] )
 
     it "assigns team_id as given parameter" do
@@ -26,6 +26,10 @@ describe TeamSwimmersPresence, type: :strategy do
 
     it "creates an empty data set" do
       expect( subject.presence_data ).to be_nil
+    end
+
+    it "creates an empty swimmers summary" do
+      expect( subject.swimmers_summary.size ).to eq(0)
     end
 
     describe "#team_id" do
@@ -76,7 +80,7 @@ describe TeamSwimmersPresence, type: :strategy do
     end
 
     describe "#retrieve_data" do
-      it "return false if no current seasons set" do
+      it "returns false if no current seasons set" do
         expect( subject.retrieve_data ).to eq(false)
       end
       it "doesn't sets presence_data if no current seasons set" do
@@ -84,12 +88,29 @@ describe TeamSwimmersPresence, type: :strategy do
         expect( subject.retrieve_data ).to eq(false)
         expect( subject.presence_data ).to be_nil
       end
-      it "return true and sets presence_data if current seasons set" do
+      it "returns true and sets presence_data if current seasons set" do
         subject.get_seasons(past_year)
         expect( subject.retrieve_data ).to eq(true)
         expect( subject.presence_data ).not_to be_nil
       end
+    end
 
+    describe "#create_swimmers_summary" do
+      it "returns an empty array and doesn't set swimmers_summary if no data retreived" do
+        expect( subject.presence_data ).to be_nil
+        result = subject.create_swimmers_summary
+        expect( result ).to be_a_kind_of( Array )
+        expect( result.size ).to eq(0)
+        expect( subject.swimmers_summary.size ).to eq(0)
+      end
+      it "returns a non empty array and sets swimmers_summary if data retreived" do
+        subject.get_seasons(past_year)
+        subject.retrieve_data
+        result = subject.create_swimmers_summary
+        expect( result ).to be_a_kind_of( Array )
+        expect( result.size ).to be > 0
+        expect( subject.swimmers_summary.size ).to be > 0
+      end
     end
   end
   #-- -------------------------------------------------------------------------

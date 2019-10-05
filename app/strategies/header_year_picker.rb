@@ -45,7 +45,7 @@ class HeaderYearPicker
     #@season_list << '2020-2021' if Date.today() >= Date.parse('20201001')
     season_list = []
     (starting_from..ending_at).to_a.each do |year|
-      header_year = year.to_s + '-' + (year + 1).to_s
+      header_year = year.to_s + '/' + (year + 1).to_s
       season_list << header_year
     end
     # In reverse order

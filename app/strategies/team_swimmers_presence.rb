@@ -15,7 +15,7 @@ class TeamSwimmersPresence
   attr_reader :team_id
 
   # These can be edited later on:
-  attr_accessor :current_seasons, :presence_data
+  attr_accessor :current_seasons, :presence_data, :swimmers_summary
 
   # Initialization
   #
@@ -26,6 +26,7 @@ class TeamSwimmersPresence
     @team_id = team_id
     @current_seasons = nil
     @presence_data = nil
+    @swimmers_summary = []
   end
 
   # Get seasons for given header year
@@ -120,6 +121,38 @@ class TeamSwimmersPresence
     end
     !@presence_data.nil?
   end
+
+  # Creates a swimmers summary structure
+  #
+  def create_swimmers_summary
+    @swimmers_summary = []
+
+    if @presence_data
+      # Combine data in a structure with swimmer and total datas
+      @presence_data.reject{ |e| e['has_to_pay_fees'] <= 0 }.each do |swimmer_presence|
+        swimmer_index = @swimmers_summary.index{ |e| e['swimmer_id'] == swimmer_presence['swimmer_id'] }
+        if swimmer_index.nil?
+          new_element = {}
+          new_element['swimmer_id']    = swimmer_presence['swimmer_id']
+          new_element['complete_name'] = swimmer_presence['complete_name']
+          new_element['tot_costs']     = swimmer_presence['badge_fee'] + swimmer_presence['mtg_fee'] + swimmer_presence['mir_fee'] + swimmer_presence['rel_fee']
+          new_element['num_payments']  = swimmer_presence['num_payments']
+          new_element['payments']      = swimmer_presence['payments'].nil? ? 0 : swimmer_presence['payments']
+          new_element['last_payment']  = swimmer_presence['last_payment']
+          new_element['num_badges']    = 1
+          @swimmers_summary << new_element
+        else
+          @swimmers_summary[swimmer_index]['tot_costs']    += swimmer_presence['badge_fee'] + swimmer_presence['mtg_fee'] + swimmer_presence['mir_fee'] + swimmer_presence['rel_fee']
+          @swimmers_summary[swimmer_index]['num_payments'] += swimmer_presence['num_payments']
+          @swimmers_summary[swimmer_index]['payments']     += swimmer_presence['payments'].nil? ? 0 : swimmer_presence['payments']
+          @swimmers_summary[swimmer_index]['last_payment'] = swimmer_presence['last_payment'] if swimmer_presence['last_payment'] && (@swimmers_summary[swimmer_index]['last_payment'].nil? || swimmer_presence['last_payment'] > @swimmers_summary[swimmer_index]['last_payment'])
+          @swimmers_summary[swimmer_index]['num_badges']   += 1
+        end
+      end
+    end
+    @swimmers_summary
+  end
+
   #-- --------------------------------------------------------------------------
   #++
 end

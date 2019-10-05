@@ -142,6 +142,10 @@
               %b= Format.a_date( last_payment )
             %td.text-right
               %b= sprintf( "%02.2f", tot_cash )
+- else
+  .col-xs-12.goggles-div-centeralign
+    %p= image_tag( 'mmh.jpg', class: "img_thumbnail" )
+    %h3=I18n.t('presences.no_data')
 
 .col-xs-12
   &nbsp;
