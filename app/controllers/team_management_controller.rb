@@ -224,7 +224,7 @@ class TeamManagementController < ApplicationController
       data_retrieve.gsub!('VAR_TEAM_ID', @team.id.to_s)
       data_retrieve.gsub!('VAR_SEASON_IDS', @current_seasons.map{ |season| season.id }.join(','))
 
-      # Reatrieve data
+      # Retrieve data
       @presence_data = ActiveRecord::Base.connection.exec_query(data_retrieve)
 
       # Combine data in a structure with swimmer and total datas
