@@ -34,10 +34,10 @@ class TeamSwimmersPresence
   # Check out only for seasons with valid team affiliation for given team
   #
   def get_seasons(header_year = nil)
-    @current_seasons = if header_year
-      Season.where( "exists(select 1 from team_affiliations ta where ta.team_id = #{@team_id} and ta.season_id = id) and header_year LIKE '#{header_year}%'" ).includes(season_type: :federation_type)
+    @current_seasons = if header_year.nil?
+      Season.is_not_ended.where( "exists(select 1 from team_affiliations ta where ta.team_id = #{@team_id} and ta.season_id = id)").includes(season_type: :federation_type)
     else
-      Season.is_not_ended.where( "exists(select 1 from team_affiliations ta where ta.team_id = #{@team_id} and ta.season_id = id").includes(season_type: :federation_type)
+      Season.where( "exists(select 1 from team_affiliations ta where ta.team_id = #{@team_id} and ta.season_id = id) and header_year LIKE '#{header_year}%'" ).includes(season_type: :federation_type)
     end
   end
 
@@ -119,10 +119,13 @@ class TeamSwimmersPresence
       # Retrieve data
       @presence_data = ActiveRecord::Base.connection.exec_query(data_retrieve_query)
     end
+
+    # TODO - Create a DAO to manage retrieved data
+
     !@presence_data.nil?
   end
 
-  # Creates a swimmers summary structure
+  # Creates a swimmers summary structure fior swimmers with fees (and payments)
   #
   def create_swimmers_summary
     @swimmers_summary = []

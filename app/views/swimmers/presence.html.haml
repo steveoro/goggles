@@ -1,150 +1,156 @@
 = render( partial: 'tabs_and_title' )
 = render( partial: 'swimmers/presence_sub_tab_menu' )
 
-- columns = @costs ? 8 : 5
+- if @spDAO.meetings.count > 0
+  - columns = @costs ? 8 : 5
 
-.col-xs-12.goggles-category-gap#swimmer_partecipation
-  %table.table.table-striped.table-bordered.table-hover.table-condensed
-    %tbody
-      %tr{'class'=>'info'}
-        %td.text-center{'colspan'=>'5'}
-          %b= I18n.t('presences.partecipation')
-        - if @costs
-          %td.text-center{'colspan'=>'4'}
-            %b= I18n.t('presences.costs')
-      %tr{'class'=>'info'}
-        %td
-          %b= I18n.t('presences.date')
-        %td
-          %b= I18n.t('presences.meeting')
-        %td.text-right{'data-toggle'=>'tooltip', 'title'=>"#{I18n.t('presences.event_explanation')}"}
-          %b= I18n.t('presences.events')
-        %td.text-right
-          %b= I18n.t('presences.relays')
-        %td.text-center{'data-toggle'=>'tooltip', 'title'=>"#{I18n.t('presences.was_present_explanation')}"}
-          %b= I18n.t('presences.done')
-        - if @costs
-          %td.text-right
+  .col-xs-12.goggles-category-gap#swimmer_partecipation
+    %table.table.table-striped.table-bordered.table-hover.table-condensed
+      %tbody
+        %tr{'class'=>'info'}
+          %td.text-center{'colspan'=>'5'}
+            %b= I18n.t('presences.partecipation')
+          - if @costs
+            %td.text-center{'colspan'=>'4'}
+              %b= I18n.t('presences.costs')
+        %tr{'class'=>'info'}
+          %td
+            %b= I18n.t('presences.date')
+          %td
             %b= I18n.t('presences.meeting')
           %td.text-right{'data-toggle'=>'tooltip', 'title'=>"#{I18n.t('presences.event_explanation')}"}
             %b= I18n.t('presences.events')
           %td.text-right
             %b= I18n.t('presences.relays')
-          %td.text-right
-            %b= I18n.t('presences.tot')
-
-      - @spDAO.meetings.sort{ |n,p| n.header_date <=> p.header_date }.each do |mpDAO|
-        %tr
-          %td
-            = Format.a_date( mpDAO.header_date )
-          %td
-            = mpDAO.description
-          %td.text-right
-            = mpDAO.events_count
-          %td.text-right
-            = mpDAO.relays_count
-          %td.text-center
-            = show_tag( mpDAO.was_present )
+          %td.text-center{'data-toggle'=>'tooltip', 'title'=>"#{I18n.t('presences.was_present_explanation')}"}
+            %b= I18n.t('presences.done')
           - if @costs
             %td.text-right
-              = mpDAO.get_meeting_fee_to_s
+              %b= I18n.t('presences.meeting')
+            %td.text-right{'data-toggle'=>'tooltip', 'title'=>"#{I18n.t('presences.event_explanation')}"}
+              %b= I18n.t('presences.events')
             %td.text-right
-              = mpDAO.get_events_fee_to_s
+              %b= I18n.t('presences.relays')
             %td.text-right
-              = mpDAO.get_relays_fee_to_s
-            %td.text-right
-              = mpDAO.get_total_fee_to_s
+              %b= I18n.t('presences.tot')
 
-      %tr{'class'=>'info'}
-        %td
-          %b= I18n.t('presences.totals')
-        %td
-          %b= @spDAO.meetings.size
-        %td.text-right
-          %b= @spDAO.tot_events
-        %td.text-right
-          %b= @spDAO.tot_relays
-        %td.text-right
-          %b= @spDAO.tot_was_presents
-        - if @costs
-          %td.text-right
-            %b= sprintf( "%02.2f", @spDAO.tot_meeting_fees )
-          %td.text-right
-            %b= sprintf( "%02.2f", @spDAO.tot_event_fees )
-          %td.text-right
-            %b= sprintf( "%02.2f", @spDAO.tot_relay_fees )
-          %td.text-right
-            %b= sprintf( "%02.2f", @spDAO.tot_total_fees )
+        - @spDAO.meetings.sort{ |n,p| n.header_date <=> p.header_date }.each do |mpDAO|
+          %tr
+            %td
+              = Format.a_date( mpDAO.header_date )
+            %td
+              = mpDAO.description
+            %td.text-right
+              = mpDAO.events_count
+            %td.text-right
+              = mpDAO.relays_count
+            %td.text-center
+              = show_tag( mpDAO.was_present )
+            - if @costs
+              %td.text-right
+                = mpDAO.get_meeting_fee_to_s
+              %td.text-right
+                = mpDAO.get_events_fee_to_s
+              %td.text-right
+                = mpDAO.get_relays_fee_to_s
+              %td.text-right
+                = mpDAO.get_total_fee_to_s
 
-- if @costs
-  - payments_sum = 0
-  .col-xs-12.goggles-category-gap#swimmer_payments
-    .col-xs-6
-      - if @badge_payments.count > 0
+        %tr{'class'=>'info'}
+          %td
+            %b= I18n.t('presences.totals')
+          %td
+            %b= @spDAO.meetings.size
+          %td.text-right
+            %b= @spDAO.tot_events
+          %td.text-right
+            %b= @spDAO.tot_relays
+          %td.text-right
+            %b= @spDAO.tot_was_presents
+          - if @costs
+            %td.text-right
+              %b= sprintf( "%02.2f", @spDAO.tot_meeting_fees )
+            %td.text-right
+              %b= sprintf( "%02.2f", @spDAO.tot_event_fees )
+            %td.text-right
+              %b= sprintf( "%02.2f", @spDAO.tot_relay_fees )
+            %td.text-right
+              %b= sprintf( "%02.2f", @spDAO.tot_total_fees )
+
+  - if @costs
+    - payments_sum = 0
+    .col-xs-12.goggles-category-gap#swimmer_payments
+      .col-xs-6
+        - if @badge_payments.count > 0
+          %table.table.table-striped.table-bordered.table-hover.table-condensed
+            %tbody
+              %tr{'class'=>'info'}
+                %td.text-center{'colspan'=>'3'}
+                  %b= I18n.t('presences.payments') + ' (al ' + Format.a_date( @last_payment_update ) + ')'
+              %tr{'class'=>'info'}
+                %td
+                  %b= I18n.t('presences.date')
+                %td
+                  %b= I18n.t('presences.notes')
+                %td.text-right
+                  %b= I18n.t('presences.amount')
+
+              - @badge_payments.each do |payment|
+                - payments_sum += payment.amount
+                %tr
+                  %td
+                    = Format.a_date( payment.payment_date )
+                  %td
+                    = payment.notes
+                  %td.text-right
+                    = sprintf( "%02.2f", payment.amount )
+
+            %tr{'class'=>'info'}
+              %td.text-center{'colspan'=>'2'}
+                %b= I18n.t('presences.payments_total')
+              %td.text-right
+                %b= sprintf( "%02.2f", payments_sum )
+        - else
+          %b= I18n.t('presences.no_payments')
+
+      .col-xs-6
         %table.table.table-striped.table-bordered.table-hover.table-condensed
           %tbody
             %tr{'class'=>'info'}
-              %td.text-center{'colspan'=>'3'}
-                %b= I18n.t('presences.payments') + ' (al ' + Format.a_date( @last_payment_update ) + ')'
-            %tr{'class'=>'info'}
-              %td
-                %b= I18n.t('presences.date')
-              %td
-                %b= I18n.t('presences.notes')
-              %td.text-right
-                %b= I18n.t('presences.amount')
+              %td.text-center{'colspan'=>'2'}
+                %b= I18n.t('presences.summary')
 
-            - @badge_payments.each do |payment|
-              - payments_sum += payment.amount
+            - saldo = payments_sum - @spDAO.tot_total_fees
+            - @cash.each do |cash_issue|
+              - saldo += cash_issue[:amount]
               %tr
                 %td
-                  = Format.a_date( payment.payment_date )
-                %td
-                  = payment.notes
+                  = cash_issue[:issue]
                 %td.text-right
-                  = sprintf( "%02.2f", payment.amount )
-
-          %tr{'class'=>'info'}
-            %td.text-center{'colspan'=>'2'}
-              %b= I18n.t('presences.payments_total')
-            %td.text-right
-              %b= sprintf( "%02.2f", payments_sum )
-      - else
-        %b= I18n.t('presences.no_payments')
-
-    .col-xs-6
-      %table.table.table-striped.table-bordered.table-hover.table-condensed
-        %tbody
-          %tr{'class'=>'info'}
-            %td.text-center{'colspan'=>'2'}
-              %b= I18n.t('presences.summary')
-
-          - saldo = payments_sum - @spDAO.tot_total_fees
-          - @cash.each do |cash_issue|
-            - saldo += cash_issue[:amount]
+                  = sprintf( "%02.2f", cash_issue[:amount])
             %tr
               %td
-                = cash_issue[:issue]
+                = I18n.t('presences.meetings')
               %td.text-right
-                = sprintf( "%02.2f", cash_issue[:amount])
-          %tr
-            %td
-              = I18n.t('presences.meetings')
-            %td.text-right
-              = sprintf( "%02.2f", -@spDAO.tot_total_fees)
+                = sprintf( "%02.2f", -@spDAO.tot_total_fees)
 
-          %tr
-            %td
-              = I18n.t('presences.payments_total')
-            %td.text-right
-              = sprintf( "%02.2f", payments_sum)
+            %tr
+              %td
+                = I18n.t('presences.payments_total')
+              %td.text-right
+                = sprintf( "%02.2f", payments_sum)
 
-          %tr{'class'=>'info'}
-            %td.text-right
-              %b= I18n.t('presences.cash')
-            %td.text-right
-              %b= sprintf( "%02.2f", saldo)
+            %tr{'class'=>'info'}
+              %td.text-right
+                %b= I18n.t('presences.cash')
+              %td.text-right
+                %b= sprintf( "%02.2f", saldo)
 
-  .col-xs-12.goggles-category-gap#swimmer_payments_notes
-    - @notes.each do |key,value|
-      = key + ": " + value
+    .col-xs-12.goggles-category-gap#swimmer_payments_notes
+      - @notes.each do |key,value|
+        = key + ": " + value
+
+- else
+  .col-xs-12.goggles-div-centeralign
+    %p= image_tag( 'mmh.jpg', class: "img_thumbnail" )
+    %h3=I18n.t('presences.no_data')
