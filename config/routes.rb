@@ -101,13 +101,16 @@ Rails.application.routes.draw do
       put 'team_management/update_team/:id',                to: "team_management#update_team",                 as: "team_management_update_team"
       get 'team_management/edit_affiliation'
       post 'team_management/update_affiliation'
-      get 'team_management/edit_badges'
-      post 'team_management/create_badge'
-      post 'team_management/update_badges'
       get 'team_management/edit_lap_template'
       post 'team_management/update_app_template'
       get 'team_management/supermaster/:id',                to: "team_management#supermaster",                 as: "team_management_supermaster"
       get 'team_management/show_presence/:id',              to: "team_management#show_presence",               as: "team_management_show_presence"
+
+      # === Badge (Team Manager only) ===
+      get 'badge/new'
+      get 'badge/create'
+      get 'badge/edit'
+      get 'badge/update'
 
       # === Records ===
       get  "records/for_season_type",           to: "records#for_season_type"

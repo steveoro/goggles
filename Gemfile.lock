@@ -573,6 +573,7 @@ DEPENDENCIES
   nokogiri
   prawn (~> 2.1)
   prawn-table
+  pry
   puma (~> 3.7)
   rails (~> 5.1.6)
   rails-controller-testing

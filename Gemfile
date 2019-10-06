@@ -152,17 +152,17 @@ end
 
 
 group :test do
+  gem "codeclimate-test-reporter", require: nil     # [Steve, 20140321] CI/Test coverage via local test run
   # FIXME (Low-pri) This is required by Draper inside the core engine, probably due to some wrong setting:
   gem "test-unit"
   # The driver for browser testing may be switched back to the default (:rack_test,
   # without Javascript support) with: > Capybara.use_default_driver
   #gem 'selenium-webdriver'                          # Full browser simulation => Capybara.current_driver = :selenium
                                                     # [Steve, 20140312] Added these to build test coverage stats reports (open: /goggles/coverage/index.html)
-  gem 'simplecov', require: false
-  gem "codeclimate-test-reporter", require: nil     # [Steve, 20140321] CI/Test coverage via local test run
-
+  gem 'pry'
   # FIXME High-priority: remove usage of 'assigns' & 'render_template' in tests
   gem 'rails-controller-testing'
+  gem 'simplecov', require: false
 end
 
 # To use debugger

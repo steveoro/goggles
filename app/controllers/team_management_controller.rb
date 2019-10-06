@@ -261,24 +261,13 @@ class TeamManagementController < ApplicationController
   end
 
 
-  def edit_badges
-  end
-
-
-  def create_badge
-  end
-
-
-  def update_badges
-  end
-
-
   def edit_lap_template
   end
 
 
   def update_app_template
   end
+
 
   private
 

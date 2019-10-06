@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe TeamManagementController, type: :controller do
 
-  let(:team)               { create( :team ) }
+  let(:team) { create(:team) }
 
   context "for a unlogged user," do
     [:edit_team, :edit_affiliation, :edit_badges, :edit_lap_template].each do |method_name|
@@ -82,7 +82,7 @@ RSpec.describe TeamManagementController, type: :controller do
       login_user()
     end
 
-    [:edit_team, :edit_affiliation, :edit_badges, :edit_lap_template].each do |method_name|
+    [:edit_team, :edit_affiliation, :edit_lap_template].each do |method_name|
       describe "GET #" + method_name.to_s do
         it "redirects to the team radio page" do
           get method_name.to_sym, params: { id: team.id }
@@ -100,7 +100,7 @@ RSpec.describe TeamManagementController, type: :controller do
       end
     end
 
-    [:update_affiliation, :create_badge, :update_badges, :update_app_template].each do |method_name|
+    [:update_affiliation, :create_badge, :update_app_template].each do |method_name|
       describe "POST #" + method_name.to_s do
         it "redirects to the team radio page" do
           post method_name.to_sym, params: { id: team.id }
@@ -128,7 +128,7 @@ RSpec.describe TeamManagementController, type: :controller do
       team_manager
     end
 
-    [:edit_team, :edit_affiliation, :edit_badges, :edit_lap_template].each do |method_name|
+    [:edit_team, :edit_affiliation, :edit_lap_template].each do |method_name|
       describe "GET #" + method_name.to_s do
         # [Steve, 20181125] TODO FAILS due to wrong routing
         # (you cannot define a route with a parameter and invoke it without)
@@ -150,7 +150,7 @@ RSpec.describe TeamManagementController, type: :controller do
       end
     end
 
-    [:update_affiliation, :create_badge, :update_badges, :update_app_template].each do |method_name|
+    [:update_affiliation, :update_app_template].each do |method_name|
       describe "POST #" + method_name.to_s do
         it "redirects to the root page" do
           post method_name.to_sym
@@ -207,27 +207,6 @@ RSpec.describe TeamManagementController, type: :controller do
     describe "POST #update_affiliation" do
       it "returns http success" do
         post :update_affiliation, params: { id: team.id }
-        expect(response).to have_http_status(:success)
-      end
-    end
-
-    describe "GET #edit_badges" do
-      it "returns http success" do
-        get :edit_badges, params: { id: team.id }
-        expect(response).to have_http_status(:success)
-      end
-    end
-
-    describe "POST #create_badge" do
-      it "returns http success" do
-        post :create_badge, params: { id: team.id }
-        expect(response).to have_http_status(:success)
-      end
-    end
-
-    describe "GET #update_badges" do
-      it "returns http success" do
-        get :update_badges, params: { id: team.id }
         expect(response).to have_http_status(:success)
       end
     end
