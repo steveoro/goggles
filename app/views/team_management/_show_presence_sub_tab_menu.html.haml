@@ -2,5 +2,5 @@
   - force_active = !params['header_year'].present?
   %ul.nav.nav-tabs{role: "seasonlist"}
     - @season_list.each_with_index do |season_tab,index|
-      = show_tab_link( params, season_tab, season_tab, team_management_show_presence_path( id: @team.id, header_year: season_tab ), nil, force_active && index == 0)
+      = show_tab_link( params, season_tab, season_tab, team_management_show_presence_path( id: @team.id, header_year: season_tab ), nil, force_active && index == 0 )
   .col-xs-12.goggles-category-gap
