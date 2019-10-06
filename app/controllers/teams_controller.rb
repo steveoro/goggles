@@ -42,13 +42,8 @@ class TeamsController < ApplicationController
   #      to test a couple of edge conditions)
   #
   def current_swimmers
-    params.permit! # (No unsafe params can be passed)
+    params.permit! # (No unsafe params are possible)
     @tab_title = I18n.t('radiography.team_current_swimmers_tab')
-    #@last_seasons = if params['header_year'].present?
-    #  Season.where( "header_year LIKE '%#{ params['header_year'] }%'" ).to_a
-    #else
-    #  Season.is_not_ended.map{ |season| season.id }
-    #end
     @last_seasons = get_searched_seasons
     @affiliations = @team.team_affiliations.where( ['season_id in (?)', @last_seasons] )
     current_badges = @team.badges.where( ['season_id in (?)', @last_seasons] ).includes( :swimmer ) if @last_seasons && @team.badges.exists?
@@ -58,6 +53,10 @@ class TeamsController < ApplicationController
       current_badges.map{ |badge| badge.swimmer }.uniq.sort{ |a,b| a.get_full_name <=> b.get_full_name }
     end
     @max_updated_at = find_last_updated_mir
+    # Badge management entry point, only for Team Managers:
+    @is_valid_team_manager = TeamManagerValidator.can_manage_team?( current_user, @team )
+    # Quick'n'dirty list to allow pre-filtering & management based even on previous seasons: (just looks at the current year)
+    @manageable_seasons_ids = Season.where("INSTR(header_year, #{Date.today.year.to_s}) > 0").pluck(:id) if @is_valid_team_manager
   end
   #-- -------------------------------------------------------------------------
   #++

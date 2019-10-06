@@ -11,10 +11,9 @@ class Api::V1::SwimmersController < Api::BaseController
   #-- -------------------------------------------------------------------------
   #++
 
-  # Returns a JSON-encoded Array of all the rows.
-  # Each array element is a JSON-encoded hash of a single row.
+  # Returns a JSON-encoded Array of all the matching rows.
+  # Each returned array element is a JSON-encoded hash of a single row.
   # The keys of the Hash are the attributes as string.
-  #
   # The returned set when no querying/filtering parameter is provided  is
   # capped to return 20 rows max.
   #
@@ -22,7 +21,7 @@ class Api::V1::SwimmersController < Api::BaseController
   # when seeking a specified value, since the actual search result may well lay
   # beyond the limit set.
   #
-  # === Additional params:
+  # === Params:
   # - 'q': filter by matching (sub)string for the Swimmer.complete_name
   # - 't': (additional) filter by a team_id array
   # - 's': (additional) filter by a SINGLE season_id array
@@ -61,6 +60,36 @@ class Api::V1::SwimmersController < Api::BaseController
 # DEBUG
 #    puts "- returning #{ @swimmers.size } result..."
     render status: 200, json: @swimmers
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  # Returns a JSON-encoded Array of all the matching rows -- specific version, tailored for
+  # Badge management, that allows to search among Swimmers that do not have a badge yet.
+  # Each returned array element is a JSON-encoded hash of a single row.
+  # The keys of the Hash are the attributes as string.
+  #
+  # === Params:
+  # - 'q': select any Swimmer with a matching complete_name for the specified (sub)string
+  # - 's': exclude any swimmer that already has a badge for the specified Season IDs
+  #
+  def unbadged
+    # DEBUG
+    # logger.debug( "\r\n\r\n!! ------ #{self.class.name}/unbadged -----" )
+    # logger.debug( "PARAMS => #{params.inspect}\r\n" )
+    render(
+      status: 400,
+      json: { success: false, error: "Invalid or missing required parameters!" }
+    ) and return unless params['q'].present? && params['s'].present? && params['s']&.split(',').present?
+
+    # All swimmers that do not have a badge in the enlisted seasons and have a complete name that matches the search string:
+    @swimmers = Swimmer.where.not(id: Badge.where(season_id: params['s']&.split(',')).select(:swimmer_id))
+                       .where("(complete_name LIKE ?)", "%#{params['q']}%")
+                       .order(:complete_name)
+                       .limit(20)
+    # DEBUG
+    # puts "- returning #{ @swimmers.size } result..."
+    render json: @swimmers
   end
   #-- -------------------------------------------------------------------------
   #++

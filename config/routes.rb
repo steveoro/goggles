@@ -288,6 +288,7 @@ Rails.application.routes.draw do
 
       # === Swimmers ===
       get    "swimmers/index",                to: "swimmers#index",         as: "swimmers"
+      get    "swimmers/unbadged",             to: "swimmers#unbadged",      as: "swimmers_unbadged", format: :json
       get    "swimmers/show/:id",             to: "swimmers#show",          as: "swimmer_show"
       put    "swimmers/tag_for_user/:id",     to: "swimmers#tag_for_user",  as: "swimmer_tag_for_user"
 
