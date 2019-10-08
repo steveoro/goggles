@@ -10,14 +10,41 @@
 #  * zeus: 'zeus rspec' (requires the server to be started separetly)
 #  * 'just' rspec: 'rspec'
 
+# Watch the bundle for updates:
+guard :bundler do
+  watch('Gemfile')
+end
+
+# Start explicitly the Spring preloader & watch for files that may need Spring to refresh itself:
+guard :spring, bundler: true do
+  watch('Gemfile.lock')
+  watch(%r{^config/})
+  watch(%r{^spec/(support|factories)/})
+  watch(%r{^spec/factory.rb})
+end
+
+# rubocop_options = {
+#   cmd: 'rubocop',
+#   # With fuubar:
+#   cli: '-E -P -S -f fu'
+# }
+
+# Watch Ruby files for changes and run RuboCop:
+# [See https://github.com/yujinakayama/guard-rubocop for all options]
+# guard :rubocop, rubocop_options do
+#   watch(/.+\.rb$/)
+#   watch(%r{(?:.+/)?\.rubocop(?:_todo)?\.yml$}) { |m| File.dirname(m[0]) }
+# end
 
 rspec_options = {
-  results_file: Dir.pwd + "/tmp/guard_rspec_results.txt", # This option must match the path in engine_plan.rb
-  cmd: "spring rspec --color -f progress --order rand --fail-fast -t ~type:performance",
+  cmd: 'rspec',
+  # Exclude performance tests:
+  cmd_additional_args: ' --color -f progress --order rand -t ~type:performance',
+  # Zeus only: the following option must match the path in engine_plan.rb
+  # results_file: Rails.root.join('tmp', 'guard_rspec_results.txt'),
   all_after_pass: false,
   failed_mode: :focus
 }
-
 
 guard :rspec, rspec_options do
   require "guard/rspec/dsl"
@@ -68,18 +95,4 @@ guard :rspec, rspec_options do
   # Capybara features specs
   watch(rails.view_dirs)     { |m| rspec.spec.("features/#{m[1]}") }
   watch(rails.layouts)       { |m| rspec.spec.("features/#{m[1]}") }
-
-  # Turnip features and steps
-  watch(%r{^spec/acceptance/(.+)\.feature$})
-  watch(%r{^spec/acceptance/steps/(.+)_steps\.rb$}) do |m|
-    Dir[File.join("**/#{m[1]}.feature")][0] || "spec/acceptance"
-  end
-end
-
-
-guard 'spring', bundler: true do
-  watch('Gemfile.lock')
-  watch(%r{^config/})
-  watch(%r{^spec/(support|factories)/})
-  watch(%r{^spec/factory.rb})
 end

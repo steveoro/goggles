@@ -5,7 +5,7 @@ RSpec.describe TeamManagementController, type: :controller do
   let(:team) { create(:team) }
 
   context "for a unlogged user," do
-    [:edit_team, :edit_affiliation, :edit_badges, :edit_lap_template].each do |method_name|
+    [:edit_team, :edit_affiliation, :edit_lap_template].each do |method_name|
       describe "GET #" + method_name.to_s do
         it "redirects to the login page" do
           get method_name.to_sym, params: { id: team.id }
@@ -23,7 +23,7 @@ RSpec.describe TeamManagementController, type: :controller do
       end
     end
 
-    [:update_affiliation, :create_badge, :update_badges, :update_app_template].each do |method_name|
+    [:update_affiliation, :update_app_template].each do |method_name|
       describe "POST #" + method_name.to_s do
         it "redirects to the login page" do
           post method_name.to_sym, params: { id: team.id }
@@ -42,7 +42,7 @@ RSpec.describe TeamManagementController, type: :controller do
       request.env["HTTP_REFERER"] = root_path()
     end
 
-    [:edit_team, :edit_affiliation, :edit_badges, :edit_lap_template].each do |method_name|
+    [:edit_team, :edit_affiliation, :edit_lap_template].each do |method_name|
       describe "GET #" + method_name.to_s do
         # [Steve, 20181125] TODO FAILS due to wrong routing
         # (you cannot define a route with a parameter and invoke it without)
@@ -64,7 +64,7 @@ RSpec.describe TeamManagementController, type: :controller do
       end
     end
 
-    [:update_affiliation, :create_badge, :update_badges, :update_app_template].each do |method_name|
+    [:update_affiliation, :update_app_template].each do |method_name|
       describe "POST #" + method_name.to_s do
         it "redirects to the root page" do
           post method_name.to_sym
@@ -100,7 +100,7 @@ RSpec.describe TeamManagementController, type: :controller do
       end
     end
 
-    [:update_affiliation, :create_badge, :update_app_template].each do |method_name|
+    [:update_affiliation, :update_app_template].each do |method_name|
       describe "POST #" + method_name.to_s do
         it "redirects to the team radio page" do
           post method_name.to_sym, params: { id: team.id }

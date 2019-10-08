@@ -38,11 +38,6 @@ gem 'jquery-turbolinks'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 2.5'
-# Use Redis adapter to run Action Cable in production
-# gem 'redis', '~> 3.0'
-# Use ActiveModel has_secure_password
-# gem 'bcrypt', '~> 3.1.7'
-
 gem 'json'
 gem 'haml-rails', '~> 2'
 
@@ -74,35 +69,26 @@ gem 'prawn-table'
 #gem 'documatic', git: "git@github.com:fasar-sw/documatic"
 gem 'documatic', git: "https://github.com/fasar-sw/documatic"
 
-gem 'country_select'
-gem 'simple_form'
 gem "cocoon"
-gem "nokogiri"                                      # Used for HTML DOCModel easy tampering
+gem 'country_select'
 gem 'generator'
+gem "nokogiri"                                      # Used for HTML DOCModel easy tampering
+gem 'simple_form'
 gem 'zip'
-
 
 # [Steve, 20181221] *** Security updates: ***
 gem "ffi", "~> 1.9.25"
 gem 'rubyzip', '~> 1.2.2', require: 'zip/zip'
 
-
-gem "recaptcha", require: "recaptcha/rails"
-gem 'kaminari'
 gem 'bootstrap-kaminari-views'
+gem 'kaminari'
+gem "recaptcha", require: "recaptcha/rails"
 gem "rest-client"                                   # For api/v1/meetings/download
 
 group :development do
   gem "better_errors" #, '~> 1.1.0'
   gem "binding_of_caller"
   gem 'rails_best_practices'
-  gem 'guard'
-  gem 'guard-rspec'
-  gem 'guard-shell'
-#  gem 'rspec_api_blueprint', require: false
-#  gem "airbrussh", require: false
-
-  gem 'rubocop', require: false                       # [Steve] For style checking
 
   # Although Capistrano + seed_dump are strictly development-related gems,
   # including them into the test environment also allows Semaphore CI to
@@ -115,19 +101,23 @@ group :development do
   gem 'capistrano-passenger'
   gem 'capistrano-faster-assets'
 
-  # [Steve, 20160919] Do we still need the following one anymore? Really?
-#  gem 'seed_dump' #, '~> 0.5.3'                       # [Steve, 20130926] Version greater than this one are ment only for Rails 4!!
+  gem 'guard'
+  gem 'guard-bundler', require: false
+  gem 'guard-rspec'
+  gem 'guard-rubocop'
+  gem 'guard-shell'
+  gem 'guard-spring'
 
-  # Access an IRB console on exception pages or by using <%= console %> anywhere in the code.
-  gem 'web-console'
   gem 'listen', '~> 3.0.5'
-
   # Spring speeds up development by keeping your application running in the background.
   # Read more: https://github.com/rails/spring
+
+  gem 'rubocop', require: false  # For style checking
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
   gem 'spring-commands-rspec'
-  gem 'guard-spring'
+  # Access an IRB console on exception pages or by using <%= console %> anywhere in the code.
+  gem 'web-console'
 end
 
 group :development, :test do

@@ -36,8 +36,7 @@ describe Api::V1::SwimmersController, type: :controller, api: true do
         id = result.first['id']
         swimmer = Swimmer.find_by_id( id )
         expect( swimmer ).to be_a( Swimmer )
-        expect( swimmer.badges.first.team_id ).to eq(1)
-        expect( swimmer.badges.last.team_id ).to eq(1)
+        expect( swimmer.badges.map(&:team_id) ).to include(1)
       end
     end
 
@@ -53,8 +52,7 @@ describe Api::V1::SwimmersController, type: :controller, api: true do
         id = result.first['id']
         swimmer = Swimmer.find_by_id( id )
         expect( swimmer ).to be_a( Swimmer )
-        expect( swimmer.badges.first.team_id ).to eq(1)
-        expect( swimmer.badges.last.team_id ).to eq(1)
+        expect( swimmer.badges.map(&:team_id) ).to include(1)
       end
     end
 
