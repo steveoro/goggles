@@ -50,7 +50,7 @@ $(document).ready(function() {
         // scrolling can be used
         params.page = params.page || 1;
         console.log('processResults:');
-        console.log(data);
+        console.log(data[0]);
 
         return {
           results: data // data.items //,
