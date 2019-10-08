@@ -24,7 +24,6 @@ describe Api::V1::SwimmersController, type: :controller, api: true do
       end
     end
 
-
     context "with a matching :t ARRAY filtering parameter," do
       before :each do
         # Assert: we rely on the pre-loaded seeds here
@@ -39,7 +38,6 @@ describe Api::V1::SwimmersController, type: :controller, api: true do
         expect( swimmer.badges.map(&:team_id) ).to include(1)
       end
     end
-
 
     context "with a matching :t SINGLE filtering parameter," do
       before :each do
@@ -56,7 +54,6 @@ describe Api::V1::SwimmersController, type: :controller, api: true do
       end
     end
 
-
     context "with a matching :s filtering parameter," do
       before :each do
         # Assert: we rely on the pre-loaded seeds here
@@ -68,7 +65,6 @@ describe Api::V1::SwimmersController, type: :controller, api: true do
         expect( result.size ).to be > 210
       end
     end
-
 
     context "with both matching :q AND :t (ARRAY) filtering parameters," do
       before :each do
@@ -90,7 +86,6 @@ describe Api::V1::SwimmersController, type: :controller, api: true do
       end
     end
 
-
     context "with both matching :q AND :s filtering parameters," do
       before :each do
         # Assert: we rely on the pre-loaded seeds here
@@ -111,7 +106,6 @@ describe Api::V1::SwimmersController, type: :controller, api: true do
       end
     end
 
-
     context "with both matching :s AND :t (ARRAY) filtering parameters," do
       before :each do
         # Assert: we rely on the pre-loaded seeds here
@@ -123,7 +117,6 @@ describe Api::V1::SwimmersController, type: :controller, api: true do
         expect( result.size ).to eq(26)
       end
     end
-
 
     context "with matching :q, :s AND :t (ARRAY) filtering parameters," do
       before :each do
@@ -143,6 +136,39 @@ describe Api::V1::SwimmersController, type: :controller, api: true do
         expect( swimmer ).to be_a( Swimmer )
         expect( swimmer.badges.first.team_id ).to eq(1)
         expect( swimmer.badges.first.season_id ).to eq(1)
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  describe '[GET swimmers/unbadged]' do
+    context "without the 'q' parameter," do
+      it "returns an error due to the missing parameter" do
+        get :unbadged, format: :json, params: { s:'181' }
+        expect(response.status).to eq( 400 )
+        result = JSON.parse(response.body)
+        expect( result['success'] ).to be false
+        expect( result['error'] ).to match(/Invalid or missing required parameters/i)
+      end
+    end
+    context "without the 's' parameter," do
+      it "returns an error due to the missing parameter" do
+        get :unbadged, format: :json, params: { q: 'allor' }
+        expect(response.status).to eq( 400 )
+        result = JSON.parse(response.body)
+        expect( result['success'] ).to be false
+        expect( result['error'] ).to match(/Invalid or missing required parameters/i)
+      end
+    end
+    context "with a matching 'q' & 's' parameters," do
+      before :each do
+        get :unbadged, format: :json, params: { q: 'allor', s:'181' }
+      end
+      it_behaves_like( "(Ap1-V1-Controllers, success returning an Array of Hash)" )
+      it "returns at least a match with the existing seeds" do
+        result = JSON.parse(response.body)
+        expect( result.first['complete_name'] ).to match(/allor/i)
       end
     end
   end

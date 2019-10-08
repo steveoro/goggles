@@ -1,0 +1,30 @@
+%h1 Badge#add
+
+.form-group
+  = form_tag('badge', method: :post) do
+    .row-fluid
+      #select2_season_id= select_tag('season_id', options_for_select(manageable_seasons_options))
+    .row-fluid
+      #select2_swimmer_id= select_tag('swimmer_id', [[]])
+    .row-fluid
+      .col
+        = team.get_verbose_name
+      .col
+        #team_affiliation_label
+          = ''
+    .row-fluid
+      #category_label
+        = ''
+    .row-fluid
+      = text_field_tag('number', '?')
+    .row-fluid
+      .col
+        = check_box_tag('is_out_of_gogglecup', false)
+      .col
+        = check_box_tag('has_to_pay_fees', false)
+      .col
+        = check_box_tag('has_to_pay_badge', false)
+      .col
+        = check_box_tag('has_to_pay_relays', false)
+    .row-fluid
+      = submit_tag

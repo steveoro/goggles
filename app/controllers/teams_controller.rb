@@ -56,7 +56,9 @@ class TeamsController < ApplicationController
     # Badge management entry point, only for Team Managers:
     @is_valid_team_manager = TeamManagerValidator.can_manage_team?( current_user, @team )
     # Quick'n'dirty list to allow pre-filtering & management based even on previous seasons: (just looks at the current year)
-    @manageable_seasons_ids = Season.where("INSTR(header_year, #{Date.today.year.to_s}) > 0").pluck(:id) if @is_valid_team_manager
+    @manageable_seasons_options = Season.where("INSTR(header_year, #{Date.today.year.to_s}) > 0")
+                                        .order(:description)
+                                        .map { |season| [season.description, season.id] } if @is_valid_team_manager
   end
   #-- -------------------------------------------------------------------------
   #++

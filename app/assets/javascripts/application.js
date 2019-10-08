@@ -25,4 +25,5 @@
 //= require offcanvas
 //= require jasny-bootstrap.min
 //= require typeahead.bundle
+//= require select2
 //= require_tree .

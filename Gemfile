@@ -74,6 +74,7 @@ gem 'country_select'
 gem 'generator'
 gem "nokogiri"                                      # Used for HTML DOCModel easy tampering
 gem 'simple_form'
+gem 'select2-rails'
 gem 'zip'
 
 # [Steve, 20181221] *** Security updates: ***

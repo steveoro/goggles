@@ -1,4 +1,6 @@
 = render( partial: 'tabs_and_title' )
+- if @is_valid_team_manager
+  = render(partial: 'badge/add', locals: { team: @team, manageable_seasons_options: @manageable_seasons_options })
 - cache( cache_key_for_team( 'current_swimmers', @team.id, @max_updated_at ) ) do
   - if @swimmers.size > 0
     .row
