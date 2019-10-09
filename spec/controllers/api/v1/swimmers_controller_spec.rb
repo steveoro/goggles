@@ -168,7 +168,9 @@ describe Api::V1::SwimmersController, type: :controller, api: true do
       it_behaves_like( "(Ap1-V1-Controllers, success returning an Array of Hash)" )
       it "returns at least a match with the existing seeds" do
         result = JSON.parse(response.body)
-        expect( result.first['complete_name'] ).to match(/allor/i)
+        expect( result.first['swimmer']['complete_name'] ).to match(/allor/i)
+        expect( result.first['season_id'] ).to eq('181')
+        expect( result.first['category'] ).to be_present
       end
     end
   end

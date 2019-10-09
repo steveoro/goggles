@@ -1,0 +1,10 @@
+it:
+  badge:
+    management:
+      creation_successful: "Badge creato con successo."
+      update_successful: "Badge aggiornato con successo."
+      errors:
+        invalid_swimmer_season_or_team: "Nuotatore, Team o Stagione non validi."
+        missing_team_affiliation: "Manca l'affiliazione del Team. Chiedi all'Admin di crearla."
+        missing_category_type: "Mancano i CategoryType per questa stagione. Chiedi all'Admin di crearli."
+        error_during_save: "Errore durante il salvataggio: il Badge e' risultato non valido."

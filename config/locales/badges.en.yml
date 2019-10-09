@@ -1,0 +1,10 @@
+en:
+  badge:
+    management:
+      creation_successful: "Badge successfully created."
+      update_successful: "Badge successfully updated."
+      errors:
+        invalid_swimmer_season_or_team: "Invalid Swimmer, Team or Season combination."
+        missing_team_affiliation: "Unable to find an existing Team Affiliation: ask an Admin to create one for you."
+        missing_category_type: "Unable to find the existing Category Types for this Season: ask an Admin to create those for you."
+        error_during_save: "Error during Badge save due to failed validations."

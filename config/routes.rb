@@ -107,19 +107,13 @@ Rails.application.routes.draw do
       get 'team_management/show_presence/:id',              to: "team_management#show_presence",               as: "team_management_show_presence"
 
       # === Badge (Team Manager only) ===
-      get 'badge/new'
-      get 'badge/create'
-      get 'badge/edit'
-      get 'badge/update'
+      post 'badge/create/:team_id', to: "badge#create", as: "badge_create"
+      put 'badge/update/:badge_id', to: "badge#update", as: "badge_update"
 
       # === Records ===
-      get  "records/for_season_type",           to: "records#for_season_type"
-      get  "records/for_team",                  to: "records#for_team"
-      get  "records/for_swimmer",               to: "records#for_swimmer"
-# FIXME this has not been used yet: (both view & action are removed or missing) -- check it out and then remove it, if everything is ok
-#      get  "records/show_for_team",             to: "records#show_for_team"
-# FIXME this has not been used yet: (view removed or missing) -- check it out and then remove it, if everything is ok
-#      get  "records/for_personal_best",         to: "records#for_personal_best"
+      get "records/for_season_type", to: "records#for_season_type"
+      get "records/for_team",        to: "records#for_team"
+      get "records/for_swimmer",     to: "records#for_swimmer"
 
       # === Swimmers ===
 #      get  "swimmers/index",                    as: "swimmers"

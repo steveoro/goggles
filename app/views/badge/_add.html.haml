@@ -1,11 +1,11 @@
 %h1 Badge#add
 
 .form-group
-  = form_tag('badge', method: :post) do
+  = form_tag(badge_create_path(team_id: team.id), method: :post) do
     .row-fluid
-      #select2_season_id= select_tag('season_id', options_for_select(manageable_seasons_options))
+      = select_tag('season_id', options_for_select(manageable_seasons_options))
     .row-fluid
-      #select2_swimmer_id= select_tag('swimmer_id', [[]])
+      = select_tag('swimmer_id', [[]], { id: 'swimmer_id', class: 'swimmer-select' })
     .row-fluid
       .col
         = team.get_verbose_name
@@ -19,12 +19,12 @@
       = text_field_tag('number', '?')
     .row-fluid
       .col
-        = check_box_tag('is_out_of_gogglecup', false)
+        = check_box_tag('is_out_of_goggle_cup')
       .col
-        = check_box_tag('has_to_pay_fees', false)
+        = check_box_tag('has_to_pay_fees')
       .col
-        = check_box_tag('has_to_pay_badge', false)
+        = check_box_tag('has_to_pay_badge')
       .col
-        = check_box_tag('has_to_pay_relays', false)
+        = check_box_tag('has_to_pay_relays')
     .row-fluid
-      = submit_tag
+      = submit_tag('Save', class: 'btn btn-primary')

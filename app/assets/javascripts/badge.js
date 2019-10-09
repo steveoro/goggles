@@ -1,17 +1,19 @@
-// Returns the custom-formatted DOM node to represent a single Swimmer JSON row result
-function formatSwimmerRow(swimmer) {
-  if (swimmer.loading) {
-    return swimmer.text;
+// Returns the custom-formatted DOM node to represent a single Swimmer JSON row result in the dropdown
+function formatSwimmerRow(item) {
+  if (item.loading) {
+    return item.text;
   }
 
   var $container = $(
     "<div class='select2-result-swimmer clearfix'>" +
       "<span class='select2-result-swimmer__name'></span>" +
-      "&nbsp;<span class='select2-result-swimmer__birthyear small text-muted'><i class='fa fa-birthday-cake'></i>&nbsp;</span>" +
+      "&nbsp;-&nbsp;<span class='select2-result-swimmer__birthyear small'><i class='fa fa-birthday-cake'></i>&nbsp;</span>" +
+      "&nbsp;-&nbsp;<span class='select2-result-swimmer__category small'><i class='fa fa-users'></i>&nbsp;</span>" +
     "</div>"
   );
-  $container.find(".select2-result-swimmer__name").text(swimmer.last_name + ' ' + swimmer.first_name);
-  $container.find(".select2-result-swimmer__birthyear").append(swimmer.year_of_birth);
+  $container.find(".select2-result-swimmer__name").text(item.last_name + ' ' + item.first_name);
+  $container.find(".select2-result-swimmer__birthyear").append(item.year_of_birth);
+  $container.find(".select2-result-swimmer__category").append(item.category_code);
 
   return $container;
 }
@@ -19,9 +21,7 @@ function formatSwimmerRow(swimmer) {
 
 // Returns the selection or the placeholder:
 function formatSwimmerRowSelection(selection) {
-  console.log('formatSwimmerRowSelection:');
-  console.log(selection);
-  return (selection.last_name + ' ' + selection.first_name) || selection.text;
+  return selection.text;
 }
 //------------------------------------------------------------------------------
 
@@ -31,7 +31,7 @@ function formatSwimmerRowSelection(selection) {
  */
 $(document).ready(function() {
   // $("#select2_season_id").select2({ theme: "bootstrap" });
-  $("#select2_swimmer_id").select2({
+  $(".swimmer-select").select2({
     theme: "bootstrap",
     ajax: {
       url: "/api/v1/swimmers/unbadged",
@@ -44,25 +44,33 @@ $(document).ready(function() {
         };
       },
       processResults: function (data, params) {
-        // parse the results into the format expected by Select2
-        // since we are using custom formatting functions we do not need to
-        // alter the remote JSON data, except to indicate that infinite
-        // scrolling can be used
-        params.page = params.page || 1;
-        console.log('processResults:');
-        console.log(data[0]);
-
+        // Parse the results into the format expected by Select2:
         return {
-          results: data // data.items //,
-          // pagination: {
-          //   more: (params.page * 30) < data.total_count
-          // }
+          results: $.map(data, function(item) {
+            console.log(item);
+            return {
+              id: item.swimmer.id,
+              text: item.swimmer.last_name + ' ' +
+                    item.swimmer.first_name +
+                    ' (' + item.swimmer.year_of_birth + ', ' +
+                    item.category.code + ')',
+              first_name: item.swimmer.first_name,
+              last_name: item.swimmer.last_name,
+              year_of_birth: item.swimmer.year_of_birth,
+              season_id: item.season_id,
+              category_code: item.category.code
+            }
+          })
         };
       },
       cache: true
     },
-    placeholder: 'Search for a swimmer',
+    placeholder: 'Search for a swimmer...',
     minimumInputLength: 2,
+    selectOnClose: true,
+    width: '50%',
+    containerCssClass: 'swimmer-select-container',
+    dropdownCssClass: 'swimmer-select-dropdown',
     templateResult: formatSwimmerRow,
     templateSelection: formatSwimmerRowSelection
   })

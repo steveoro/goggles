@@ -70,8 +70,20 @@ class Api::V1::SwimmersController < Api::BaseController
   # The keys of the Hash are the attributes as string.
   #
   # === Params:
-  # - 'q': select any Swimmer with a matching complete_name for the specified (sub)string
-  # - 's': exclude any swimmer that already has a badge for the specified Season IDs
+  # - 'q': query; select any Swimmer with a matching complete_name for the specified (sub)string
+  # - 's': season_id; exclude any swimmer that already has a badge for the specified Season ID
+  #
+  # === Returns:
+  # An array of JSON objects having the following individual structre:
+  #
+  #  {
+  #    'swimmer': swimmer_object,
+  #    'season_id': season_id,
+  #    'category': category_type_object_for_season_id
+  #  }
+  #
+  # For both the swimmer and the category objects, the field keys are equal to the
+  # corresponding instance attributes as strings.
   #
   def unbadged
     # DEBUG
@@ -80,13 +92,20 @@ class Api::V1::SwimmersController < Api::BaseController
     render(
       status: 400,
       json: { success: false, error: "Invalid or missing required parameters!" }
-    ) and return unless params['q'].present? && params['s'].present? && params['s']&.split(',').present?
+    ) and return unless params['q'].present? && params['s'].present?
 
     # All swimmers that do not have a badge in the enlisted seasons and have a complete name that matches the search string:
-    @swimmers = Swimmer.where.not(id: Badge.where(season_id: params['s']&.split(',')).select(:swimmer_id))
+    @swimmers = Swimmer.where.not(id: Badge.where(season_id: params['s']).select(:swimmer_id))
                        .where("(complete_name LIKE ?)", "%#{params['q']}%")
                        .order(:complete_name)
                        .limit(20)
+                       .map do |swimmer|
+                        {
+                          swimmer: swimmer,
+                          season_id: params['s'],
+                          category: CategoryType.get_category_from(params['s'].to_i, swimmer.year_of_birth)
+                        }
+                       end
     # DEBUG
     # puts "- returning #{ @swimmers.size } result..."
     render json: @swimmers
