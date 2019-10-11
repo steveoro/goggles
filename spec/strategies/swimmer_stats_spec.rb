@@ -7,8 +7,12 @@ describe SwimmerStats, type: :strategy do
   let(:leega)           { Swimmer.find(23) }
   let(:leega_irons)     { 3 }
   let(:leega_meetings)  { 200 }
-  let(:leega_points)    { 50000 }
+  let(:leega_events)    { 400 }
+  let(:leega_points)    { 150000 }
   let(:leega_dsq)       { 2 }
+  let(:leega_meters)    { 75000 }
+  let(:leega_worst_fin) { 587 }
+  let(:leega_best_fin)  { 827 }
 
   context "well formed instance" do
     subject { SwimmerStats.new( swimmer ) }
@@ -36,7 +40,6 @@ describe SwimmerStats, type: :strategy do
       it "returns a query result with necessary columns" do
         subject.retrieve_data
         [
-          'complete_name','year_of_birth',
           'meetings_count', 'mirs_count', 'total_fin_points', 'total_minutes', 'total_seconds', 'total_hundreds', 'total_meters', 'disqualified_count',
           'max_fin_points_and_id', 'min_fin_points_and_id', 'irons_count',
           'teams_name_and_ids',
@@ -57,10 +60,41 @@ describe SwimmerStats, type: :strategy do
         expect( ssd.get_meetings_count ).to eq(0)
       end
     end
+
+    describe "#get_linked_teams" do
+      it "returns a string" do
+        expect( subject.get_linked_teams('PIPPO:1') ).to be_an_instance_of( String )
+      end
+    end
+
+    describe "#get_items_hash" do
+      it "returns an hash" do
+        expect( subject.get_items_hash('PIPPO:1') ).to be_a_kind_of( Hash )
+      end
+      it "returns an hash that respond to 1 key" do
+        result = subject.get_items_hash('PIPPO:1')
+        expect( result.has_key?('1') ).to eq(true)
+      end
+      it "returns an hash with three keys" do
+        result = subject.get_items_hash('PIPPO:1, PLUTO:2, PAPERINO:3')
+        expect( result.size ).to eq(3)
+      end
+    end
+
+    describe "#get_items_array" do
+      it "returns an array" do
+        expect( subject.get_items_array('PIPPO:1:PRIMO:ALTRO') ).to be_a_kind_of( Array )
+      end
+      it "returns an array elements if a 5 elements item given" do
+        expect( subject.get_items_array('PIPPO:1:PRIMO:DOPO:ADESSO').count ).to eq(5)
+      end
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
 
+  # This context is to ensure results of data retrieving are those desidered
+  # based on known data (of Leega)
   context "for Leega (a swimmer with full stats)" do
     subject { SwimmerStats.new( leega ) }
 
@@ -71,6 +105,7 @@ describe SwimmerStats, type: :strategy do
         expect( result['total_fin_points'].to_i ).to be >= leega_points
         expect( result['irons_count'].to_i ).to be >= leega_irons
         expect( result['disqualified_count'].to_i ).to be >= leega_dsq
+        expect( result['teams_name_and_ids'].split(', ').size ).to be >= 2
       end
     end
 
@@ -82,6 +117,14 @@ describe SwimmerStats, type: :strategy do
         expect( ssd.get_tot_fin_points ).to be >= leega_points
         expect( ssd.get_iron_masters_count ).to be >= leega_irons
         expect( ssd.get_disqualifications ).to be >= leega_dsq
+        expect( ssd.get_meters_swam ).to be >= leega_meters
+        expect( ssd.get_meters_swam ).to be >= leega_meters
+        expect( ssd.get_individual_results_count ).to be >= leega_events
+        expect( ssd.swimmer_stats[:teams_hash].size ).to be >= 2
+        expect( ssd.swimmer_stats[:first_array].size ).to eq(4)
+        expect( ssd.swimmer_stats[:last_array].size ).to eq(4)
+        expect( ssd.swimmer_stats[:worst_fin_array].size ).to eq(6)
+        expect( ssd.swimmer_stats[:best_fin_array].size ).to eq(6)
       end
     end
   end

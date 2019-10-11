@@ -324,11 +324,25 @@ class SwimmerStatsDAO
     @swimmer_stats[:first]
   end
 
+  # Swimmer first attended meeting
+  #
+  def get_first_meeting_array
+    #@mirs.count > 0 ? Meeting.find(@mirs.first.meeting_id) : nil
+    @swimmer_stats[:first_array]
+  end
+
   # Swimmer last attended meeting
   #
   def get_last_meeting
     #@mirs.count > 0 ? Meeting.find(@mirs.last.meeting_id) : nil
     @swimmer_stats[:last]
+  end
+
+  # Swimmer last attended meeting
+  #
+  def get_last_meeting_array
+    #@mirs.count > 0 ? Meeting.find(@mirs.last.meeting_id) : nil
+    @swimmer_stats[:last_array]
   end
 
   # Swimmer best fin result
@@ -339,10 +353,27 @@ class SwimmerStatsDAO
 
   # Swimmer best fin result
   #
+  def get_best_fin_array
+    @swimmer_stats[:best_fin_array]
+  end
+
+  # Swimmer best fin result
+  #
   def get_worst_fin
     @swimmer_stats[:worst_fin]
   end
+
+  # Swimmer best fin result
+  #
+  def get_worst_fin_array
+    @swimmer_stats[:worst_fin_array]
+  end
+
+    # Swimmer best fin result
+    #
+    def get_teams_hash
+      @swimmer_stats[:teams_hash]
+    end
   #-- -------------------------------------------------------------------------
   #++
-
 end
