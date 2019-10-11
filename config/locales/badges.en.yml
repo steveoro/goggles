@@ -1,10 +1,26 @@
 en:
   badge:
     management:
+      create_new_badge_label: "Add a new Badge"
+      edit_badge_label: "Edit Badge"
+      dismiss_button_label: "Close"
+      save_button_label: "Save changes"
+      save_button_disabled_label: "Wait..."
+      confirm_save: "Are you sure you want to save?"
       creation_successful: "Badge successfully created."
       update_successful: "Badge successfully updated."
+      labels:
+        search_swimmer: "Search for a swimmer..."
+        team_affiliation: "Affiliation Name"
+        category: "Category"
+        badge_number: "Badge code"
+        is_out_of_goggle_cup: "Out of GoggleCup?"
+        has_to_pay_fees: "Has to pay fees?"
+        has_to_pay_badge: "Has to pay badge?"
+        has_to_pay_relays: "Has to pay relays?"
       errors:
-        invalid_swimmer_season_or_team: "Invalid Swimmer, Team or Season combination."
+        invalid_badge: "Invalid Badge."
+        invalid_swimmer_season_or_team: "Invalid Swimmer or Season."
         missing_team_affiliation: "Unable to find an existing Team Affiliation: ask an Admin to create one for you."
         missing_category_type: "Unable to find the existing Category Types for this Season: ask an Admin to create those for you."
         error_during_save: "Error during Badge save due to failed validations."

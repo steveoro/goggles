@@ -31,7 +31,6 @@ it:
     points: 'Punti'
     events: 'Gare'
     details: 'Dettaglio dei risultati conteggiati'
-    event: 'Specialità'
     time: 'Tempo'
     everage: 'Media'
     range: 'Fascia '

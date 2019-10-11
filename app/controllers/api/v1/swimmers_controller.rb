@@ -4,8 +4,8 @@
 class Api::V1::SwimmersController < Api::BaseController
 
   respond_to :json
-
   before_action :ensure_format
+
   # Require authorization before invoking any of this controller's actions:
   before_action :authenticate_user_from_token!, only: [:tag_for_user]
   #-- -------------------------------------------------------------------------

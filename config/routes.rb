@@ -107,8 +107,9 @@ Rails.application.routes.draw do
       get 'team_management/show_presence/:id',              to: "team_management#show_presence",               as: "team_management_show_presence"
 
       # === Badge (Team Manager only) ===
-      post 'badge/create/:team_id', to: "badge#create", as: "badge_create"
-      put 'badge/update/:badge_id', to: "badge#update", as: "badge_update"
+      get 'badge/edit_form',        to: "badge#edit_form",  as: "badge_edit_form"
+      post 'badge/create/:team_id', to: "badge#create",     as: "badge_create"
+      put 'badge/update/:badge_id', to: "badge#update",     as: "badge_update"
 
       # === Records ===
       get "records/for_season_type", to: "records#for_season_type"
@@ -295,6 +296,7 @@ Rails.application.routes.draw do
       get    "team/count_results/:id",        to: "teams#count_results",    as: "team_count_results"
       get    "team/count_details/:id",        to: "teams#count_details",    as: "team_count_details"
       get    "team/current_swimmers/:id",     to: "teams#current_swimmers", as: "team_current_swimmers"
+      get    "team/get_affiliation/:id",      to: "teams#get_affiliation",  as: "team_get_affiliation", format: :json
       get    "teams/index",                   to: "teams#index",            as: "teams"
       get    "teams/show/:id",                to: "teams#show",             as: "team_show"
 

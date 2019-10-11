@@ -4,10 +4,10 @@
 class Api::V1::TeamsController < Api::BaseController
 
   respond_to :json
+  before_action :ensure_format
 
   # Require authorization before invoking any of this controller's actions:
-  before_action :authenticate_user_from_token!, except: [:current_swimmers, :index]
-  before_action :ensure_format
+  before_action :authenticate_user_from_token!, except: [:get_affiliation, :current_swimmers, :index]
   #-- -------------------------------------------------------------------------
   #++
 
@@ -78,6 +78,15 @@ class Api::V1::TeamsController < Api::BaseController
     else
       render( json: [] )
     end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  # Returns the +TeamAffiliation+ JSON-ified for the specified :season_id & (team):id.
+  # Simply returns "null" when not found (valid JSON for +nil+).
+  #
+  def get_affiliation
+    render( json: TeamAffiliation.find_by(season_id: params[:season_id], team_id: params[:id]) )
   end
   #-- -------------------------------------------------------------------------
   #++

@@ -44,9 +44,15 @@ class TeamsController < ApplicationController
   def current_swimmers
     params.permit! # (No unsafe params are possible)
     @tab_title = I18n.t('radiography.team_current_swimmers_tab')
-    @last_seasons = get_searched_seasons
-    @affiliations = @team.team_affiliations.where( ['season_id in (?)', @last_seasons] )
-    current_badges = @team.badges.where( ['season_id in (?)', @last_seasons] ).includes( :swimmer ) if @last_seasons && @team.badges.exists?
+    #***************************************************************************
+    # FIXME TEMP HACK to have swimmers even if all the seasons are ended:
+    # @last_seasons = get_searched_seasons # <= CORRECT
+    @last_seasons = Season.where("INSTR(header_year, #{Date.today.year.to_s}) > 0")
+                    # ^^^ TEMP HACK
+    #***************************************************************************
+    @affiliations = @team.team_affiliations.includes(season: :federation_type).where(season_id: @last_seasons)
+    current_badges = @team.badges.where(season_id: @last_seasons).includes(:swimmer)
+    @team.badges.where(season_id: @last_seasons).includes( :swimmer ) if @last_seasons && @team.badges.exists?
     @swimmers = if current_badges.nil?
       []
     else

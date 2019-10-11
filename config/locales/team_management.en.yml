@@ -31,7 +31,6 @@ it:
     points: 'Score'
     events: 'Events'
     details: 'Details'
-    event: 'Event'
     time: 'Time'
     everage: 'Everage'
     range: 'Range '

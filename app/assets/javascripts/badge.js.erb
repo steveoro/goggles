@@ -1,0 +1,51 @@
+// Returns the custom-formatted HTML DOM node to represent a single Swimmer JSON
+// row result in the dropdown of a Swimmer search
+function formatSwimmerRow(item) {
+  if (item.loading) {
+    return item.text;
+  }
+
+  var $container = $(
+    "<div class='select2-result-swimmer clearfix'>" +
+      "<span class='select2-result-swimmer__name'></span>" +
+      "&nbsp;-&nbsp;<span class='select2-result-swimmer__birthyear small'><i class='fa fa-birthday-cake'></i>&nbsp;</span>" +
+      "&nbsp;-&nbsp;<span class='select2-result-swimmer__category small'><i class='fa fa-users'></i>&nbsp;</span>" +
+    "</div>"
+  );
+  $container.find(".select2-result-swimmer__name").text(item.last_name + ' ' + item.first_name);
+  $container.find(".select2-result-swimmer__birthyear").append(item.year_of_birth);
+  $container.find(".select2-result-swimmer__category").append(item.category_code);
+
+  return $container;
+}
+//------------------------------------------------------------------------------
+
+// Returns the selection or the placeholder for a Swimmer drop-down combo box.
+function formatSwimmerRowSelection(selection) {
+  return selection.text;
+}
+//------------------------------------------------------------------------------
+
+// AJAX request to get and display the correct TeamAffiliation name.
+//
+// Assumes to get its parameters from these DOM ID text fields (reading their value):
+// - '#team_id' => Team ID
+// - '#season_id' => Season ID
+//
+// The resulting value (TeamAffiliation.name) will be set as text attribute
+// of '#team_affiliation_label'.
+//
+function updateTeamAffiliationInBadgeEditForm() {
+  $.ajax({
+    dataType: "json",
+    url: "/api/v1/team/get_affiliation/" + $('#team_id').val(),
+    data: {
+      season_id: $('#season_id').val()
+    },
+    success: function (result) {
+      $('#team_affiliation_label').text(result.name);
+    }
+  });
+  return false;
+}
+//------------------------------------------------------------------------------

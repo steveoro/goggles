@@ -74,29 +74,73 @@ RSpec.describe BadgeController, type: :controller do
     end
 
     describe "POST #create" do
+      context "given invalid parameters (except team)," do
+        let(:create_params) { { team_id: team.id, season_id: 0, swimmer_id: swimmer.id } }
+
+        it "accepts the request but displays the error" do
+          post :create, params: create_params
+          expect(flash['error']).to eq(I18n.t('badge.management.errors.invalid_swimmer_season_or_team'))
+          expect(response).to redirect_to( team_current_swimmers_path(id: team.id) )
+        end
+      end
+
       context "given valid parameters," do
         let(:create_params) { { team_id: team.id, season_id: team_affiliation.season_id, swimmer_id: swimmer.id } }
 
-        it "returns http success" do
+        it "accepts the request, creating the new badge" do
+          orig_count = Badge.count
           post :create, params: create_params
-          expect(flash['info']).to eq(I18n.t('badge.management.creation_successful'))
+          # Check response:
           expect(response).to redirect_to( team_current_swimmers_path(id: team.id) )
+          expect(flash['info']).to eq(I18n.t('badge.management.creation_successful'))
+          expect(Badge.count).to eq(orig_count + 1) # just 1 badge must have been created
+          # Check created badge:
+          allegedly_created_badge = Badge.last
+          expect(allegedly_created_badge.team_id).to eq(team.id)
+          expect(allegedly_created_badge.season_id).to eq(team_affiliation.season_id)
+          expect(allegedly_created_badge.swimmer_id).to eq(swimmer.id)
         end
       end
     end
 
     describe "PUT #update" do
+      context "given invalid parameters (except team)," do
+        let(:update_params)  { { badge_id: 0 } }
+
+        it "redirects to the root path" do
+          put :update, params: update_params
+          expect(flash['error']).to include(I18n.t(:invalid_action_request))
+          expect(response).to redirect_to( root_path )
+        end
+      end
+
       context "given valid parameters," do
         let(:updated_number) { 'EMI-Fake-1' }
-        let(:existing_badge) { Badge.select(:id).last(100).sample }
+        let(:existing_badge) do
+          create(
+            :badge,
+            team_id: team_manager.team_affiliation.team_id,
+            season_id: team_manager.team_affiliation.season_id,
+            swimmer_id: swimmer.id,
+            team_affiliation_id: team_manager.team_affiliation.id,
+          )
+        end
         let(:update_params)  { { badge_id: existing_badge.id, number: updated_number } }
 
-        it "returns http success" do
+        it "accepts the request, updating the existing badge" do
+          expect(existing_badge).to be_a(Badge).and be_valid
+          orig_count = Badge.count
           put :update, params: update_params
-          puts "\r\n"
-          puts flash.inspect
-          expect(flash['info']).to eq(I18n.t('badge.management.update_successful'))
+          # Check response:
           expect(response).to redirect_to( team_current_swimmers_path(id: existing_badge.team_id) )
+          expect(flash['info']).to eq(I18n.t('badge.management.update_successful'))
+          expect(Badge.count).to eq(orig_count) # no other badges added
+          # Check updated badge:
+          allegedly_updated_badge = Badge.find_by(id: existing_badge.id)
+          expect(allegedly_updated_badge.team_id).to eq(existing_badge.team_id)
+          expect(allegedly_updated_badge.season_id).to eq(existing_badge.season_id)
+          expect(allegedly_updated_badge.swimmer_id).to eq(existing_badge.swimmer_id)
+          expect(allegedly_updated_badge.number).to eq(updated_number)
         end
       end
     end

@@ -1,10 +1,26 @@
 it:
   badge:
     management:
+      create_new_badge_label: "Aggiungi nuovo Cartellino"
+      edit_badge_label: "Modifica Cartellino"
+      dismiss_button_label: "Chiudi"
+      save_button_label: "Salva modifiche"
+      save_button_disabled_label: "Attendi..."
+      confirm_save: "Confermi di voler salvare?"
       creation_successful: "Badge creato con successo."
       update_successful: "Badge aggiornato con successo."
+      labels:
+        search_swimmer: "Cerca nuotatore..."
+        team_affiliation: "Nome Affiliazione"
+        category: "Categoria"
+        badge_number: "Cod. Cartellino"
+        is_out_of_goggle_cup: "Fuori GoggleCup?"
+        has_to_pay_fees: "Deve pagare quote?"
+        has_to_pay_badge: "Deve pagare cartellino?"
+        has_to_pay_relays: "Deve pagare staffette?"
       errors:
-        invalid_swimmer_season_or_team: "Nuotatore, Team o Stagione non validi."
+        invalid_badge: "Badge non valido."
+        invalid_swimmer_season_or_team: "Nuotatore o Stagione non validi."
         missing_team_affiliation: "Manca l'affiliazione del Team. Chiedi all'Admin di crearla."
         missing_category_type: "Mancano i CategoryType per questa stagione. Chiedi all'Admin di crearli."
         error_during_save: "Errore durante il salvataggio: il Badge e' risultato non valido."

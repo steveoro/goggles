@@ -1,0 +1,72 @@
+$('#newBadgeDialogBtnSpinner').addClass('hidden');
+
+<% if flash[:error] %>
+ alert('<%= escape_javascript( flash[:error] ) %>' );
+<% end %>
+$('#newBadgeEditForn').replaceWith('<%=
+  escape_javascript(
+    render(partial: 'badge/edit_form',
+    locals: {
+      team: @team,
+      manageable_seasons_options: @manageable_seasons_options,
+      destination_url_path: @badge ? badge_update_path(badge_id: @badge.id) : badge_create_path(team_id: team.id)
+      badge: @badge || Badge.new
+    })
+  ) %>');
+$('#badgeEditModal').removeClass('hidden');
+
+// --- Badge management pseudo-modal ---
+// Init the modal as hidden, without the dark backdrop:
+$('#badgeEditModalLabel').modal({
+  backdrop: false,
+  show: false
+});
+// Get the correct Team affiliation name and display it on the label at start:
+updateTeamAffiliationInBadgeEditForm();
+
+// Setup Select2 combo dropdown search widget:
+$(".swimmer-select").select2({
+  theme: "bootstrap",
+  ajax: {
+    url: "/api/v1/swimmers/unbadged",
+    dataType: 'json',
+    delay: 200,
+    data: function (params) {
+      return {
+        s: $('#season_id').val(), // filtering season ID (all except this one)
+        q: params.term            // search term for complete name
+      };
+    },
+    processResults: function (data, params) {
+      // Parse the results into the format expected by Select2:
+      return {
+        results: $.map(data, function(item) {
+          return {
+            id: item.swimmer.id,
+            text: item.swimmer.last_name + ' ' +
+                  item.swimmer.first_name +
+                  ' (' + item.swimmer.year_of_birth + ', ' +
+                  item.category.code + ')',
+            first_name: item.swimmer.first_name,
+            last_name: item.swimmer.last_name,
+            year_of_birth: item.swimmer.year_of_birth,
+            season_id: item.season_id,
+            category_code: item.category.code
+          }
+        })
+      };
+    },
+    cache: true
+  },
+  placeholder: "<%= escape_javascript(I18n.t('badge.management.labels.search_swimmer')) %>", // "Search for a swimmer...",
+  minimumInputLength: 2,
+  selectOnClose: true,
+  width: '80%',
+  containerCssClass: 'swimmer-select-container',
+  dropdownCssClass: 'swimmer-select-dropdown',
+  templateResult: formatSwimmerRow,
+  templateSelection: formatSwimmerRowSelection
+});
+
+// Set change handler for current season:
+$("#season_id").change( updateTeamAffiliationInBadgeEditForm );
