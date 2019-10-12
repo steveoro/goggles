@@ -3,17 +3,19 @@ $('#newBadgeDialogBtnSpinner').addClass('hidden');
 <% if flash[:error] %>
  alert('<%= escape_javascript( flash[:error] ) %>' );
 <% end %>
-$('#newBadgeEditForn').replaceWith('<%=
+
+$("#<%= escape_javascript(@dom_id) %>").replaceWith('<%=
   escape_javascript(
     render(partial: 'badge/edit_form',
     locals: {
       team: @team,
       manageable_seasons_options: @manageable_seasons_options,
-      destination_url_path: @badge ? badge_update_path(badge_id: @badge.id) : badge_create_path(team_id: team.id)
-      badge: @badge || Badge.new
+      destination_url_path: @badge ? badge_update_path(badge_id: @badge.id) : badge_create_path(team_id: @team.id),
+      badge: @badge || Badge.new,
+      dom_id: @dom_id
     })
   ) %>');
-$('#badgeEditModal').removeClass('hidden');
+$("#<%= escape_javascript(@dom_id) %>").removeClass('hidden');
 
 // --- Badge management pseudo-modal ---
 // Init the modal as hidden, without the dark backdrop:

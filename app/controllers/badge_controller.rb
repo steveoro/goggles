@@ -31,6 +31,8 @@ class BadgeController < ApplicationController
     @manageable_seasons_options = Season.where("INSTR(header_year, #{Date.today.year.to_s}) > 0")
                                         .order(:description)
                                         .map { |season| [season.description, season.id] } if @is_valid_team_manager
+    # Destination DOM id according to Badge edit / creation:
+    @dom_id = @badge && @badge.swimmer_id.present? ? "rowBadgeEditForm-#{@badge.swimmer_id}" : "rowBadgeEditForm-0"
   end
 
 

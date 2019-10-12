@@ -1,17 +1,22 @@
-%section#newBadgeEditForn
-  #badgeEditModal.hidden{"aria-labelledby" => 'badgeEditModalLabel', role: 'dialog', tabindex: '-1', 'data-backdrop': 'false'}
-    = form_tag(destination_url_path, method: :post, onsubmit: "$('#waitSpinner').removeClass('hidden');") do
+- is_editing = badge.swimmer_id.present?
+%div{ id: dom_id, class: 'hidden' }
+  #badgeEditModal{"aria-labelledby" => 'badgeEditModalLabel', role: 'dialog', tabindex: '-1', 'data-backdrop': 'false'}
+    = form_tag(destination_url_path, method: (is_editing ? :put : :post), onsubmit: "$('#waitSpinner').removeClass('hidden');") do
       .modal-dialog{role: "document"}
         .modal-content
           .modal-header
-            %h4#badgeEditModalLabel.modal-title= I18n.t('badge.management.create_new_badge_label')
+            %h4#badgeEditModalLabel.modal-title= is_editing ? I18n.t('badge.management.edit_badge_label') : I18n.t('badge.management.create_new_badge_label')
+            - if is_editing
+              %h4
+                %b= badge.swimmer.get_full_name
           .modal-body
             .form-group
               = hidden_field_tag('team_id', team.id)
               .row-fluid= label_tag('season_id', I18n.t('activerecord.models.season'), class: 'control-label')
-              .row-fluid= select_tag('season_id', options_for_select(manageable_seasons_options))
+              .row-fluid= select_tag('season_id', options_for_select(manageable_seasons_options, badge.season_id), disabled: is_editing)
             .form-group
-              = select_tag('swimmer_id', [[]], { id: 'swimmer_id', class: 'swimmer-select' })
+              - unless is_editing
+                = select_tag('swimmer_id', [[]], { id: 'swimmer_id', class: 'swimmer-select' })
             .form-group
               .row-fluid= label_tag('team_lbl', I18n.t('activerecord.models.team'), class: 'control-label')
               .row-fluid= team.get_verbose_name
@@ -23,23 +28,23 @@
               &nbsp;
               = text_field_tag('number', badge.number || '?')
             .form-group
-              = check_box_tag('is_out_of_goggle_cup', class: 'checkbox')
-              &nbsp;
-              = label_tag('team_lbl', I18n.t('badge.management.labels.is_out_of_goggle_cup'), class: 'control-label')
+              = check_box_tag('is_out_of_goggle_cup', '1', badge.is_out_of_goggle_cup)
+              = label_tag('is_out_of_goggle_cup', I18n.t('badge.management.labels.is_out_of_goggle_cup'), class: 'control-label')
             .form-group
-              = check_box_tag('has_to_pay_fees', {class: 'checkbox'})
-              &nbsp;
-              = label_tag('team_lbl', I18n.t('badge.management.labels.has_to_pay_fees'), class: 'control-label')
+              = check_box_tag('has_to_pay_fees', '1', badge.has_to_pay_fees)
+              = label_tag('has_to_pay_fees', I18n.t('badge.management.labels.has_to_pay_fees'), class: 'control-label')
             .form-group
-              = check_box_tag('has_to_pay_badge', class: 'checkbox')
-              &nbsp;
-              = label_tag('team_lbl', I18n.t('badge.management.labels.has_to_pay_badge'), class: 'control-label')
+              = check_box_tag('has_to_pay_badge', '1', badge.has_to_pay_badge)
+              = label_tag('has_to_pay_badge', I18n.t('badge.management.labels.has_to_pay_badge'), class: 'control-label')
             .form-group
-              = check_box_tag('has_to_pay_relays', class: 'checkbox')
-              &nbsp;
-              = label_tag('team_lbl', I18n.t('badge.management.labels.has_to_pay_relays'), class: 'control-label')
+              = check_box_tag('has_to_pay_relays', '1', badge.has_to_pay_relays)
+              = label_tag('has_to_pay_relays', I18n.t('badge.management.labels.has_to_pay_relays'), class: 'control-label')
           .modal-footer
-            %button.btn.btn-default{type: "button", onclick: "$('#badgeEditModal').addClass('hidden');"}= I18n.t('badge.management.dismiss_button_label')
+            / In edit mode, hide also the additional table row:
+            - if is_editing
+              %button.btn.btn-default{type: "button", onclick: "$('#rowBadgeEditFormContainer-#{badge.swimmer_id}').addClass('hidden'); $('##{dom_id}').html('');"}= I18n.t('badge.management.dismiss_button_label')
+            - else
+              %button.btn.btn-default{type: "button", onclick: "$('##{dom_id}').html('');"}= I18n.t('badge.management.dismiss_button_label')
             = submit_tag(I18n.t('badge.management.save_button_label'), id: 'btnSaveBadgeEdit', class: 'btn btn-primary', data: { confirm: I18n.t('badge.management.confirm_save'), disable_with: I18n.t('badge.management.save_button_disabled_label') } )
             %span#waitSpinner.hidden
               %i.fa.fa-spinner.fa-spin.fa-fw

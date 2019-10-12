@@ -3,13 +3,13 @@
 / "Add badge" button only for team managers:
 - if @is_valid_team_manager
   = link_to(badge_edit_form_path(team_id: @team.id), { class: "btn btn-primary btn-md", remote: true, |
-            onclick: "$('#newBadgeDialogBtnSpinner').removeClass('hidden');" }) do                    |
+            onclick: "$('#newBadgeDialogBtnSpinner').removeClass('hidden');" }) do |
     = I18n.t('badge.management.create_new_badge_label')
     &nbsp;
     %span#newBadgeDialogBtnSpinner.hidden
       %i.fa.fa-spinner.fa-spin.fa-fw
-  / Pseudo-Modal form for badge edit placeholder:
-  #newBadgeEditForn
+  / Top placeholder for badge creation form:
+  #rowBadgeEditForm-0
   %hr
 
 - cache( cache_key_for_team( 'current_swimmers', @team.id, @max_updated_at ) ) do
@@ -18,10 +18,6 @@
       %table.table.table-striped.table-bordered.table-hover.table-condensed
         %tbody
           %tr{'class'=>'info'}
-            / Add a command button column if you are a team manager:
-            - if @is_valid_team_manager
-              %td.text-center
-                &nbsp;
             %td.text-center
               %b= I18n.t(:name)
             %td.text-center
@@ -39,19 +35,6 @@
           - @swimmers.each do |swimmer|
             - swimmer = swimmer.decorate
             %tr
-              / Add a command button column if you are a team manager:
-              - if @is_valid_team_manager
-                %td.goggles-td.text-center
-                  -# = link_to(badge_edit_form_path(team_id: @team.id, badge_id: swimmer.badge.id),    |
-                  -#           { class: "btn btn-primary btn-md", remote: true,                        |
-                  -#           onclick: "$('#rowBadgeEditFornBtnSpinner-#{swimmer.badge.id}').removeClass('hidden');" }) do |
-                  %span
-                    %i.fa.fa-edit
-                  -# &nbsp;
-                  -# %span{ id: "rowBadgeEditFornBtnSpinner-#{swimmer.badge.id}", class: 'hidden' }
-                  -#   %i.fa.fa-spinner.fa-spin.fa-fw
-                  / Pseudo-Modal form for badge edit placeholder:
-                  -# %div{ id: "rowBadgeEditForn-#{swimmer.badge.id}" }
               %td.goggles-td.goggles-rightalign
                 = swimmer.get_linked_swimmer_name
               %td.goggles-td.text-center
@@ -61,12 +44,27 @@
               - @affiliations.each do |team_affiliation|
                 - badge = swimmer.badges.for_team_affiliation(team_affiliation).first if swimmer.badges.for_team_affiliation(team_affiliation).exists?
                 %td.goggles-div-centeralign{'data-toggle'=>'tooltip', 'title'=> badge ? "#{badge.category_type.code} - #{badge.number}" : 'N/A' }
-                  = show_tag( badge )
-                  = " (#{badge.meeting_individual_results.joins(:meeting).includes(:meeting).select('meetings.id').uniq.count})" if badge
+                  - if badge
+                    = show_tag( badge )
+                    = " (#{badge.meeting_individual_results.joins(:meeting).includes(:meeting).select('meetings.id').uniq.count})"
+                    / Add a command button column if you are a team manager:
+                    - if @is_valid_team_manager
+                      = link_to(badge_edit_form_path(team_id: @team.id, badge_id: badge.id),  |
+                                { class: "btn btn-default btn-sm", remote: true,              |
+                                onclick: "$('#rowBadgeEditFormContainer-#{swimmer.id}').removeClass('hidden');" }) do |
+                        %span
+                          %i.fa.fa-edit
               %td.goggles-td.goggles-rightalign
                 = count_with_small_star( swimmer.meeting_individual_results.for_team( @team ).joins(:meeting).select('meetings.id').uniq.count, 50, :left )
               %td.goggles-td.goggles-rightalign
                 = count_with_small_star( swimmer.meeting_individual_results.for_team( @team ).count + swimmer.meeting_relay_results.for_team( @team ).count, 100, :left )
+            - if @is_valid_team_manager
+              / In-row placeholder for badge edit form:
+              %tr{ id: "rowBadgeEditFormContainer-#{swimmer.id}", class: 'hidden' }
+                %td{ colspan: 5 + @affiliations.count }
+                  %div{ id: "rowBadgeEditForm-#{swimmer.id}" }
+                    %span
+                      %i.fa.fa-spinner.fa-spin.fa-fw
   .col-xs-12
     %i
       = I18n.t('meeting_team_score.team_total_athletes_for_current_year') + ": "

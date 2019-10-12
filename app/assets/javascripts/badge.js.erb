@@ -43,7 +43,9 @@ function updateTeamAffiliationInBadgeEditForm() {
       season_id: $('#season_id').val()
     },
     success: function (result) {
-      $('#team_affiliation_label').text(result.name);
+      if (result != null) {
+        $('#team_affiliation_label').text(result['name']);
+      }
     }
   });
   return false;
