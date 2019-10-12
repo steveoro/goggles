@@ -44,12 +44,7 @@ class TeamsController < ApplicationController
   def current_swimmers
     params.permit! # (No unsafe params are possible)
     @tab_title = I18n.t('radiography.team_current_swimmers_tab')
-    #***************************************************************************
-    # FIXME TEMP HACK to have swimmers even if all the seasons are ended:
-    # @last_seasons = get_searched_seasons # <= CORRECT
-    @last_seasons = Season.where("INSTR(header_year, #{Date.today.year.to_s}) > 0")
-                    # ^^^ TEMP HACK
-    #***************************************************************************
+    @last_seasons = get_searched_seasons
     @affiliations = @team.team_affiliations.includes(season: :federation_type).where(season_id: @last_seasons)
     current_badges = @team.badges.where(season_id: @last_seasons).includes(:swimmer)
     @team.badges.where(season_id: @last_seasons).includes( :swimmer ) if @last_seasons && @team.badges.exists?
@@ -61,10 +56,17 @@ class TeamsController < ApplicationController
     @max_updated_at = find_last_updated_mir
     # Badge management entry point, only for Team Managers:
     @is_valid_team_manager = TeamManagerValidator.can_manage_team?( current_user, @team )
-    # Quick'n'dirty list to allow pre-filtering & management based even on previous seasons: (just looks at the current year)
-    @manageable_seasons_options = Season.where("INSTR(header_year, #{Date.today.year.to_s}) > 0")
+    @manageable_seasons_options = Season.is_not_ended
                                         .order(:description)
                                         .map { |season| [season.description, season.id] } if @is_valid_team_manager
+    # Before the start of a new Season and after last Season's end, the following
+    # versions can be used to allow pre-filtering & management based even on the just-ended
+    # seasons: (just looks at the current year)
+    #
+    # @last_seasons = Season.where("INSTR(header_year, #{Date.today.year.to_s}) > 0")
+    # @manageable_seasons_options = Season.where("INSTR(header_year, #{Date.today.year.to_s}) > 0")
+    #                                     .order(:description)
+    #                                     .map { |season| [season.description, season.id] } if @is_valid_team_manager
   end
   #-- -------------------------------------------------------------------------
   #++
