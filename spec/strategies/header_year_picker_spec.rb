@@ -87,8 +87,8 @@ describe HeaderYearPicker, type: :strategy do
         subject.find
         subject.season_list.each do |header_year|
           expect( header_year.length ).to eq( 9 )
-          expect( header_year.include?('-') ).to be true
-          expect( header_year.slice(4,1) ).to eq( '-' )
+          expect( header_year.include?('/') ).to be true
+          expect( header_year.slice(4,1) ).to eq( '/' )
           expect( header_year.slice(0,4).to_i ).to be > 0
           expect( header_year.slice(5,4).to_i ).to be > 0
           expect( header_year.slice(0,4).to_i ).to be < header_year.slice(5,4).to_i

@@ -1,8 +1,6 @@
 - if @season_list.count > 1
+  - force_active = !params['header_year'].present?
   %ul.nav.nav-tabs{role: "seasonlist"}
-    - first_year = @season_list.last.to_i
-    - last_year  = @season_list.first.to_i
-    - @season_list.each do |season_tab|
-      - action_name = params['header_year'] == season_tab ? params[:action] : season_tab
-      = show_tab_link( params, action_name, season_tab, swimmer_presence_path( id: @swimmer.id, header_year: season_tab ) )
+    - @season_list.each_with_index do |season_tab, index|
+      = show_tab_link( params, season_tab, season_tab, swimmer_presence_path( id: @swimmer.id, header_year: season_tab ), nil, force_active && index == 0 )
   .col-xs-12.goggles-category-gap

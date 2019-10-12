@@ -149,107 +149,22 @@ class TeamManagementController < ApplicationController
   def show_presence
     @tab_title = I18n.t('presences.title')
 
-    # Collection of swimmer data presence
-    @presence_data = []
-    @swimmers_summary = []
-
     # TODO Find out managed seasons
     hyp = HeaderYearPicker.new()
     @season_list = hyp.find(2015)
 
-    # Find out current seasons for team
-    @current_seasons = if params['header_year'].present?
-      Season.where( "header_year LIKE '#{ params['header_year'].to_i }%'" ).includes(season_type: :federation_type)
-    else
-      Season.is_not_ended.includes(season_type: :federation_type)
-    end
+    # Prepare data retreiving structure
+    @tsp = TeamSwimmersPresence.new( @team.id )
 
-    # Check if no current season
-    if @current_seasons && @current_seasons.count > 0
-      # Define query for data retrieve.
-      # Use one single query to decrease db access
-      data_retrieve =
-      'select bdg.swimmer_id, bdg.id as badge_is, bdg.season_id, s.complete_name, bdg.has_to_pay_fees,
-  	  sum(case when prm.mir + prm.res > 0 then 1 else 0 end) as mtg_count,
-  	  (case when prm.badge_id is not null then sum(case when prm.mir >= prm.res then prm.mir else prm.res end) else 0 end) as mir_count,
-      (case when prm.badge_id is not null then sum(prm.rel) else 0 end) as rel_count,
-      (case when bdg.has_to_pay_badge and ssn.badge_fee > 0 then ssn.badge_fee else 0 end) as badge_fee,
-      sum(case when bdg.has_to_pay_fees and mtg.meeting_fee > 0 and (prm.mir + prm.res) > 0 then mtg.meeting_fee else 0 end) as mtg_fee,
-      sum(case when bdg.has_to_pay_fees and mtg.event_fee > 0 then (case when prm.mir >= prm.res then prm.mir else prm.res end) * mtg.event_fee else 0 end) as mir_fee,
-      sum(case when bdg.has_to_pay_relays and prm.badge_id is not null then round(prm.rel * mtg.relay_fee / 4, 2) else 0 end) as rel_fee,
-      (case when bdg.has_to_pay_fees then (select sum(bp.amount) from badge_payments bp where bp.badge_id = bdg.id) else 0 end) as payments,
-      (case when bdg.has_to_pay_fees then (select max(bp.payment_date) from badge_payments bp where bp.badge_id = bdg.id) else null end) as last_payment,
-      (case when bdg.has_to_pay_fees then (select count(bp.id) from badge_payments bp where bp.badge_id = bdg.id) else 0 end) as num_payments
-      from swimmers s
-      join badges bdg on bdg.swimmer_id = s.id
-      join seasons ssn on ssn.id = bdg.season_id
-  	  left join
-      (select b.id as badge_id, b.swimmer_id, m.id as meeting_id,
-        (select count(mir.id)
-        from meeting_individual_results mir
-          join meeting_programs mp on mp.id = mir.meeting_program_id
-          join meeting_events me on me.id = mp.meeting_event_id
-          join meeting_sessions ms on ms.id = me.meeting_session_id
-        where mir.badge_id = b.id
-      	and ms.meeting_id = m.id) as mir,
-        (select count(mer.id)
-        from meeting_event_reservations mer
-      	join meeting_reservations mr on mr.meeting_id = mer.meeting_id and mr.badge_id = mer.badge_id
-        where mer.badge_id = b.id
-      	and mer.meeting_id = m.id
-          and mer.is_doing_this
-          and mr.has_confirmed) as res,
-        (select count(mrs.id)
-        from meeting_relay_swimmers mrs
-      	join meeting_relay_results mrr on mrr.id = mrs.meeting_relay_result_id
-          join meeting_programs mp on mp.id = mrr.meeting_program_id
-          join meeting_events me on me.id = mp.meeting_event_id
-          join meeting_sessions ms on ms.id = me.meeting_session_id
-        where mrs.badge_id = b.id
-      	and ms.meeting_id = m.id) as rel
-       from badges b
-          join meetings m on m.season_id = b.season_id
-       where b.team_id = VAR_TEAM_ID
-      	and b.season_id in (VAR_SEASON_IDS)
-       group by b.id, b.swimmer_id, m.id
-       having mir > 0 or res > 0 or rel > 0
-      ) as prm on prm.badge_id = bdg.id
-      	left join meetings mtg on mtg.id = prm.meeting_id
-      where bdg.team_id = VAR_TEAM_ID
-       	and bdg.season_id in (VAR_SEASON_IDS)
-      group by prm.swimmer_id, prm.badge_id, bdg.season_id, s.complete_name, bdg.has_to_pay_fees
-      order by bdg.season_id, s.complete_name'
+    # Find out current seasons for team. Use only initial year of header_year
+    @current_seasons = @tsp.get_seasons( params['header_year'].present? ? params['header_year'].slice(0, 4) : nil )
 
-      # Prepare data retrieve query with team and seasons as parameters
-      data_retrieve.gsub!('VAR_TEAM_ID', @team.id.to_s)
-      data_retrieve.gsub!('VAR_SEASON_IDS', @current_seasons.map{ |season| season.id }.join(','))
+    # Retrieve team presence data
+    @tsp.retrieve_data
+    @presence_data = @tsp.presence_data
 
-      # Reatrieve data
-      @presence_data = ActiveRecord::Base.connection.exec_query(data_retrieve)
-
-      # Combine data in a structure with swimmer and total datas
-      @presence_data.reject{ |e| e['has_to_pay_fees'] <= 0 }.each do |swimmer_presence|
-        swimmer_index = @swimmers_summary.index{ |e| e['swimmer_id'] == swimmer_presence['swimmer_id'] }
-        if swimmer_index.nil?
-          new_element = {}
-          new_element['swimmer_id']    = swimmer_presence['swimmer_id']
-          new_element['complete_name'] = swimmer_presence['complete_name']
-          new_element['tot_costs']     = swimmer_presence['badge_fee'] + swimmer_presence['mtg_fee'] + swimmer_presence['mir_fee'] + swimmer_presence['rel_fee']
-          new_element['num_payments']  = swimmer_presence['num_payments']
-          new_element['payments']      = swimmer_presence['payments'].nil? ? 0 : swimmer_presence['payments']
-          new_element['last_payment']  = swimmer_presence['last_payment']
-          new_element['num_badges']    = 1
-          @swimmers_summary << new_element
-        else
-          @swimmers_summary[swimmer_index]['tot_costs']    += swimmer_presence['badge_fee'] + swimmer_presence['mtg_fee'] + swimmer_presence['mir_fee'] + swimmer_presence['rel_fee']
-          @swimmers_summary[swimmer_index]['num_payments'] += swimmer_presence['num_payments']
-          @swimmers_summary[swimmer_index]['payments']     += swimmer_presence['payments'].nil? ? 0 : swimmer_presence['payments']
-          @swimmers_summary[swimmer_index]['last_payment'] = swimmer_presence['last_payment'] if swimmer_presence['last_payment'] && (@swimmers_summary[swimmer_index]['last_payment'].nil? || swimmer_presence['last_payment'] > @swimmers_summary[swimmer_index]['last_payment'])
-          @swimmers_summary[swimmer_index]['num_badges']   += 1
-        end
-      end
-      #@swimmers_summary.sort!{ |p,n| p['num_badges'].to_s + p['complete_name'] <=> n['num_badges'].to_s + n['complete_name'] }
-    end
+    # Creates swimmers_summary
+    @swimmers_summary = @tsp.create_swimmers_summary
   end
 
 

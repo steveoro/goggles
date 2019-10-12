@@ -125,3 +125,4 @@ en:
     last_operation: 'Last operation'
     presences_link: 'Goto swimmer presence tab'
     season: 'Season'
+    no_data: 'Mmmmh... No data found for selected season'

@@ -6,7 +6,7 @@ require 'common/format'
 
 describe SwimmerStatsDAO, type: :model do
   let(:leega)           { Swimmer.find(23) }
-  let(:swimmer)         { Swimmer.all.sample }
+  let(:swimmer)         { Swimmer.first(300).sample }
 
   context "with valid parameter," do
 
@@ -97,11 +97,6 @@ describe SwimmerStatsDAO, type: :model do
         expect( result.swimmer_stats.size ).to eq( 0 )
         expect( result.get_best_fin ).to be_nil
       end
-      it "returns a SwimmerMeetingDAO if data retrieved" do
-        ssd = SwimmerStatsDAO.new( leega )
-        ssd.calculate_stats
-        expect( ssd.get_best_fin ).to be_an_instance_of( SwimmerStatsDAO::SwimmerStatsMeetingDAO )
-      end
     end
 
     describe "#get_worst_fin" do
@@ -110,12 +105,38 @@ describe SwimmerStatsDAO, type: :model do
         expect( result.swimmer_stats.size ).to eq( 0 )
         expect( result.get_worst_fin ).to be_nil
       end
+    end
+
+    describe "#prepare_structure" do
+      it "sets the swimmer_stats hash keys" do
+        subject.prepare_structure
+        [
+          :meetings_count, :individual_results_count,
+          :team_names, :first, :last, :meters_swam, :time_swam, :disqualifications,
+          :iron_masters, :tot_fin_points, :worst_fin, :best_fin
+        ].each do |key|
+          expect( subject.swimmer_stats.has_key?( key ) ).to eq(true)
+        end
+      end
+    end
+  end
+
+
+  context "with Leega swimmer," do
+    before(:context) do
+      @ssd = SwimmerStatsDAO.new( Swimmer.find(23) )
+      @ssd.calculate_stats
+      @leega_stats = @ssd.swimmer_stats
+    end
+    describe "#get_worst_fin" do
       it "returns a SwimmerMeetingDAO if data retrieved" do
-        ssd = SwimmerStatsDAO.new( leega )
-        ssd.calculate_stats
-        expect( ssd.get_worst_fin ).to be_an_instance_of( SwimmerStatsDAO::SwimmerStatsMeetingDAO )
+        expect( @ssd.get_worst_fin ).to be_an_instance_of( SwimmerStatsDAO::SwimmerStatsMeetingDAO )
+      end
+    end
+    describe "#get_best_fin" do
+      it "returns a SwimmerMeetingDAO if data retrieved" do
+        expect( @ssd.get_best_fin ).to be_an_instance_of( SwimmerStatsDAO::SwimmerStatsMeetingDAO )
       end
     end
   end
 end
-
