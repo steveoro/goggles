@@ -86,20 +86,36 @@ class SwimmerStatsDAO
   # Prepares the structure of DAO hash with neutral values
   #
   def prepare_structure
+    # Individual results
     @swimmer_stats[:meetings_count]           = 0
     @swimmer_stats[:individual_results_count] = 0
     @swimmer_stats[:team_names]               = ""
+    @swimmer_stats[:team_hash]                = Hash.new()
     @swimmer_stats[:first]                    = nil
+    @swimmer_stats[:first_aray]               = []
     @swimmer_stats[:last]                     = nil
+    @swimmer_stats[:last_aray]                = []
     @swimmer_stats[:meters_swam]              = 0
-    @swimmer_stats[:time_swam]                = Time.new(0)
+    @swimmer_stats[:time_swam]                = Timing.new(0)
     @swimmer_stats[:disqualifications]        = 0
 
+    # Relay results
+    @swimmer_stats[:relay_results_count]     = 0
+    @swimmer_stats[:relay_meters_swam]       = 0
+    @swimmer_stats[:relay_time_swam]         = Timing.new(0)
+    @swimmer_stats[:relay_disqualifications] = 0
+
     # FIN statistics
-    @swimmer_stats[:iron_masters]   = 0
-    @swimmer_stats[:tot_fin_points] = 0
-    @swimmer_stats[:worst_fin]      = nil
-    @swimmer_stats[:best_fin]       = nil
+    @swimmer_stats[:iron_masters]    = 0
+    @swimmer_stats[:tot_fin_points]  = 0
+    @swimmer_stats[:worst_fin]       = nil
+    @swimmer_stats[:worst_fin_array] = []
+    @swimmer_stats[:best_fin]        = nil
+    @swimmer_stats[:best_fin_array]  = []
+
+    # Currents
+    @swimmer_stats[:current_team_hash]      = Hash.new()
+    @swimmer_stats[:current_category_array] = []
   end
 
   # Retrieve swimmer individual results

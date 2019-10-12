@@ -72,6 +72,7 @@ describe SwimmerStats, type: :strategy do
     describe "#get_items_hash" do
       it "returns an hash" do
         expect( subject.get_items_hash('PIPPO:1') ).to be_a_kind_of( Hash )
+        expect( subject.get_items_hash( nil ) ).to be_a_kind_of( Hash )
       end
       it "returns an hash that respond to 1 key" do
         result = subject.get_items_hash('PIPPO:1')
@@ -84,11 +85,42 @@ describe SwimmerStats, type: :strategy do
     end
 
     describe "#get_items_array" do
-      it "returns an array" do
+      it "returns an array if items given" do
         expect( subject.get_items_array('PIPPO:1:PRIMO:ALTRO') ).to be_a_kind_of( Array )
+      end
+      it "returns nil if any items given" do
+        expect( subject.get_items_array( nil ) ).to be_nil
       end
       it "returns an array elements if a 5 elements item given" do
         expect( subject.get_items_array('PIPPO:1:PRIMO:DOPO:ADESSO').count ).to eq(5)
+      end
+    end
+
+    describe "#get_distinct_items" do
+      it "returns an array if items given" do
+        expect( subject.get_distinct_items('PIPPO, PLUTO') ).to be_a_kind_of( Array )
+      end
+      it "returns nil if any items given" do
+        expect( subject.get_distinct_items( nil ) ).to be_nil
+      end
+      it "returns an array with no replicated items" do
+        expect( subject.get_distinct_items('PIPPO, PIPPO, PLUTO, PIPPO').size ).to eq( 2 )
+      end
+    end
+
+    describe "#get_item_data" do
+      it "returns an hash if items given" do
+        expect( subject.get_item_data('PIPPO:PLUTO', [:id, :value]) ).to be_a_kind_of( Hash )
+      end
+      it "returns nil if any items given" do
+        expect( subject.get_item_data( nil, [:id, :value] ) ).to be_nil
+      end
+      it "returns an hash with given keys" do
+        keys = [:id, :value, :note]
+        result = subject.get_item_data('PIPPO:PLUTO:PAPERINO', keys)
+        keys.each do |key|
+          expect( result.has_key?( key ) ).to eq(true)
+        end
       end
     end
   end

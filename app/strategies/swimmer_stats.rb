@@ -23,8 +23,11 @@ class SwimmerStats
   # An instance of season
   #
   def initialize(swimmer)
-    @swimmer = swimmer
+    @swimmer       = swimmer
     @swimmer_stats = nil
+    @event_keys     = [:points, :meeting_id]
+    @meeting_keys   = [:meeting_date, :meeting_id]
+    @team_keys      = [:team_name, :team_id]
   end
 
   # Retrieve data from DB using the current seasons
@@ -59,8 +62,8 @@ class SwimmerStats
         sum(sbr.relay_hundreds) as relay_hundreds,
         sum(sbr.relay_meters) as relay_meters,
         sum(sbr.relay_disqualified_count) as relay_disqualified_count,
-        group_concat(crb.current_team) as current_teams,
-        group_concat(crb.current_category) as current_categories
+        group_concat(crb.current_team separator ', ') as current_teams,
+        group_concat(crb.current_category separator ', ') as current_categories
     -- Individual results
     from (
     	select mir.swimmer_id, mir.badge_id, ft.code as fed_code, concat(t.editable_name, ':', t.id) as team_name_and_id,
@@ -140,30 +143,38 @@ class SwimmerStats
 
     #retrieve_data if @swimmer_stats.nil?
     if !@swimmer_stats.nil?
+      # Individual results
       ssd.swimmer_stats[:meetings_count]           = @swimmer_stats['meetings_count'].to_i
       ssd.swimmer_stats[:individual_results_count] = @swimmer_stats['individual_count'].to_i
-
-      # Use an array and made the link in hatml directly to avoid DB read
-      #ssd.swimmer_stats[:team_names]               = get_linked_teams( @swimmer_stats['teams_name_and_ids'] )
-      ssd.swimmer_stats[:teams_hash]               = get_items_hash( @swimmer_stats['teams_name_and_ids'] )
-      #ssd.swimmer_stats[:first]                    = nil
-      ssd.swimmer_stats[:first_array]              = get_items_array( @swimmer_stats['first_meeting_data'] )
-      #ssd.swimmer_stats[:last]                     = nil
-      ssd.swimmer_stats[:last_array]               = get_items_array( @swimmer_stats['last_meeting_data'] )
-
       ssd.swimmer_stats[:meters_swam]              = @swimmer_stats['individual_meters'].to_i
       ssd.swimmer_stats[:time_swam]                = @swimmer_stats['individual_hundreds'].to_i + (@swimmer_stats['individual_seconds'].to_i * 100) + (@swimmer_stats['individual_minutes'].to_i * 6000)
       ssd.swimmer_stats[:disqualifications]        = @swimmer_stats['individual_disqualified_count'].to_i
+      # Use an array and made the link in html directly to avoid DB read
+      #ssd.swimmer_stats[:team_names]               = get_linked_teams( @swimmer_stats['teams_name_and_ids'] )
+      #ssd.swimmer_stats[:first]                    = nil
+      #ssd.swimmer_stats[:last]                     = nil
+      ssd.swimmer_stats[:teams_hash]               = get_items_hash( @swimmer_stats['teams_name_and_ids'] )
+      ssd.swimmer_stats[:first_array]              = get_items_array( @swimmer_stats['first_meeting_data'] )
+      ssd.swimmer_stats[:last_array]               = get_items_array( @swimmer_stats['last_meeting_data'] )
+
+      # Relay results
+      ssd.swimmer_stats[:relay_results_count]     = @swimmer_stats['relay_count'].to_i
+      ssd.swimmer_stats[:relay_meters_swam]       = @swimmer_stats['relay_meters'].to_i
+      ssd.swimmer_stats[:relay_time_swam]         = @swimmer_stats['relay_hundreds'].to_i + (@swimmer_stats['relay_seconds'].to_i * 100) + (@swimmer_stats['relay_minutes'].to_i * 6000)
+      ssd.swimmer_stats[:relay_disqualifications] = @swimmer_stats['relay_disqualified_count'].to_i
 
       # FIN statistics
-      ssd.swimmer_stats[:iron_masters]   = @swimmer_stats['irons_count']
-      ssd.swimmer_stats[:tot_fin_points] = @swimmer_stats['total_fin_points'].to_i
-
+      ssd.swimmer_stats[:iron_masters]    = @swimmer_stats['irons_count']
+      ssd.swimmer_stats[:tot_fin_points]  = @swimmer_stats['total_fin_points'].to_i
       # Use an array and made the link in hatml directly to avoid DB read
-      #ssd.swimmer_stats[:worst_fin]      = nil
+      #ssd.swimmer_stats[:worst_fin]       = nil
+      #ssd.swimmer_stats[:best_fin]        = nil
       ssd.swimmer_stats[:worst_fin_array] = get_items_array( @swimmer_stats['min_fin_points_data'] )
-      #ssd.swimmer_stats[:best_fin]       = nil
-      ssd.swimmer_stats[:best_fin_array] = get_items_array( @swimmer_stats['max_fin_points_data'] )
+      ssd.swimmer_stats[:best_fin_array]  = get_items_array( @swimmer_stats['max_fin_points_data'] )
+
+      # Currents
+      ssd.swimmer_stats[:current_team_hash]      = get_item_data( @swimmer_stats['teams_name_and_ids'], @team_keys )
+      ssd.swimmer_stats[:current_category_array] = get_distinct_items( @swimmer_stats['last_meeting_data'].split(', ') )
     end
 
     ssd
@@ -184,6 +195,8 @@ class SwimmerStats
 
   # Creates an hash of an item list in wich items are comma separated and
   # item elements are semicolon separated like 'PIPPO:1, PLUTO:2'
+  # Returns an empty hash if no items
+  #
   def get_items_hash( comma_separated_list )
     item_hash = Hash.new()
     if comma_separated_list
@@ -195,12 +208,42 @@ class SwimmerStats
     item_hash
   end
 
-  # Creates an array of items arraya in wich items are comma separated and
+  # Creates an array of items array in wich items are comma separated and
   # item elements are semiclon separated lik 'PIPPO:1:PRIMO, PLUTO:2:SECONDO'
+  # Returns nil if no items
+  #
   def get_items_array( semicolon_separated_list )
     item_Array = nil
     item_Array = semicolon_separated_list.split(':') if semicolon_separated_list
     item_Array
+  end
+
+  # Creates an array of comma separated items
+  # Returns nil if no items
+  #
+  def get_distinct_items( comma_separated_list )
+    array = nil
+    array = comma_separated_list.split(', ').uniq if comma_separated_list
+    array
+  end
+
+  # Creates an array of items array in wich items are comma separated and
+  # item elements are semiclon separated lik 'PIPPO:1:PRIMO, PLUTO:2:SECONDO'
+  # Returns nil if no items
+  #
+  def get_item_data( data_list, data_tags )
+    item_data = Hash.new()
+    #ms.scheduled_date, ':', m.id, ':', m.description, ':', ft.code
+    #event_data_tags = [:date, :meeting_id, :meeting_description, :federation_code]
+    if data_list
+      data_list.split(':').each_with_index do |value, index|
+        tag = data_tags[index]
+        item_data[tag] = value
+      end
+    else
+      item_data = nil
+    end
+    item_data
   end
   #-- --------------------------------------------------------------------------
   #++
