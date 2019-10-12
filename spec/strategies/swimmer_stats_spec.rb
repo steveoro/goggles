@@ -40,10 +40,12 @@ describe SwimmerStats, type: :strategy do
       it "returns a query result with necessary columns" do
         subject.retrieve_data
         [
-          'meetings_count', 'mirs_count', 'total_fin_points', 'total_minutes', 'total_seconds', 'total_hundreds', 'total_meters', 'disqualified_count',
-          'max_fin_points_and_id', 'min_fin_points_and_id', 'irons_count',
+          'meetings_count', 'individual_count', 'total_fin_points',
+          'individual_minutes', 'individual_seconds', 'individual_hundreds', 'individual_meters', 'individual_disqualified_count',
+          'max_fin_points_data', 'min_fin_points_data',
+          'irons_count',
           'teams_name_and_ids',
-          'first_meeting', 'last_meeting'
+          'first_meeting_data', 'last_meeting_data'
         ].each do |column|
           expect( subject.swimmer_stats.has_key?(column) ).to eq(true)
         end
@@ -104,7 +106,7 @@ describe SwimmerStats, type: :strategy do
         expect( result['meetings_count'].to_i ).to be >= leega_meetings
         expect( result['total_fin_points'].to_i ).to be >= leega_points
         expect( result['irons_count'].to_i ).to be >= leega_irons
-        expect( result['disqualified_count'].to_i ).to be >= leega_dsq
+        expect( result['individual_disqualified_count'].to_i ).to be >= leega_dsq
         expect( result['teams_name_and_ids'].split(', ').size ).to be >= 2
       end
     end
