@@ -5,12 +5,18 @@ describe SwimmerStats, type: :strategy do
 
   let(:swimmer)         { Swimmer.first(300).sample }
   let(:leega)           { Swimmer.find(23) }
+
+  # Leega stats (minimum values at 13/10/2019)
+  let(:leega_teams)     { 2 }
   let(:leega_irons)     { 3 }
   let(:leega_meetings)  { 200 }
   let(:leega_events)    { 400 }
+  let(:leega_relays)    { 40 }
   let(:leega_points)    { 150000 }
   let(:leega_dsq)       { 2 }
   let(:leega_meters)    { 75000 }
+  let(:leega_first)     { Date.new(2001, 01, 28) }
+  let(:leega_last)      { Date.new(2019, 06, 26) }
   let(:leega_worst_fin) { 587 }
   let(:leega_best_fin)  { 827 }
 
@@ -63,16 +69,10 @@ describe SwimmerStats, type: :strategy do
       end
     end
 
-    describe "#get_linked_teams" do
-      it "returns a string" do
-        expect( subject.get_linked_teams('PIPPO:1') ).to be_an_instance_of( String )
-      end
-    end
-
     describe "#get_items_hash" do
       it "returns an hash" do
         expect( subject.get_items_hash('PIPPO:1') ).to be_a_kind_of( Hash )
-        expect( subject.get_items_hash( nil ) ).to be_a_kind_of( Hash )
+        expect( subject.get_items_hash( nil ) ).to be_nil
       end
       it "returns an hash that respond to 1 key" do
         result = subject.get_items_hash('PIPPO:1')
@@ -81,18 +81,6 @@ describe SwimmerStats, type: :strategy do
       it "returns an hash with three keys" do
         result = subject.get_items_hash('PIPPO:1, PLUTO:2, PAPERINO:3')
         expect( result.size ).to eq(3)
-      end
-    end
-
-    describe "#get_items_array" do
-      it "returns an array if items given" do
-        expect( subject.get_items_array('PIPPO:1:PRIMO:ALTRO') ).to be_a_kind_of( Array )
-      end
-      it "returns nil if any items given" do
-        expect( subject.get_items_array( nil ) ).to be_nil
-      end
-      it "returns an array elements if a 5 elements item given" do
-        expect( subject.get_items_array('PIPPO:1:PRIMO:DOPO:ADESSO').count ).to eq(5)
       end
     end
 
@@ -154,11 +142,12 @@ describe SwimmerStats, type: :strategy do
         expect( ssd.get_meters_swam ).to be >= leega_meters
         expect( ssd.get_meters_swam ).to be >= leega_meters
         expect( ssd.get_individual_results_count ).to be >= leega_events
-        expect( ssd.swimmer_stats[:teams_hash].size ).to be >= 2
-        expect( ssd.swimmer_stats[:first_array].size ).to eq(4)
-        expect( ssd.swimmer_stats[:last_array].size ).to eq(4)
-        expect( ssd.swimmer_stats[:worst_fin_array].size ).to eq(6)
-        expect( ssd.swimmer_stats[:best_fin_array].size ).to eq(6)
+        expect( ssd.get_relay_results_count ).to be >= leega_relays
+        expect( ssd.get_teams_hash.size ).to be >= 2
+        expect( ssd.get_first_meeting_hash[:meeting_date].to_date ).to be <= leega_first
+        expect( ssd.get_last_meeting_hash[:meeting_date].to_date ).to be >= leega_last
+        expect( ssd.get_worst_fin_hash[:standard_points].to_i ).to be <= leega_worst_fin
+        expect( ssd.get_best_fin_hash[:standard_points].to_i ).to be >= leega_best_fin
       end
     end
   end

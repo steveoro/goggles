@@ -90,11 +90,11 @@ class SwimmerStatsDAO
     @swimmer_stats[:meetings_count]           = 0
     @swimmer_stats[:individual_results_count] = 0
     @swimmer_stats[:team_names]               = ""
-    @swimmer_stats[:team_hash]                = Hash.new()
+    @swimmer_stats[:teams_hash]               = nil
     @swimmer_stats[:first]                    = nil
-    @swimmer_stats[:first_aray]               = []
     @swimmer_stats[:last]                     = nil
-    @swimmer_stats[:last_aray]                = []
+    @swimmer_stats[:first_meeting_hash]       = nil
+    @swimmer_stats[:last_meeting_hash]        = nil
     @swimmer_stats[:meters_swam]              = 0
     @swimmer_stats[:time_swam]                = Timing.new(0)
     @swimmer_stats[:disqualifications]        = 0
@@ -106,16 +106,16 @@ class SwimmerStatsDAO
     @swimmer_stats[:relay_disqualifications] = 0
 
     # FIN statistics
-    @swimmer_stats[:iron_masters]    = 0
-    @swimmer_stats[:tot_fin_points]  = 0
-    @swimmer_stats[:worst_fin]       = nil
-    @swimmer_stats[:worst_fin_array] = []
-    @swimmer_stats[:best_fin]        = nil
-    @swimmer_stats[:best_fin_array]  = []
+    @swimmer_stats[:iron_masters]   = 0
+    @swimmer_stats[:tot_fin_points] = 0
+    @swimmer_stats[:worst_fin]      = nil
+    @swimmer_stats[:best_fin]       = nil
+    @swimmer_stats[:worst_fin_hash] = nil
+    @swimmer_stats[:best_fin_hash]  = nil
 
     # Currents
-    @swimmer_stats[:current_team_hash]      = Hash.new()
-    @swimmer_stats[:current_category_array] = []
+    @swimmer_stats[:current_teams_hash]       = nil
+    @swimmer_stats[:current_categories_array] = nil
   end
 
   # Retrieve swimmer individual results
@@ -297,6 +297,12 @@ class SwimmerStatsDAO
     @swimmer_stats.has_key?( :individual_results_count ) ? @swimmer_stats[:individual_results_count] : 0
   end
 
+  # Meeting individual results count
+  #
+  def get_relay_results_count
+    @swimmer_stats.has_key?( :relay_results_count ) ? @swimmer_stats[:relay_results_count] : 0
+  end
+
   # Swimmer meters swam
   #
   def get_meters_swam
@@ -340,25 +346,11 @@ class SwimmerStatsDAO
     @swimmer_stats[:first]
   end
 
-  # Swimmer first attended meeting
-  #
-  def get_first_meeting_array
-    #@mirs.count > 0 ? Meeting.find(@mirs.first.meeting_id) : nil
-    @swimmer_stats[:first_array]
-  end
-
   # Swimmer last attended meeting
   #
   def get_last_meeting
     #@mirs.count > 0 ? Meeting.find(@mirs.last.meeting_id) : nil
     @swimmer_stats[:last]
-  end
-
-  # Swimmer last attended meeting
-  #
-  def get_last_meeting_array
-    #@mirs.count > 0 ? Meeting.find(@mirs.last.meeting_id) : nil
-    @swimmer_stats[:last_array]
   end
 
   # Swimmer best fin result
@@ -369,27 +361,55 @@ class SwimmerStatsDAO
 
   # Swimmer best fin result
   #
-  def get_best_fin_array
-    @swimmer_stats[:best_fin_array]
-  end
-
-  # Swimmer best fin result
-  #
   def get_worst_fin
     @swimmer_stats[:worst_fin]
   end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  # Hash object to creat linked row at view time
+
+  # Swimmer teams
+  #
+  def get_teams_hash
+    @swimmer_stats[:teams_hash]
+  end
+
+  # Swimmer first attended meeting
+  #
+  def get_first_meeting_hash
+    @swimmer_stats[:first_meeting_hash]
+  end
+
+  # Swimmer last attended meeting
+  #
+  def get_last_meeting_hash
+    @swimmer_stats[:last_meeting_hash]
+  end
 
   # Swimmer best fin result
   #
-  def get_worst_fin_array
-    @swimmer_stats[:worst_fin_array]
+  def get_best_fin_hash
+    @swimmer_stats[:best_fin_hash]
   end
 
-    # Swimmer best fin result
-    #
-    def get_teams_hash
-      @swimmer_stats[:teams_hash]
-    end
+  # Swimmer best fin result
+  #
+  def get_worst_fin_hash
+    @swimmer_stats[:worst_fin_hash]
+  end
+
+  # Swimmer currente teams
+  #
+  def get_current_teams_hash
+    @swimmer_stats[:current_teams_hash]
+  end
+
+  # Swimmer currente teams
+  #
+  def get_current_categories_array
+    @swimmer_stats[:current_categories_array]
+  end
   #-- -------------------------------------------------------------------------
   #++
 end

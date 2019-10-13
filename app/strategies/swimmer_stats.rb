@@ -25,9 +25,10 @@ class SwimmerStats
   def initialize(swimmer)
     @swimmer       = swimmer
     @swimmer_stats = nil
-    @event_keys     = [:points, :meeting_id]
-    @meeting_keys   = [:meeting_date, :meeting_id]
-    @team_keys      = [:team_name, :team_id]
+
+    # Those key are used to manage query results and produce linked event and team data at view time
+    @event_keys     = [:standard_points, :meeting_id, :event_code, :event_date, :federation_code, :meeting_description]
+    @meeting_keys   = [:meeting_date, :meeting_id, :meeting_description, :federation_code]
   end
 
   # Retrieve data from DB using the current seasons
@@ -66,7 +67,8 @@ class SwimmerStats
         group_concat(crb.current_category separator ', ') as current_categories
     -- Individual results
     from (
-    	select mir.swimmer_id, mir.badge_id, ft.code as fed_code, concat(t.editable_name, ':', t.id) as team_name_and_id,
+    	select mir.swimmer_id, mir.badge_id, ft.code as fed_code,
+        concat(t.editable_name, ':', t.id) as team_name_and_id,
     		count(distinct ms.meeting_id) as meeting_count,
     		count(mir.id) as mir_count,
     		sum(mir.standard_points) as total_points,
@@ -116,7 +118,7 @@ class SwimmerStats
     left join (
     	select b.id as badge_id,
     		concat(t.editable_name, ':', t.id) as current_team,
-            ct.code as current_category
+        ct.code as current_category
     	from badges b
     	join seasons s on s.id = b.season_id
     	join category_types ct on ct.id = b.category_type_id
@@ -154,47 +156,35 @@ class SwimmerStats
       #ssd.swimmer_stats[:first]                    = nil
       #ssd.swimmer_stats[:last]                     = nil
       ssd.swimmer_stats[:teams_hash]               = get_items_hash( @swimmer_stats['teams_name_and_ids'] )
-      ssd.swimmer_stats[:first_array]              = get_items_array( @swimmer_stats['first_meeting_data'] )
-      ssd.swimmer_stats[:last_array]               = get_items_array( @swimmer_stats['last_meeting_data'] )
+      ssd.swimmer_stats[:first_meeting_hash]       = get_item_data( @swimmer_stats['first_meeting_data'], @meeting_keys )
+      ssd.swimmer_stats[:last_meeting_hash]        = get_item_data( @swimmer_stats['last_meeting_data'], @meeting_keys )
 
       # Relay results
-      ssd.swimmer_stats[:relay_results_count]     = @swimmer_stats['relay_count'].to_i
-      ssd.swimmer_stats[:relay_meters_swam]       = @swimmer_stats['relay_meters'].to_i
-      ssd.swimmer_stats[:relay_time_swam]         = @swimmer_stats['relay_hundreds'].to_i + (@swimmer_stats['relay_seconds'].to_i * 100) + (@swimmer_stats['relay_minutes'].to_i * 6000)
-      ssd.swimmer_stats[:relay_disqualifications] = @swimmer_stats['relay_disqualified_count'].to_i
+      ssd.swimmer_stats[:relay_results_count]      = @swimmer_stats['relays_count'].to_i
+      ssd.swimmer_stats[:relay_meters_swam]        = @swimmer_stats['relay_meters'].to_i
+      ssd.swimmer_stats[:relay_time_swam]          = @swimmer_stats['relay_hundreds'].to_i + (@swimmer_stats['relay_seconds'].to_i * 100) + (@swimmer_stats['relay_minutes'].to_i * 6000)
+      ssd.swimmer_stats[:relay_disqualifications]  = @swimmer_stats['relay_disqualified_count'].to_i
 
       # FIN statistics
-      ssd.swimmer_stats[:iron_masters]    = @swimmer_stats['irons_count']
-      ssd.swimmer_stats[:tot_fin_points]  = @swimmer_stats['total_fin_points'].to_i
+      ssd.swimmer_stats[:iron_masters]             = @swimmer_stats['irons_count'].to_i
+      ssd.swimmer_stats[:tot_fin_points]           = @swimmer_stats['total_fin_points'].to_i
       # Use an array and made the link in hatml directly to avoid DB read
-      #ssd.swimmer_stats[:worst_fin]       = nil
-      #ssd.swimmer_stats[:best_fin]        = nil
-      ssd.swimmer_stats[:worst_fin_array] = get_items_array( @swimmer_stats['min_fin_points_data'] )
-      ssd.swimmer_stats[:best_fin_array]  = get_items_array( @swimmer_stats['max_fin_points_data'] )
+      #ssd.swimmer_stats[:worst_fin]                = nil
+      #ssd.swimmer_stats[:best_fin]                 = nil
+      ssd.swimmer_stats[:worst_fin_hash]           = get_item_data( @swimmer_stats['min_fin_points_data'], @event_keys )
+      ssd.swimmer_stats[:best_fin_hash]            = get_item_data( @swimmer_stats['max_fin_points_data'], @event_keys )
 
       # Currents
-      ssd.swimmer_stats[:current_team_hash]      = get_item_data( @swimmer_stats['teams_name_and_ids'], @team_keys )
-      ssd.swimmer_stats[:current_category_array] = get_distinct_items( @swimmer_stats['last_meeting_data'].split(', ') )
+      ssd.swimmer_stats[:current_teams_hash]       = get_items_hash( @swimmer_stats['teams_name_and_ids'] )
+      ssd.swimmer_stats[:current_categories_array] = get_distinct_items( @swimmer_stats['current_categories'] )
     end
 
     ssd
   end
 
-  # Creates a linked list to team from given string with team_name and id comma separated
-  def get_linked_teams( comma_separated_list )
-    #Team.find(team_id).decorate.get_linked_name
-    team_id = 0
-    teams = []
-    comma_separated_list.split(', ').each do |team_name_and_id|
-      team_data = team_name_and_id.split(':')
-      teams.<< Team.find(team_data[1]).decorate.get_linked_name
-      #teams << link_to( team_name_or_id, team_radio_path(id: team_id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('radiography.team_radio_tab_tooltip') } )
-    end
-    teams.join(', ')
-  end
-
   # Creates an hash of an item list in wich items are comma separated and
-  # item elements are semicolon separated like 'PIPPO:1, PLUTO:2'
+  # item elements are semicolon separated couples value:key
+  # like 'PIPPO:1, PLUTO:2'
   # Returns an empty hash if no items
   #
   def get_items_hash( comma_separated_list )
@@ -204,18 +194,10 @@ class SwimmerStats
         item_data = item_name_and_id.split(':')
         item_hash[item_data[1]] = item_data[0]
       end
+    else
+      item_hash = nil
     end
     item_hash
-  end
-
-  # Creates an array of items array in wich items are comma separated and
-  # item elements are semiclon separated lik 'PIPPO:1:PRIMO, PLUTO:2:SECONDO'
-  # Returns nil if no items
-  #
-  def get_items_array( semicolon_separated_list )
-    item_Array = nil
-    item_Array = semicolon_separated_list.split(':') if semicolon_separated_list
-    item_Array
   end
 
   # Creates an array of comma separated items
