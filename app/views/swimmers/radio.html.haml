@@ -27,11 +27,12 @@
           - data = @ssd.get_current_categories_array
           - if data
             = data.join(' / ')
-          = ' ('
-          = I18n.t('swimmers.last_registered_category') +':'
-          - category = @swimmer.get_current_category_type_from_badges
-          = category ? category.code : '?'
-          = ')'
+          - else
+            = '('
+            = I18n.t('swimmers.last_registered_category') +':'
+            - category = @swimmer.get_current_category_type_from_badges
+            = category ? category.code : '?'
+            = ')'
       .row.goggles-category-gap
         .col-xs-3
           = I18n.t('swimmers.affiliated_in_teams') +':'
@@ -48,31 +49,6 @@
         .col-xs-9
           = count_with_award_star( @ssd.get_meetings_count )
       .row
-        .col-xs-3
-          = I18n.t('swimmers.events_attended') +':'
-        .col-xs-9
-          = count_with_small_star( @ssd.get_individual_results_count + @swimmer.meeting_relay_swimmers.count )
-      .row
-        .col-xs-3
-          = I18n.t('swimmers.total_metres_swam') +':'
-        .col-xs-9
-          = count_with_star( @ssd.get_meters_swam )
-      .row
-        .col-xs-3
-          = I18n.t('swimmers.total_time_swam') +':'
-        .col-xs-9
-          = @ssd.get_time_swam.to_s
-      .row
-        .col-xs-3
-          = I18n.t('swimmers.ironmaster') +':'
-        .col-xs-9
-          = count_with_award_star(@ssd.get_iron_masters_count, 1)
-      .row
-        .col-xs-3
-          = I18n.t('swimmers.total_fin_points') +':'
-        .col-xs-9
-          = count_with_small_star(@ssd.get_tot_fin_points, 50000)
-      .row.goggles-category-gap
         .col-xs-3
           = I18n.t('swimmers.first_attended_meeting') +':'
         .col-xs-9
@@ -94,6 +70,34 @@
             = ' - '
             %a{ href: "#{ meeting_show_full_path(:id=>data[:meeting_id], :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_results_tooltip') + "\r\n(#{data[:meeting_description]})" }
               = "#{data[:meeting_description]} (#{data[:federation_code]})"
+      .row.goggles-category-gap
+        .col-xs-3
+          = I18n.t('swimmers.all_teams') +':'
+        .col-xs-9
+          - data = @ssd.get_teams_hash
+          - if data
+            - data.each_pair do |team_id, team_name|
+              %a{ href: "#{ team_radio_path(:id=>team_id) }", 'data-toggle' => 'tooltip', title: I18n.t('radiography.team_radio_tab_tooltip') }
+                = "#{team_name}<br>".html_safe
+
+      .row.goggles-category-gap#individual_events
+        .col-xs-12
+          %b= I18n.t('swimmers.individual_events_done') +':'
+      .row
+        .col-xs-3
+          = I18n.t('swimmers.events_attended') +':'
+        .col-xs-9
+          = count_with_small_star( @ssd.get_individual_results_count )
+      .row
+        .col-xs-3
+          = I18n.t('swimmers.total_metres_swam') +':'
+        .col-xs-9
+          = count_with_star( @ssd.get_meters_swam )
+      .row
+        .col-xs-3
+          = I18n.t('swimmers.total_time_swam') +':'
+        .col-xs-9
+          = @ssd.get_time_swam.to_s
       .row
         .col-xs-3
           = I18n.t('swimmers.total_disqualifications') +':'
@@ -104,45 +108,73 @@
           - else
             = I18n.t('swimmers.no_disqualifications')
 
-      .row.goggles-category-gap#FIN_stats
-        .col-xs-3
-          = I18n.t('swimmers.best_score_ever') +':'
-        .col-xs-9
-          - data = @ssd.get_best_fin_hash
-          - if data
-            = format_score( data[:standard_points] ) + ', '
-            %a{ href: "#{ meeting_show_swimmer_results_path(:id=>data[:meeting_id], :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_swimmer_results_tooltip') + "\r\n(#{@swimmer_name} @ #{data[:meeting_description]})" }
-              = Format.a_date(data[:event_date])
-            = ', '
-            %a{ href: "#{ meeting_show_full_path(:id=>data[:meeting_id], :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_results_tooltip') + "\r\n(#{data[:meeting_description]})" }
-              = "#{data[:meeting_description]} (#{data[:federation_code]})"
-            = ' - '
-            = data[:event_code]
+      - if @ssd.get_best_fin_hash
+        .row.goggles-category-gap#FIN_stats
+          .col-xs-3
+            = I18n.t('swimmers.best_score_ever') +':'
+          .col-xs-9
+            - data = @ssd.get_best_fin_hash
+            - if data
+              = format_score( data[:standard_points] ) + ', '
+              %a{ href: "#{ meeting_show_swimmer_results_path(:id=>data[:meeting_id], :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_swimmer_results_tooltip') + "\r\n(#{@swimmer_name} @ #{data[:meeting_description]})" }
+                = Format.a_date(data[:event_date])
+              = ', '
+              %a{ href: "#{ meeting_show_full_path(:id=>data[:meeting_id], :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_results_tooltip') + "\r\n(#{data[:meeting_description]})" }
+                = "#{data[:meeting_description]} (#{data[:federation_code]})"
+              = ' - '
+              = data[:event_code]
+        .row
+          .col-xs-3
+            = I18n.t('swimmers.worst_score_ever') +':'
+          .col-xs-9
+            - data = @ssd.get_worst_fin_hash
+            - if data
+              = format_score( data[:standard_points] ) + ', '
+              %a{ href: "#{ meeting_show_swimmer_results_path(:id=>data[:meeting_id], :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_swimmer_results_tooltip') + "\r\n(#{@swimmer_name} @ #{data[:meeting_description]})" }
+                = Format.a_date(data[:event_date])
+              = ', '
+              %a{ href: "#{ meeting_show_full_path(:id=>data[:meeting_id], :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_results_tooltip') + "\r\n(#{data[:meeting_description]})" }
+                = "#{data[:meeting_description]} (#{data[:federation_code]})"
+              = ' - '
+              = data[:event_code]
+        .row
+          .col-xs-3
+            = I18n.t('swimmers.total_fin_points') +':'
+          .col-xs-9
+            = count_with_small_star(@ssd.get_tot_fin_points, 50000)
+        .row
+          .col-xs-3
+            = I18n.t('swimmers.ironmaster') +':'
+          .col-xs-9
+            = count_with_award_star(@ssd.get_iron_masters_count, 1)
+
+      .row.goggles-category-gap#relay_events
+        .col-xs-12
+          %b= I18n.t('swimmers.relay_events_done') +':'
       .row
         .col-xs-3
-          = I18n.t('swimmers.worst_score_ever') +':'
+          = I18n.t('swimmers.relays_attended') +':'
         .col-xs-9
-          - data = @ssd.get_worst_fin_hash
-          - if data
-            = format_score( data[:standard_points] ) + ', '
-            %a{ href: "#{ meeting_show_swimmer_results_path(:id=>data[:meeting_id], :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_swimmer_results_tooltip') + "\r\n(#{@swimmer_name} @ #{data[:meeting_description]})" }
-              = Format.a_date(data[:event_date])
-            = ', '
-            %a{ href: "#{ meeting_show_full_path(:id=>data[:meeting_id], :swimmer_id=>@swimmer.id) }", 'data-toggle' => 'tooltip', title: I18n.t('meeting.show_results_tooltip') + "\r\n(#{data[:meeting_description]})" }
-              = "#{data[:meeting_description]} (#{data[:federation_code]})"
-            = ' - '
-            = data[:event_code]
-
-      .row.goggles-category-gap
+          = count_with_small_star( @ssd.get_relay_results_count )
+      .row
         .col-xs-3
-          = I18n.t('swimmers.all_teams') +':'
+          = I18n.t('swimmers.relay_metres_swam') +':'
         .col-xs-9
-          - m = @ssd.get_teams_hash
-          - m.each_pair do |team_id, team_name|
-            %a{ href: "#{ team_radio_path(:id=>team_id) }", 'data-toggle' => 'tooltip', title: I18n.t('radiography.team_radio_tab_tooltip') }
-              = "#{team_name}<br>".html_safe
-
-
+          = count_with_star( @ssd.get_relay_meters_swam )
+      .row
+        .col-xs-3
+          = I18n.t('swimmers.relay_time_swam') +':'
+        .col-xs-9
+          = @ssd.get_relay_time_swam.to_s
+      .row
+        .col-xs-3
+          = I18n.t('swimmers.relay_disqualifications') +':'
+        .col-xs-9
+          - dsq_count = @ssd.get_relay_disqualifications
+          - if dsq_count > 0
+            = count_with_bomb( dsq_count )
+          - else
+            = I18n.t('swimmers.no_disqualifications')
 
     .col-xs-3
       .text-center

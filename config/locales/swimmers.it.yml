@@ -23,7 +23,7 @@ it:
     total_team_records: "Record di Federazione detenuti (stando ai dati inseriti)"
     records_by_team: "Record per affiliazione"
     total_disqualifications: "Squalifiche subite"
-    no_disqualifications: "Nessuna !!"
+    no_disqualifications: "Nessuna!!!"
     swimmers: "Nuotatori"
     search_swimmers: "Cerca Nuotatori"
     age_current: "Età al 31/12"
@@ -32,6 +32,12 @@ it:
     all_teams: "Società in cui ha nuotato"
     ironmaster: "Ironmaster completati"
     no_associated_goggle_cup_found: "Questo atleta non sembra partecipare a nessuna Goggle cup per la stagione in corso!"
-    
+    individual_events_done: "Partecipazione a gare individuali"
+    relay_events_done: "Partecipazione a staffette"
+    relays_attended: "Staffette disputate"
+    relay_metres_swam: "Metri frazioni percorsi"
+    relay_time_swam: "Tempo totale frazioni"
+    relay_disqualifications: "Squalifiche subite"
+
   swimmer:
     unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sui Nuotatori! (tab: 'swimmers')"

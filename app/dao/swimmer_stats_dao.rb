@@ -96,13 +96,13 @@ class SwimmerStatsDAO
     @swimmer_stats[:first_meeting_hash]       = nil
     @swimmer_stats[:last_meeting_hash]        = nil
     @swimmer_stats[:meters_swam]              = 0
-    @swimmer_stats[:time_swam]                = Timing.new(0)
+    @swimmer_stats[:time_swam]                = 0
     @swimmer_stats[:disqualifications]        = 0
 
     # Relay results
     @swimmer_stats[:relay_results_count]     = 0
     @swimmer_stats[:relay_meters_swam]       = 0
-    @swimmer_stats[:relay_time_swam]         = Timing.new(0)
+    @swimmer_stats[:relay_time_swam]         = 0
     @swimmer_stats[:relay_disqualifications] = 0
 
     # FIN statistics
@@ -309,10 +309,22 @@ class SwimmerStatsDAO
     @swimmer_stats.has_key?( :meters_swam ) ? @swimmer_stats[:meters_swam] : 0
   end
 
+  # Swimmer relay meters swam
+  #
+  def get_relay_meters_swam
+    @swimmer_stats.has_key?( :relay_meters_swam ) ? @swimmer_stats[:relay_meters_swam] : 0
+  end
+
   # Swimmer total time swam
   #
   def get_time_swam
     @swimmer_stats.has_key?( :time_swam ) ? Timing.new( @swimmer_stats[:time_swam] ) : Timing.new( 0 )
+  end
+
+  # Swimmer relay time swam
+  #
+  def get_relay_time_swam
+    @swimmer_stats.has_key?( :relay_time_swam ) ? Timing.new( @swimmer_stats[:relay_time_swam] ) : Timing.new( 0 )
   end
 
   # Swimmer total disqualifications
@@ -321,7 +333,13 @@ class SwimmerStatsDAO
     @swimmer_stats.has_key?( :disqualifications ) ? @swimmer_stats[:disqualifications] : 0
   end
 
-  # Swimmer total time swam
+  # Swimmer relay disqualifications
+  #
+  def get_relay_disqualifications
+    @swimmer_stats.has_key?( :relay_disqualifications ) ? @swimmer_stats[:relay_disqualifications] : 0
+  end
+
+  # Swimmer iron master count
   #
   def get_iron_masters_count
     @swimmer_stats.has_key?( :iron_masters ) ? @swimmer_stats[:iron_masters] : 0

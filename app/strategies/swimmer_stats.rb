@@ -175,7 +175,7 @@ class SwimmerStats
       ssd.swimmer_stats[:best_fin_hash]            = get_item_data( @swimmer_stats['max_fin_points_data'], @event_keys )
 
       # Currents
-      ssd.swimmer_stats[:current_teams_hash]       = get_items_hash( @swimmer_stats['teams_name_and_ids'] )
+      ssd.swimmer_stats[:current_teams_hash]       = get_items_hash( @swimmer_stats['current_teams'] )
       ssd.swimmer_stats[:current_categories_array] = get_distinct_items( @swimmer_stats['current_categories'] )
     end
 
