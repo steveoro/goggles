@@ -76,6 +76,33 @@ class SwimmersController < ApplicationController
     @seasonal_medal_collection = []
     @event_medal_collection = {}
 
+
+
+    data_retrieve_query = '
+    select
+    	st.short_name as season_type,
+      pt.code as pool_code,
+      et.style_order as style_order,
+      et.code as event_code,
+    	sum(case when mir.rank = 1 then 1 else 0 end) as gold,
+    	sum(case when mir.rank = 2 then 1 else 0 end) as silver,
+    	sum(case when mir.rank = 3 then 1 else 0 end) as bronz,
+    	sum(case when mir.rank = 4 then 1 else 0 end) as wooden
+    from meeting_individual_results mir
+    	join meeting_programs mp on mp.id = mir.meeting_program_id
+    	join meeting_events me on me.id = mp.meeting_event_id
+      join event_types et on et.id = me.event_type_id
+      join pool_types pt on pt.id = mp.pool_type_id
+      join badges b on b.id = mir.badge_id
+      join seasons s on s.id = b.season_id
+      join season_types st on st.id = s.season_type_id
+    where not mir.is_disqualified
+    	and mir.swimmer_id = 23
+    group by st.short_name, pt.code, et.style_order, et.code;
+    '
+
+
+
     # TODO
     # Refactor this part using medal_types
     # Collects total for summary section
