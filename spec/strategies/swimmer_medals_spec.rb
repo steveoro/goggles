@@ -5,7 +5,16 @@ describe SwimmerMedals, type: :strategy do
   let(:swimmer)         { Swimmer.first(300).sample }
   let(:leega)           { Swimmer.find(23) }
 
+  let(:individuals)  { false }
+  let(:season_fin)   { 'MASFIN' }
+  let(:season_csi)   { 'MASCSI' }
+  let(:pool_25)      { '25' }
+  let(:pool_50)      { '50' }
+  let(:event_200MI)  { '200MI' }
+  let(:medal_gold)   { 'O' }
+
   # Leega medals (minimum values at 13/10/2019)
+  let(:leega_types)     { 130 }
   let(:leega_golds)     { 59 }
   let(:leega_silvers)   { 62 }
   let(:leega_bronzes)   { 55 }
@@ -27,24 +36,46 @@ describe SwimmerMedals, type: :strategy do
     end
 
     describe "#retrieve_data" do
-      it "returns an hash and sets swimmer_medals" do
+      it "returns a relation and sets swimmer_medals" do
         expect( subject.swimmer_medals ).to be_nil
         result = subject.retrieve_data
-        expect( result ).to be_a_kind_of( Hash )
-        expect( subject.swimmer_medals ).to be_a_kind_of( Hash )
+        expect( result ).to be_a_kind_of( ActiveRecord::Result )
+        expect( subject.swimmer_medals ).to be_a_kind_of( ActiveRecord::Result )
         expect( subject.swimmer_medals ).to eq( result )
       end
-      it "returns a query result with necessary columns" do
+      it "returns a query result of elements with necessary columns" do
         result = subject.retrieve_data
-        [
-          'is_a_relay', 'season_type', 'pool_code', 'style_order', 'event_code',
-          'golds', 'silvers', 'bronzes', 'woodens'
-        ].each do |column|
-          expect( result.has_key?(column) ).to eq(true)
+        result.each do |element|
+          expect( element.size ).to eq(7)
+          [
+            'is_a_relay', 'season_code', 'pool_code', 'style_order', 'event_code',
+            'medal_code', 'medals_count'
+          ].each do |column|
+            expect( element.has_key?(column) ).to eq(true)
+          end
         end
+      end
+      it "returns an empty query result for a medal-less swimmer" do
+        new_swimmer = create( :swimmer )
+        sm = SwimmerMedals.new( new_swimmer )
+        result = sm.retrieve_data
+        expect( result ).to be_a_kind_of( ActiveRecord::Result )
+        expect( result.count ).to eq( 0 )
       end
     end
 
+    describe "#get_medals_dao" do
+      it "returns a MedalsDAO object" do
+        expect( subject.get_medals_dao ).to be_an_instance_of( MedalsDAO )
+      end
+      it "returns an empty MedalsDAO object if no data collected" do
+        expect( subject.swimmer_medals ).to be_nil
+        md = subject.get_medals_dao
+        MedalType.all.each do |medal_type|
+          expect( md.get_summary( medal_type.code ) ).to be( 0 )
+        end
+      end
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -55,6 +86,20 @@ describe SwimmerMedals, type: :strategy do
     subject { SwimmerMedals.new( leega ) }
 
     describe "#retrieve_data" do
+      it "return an hash with at least Leega's number of medals types" do
+        result = subject.retrieve_data
+        expect( result ).to be_a_kind_of( ActiveRecord::Result )
+        expect( result.count ).to be >= leega_types
+      end
+    end
+
+    describe "#get_medals_dao" do
+      it "return an hash with at least Leega's number of gold medals in 200MI CSI " do
+        subject.retrieve_data
+        result = subject.get_medals_dao
+        #expect( result.get_medals( individuals, season_csi, pool_25, event_200MI, medal_gold ) ).to be > 0
+        #expect( result.get_medals( individuals, season_csi, pool_50, event_200MI, medal_gold ) ).to be > 0
+      end
     end
   end
   #-- -------------------------------------------------------------------------
