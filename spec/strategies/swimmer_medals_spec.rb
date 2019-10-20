@@ -6,12 +6,15 @@ describe SwimmerMedals, type: :strategy do
   let(:leega)           { Swimmer.find(23) }
 
   let(:individuals)  { false }
-  let(:season_fin)   { 'MASFIN' }
-  let(:season_csi)   { 'MASCSI' }
+  let(:season_fin)   { 'MASTER FIN' }
+  let(:season_csi)   { 'MASTER CSI' }
   let(:pool_25)      { '25' }
   let(:pool_50)      { '50' }
   let(:event_200MI)  { '200MI' }
   let(:medal_gold)   { 'O' }
+
+  let(:leega_FIN_200MI_50_gold) { 1 }
+  let(:leega_CSI_200MI_25_gold) { 4 }
 
   # Leega medals (minimum values at 13/10/2019)
   let(:leega_types)     { 130 }
@@ -97,8 +100,12 @@ describe SwimmerMedals, type: :strategy do
       it "return an hash with at least Leega's number of gold medals in 200MI CSI " do
         subject.retrieve_data
         result = subject.get_medals_dao
-        #expect( result.get_medals( individuals, season_csi, pool_25, event_200MI, medal_gold ) ).to be > 0
-        #expect( result.get_medals( individuals, season_csi, pool_50, event_200MI, medal_gold ) ).to be > 0
+        expect( result.get_individuals.exists_season?(season_csi) ).to eq( true )
+        expect( result.get_individuals.exists_season?(season_fin) ).to eq( true )
+        expect( result.get_relays.exists_season?(season_csi) ).to eq( true )
+        expect( result.get_relays.exists_season?(season_fin) ).to eq( true )
+        expect( result.get_medals( individuals, season_csi, pool_25, event_200MI, medal_gold ) ).to be >= leega_CSI_200MI_25_gold
+        expect( result.get_medals( individuals, season_fin, pool_50, event_200MI, medal_gold ) ).to be >= leega_FIN_200MI_50_gold
       end
     end
   end

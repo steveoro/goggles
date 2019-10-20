@@ -72,6 +72,16 @@ class SwimmersController < ApplicationController
   def medals
     # --- "Medals" tab: ---
     @tab_title = I18n.t('radiography.medals_tab')
+    sm = SwimmerMedals.new( @swimmer )
+    sm.retrieve_data
+    @swimmer_medals_dao = sm.get_medals_dao
+  end
+
+  def medals_old
+    # --- "Medals" tab: ---
+    @tab_title = I18n.t('radiography.medals_tab')
+
+
     @medal_types = MedalType.sort_by_rank
     @seasonal_medal_collection = []
     @event_medal_collection = {}

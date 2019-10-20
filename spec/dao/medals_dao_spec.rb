@@ -3,7 +3,6 @@
 require 'rails_helper'
 require 'common/format'
 
-
 describe MedalsDAO, type: :model do
 
   let(:is_a_relay)   { [0..1].sample }
@@ -12,7 +11,7 @@ describe MedalsDAO, type: :model do
   let(:event_code)   { EventType.all.sample.code }
   let(:medal_code)   { MedalType.all.sample.code }
   let(:medal_number) { (rand * 5).to_i + 1 }
-
+  let(:group_dao)    { 'fuck_name' }
   let(:season_wrong) { 'MASFUCK' }
   let(:pool_wrong)   { '42' }
   let(:event_wrong)  { '215CA' }
@@ -70,7 +69,13 @@ describe MedalsDAO, type: :model do
 
   context "MedalsGroupDAO sub-module," do
 
-    subject { MedalsDAO::MedalsGroupDAO.new() }
+    subject { MedalsDAO::MedalsGroupDAO.new(group_dao) }
+
+    describe "#name" do
+      it "assigns readable attributes with given parameters" do
+        expect( subject.name ).to eq( group_dao )
+      end
+    end
 
     describe "#detail" do
       it "returns an hash" do
@@ -131,17 +136,42 @@ describe MedalsDAO, type: :model do
         expect( subject.set_medals( season_code, pool_code, event_code, medal_code, medal_number ) ).to eq( medal_number )
       end
       it "creates a key for each level (parameter)" do
-        expect( subject.detail.has_key?(season_code) ).to eq( false )
+        expect( subject.exists_season?(season_code) ).to eq( false )
         subject.set_medals( season_code, pool_code, event_code, medal_code, medal_number )
         expect( subject.detail.has_key?(season_code) ).to eq( true )
         expect( subject.detail[season_code].has_key?(pool_code) ).to eq( true )
-
+      end
+      it "sets the given medals count" do
+        expect( subject.get_medals( season_code, pool_code, event_code, medal_code ) ).to eq( 0 )
+        subject.set_medals( season_code, pool_code, event_code, medal_code, medal_number )
+        expect( subject.get_medals( season_code, pool_code, event_code, medal_code ) ).to eq( medal_number )
       end
     end
 
     describe "#get_medals" do
       it "returns a number" do
         expect( subject.get_medals( season_code, pool_code, event_code, medal_code ) ).to be >= 0
+      end
+      it "returns zero if no data set" do
+        expect( subject.exists_season?(season_code) ).to eq( false )
+        expect( subject.get_medals( season_code, pool_code, event_code, medal_code ) ).to eq( 0 )
+      end
+      it "returns the number set in the medal type" do
+        subject.set_medals( season_code, pool_code, event_code, medal_code, medal_number )
+        expect( subject.get_medals( season_code, pool_code, event_code, medal_code ) ).to eq( medal_number )
+        expect( subject.get_medals( season_wrong, pool_code, event_code, medal_code ) ).to eq( 0 )
+        expect( subject.get_medals( season_code, pool_wrong, event_code, medal_code ) ).to eq( 0 )
+        expect( subject.get_medals( season_code, pool_code, event_wrong, medal_code ) ).to eq( 0 )
+      end
+    end
+
+    describe "#get_summary" do
+      it "returns a number" do
+        expect( subject.get_summary( medal_code ) ).to be >= 0
+      end
+      it "returns zero if no data set" do
+        expect( subject.detail.keys.count ).to eq( 0 )
+        expect( subject.get_summary( medal_code ) ).to eq( 0 )
       end
     end
   end

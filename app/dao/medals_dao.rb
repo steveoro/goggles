@@ -22,7 +22,7 @@ class MedalsDAO
     def initialize()
       @medals = Hash.new()
     end
-
+    
     def set_medals( medal_code, medals_count )
        @medals[medal_code] = medals_count
     end
@@ -44,11 +44,12 @@ class MedalsDAO
   #
   class MedalsGroupDAO
     # These can be edited later on:
-    attr_accessor :detail, :summary
+    attr_accessor :detail, :summary, :name
 
     # Creates a new instance.
     #
-    def initialize
+    def initialize( name )
+      @name    = name
       @detail  = Hash.new()
       @summary = MedalsCollectorDAO.new()
     end
@@ -83,6 +84,11 @@ class MedalsDAO
       exists_event?( season_code, pool_code, event_code ) ?  @detail[season_code][pool_code][event_code].get_medals( medal_code ) : 0
     end
 
+    # Return medal summary count or zero if any
+    def get_summary( medal_code )
+      @summary.get_medals( medal_code )
+    end
+
     def exists_season?( season_code )
       @detail.has_key?( season_code )
     end
@@ -113,8 +119,8 @@ class MedalsDAO
   def initialize()
     # Define basic structure
     @medals               = Hash.new()
-    @medals[:individuals] = MedalsGroupDAO.new()
-    @medals[:relays]      = MedalsGroupDAO.new()
+    @medals[:individuals] = MedalsGroupDAO.new(I18n.t('radiography.individuals'))
+    @medals[:relays]      = MedalsGroupDAO.new(I18n.t('radiography.relays'))
     @summary              = MedalsCollectorDAO.new()
   end
   #-- -------------------------------------------------------------------------

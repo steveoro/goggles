@@ -95,7 +95,7 @@ class SwimmerMedals
       # Cycle medals and fill dao
       @swimmer_medals.each do |medals|
         is_a_relay = ( medals['is_a_relay'].to_i == 1 )
-        smd.set_medals( is_a_relay, medals['season_type'], medals['pool_code'], medals['event_code'], medals['medal_code'], medals['medals_count'].to_i )
+        smd.set_medals( is_a_relay, medals['season_code'], medals['pool_code'], medals['event_code'], medals['medal_code'], medals['medals_count'].to_i )
       end
     end
     smd

@@ -1,0 +1,108 @@
+= render( partial: 'tabs_and_title' )
+- cache( cache_key_for_swimmer( 'medals', @swimmer.id, @max_updated_at ) ) do
+
+  .col-xs-12.goggles-category-gap#pageTop
+    .navbar
+      %ul.nav.nav-pills
+        %li
+          = link_to( "#summary", {'data-turbolinks'=>'false', class: "goggles-nav-compact"} ) do
+            = I18n.t('radiography.medals_summary')
+        %li
+          = link_to( "#by_season_type", {'data-turbolinks'=>'false', class: "goggles-nav-compact"} ) do
+            = I18n.t('radiography.medals_by_season_type')
+        - @event_medal_collection.keys.each do |pool_type|
+          %li
+            = link_to( "#by_event_type_#{pool_type}", {'data-turbolinks'=>'false', class: "goggles-nav-compact"} ) do
+              = I18n.t('radiography.medals_by_event_type').gsub('{POOL_TYPE}', pool_type)
+      .ghost-divider-vertical
+
+  .col-xs-6.goggles-category-gap#summary
+    %h3
+      = I18n.t('radiography.medals_summary')
+      = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+        = image_tag('bullet_arrow_up.png')
+    .row
+      .col-xs-8.col-md-6
+        = image_tag('medal_gold_3.png')
+        = I18n.t('radiography.total_gold_medals') +':'
+      .col-xs-4.col-md-6
+        %b= @gold_medals
+    .row
+      .col-xs-8.col-md-6
+        = image_tag('medal_silver_3.png')
+        = I18n.t('radiography.total_silver_medals') +':'
+      .col-xs-4.col-md-6
+        %b= @silver_medals
+    .row
+      .col-xs-8.col-md-6
+        = image_tag('medal_bronze_3.png')
+        = I18n.t('radiography.total_bronze_medals') +':'
+      .col-xs-4.col-md-6
+        %b= @bronze_medals
+    .row
+      .col-xs-8.col-md-6
+        = I18n.t('radiography.total_wooden_medals') +':'
+      .col-xs-4.col-md-6
+        = @wooden_medals
+
+  .col-xs-6.goggles-category-gap#by_season_type
+    %h3
+      = I18n.t('radiography.medals_by_season_type')
+      = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+        = image_tag('bullet_arrow_up.png')
+    .row
+      .col-xs-5
+        %table.table.table-striped.table-bordered.table-hover.table-condensed
+          %tbody
+            %tr{'class'=>'info'}
+              %td.col-xs-2.goggles-centeralign
+                %b= I18n.t('medals')
+              - @seasonal_medal_collection.each do |medal_collection|
+                %td.col-xs-2.goggles-centeralign
+                  %b= medal_collection[:season_type]
+              %td.col-xs-1.goggles-centeralign
+                %b=  I18n.t('tot')
+            - @medal_types.each do |medal_type|
+              %tr
+                %td
+                  %b= medal_type.i18n_description
+                - tot_medals_for_type = 0
+                - @seasonal_medal_collection.each do |medal_collection|
+                  - tot_medals_for_type += medal_collection[medal_type.rank]
+                  %td.goggles-rightalign
+                    - if medal_collection[medal_type.rank] > 0
+                      = medal_collection[medal_type.rank]
+                %td.goggles-rightalign
+                  %b= tot_medals_for_type
+
+  - @event_medal_collection.keys.each do |pool_type|
+    .col-xs-12.goggles-category-gap{ id: "by_event_type_#{pool_type}" }
+      %h3
+        = I18n.t('radiography.medals_by_event_type').gsub('{POOL_TYPE}', pool_type)
+        = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+          = image_tag('bullet_arrow_up.png')
+      %table.table.table-striped.table-bordered.table-hover.table-condensed
+        %tbody
+          %tr{'class'=>'info'}
+            %td.goggles-centeralign
+              %b= I18n.t('medals')
+            - @event_medal_collection[pool_type].each do |medal_collection|
+              %td.goggles-centeralign
+                %b= medal_collection[:event_type]
+            %td.goggles-centeralign
+              %b=  I18n.t('tot')
+          - @medal_types.each do |medal_type|
+            %tr
+              %td
+                %b= medal_type.i18n_description
+              - tot_medals_for_type = 0
+              - @event_medal_collection[pool_type].each do |medal_collection|
+                - tot_medals_for_type += medal_collection[medal_type.rank]
+                %td.goggles-rightalign
+                  - if medal_collection[medal_type.rank] > 0
+                    = medal_collection[medal_type.rank]
+              %td.goggles-rightalign
+                %b= tot_medals_for_type
+
+  .col-xs-12.goggles-category-gap
+    &nbsp;
