@@ -52,6 +52,7 @@ class SwimmerMedals
       join seasons s on s.id = b.season_id
       join season_types st on st.id = s.season_type_id
     where not mir.is_disqualified
+	    and not mir.is_out_of_race
     	and mir.swimmer_id = VAR_SWIMMER_ID
     group by et.is_a_relay, st.short_name, pt.code, et.style_order, et.code, mt.code
     union
@@ -74,6 +75,7 @@ class SwimmerMedals
       join seasons s on s.id = b.season_id
       join season_types st on st.id = s.season_type_id
     where not mrr.is_disqualified
+      and not mrr.is_out_of_race    
     	and mrs.swimmer_id = VAR_SWIMMER_ID
     group by et.is_a_relay, st.short_name, pt.code, et.style_order, et.code, mt.code;
     '
