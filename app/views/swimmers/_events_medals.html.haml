@@ -21,6 +21,6 @@
             - medals_count = events_hash[event_code].get_medals( medal_type.code )
             - tot_medals_for_type += medals_count
             %td.goggles-rightalign
-              = medals_count
+              = events_hash[event_code].get_medals_to_show( medal_type.code )
           %td.goggles-rightalign
             %b= tot_medals_for_type

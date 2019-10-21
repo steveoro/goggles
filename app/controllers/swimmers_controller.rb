@@ -48,14 +48,12 @@ class SwimmersController < ApplicationController
     # --- "Radiography" tab: ---
     #@team_ids = @swimmer.teams.collect{|row| row.id }.uniq
     @tab_title = I18n.t('radiography.radio_tab')
-
     @swimmer_name = @swimmer.get_full_name
     #@ssd = SwimmerStatsDAO.new( @swimmer )
     #@ssd.calculate_stats
     ss = SwimmerStats.new(@swimmer)
     ss.retrieve_data
     @ssd = ss.get_swimmers_stats_dao
-
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -77,17 +75,14 @@ class SwimmersController < ApplicationController
     sm.retrieve_data
     @swimmer_medals_dao = sm.get_medals_dao
   end
-
+  # Leega: Remove this old method if new will result cool
   def medals_old
     # --- "Medals" tab: ---
     @tab_title = I18n.t('radiography.medals_tab')
 
-
     @medal_types = MedalType.sort_by_rank
     @seasonal_medal_collection = []
     @event_medal_collection = {}
-
-
 
     # TODO
     # Refactor this part using medal_types
