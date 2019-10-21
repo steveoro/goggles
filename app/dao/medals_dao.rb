@@ -22,7 +22,7 @@ class MedalsDAO
     def initialize()
       @medals = Hash.new()
     end
-    
+
     def set_medals( medal_code, medals_count )
        @medals[medal_code] = medals_count
     end
@@ -60,28 +60,30 @@ class MedalsDAO
     #
     def set_medals( season_code, pool_code, event_code, medal_code, medals_count )
       # If not already exists create season hash
-      @detail[season_code] = Hash.new() if !exists_season?( season_code )
+      @detail[season_code] = MedalsGroupDAO.new( season_code ) if !exists_season?( season_code )
 
       # If not already exists create pool hash
-      @detail[season_code][pool_code] = Hash.new() if !exists_pool?( season_code, pool_code )
+      @detail[season_code].detail[pool_code] = MedalsGroupDAO.new( season_code ) if !exists_pool?( season_code, pool_code )
 
       #if not already exists create event hash
-      @detail[season_code][pool_code][event_code] = MedalsCollectorDAO.new() if !exists_event?( season_code, pool_code, event_code )
+      @detail[season_code].detail[pool_code].detail[event_code] = MedalsCollectorDAO.new() if !exists_event?( season_code, pool_code, event_code )
 
       # Set medal number
-      @detail[season_code][pool_code][event_code].set_medals( medal_code, medals_count )
+      @detail[season_code].detail[pool_code].detail[event_code].set_medals( medal_code, medals_count )
 
       # Collect summarized data
+      @detail[season_code].summary.add_medals( medal_code, medals_count )
+      @detail[season_code].detail[pool_code].summary.add_medals( medal_code, medals_count )
       @summary.add_medals( medal_code, medals_count )
 
       # Return medals count set for verifing purposes
-      @detail[season_code][pool_code][event_code].get_medals( medal_code )
+      @detail[season_code].detail[pool_code].detail[event_code].get_medals( medal_code )
     end
 
     # Return medal count or zero if any
     def get_medals( season_code, pool_code, event_code, medal_code )
       # Return medals count set for verifing purposes
-      exists_event?( season_code, pool_code, event_code ) ?  @detail[season_code][pool_code][event_code].get_medals( medal_code ) : 0
+      exists_event?( season_code, pool_code, event_code ) ?  @detail[season_code].detail[pool_code].detail[event_code].get_medals( medal_code ) : 0
     end
 
     # Return medal summary count or zero if any
@@ -94,11 +96,11 @@ class MedalsDAO
     end
 
     def exists_pool?( season_code, pool_code )
-      exists_season?( season_code ) && @detail[season_code].has_key?( pool_code )
+      exists_season?( season_code ) && @detail[season_code].detail.has_key?( pool_code )
     end
 
     def exists_event?( season_code, pool_code, event_code )
-      exists_season?( season_code ) && exists_pool?( season_code, pool_code ) && @detail[season_code][pool_code].has_key?( event_code )
+      exists_season?( season_code ) && exists_pool?( season_code, pool_code ) && @detail[season_code].detail[pool_code].detail.has_key?( event_code )
     end
   end
   #-- -------------------------------------------------------------------------
@@ -119,8 +121,8 @@ class MedalsDAO
   def initialize()
     # Define basic structure
     @medals               = Hash.new()
-    @medals[:individuals] = MedalsGroupDAO.new(I18n.t('radiography.individuals'))
-    @medals[:relays]      = MedalsGroupDAO.new(I18n.t('radiography.relays'))
+    @medals[:individuals] = MedalsGroupDAO.new(I18n.t('radiography.individual_medals'))
+    @medals[:relays]      = MedalsGroupDAO.new(I18n.t('radiography.relay_medals'))
     @summary              = MedalsCollectorDAO.new()
   end
   #-- -------------------------------------------------------------------------

@@ -139,12 +139,43 @@ describe MedalsDAO, type: :model do
         expect( subject.exists_season?(season_code) ).to eq( false )
         subject.set_medals( season_code, pool_code, event_code, medal_code, medal_number )
         expect( subject.detail.has_key?(season_code) ).to eq( true )
-        expect( subject.detail[season_code].has_key?(pool_code) ).to eq( true )
+        expect( subject.detail[season_code].detail.has_key?(pool_code) ).to eq( true )
       end
       it "sets the given medals count" do
         expect( subject.get_medals( season_code, pool_code, event_code, medal_code ) ).to eq( 0 )
         subject.set_medals( season_code, pool_code, event_code, medal_code, medal_number )
         expect( subject.get_medals( season_code, pool_code, event_code, medal_code ) ).to eq( medal_number )
+      end
+      it "sets the given medals in summaries" do
+        subject.set_medals( season_code, pool_code, event_code, medal_code, medal_number )
+        expect( subject.get_summary( medal_code ) ).to eq( medal_number )
+        expect( subject.detail[season_code].get_summary( medal_code ) ).to eq( medal_number )
+        expect( subject.detail[season_code].detail[pool_code].get_summary( medal_code ) ).to eq( medal_number )
+        subject.set_medals( season_code, pool_code, event_code, medal_code, medal_number )
+        expect( subject.get_summary( medal_code ) ).to eq( medal_number * 2 )
+        expect( subject.detail[season_code].get_summary( medal_code ) ).to eq( medal_number * 2 )
+        expect( subject.detail[season_code].detail[pool_code].get_summary( medal_code ) ).to eq( medal_number * 2 )
+      end
+      it "sets the expected objects in subgroups" do
+        subject.set_medals( season_code, pool_code, event_code, medal_code, medal_number )
+        subject.set_medals( season_code, pool_code, event_code, 'OTHER', medal_number )
+        subject.set_medals( season_code, 'OTHER', event_code, medal_code, medal_number )
+        subject.set_medals( season_code, pool_code, 'OTHER', medal_code, medal_number )
+        season_sub = subject.detail
+        expect( season_sub ).to be_a_kind_of( Hash )
+        season_sub.each_value do |season_group|
+          expect( season_group ).to be_an_instance_of( MedalsDAO::MedalsGroupDAO )
+          pool_sub = season_group.detail
+          expect( pool_sub ).to be_a_kind_of( Hash )
+          pool_sub.each_value do |pool_group|
+            expect( pool_group ).to be_an_instance_of( MedalsDAO::MedalsGroupDAO )
+            event_sub = pool_group.detail
+            expect( event_sub ).to be_a_kind_of( Hash )
+            event_sub.each_value do |event_group|
+              expect( event_group ).to be_an_instance_of( MedalsDAO::MedalsCollectorDAO )
+            end
+          end
+        end
       end
     end
 

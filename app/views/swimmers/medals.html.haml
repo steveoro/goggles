@@ -4,16 +4,23 @@
   .col-xs-12.goggles-category-gap#pageTop
     .navbar
       %ul.nav.nav-pills
-        %li
-          = link_to( "#individuals", {'data-turbolinks'=>'false', class: "goggles-nav-compact"} ) do
-            = I18n.t('radiography.individuals')
-        %li
-          = link_to( "#relays", {'data-turbolinks'=>'false', class: "goggles-nav-compact"} ) do
-            = I18n.t('radiography.relays')
+        - @swimmer_medals_dao.medals.each_value do |mainDAO|
+          %li
+            = link_to( "##{mainDAO.name}", {'data-turbolinks'=>'false', class: "goggles-nav-compact"} ) do
+              = mainDAO.name
       .ghost-divider-vertical
 
-  - @swimmer_medals_dao.medals.each_pair do |key, value|
-    - mgDAO = value
+  - # Cycle between main groups (individuals and relays)
+  - @swimmer_medals_dao.medals.each_value do |mainDAO|
+    .col-xs-12.goggles-category-gap{ id: mainDAO.name }
+      %h2
+        = mainDAO.name
+        = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+          = image_tag('bullet_arrow_up.png')
+
+    - # Get group DAO for main type and season hash for season summary
+    - seasons_hash = mainDAO.detail
+    - seasons = seasons_hash.keys
     .col-xs-6.goggles-category-gap
       %h3
         = I18n.t('radiography.medals_summary')
@@ -21,13 +28,13 @@
           = image_tag('bullet_arrow_up.png')
       - @medal_types.each do |medal_type|
         .row
-          .col-xs-8.col-md-6
-            = image_tag(medal_type.image)
-            = I18n.t('radiography.total_gold_medals') +':'
-          .col-xs-4.col-md-6
-            %b= mgDAO.summary.get_medals( medal_type.code )
+          .col-xs-8.col-md-4
+            = image_tag(medal_type.image_uri)
+            %b= medal_type.i18n_description
+          .col-xs-4.col-md-4
+            %b= mainDAO.summary.get_medals( medal_type.code )
 
-    .col-xs-6.goggles-category-gap#by_season_type
+    .col-xs-6.goggles-category-gap
       %h3
         = I18n.t('radiography.medals_by_season_type')
         = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
@@ -39,52 +46,65 @@
               %tr{'class'=>'info'}
                 %td.col-xs-2.goggles-centeralign
                   %b= I18n.t('medals')
-                - mgDAO.detail.each_pair do |season, event_hash|
+                - seasons.each do |season|
                   %td.col-xs-2.goggles-centeralign
                     %b= season
                 %td.col-xs-1.goggles-centeralign
                   %b=  I18n.t('tot')
               - @medal_types.each do |medal_type|
+                - tot_medals_for_type = 0
                 %tr
                   %td
                     %b= medal_type.i18n_description
-                  - tot_medals_for_type = 0
-                  - @seasonal_medal_collection.each do |medal_collection|
-                    - tot_medals_for_type += medal_collection[medal_type.rank]
+                  - seasons.each do |season|
+                    - seasonDAO = seasons_hash[season]
+                    - medals_count = seasonDAO.get_summary( medal_type.code )
+                    - tot_medals_for_type += medals_count
                     %td.goggles-rightalign
-                      - if medal_collection[medal_type.rank] > 0
-                        = medal_collection[medal_type.rank]
+                      = medals_count
                   %td.goggles-rightalign
                     %b= tot_medals_for_type
 
-  - @event_medal_collection.keys.each do |pool_type|
-    .col-xs-12.goggles-category-gap{ id: "by_event_type_#{pool_type}" }
-      %h3
-        = I18n.t('radiography.medals_by_event_type').gsub('{POOL_TYPE}', pool_type)
-        = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
-          = image_tag('bullet_arrow_up.png')
-      %table.table.table-striped.table-bordered.table-hover.table-condensed
-        %tbody
-          %tr{'class'=>'info'}
-            %td.goggles-centeralign
-              %b= I18n.t('medals')
-            - @event_medal_collection[pool_type].each do |medal_collection|
-              %td.goggles-centeralign
-                %b= medal_collection[:event_type]
-            %td.goggles-centeralign
-              %b=  I18n.t('tot')
-          - @medal_types.each do |medal_type|
-            %tr
-              %td
-                %b= medal_type.i18n_description
-              - tot_medals_for_type = 0
-              - @event_medal_collection[pool_type].each do |medal_collection|
-                - tot_medals_for_type += medal_collection[medal_type.rank]
-                %td.goggles-rightalign
-                  - if medal_collection[medal_type.rank] > 0
-                    = medal_collection[medal_type.rank]
-              %td.goggles-rightalign
-                %b= tot_medals_for_type
+    - # For each season show distinct pool types event summary
+    - seasons_hash.each_pair do |season, seasonDAO|
+      - pool_hash = seasonDAO.detail
+      .col-xs-12.goggles-category-gap{ id: "by_season_#{mainDAO.name}_#{seasonDAO.name}" }
+      .col-xs-12.goggles-category-gap
+        %h3
+          = I18n.t('radiography.season_type').gsub('{SEASON_TYPE}', seasonDAO.name)
+          = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+            = image_tag('bullet_arrow_up.png')
+        - pool_hash.each_pair do |pool, poolDAO|
+          - events_hash = poolDAO.detail
+          - events = events_hash.keys
+          .col-xs-12.goggles-category-gap{ id: "by_event_type_#{mainDAO.name}_#{seasonDAO.name}_#{poolDAO.name}" }
+            %h4
+              = I18n.t('radiography.medals_by_event_type').gsub('{POOL_TYPE}', pool)
+              = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+                = image_tag('bullet_arrow_up.png')
+            %table.table.table-striped.table-bordered.table-hover.table-condensed
+              %tbody
+                %tr{'class'=>'info'}
+                  %td.goggles-centeralign
+                    %b= I18n.t('medals')
+                  - events.each do |event_code|
+                    %td.goggles-centeralign
+                      %b= event_code
+                  %td.goggles-centeralign
+                    %b=  I18n.t('tot')
+                - @medal_types.each do |medal_type|
+                  %tr
+                    %td
+                      %b= medal_type.i18n_description
+                    - tot_medals_for_type = 0
+                    - events.each do |event_code|
+                      - medals_count = events_hash[event_code].get_medals( medal_type.code )
+                      - tot_medals_for_type += medals_count
+                      %td.goggles-rightalign
+                        = medals_count
+                    %td.goggles-rightalign
+                      %b= tot_medals_for_type
+        .col-xs-12.goggles-category-gap
 
-  .col-xs-12.goggles-category-gap
-    &nbsp;
+    .col-xs-12.goggles-category-gap
+      &nbsp;
