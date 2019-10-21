@@ -143,15 +143,12 @@ describe SwimmersController, type: :controller do
       it "retrieves the medal types" do
         expect( assigns(:medal_types) ).to all( be_an_instance_of( MedalType ) )
       end
-      it "assigns the required medal collection by season" do
-        expect( assigns(:seasonal_medal_collection) ).to be_an_instance_of( Array )
-      end
-      it "assigns the required medal collection by event" do
-        expect( assigns(:event_medal_collection) ).to be_a_kind_of( Hash )
+      it "assigns the required medals DAO" do
+        expect( assigns(:swimmer_medals_dao) ).to be_an_instance_of( MedalsDAO )
       end
     end
 
-    context "as a logged-in user, with LIGABUE MARCO seeds" do
+    context "as a logged-in user, with Leega seeds" do
       before(:each) do
         login_user()
         @swimmer = Swimmer.find(23)
@@ -162,45 +159,14 @@ describe SwimmersController, type: :controller do
         expect(response.status).to eq( 200 )
       end
 
-      it "collects informations about at least one season type" do
+      it "collects informations about every kind of medal types" do
         # [Steve, 20140911] We cannot test specific values here, because they
-        # will be reset at the start of each new season!
-        expect( assigns(:seasonal_medal_collection).count ).to be >= 0
-      end
-      it "collects informations for all the swimmer seasons" do
-        expect( assigns(:seasonal_medal_collection).count ).to eq( @swimmer.season_types.uniq.count )
-      end
-      it "assigns an array of hashes as medal seasonal collection" do
-        expect( assigns(:seasonal_medal_collection) ).to all( be_a_kind_of( Hash ) )
-      end
-      it "assigns an array of hashes as medal seasonal collection which responds to :season_type" do
-        assigns(:seasonal_medal_collection).each do |seasonal_medals|
-          expect( seasonal_medals[:season_type] ).to be_an_instance_of( String )
-        end
-      end
-      it "assigns an array of hashes as medal seasonal collection which responds to medal types" do
-        # [Steve, 20140911] We cannot test specific values here, because they
-        # will be reset at the start of each new season!
-        medal_types = assigns(:medal_types)
-        assigns(:seasonal_medal_collection).each do |seasonal_medals|
-          medal_types.each do |medal_type|
-            expect( seasonal_medals[medal_type.rank] ).to be >= 0
-          end
-        end
-      end
-      it "assigns an array of hashes as medal event collection which responds to meeting suitable pool types with arrays" do
-        PoolType.only_for_meetings.each do |pool_type|
-          expect( assigns(:event_medal_collection)[pool_type.code] ).to be_a_kind_of( Array )
-        end
-      end
-      it "assigns an array of hashes as medal event collection which responds to medal types" do
-        medal_types = assigns(:medal_types)
-        assigns(:event_medal_collection).keys.each do |pool_type|
-          assigns(:event_medal_collection)[pool_type].each do |event_medals|
-            medal_types.each do |medal_type|
-              expect( event_medals[medal_type.rank] ).to be >= 0
-            end
-          end
+        # will be increased at the start of each new season!
+        # But we can assume Leega won at least a medal of each type, individual or relay
+        MedalType.all.each do |medal_type|
+          swm = assigns(:swimmer_medals_dao)
+          expect( swm.get_individuals.get_summary(medal_type.code) ).to be > 0
+          expect( swm.get_relays.get_summary(medal_type.code) ).to be > 0
         end
       end
     end

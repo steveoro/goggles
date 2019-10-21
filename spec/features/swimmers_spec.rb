@@ -56,9 +56,9 @@ describe "Swimmers medals tab", type: :feature, wip: true do
     end
 
     it "shows successfully the medal count for a chosen Swimmer" do
-      expect( page ).to have_content( I18n.t('radiography.total_gold_medals') )
-      expect( page ).to have_content( I18n.t('radiography.total_silver_medals') )
-      expect( page ).to have_content( I18n.t('radiography.total_bronze_medals') )
+      MedalType.all.each do |medal_type|
+        expect( page ).to have_content( medal_type.i18n_description )
+      end
     end
   end
 end

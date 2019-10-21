@@ -1,0 +1,26 @@
+.row
+  %table.table.table-striped.table-bordered.table-hover.table-condensed
+    %tbody
+      %tr{'class'=>'success'}
+        %td{ colspan: "#{events.size + 2}"}
+          %b= I18n.t('radiography.medals_by_event_type').gsub('{POOL_TYPE}', pool)
+      %tr{'class'=>'info'}
+        %td.goggles-centeralign
+          %b= I18n.t('medals')
+        - events.each do |event_code|
+          %td.goggles-centeralign
+            %b= event_code
+        %td.goggles-centeralign
+          %b=  I18n.t('tot')
+      - @medal_types.each do |medal_type|
+        %tr
+          %td
+            %b= medal_type.i18n_description
+          - tot_medals_for_type = 0
+          - events.each do |event_code|
+            - medals_count = events_hash[event_code].get_medals( medal_type.code )
+            - tot_medals_for_type += medals_count
+            %td.goggles-rightalign
+              = medals_count
+          %td.goggles-rightalign
+            %b= tot_medals_for_type

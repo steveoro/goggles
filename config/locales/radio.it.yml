@@ -34,6 +34,7 @@ it:
     goggle_cup_current_tooltip: "Vai ai risultati della Goggle cup dell'anno"
     goggle_cup_closed_tooltip: "Vai ai risultati della Goggle archiviata"
     link_to_gravatar_tooltip: "Personalizza il tuo Gravatar!"
+    medals_detail: "Dettaglio - {MEDAL_CATEGORY}"
     medals_summary: "Riepilogo medaglie"
     medals_by_season_type: "Riepilogo per tipo stagione"
     season_type: "Dettaglio stagione - {SEASON_TYPE}"
