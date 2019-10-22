@@ -34,11 +34,6 @@ class MedalsDAO
     def get_medals( medal_code )
       @medals.has_key?( medal_code ) ? @medals[medal_code] : 0
     end
-
-    def get_medals_to_show( medal_code )
-      medals = get_medals( medal_code )
-      medals > 0 ? medals.to_s : '--'
-    end
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -94,11 +89,6 @@ class MedalsDAO
     # Return medal summary count or zero if any
     def get_summary( medal_code )
       @summary.get_medals( medal_code )
-    end
-    # Return medal summary count or zero if any
-    def get_summary_to_show( medal_code )
-      medals = @summary.get_medals( medal_code )
-      medals > 0 ? medals.to_s : '--'
     end
 
     def exists_season?( season_code )

@@ -30,7 +30,7 @@
             = image_tag(medal_type.image_uri)
             %b= medal_type.i18n_description
           .col-xs-4.col-md-4
-            %b= mainDAO.get_summary_to_show( medal_type.code )
+            %b= to_s_if_positive( mainDAO.get_summary( medal_type.code ), '--' )
   .col-xs-12.goggles-category-gap
 
   - # Cycle between main groups (individuals and relays) to show detail.col-xs-2.goggles-centeralign
@@ -70,7 +70,7 @@
                   - medals_count = seasonDAO.get_summary( medal_type.code )
                   - tot_medals_for_type += medals_count
                   %td.goggles-rightalign
-                    = seasonDAO.get_summary_to_show( medal_type.code )
+                    = to_s_if_positive( seasonDAO.get_summary( medal_type.code ), '--' )
                 %td.goggles-rightalign
                   %b= tot_medals_for_type
 

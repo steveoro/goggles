@@ -69,6 +69,12 @@ module ApplicationHelper
   #-- -------------------------------------------------------------------------
   #++
 
+  # Convert a number into string only if number is positive (greater than zero)
+  # Otherwise it respond with empty string or given item
+  def to_s_if_positive( number, non_positive = '' )
+    number > 0 ? number.to_s : non_positive
+  end
+
   # Getter for a string key viable for use as a cache key for fragments involving
   # the rending of collections of models.
   #

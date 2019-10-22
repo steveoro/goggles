@@ -20,6 +20,7 @@ describe ApplicationHelper, type: :helper do
         :count_with_red_ribbon,
         :count_with_bomb,
         :format_score,
+        :to_s_if_positive,
         :cache_key_from_collection
       ]
     )
@@ -148,7 +149,6 @@ describe ApplicationHelper, type: :helper do
   #-- -------------------------------------------------------------------------
   #++
 
-
   describe "#format_score" do
     let(:score)   { rand * 1000 }
     let(:bias)    { 800 }
@@ -174,6 +174,27 @@ describe ApplicationHelper, type: :helper do
   #-- -------------------------------------------------------------------------
   #++
 
+  describe "#to_s_if_positive" do
+    let(:positive)   { (rand * 20).to_i + 1 }
+    let(:negative)   { (rand * -20).to_i - 1 }
+    let(:zero)       { 0 }
+    let(:replace)    { ['a', 'b', 'c', 'd', 'e', '--', 'prova'].sample }
+
+    it "returns a string corresponding to the given positive numbers" do
+      expect( subject.to_s_if_positive( positive ) ).to eq( positive.to_s )
+      expect( subject.to_s_if_positive( positive, replace ) ).to eq( positive.to_s )
+    end
+    it "returns a string corresponding to the replace string for negative numbers" do
+      expect( subject.to_s_if_positive( negative ) ).to eq( '' )
+      expect( subject.to_s_if_positive( negative, replace ) ).to eq( replace )
+    end
+    it "returns a string corresponding to the replace string for zero" do
+      expect( subject.to_s_if_positive( zero ) ).to eq( '' )
+      expect( subject.to_s_if_positive( zero, replace ) ).to eq( replace )
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 
   describe "#cache_key_from_collection" do
     let(:collection)  { create_list(:swimmer, 5) }
