@@ -53,7 +53,7 @@ class SwimmersController < ApplicationController
     #@ssd.calculate_stats
     ss = SwimmerStats.new(@swimmer)
     ss.retrieve_data
-    @ssd = ss.get_swimmers_stats_dao
+    @ssd = ss.get_swimmer_stats_dao
   end
   #-- -------------------------------------------------------------------------
   #++

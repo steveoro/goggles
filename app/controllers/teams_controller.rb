@@ -27,24 +27,6 @@ class TeamsController < ApplicationController
   #
   def radio
     @tab_title = I18n.t('radiography.radio_tab')
-
-    data_retrieve_query = "
-      select st.short_name as federation,
-      	min(concat(ms.scheduled_date, ':', ms.meeting_id, ':', m.description)) as min_date,
-        max(concat(ms.scheduled_date, ':', ms.meeting_id, ':', m.description)) as max_date,
-        count(distinct ta.id) as affiliations_count,
-        count(distinct ms.meeting_id) as meetings_count
-      from meeting_individual_results mir
-      	join meeting_programs mp on mp.id = mir.meeting_program_id
-        join meeting_events me on me.id = mp.meeting_event_id
-        join meeting_sessions ms on ms.id = me.meeting_session_id
-        join meetings m on m.id = ms.meeting_id
-        join team_affiliations ta on ta.id = mir.team_affiliation_id
-        join seasons s on s.id = ta.season_id
-        join season_types st on st.id = s.season_type_id
-      where mir.team_id = VAR_TEAM_ID
-      group by st.short_name;
-    "
   end
   #-- -------------------------------------------------------------------------
   #++

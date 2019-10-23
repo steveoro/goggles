@@ -58,13 +58,13 @@ describe SwimmerStats, type: :strategy do
       end
     end
 
-    describe "#get_swimmers_stats_dao" do
+    describe "#get_swimmer_stats_dao" do
       it "returns a swimmer_stats_dao" do
-        expect( subject.get_swimmers_stats_dao ).to be_an_instance_of( SwimmerStatsDAO )
+        expect( subject.get_swimmer_stats_dao ).to be_an_instance_of( SwimmerStatsDAO )
       end
       it "returns an empty swimmer_stats_dao if no data retrieved" do
         expect( subject.swimmer_stats ).to be_nil
-        ssd = subject.get_swimmers_stats_dao
+        ssd = subject.get_swimmer_stats_dao
         expect( ssd.get_meetings_count ).to eq(0)
       end
     end
@@ -131,10 +131,10 @@ describe SwimmerStats, type: :strategy do
       end
     end
 
-    describe "#get_swimmers_stats_dao" do
+    describe "#get_swimmer_stats_dao" do
       it "returns a non empty swimmer_stats_dao if data retrieved" do
         subject.retrieve_data
-        ssd = subject.get_swimmers_stats_dao
+        ssd = subject.get_swimmer_stats_dao
         expect( ssd.get_meetings_count ).to be >= leega_meetings
         expect( ssd.get_tot_fin_points ).to be >= leega_points
         expect( ssd.get_iron_masters_count ).to be >= leega_irons

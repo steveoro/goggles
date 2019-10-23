@@ -3,8 +3,8 @@ require 'wrappers/timing'
 #
 # == SwimmerStats
 #
-# Pattern to retrieve swimmers statistic data
-# Swimemr statis are those sown in swimemr's radio tab
+# Pattern to retrieve swimmer statistic data
+# Swimemr statis are those shown in swimemr's radio tab
 #
 # @author   Leega
 #
@@ -137,7 +137,7 @@ class SwimmerStats
 
   # Gets a swimmer stats dao populated with data retrieve result
   #
-  def get_swimmers_stats_dao
+  def get_swimmer_stats_dao
     ssd = SwimmerStatsDAO.new( @swimmer )
     ssd.prepare_structure
 
