@@ -10,7 +10,8 @@ describe TeamStatsDAO, type: :model do
   let(:meeting_id)          { (rand * 10000).to_i }
   let(:meeting_description) { 'Fucking meeting n° ' + ( rand * 50 ).to_i.to_s }
   let(:federation_code)     { FederationType.all.sample.code }
-  let(:meeting_count)       { (rand * 300).to_i + 1 }
+  let(:affiliations_count)  { (rand * 15).to_i + 1 }
+  let(:meetings_count)      { (rand * 300).to_i + 1 }
 
   let(:first_meeting)       { TeamStatsDAO::MeetingTeamStatsDAO.new( meeting_date - 100, meeting_id, meeting_description + '_older', federation_code ) }
   let(:last_meeting)        { TeamStatsDAO::MeetingTeamStatsDAO.new( meeting_date + 100, meeting_id + 100, meeting_description + '_newer', federation_code ) }
@@ -72,18 +73,20 @@ describe TeamStatsDAO, type: :model do
     subject { TeamStatsDAO::DataTeamStatsDAO.new() }
 
     it_behaves_like( "(the existance of a method returning numeric values)", [
-      :meetings_count
+      :affiliations_count, :meetings_count
     ] )
 
     it_behaves_like( "(the existance of a method)", [
-      :first_meeting_dao, :last_meeting_dao, :individuals, :relays
+      :first_meeting_dao, :last_meeting_dao, :individuals, :relays, :max_updated_at
     ] )
 
     describe "when iniatlized without parameters" do
       it "sets zero or nil elements" do
+        expect( subject.affiliations_count ).to eq( 0 )
         expect( subject.meetings_count ).to eq( 0 )
         expect( subject.first_meeting_dao ).to be_nil
         expect( subject.last_meeting_dao ).to be_nil
+        expect( subject.max_updated_at ).to eq( 0 )
         expect( subject.individuals ).to be_an_instance_of( TeamStatsDAO::DetailTeamStatsDAO )
         expect( subject.individuals.meters_swam ).to eq ( 0 )
         expect( subject.relays ).to be_an_instance_of( TeamStatsDAO::DetailTeamStatsDAO )
@@ -93,8 +96,9 @@ describe TeamStatsDAO, type: :model do
 
     describe "#when initialized with given parameters" do
       it "returns given parameters" do
-        data = TeamStatsDAO::DataTeamStatsDAO.new( meeting_count, first_meeting,  last_meeting )
-        expect( data.meetings_count ).to eq( meeting_count )
+        data = TeamStatsDAO::DataTeamStatsDAO.new( affiliations_count, meetings_count, first_meeting,  last_meeting )
+        expect( data.affiliations_count ).to eq( affiliations_count )
+        expect( data.meetings_count ).to eq( meetings_count )
         expect( data.first_meeting_dao ).to eq( first_meeting )
         expect( data.last_meeting_dao ).to eq( last_meeting )
       end

@@ -44,7 +44,13 @@ class TeamStats
         min(concat(ms.scheduled_date, ':', ms.meeting_id, ':', m.description, ':', ft.code)) as min_date,
         max(concat(ms.scheduled_date, ':', ms.meeting_id, ':', m.description, ':', ft.code)) as max_date,
         count(distinct ta.id) as affiliations_count,
-        count(distinct ms.meeting_id) as meetings_count
+        count(distinct ms.meeting_id) as meetings_count,
+        0 as individual_meters,
+        0 as individual_minutes,
+        0 as individual_seconds,
+        0 as individual_hundreds,
+        0 as individual_disqualifications,
+        max(mir.updated_at) as max_updated_at
       from meeting_individual_results mir
         join meeting_programs mp on mp.id = mir.meeting_program_id
         join meeting_events me on me.id = mp.meeting_event_id
@@ -78,19 +84,22 @@ class TeamStats
         fts = TeamStatsDAO::DataTeamStatsDAO.new()
 
         # Generals
-        fts.meetings_count    = federation_stats['meetings_count'].to_i
-        fts.first_meeting_dao = get_item_data( federation_stats['first_meeting_data'], @meeting_keys )
-        fts.last_meeting_dao  = get_item_data( federation_stats['last_meeting_data'], @meeting_keys )
+        fts.affiliations_count = federation_stats['affiliations_count'].to_i
+        fts.meetings_count     = federation_stats['meetings_count'].to_i
+        fts.first_meeting_dao  = get_meeting_detail_data( federation_stats['min_date'] )
+        fts.last_meeting_dao   = get_meeting_detail_data( federation_stats['max_date'] )
 
         # Individual results
         fts.individuals.meters_swam       = federation_stats['individual_meters'].to_i
         fts.individuals.time_swam         = federation_stats['individual_hundreds'].to_i + (federation_stats['individual_seconds'].to_i * 100) + (federation_stats['individual_minutes'].to_i * 6000)
-        fts.individuals.disqualifications = federation_stats['individual_disqualified_count'].to_i
+        fts.individuals.disqualifications = federation_stats['individual_disqualifications'].to_i
 
         # Relay results
-        fts.relays.meters_swam        = federation_stats['relay_meters'].to_i
-        fts.relays.time_swam          = federation_stats['relay_hundreds'].to_i + (federation_stats['relay_seconds'].to_i * 100) + (federation_stats['relay_minutes'].to_i * 6000)
-        fts.relays.disqualifications  = federation_stats['relay_disqualified_count'].to_i
+        #fts.relays.meters_swam        = federation_stats['relay_meters'].to_i
+        #fts.relays.time_swam          = federation_stats['relay_hundreds'].to_i + (federation_stats['relay_seconds'].to_i * 100) + (federation_stats['relay_minutes'].to_i * 6000)
+        #fts.relays.disqualifications  = federation_stats['relay_disqualifications'].to_i
+
+        fts.max_updated_at = federation_stats['max_updated_at']
 
         tsd.add_federation_data( federation_stats['federation_name'], fts )
       end
@@ -103,17 +112,17 @@ class TeamStats
   # item elements are semiclon separated lik 'PIPPO:1:PRIMO, PLUTO:2:SECONDO'
   # Returns nil if no items
   #
-  def get_item_data( data_list, data_tags )
-    item_data = Hash.new()
+  def get_meeting_detail_data( data_list )
+    item_data = nil
     #ms.scheduled_date, ':', m.id, ':', m.description, ':', ft.code
-    #event_data_tags = [:date, :meeting_id, :meeting_description, :federation_code]
     if data_list
-      data_list.split(':').each_with_index do |value, index|
-        tag = data_tags[index]
-        item_data[tag] = value
-      end
-    else
-      item_data = nil
+      data_values = data_list.split(':')
+      item_data = TeamStatsDAO::MeetingTeamStatsDAO.new(
+        data_values[0],
+        data_values[1],
+        data_values[2],
+        data_values[3]
+      )
     end
     item_data
   end

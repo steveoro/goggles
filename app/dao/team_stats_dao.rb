@@ -55,18 +55,20 @@ class TeamStatsDAO
   class DataTeamStatsDAO
 
     # These can be edited later on:
-    attr_accessor :meetings_count, :first_meeting_dao, :last_meeting_dao, :individuals, :relays
+    attr_accessor :affiliations_count, :meetings_count, :first_meeting_dao, :last_meeting_dao, :individuals, :relays, :max_updated_at
     #-- -------------------------------------------------------------------------
     #++
 
     # Creates a new instance.
     #
-    def initialize( meeting_count = 0, first_meeting_dao = nil, last_meeting_dao = nil, individuals = DetailTeamStatsDAO.new(), relays = DetailTeamStatsDAO.new() )
-      @meetings_count    = meeting_count
-      @first_meeting_dao = first_meeting_dao
-      @last_meeting_dao  = last_meeting_dao
-      @individuals       = individuals
-      @relays            = relays
+    def initialize( affiliations_count = 0, meeting_count = 0, first_meeting_dao = nil, last_meeting_dao = nil, individuals = DetailTeamStatsDAO.new(), relays = DetailTeamStatsDAO.new(), max_updated_at = 0 )
+      @affiliations_count = affiliations_count
+      @meetings_count     = meeting_count
+      @first_meeting_dao  = first_meeting_dao
+      @last_meeting_dao   = last_meeting_dao
+      @individuals        = individuals
+      @relays             = relays
+      @max_updated_at     = max_updated_at
     end
   end
 
@@ -95,9 +97,11 @@ class TeamStatsDAO
     # Sets federation data detail
     @federations[name]  = federation_data
 
-    @summary.meetings_count    += federation_data.meetings_count
-    @summary.first_meeting_dao = federation_data.first_meeting_dao if @summary.first_meeting_dao.nil? || federation_data.first_meeting_dao.meeting_date < @summary.first_meeting_dao.meeting_date
-    @summary.last_meeting_dao  = federation_data.last_meeting_dao if @summary.last_meeting_dao.nil? || federation_data.last_meeting_dao.meeting_date > @summary.last_meeting_dao.meeting_date
+    @summary.affiliations_count += federation_data.affiliations_count
+    @summary.meetings_count     += federation_data.meetings_count
+    @summary.first_meeting_dao  = federation_data.first_meeting_dao if @summary.first_meeting_dao.nil? || federation_data.first_meeting_dao.meeting_date < @summary.first_meeting_dao.meeting_date
+    @summary.last_meeting_dao   = federation_data.last_meeting_dao if @summary.last_meeting_dao.nil? || federation_data.last_meeting_dao.meeting_date > @summary.last_meeting_dao.meeting_date
+    @summary.max_updated_at     = federation_data.max_updated_at if @summary.max_updated_at == 0 || federation_data.max_updated_at > @summary.max_updated_at
 
     # Individual results
     @summary.individuals.meters_swam       += federation_data.individuals.meters_swam
@@ -108,10 +112,17 @@ class TeamStatsDAO
     @summary.relays.meters_swam       += federation_data.relays.meters_swam
     @summary.relays.time_swam         += federation_data.relays.time_swam
     @summary.relays.disqualifications += federation_data.relays.disqualifications
+
   end
 
   # Safe getter methods to retrieve stats data
   #
+
+  # Affiliations count
+  #
+  def get_affiliations_count
+    @summary.affiliations_count
+  end
 
   # Attended meetings count
   #
@@ -125,7 +136,7 @@ class TeamStatsDAO
     @summary.individuals.meters_swam
   end
 
-  # Team meters swam
+  # Team relay meters swam
   #
   def get_relay_meters_swam
     @summary.relays.meters_swam
@@ -139,7 +150,7 @@ class TeamStatsDAO
 
   # Team relay time swam
   #
-  def get_time_swam
+  def get_relay_time_swam
     Timing.new( @summary.relays.time_swam )
   end
 
@@ -166,7 +177,13 @@ class TeamStatsDAO
   # Team last attended meeting
   #
   def get_last_meeting_dao
-    @summary.last_meeting_hash
+    @summary.last_meeting_dao
+  end
+
+  # Team max updated at result
+  #
+  def get_max_updated_at
+    @summary.max_updated_at
   end
   #-- -------------------------------------------------------------------------
   #++

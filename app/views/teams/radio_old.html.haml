@@ -1,0 +1,50 @@
+= render( partial: 'tabs_and_title' )
+
+.row.col-xs-12
+  .col-xs-9
+    .row
+      .col-xs-3
+        = "#{ I18n.t(:name) }:"
+      .col-xs-9
+        %b= @team.get_full_name
+    .row
+      .col-xs-3
+        = "#{ I18n.t('address') }:"
+      .col-xs-9
+        = @team.get_complete_address
+    .row
+      .col-xs-3
+        = "#{ I18n.t('contacts') }:"
+      .col-xs-9
+        = @team.get_contacts.html_safe
+    .row
+      .col-xs-3
+        = "#{ I18n.t('home_site') }:"
+      .col-xs-9
+        = @team.get_home_site.html_safe
+    .row
+      .col-xs-3
+        = "#{ I18n.t('team.affiliations') }:"
+      .col-xs-9
+        = @team.get_season_type_list
+    .row
+      .col-xs-3
+        = "#{ I18n.t('radiography.first_meeting') }:"
+      .col-xs-9
+        = @team.get_first_meeting_name.html_safe
+    .row
+      .col-xs-3
+        = "#{ I18n.t('radiography.last_meeting') }:"
+      .col-xs-9
+        = @team.get_last_meeting_name.html_safe
+
+  .col-xs-3
+    .text-center
+      = image_tag( 'img_radiography.jpg', class: "img-thumbnail" )
+    .row
+      &nbsp;
+    .row.text-center
+      = link_to( t('team.all_races'), search_meetings_path( t: @team.id ), {class: "btn btn-default"} )
+
+.col-xs-12
+  &nbsp;

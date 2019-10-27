@@ -45,12 +45,12 @@
 
       .row.goggles-category-gap#general_stats
         .col-xs-3
-          = I18n.t('swimmers.meeting_presence') +':'
+          = I18n.t('radiography.meeting_presence') +':'
         .col-xs-9
           = count_with_award_star( @ssd.get_meetings_count )
       .row
         .col-xs-3
-          = I18n.t('swimmers.first_attended_meeting') +':'
+          = I18n.t('radiography.first_attended_meeting') +':'
         .col-xs-9
           - data = @ssd.get_first_meeting_hash
           - if data
@@ -61,7 +61,7 @@
               = "#{data[:meeting_description]} (#{data[:federation_code]})"
       .row
         .col-xs-3
-          = I18n.t('swimmers.last_attended_meeting') +':'
+          = I18n.t('radiography.last_attended_meeting') +':'
         .col-xs-9
           - data = @ssd.get_last_meeting_hash
           - if data
@@ -90,28 +90,28 @@
           = count_with_small_star( @ssd.get_individual_results_count )
       .row
         .col-xs-3
-          = I18n.t('swimmers.total_metres_swam') +':'
+          = I18n.t('radiography.total_metres_swam') +':'
         .col-xs-9
           = count_with_star( @ssd.get_meters_swam )
       .row
         .col-xs-3
-          = I18n.t('swimmers.total_time_swam') +':'
+          = I18n.t('radiography.total_time_swam') +':'
         .col-xs-9
           = @ssd.get_time_swam.to_s
       .row
         .col-xs-3
-          = I18n.t('swimmers.total_disqualifications') +':'
+          = I18n.t('radiography.total_disqualifications') +':'
         .col-xs-9
           - dsq_count = @ssd.get_disqualifications
           - if dsq_count > 0
             = count_with_bomb( dsq_count )
           - else
-            = I18n.t('swimmers.no_disqualifications')
+            = I18n.t('radiography.no_disqualifications')
 
       - if @ssd.get_best_fin_hash
         .row.goggles-category-gap#FIN_stats
           .col-xs-3
-            = I18n.t('swimmers.best_score_ever') +':'
+            = I18n.t('radiography.best_score_ever') +':'
           .col-xs-9
             - data = @ssd.get_best_fin_hash
             - if data
@@ -125,7 +125,7 @@
               = data[:event_code]
         .row
           .col-xs-3
-            = I18n.t('swimmers.worst_score_ever') +':'
+            = I18n.t('radiography.worst_score_ever') +':'
           .col-xs-9
             - data = @ssd.get_worst_fin_hash
             - if data
@@ -139,7 +139,7 @@
               = data[:event_code]
         .row
           .col-xs-3
-            = I18n.t('swimmers.total_fin_points') +':'
+            = I18n.t('radiography.total_fin_points') +':'
           .col-xs-9
             = count_with_small_star(@ssd.get_tot_fin_points, 50000)
         .row

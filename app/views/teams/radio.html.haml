@@ -1,50 +1,109 @@
 = render( partial: 'tabs_and_title' )
+- cache( cache_key_for_team( 'radio', @team.id, @team_stats.get_max_updated_at ) ) do
 
-.row.col-xs-12
-  .col-xs-9
-    .row
-      .col-xs-3
-        = "#{ I18n.t(:name) }:"
-      .col-xs-9
-        %b= @team.get_full_name
-    .row
-      .col-xs-3
-        = "#{ I18n.t('address') }:"
-      .col-xs-9
-        = @team.get_complete_address
-    .row
-      .col-xs-3
-        = "#{ I18n.t('contacts') }:"
-      .col-xs-9
-        = @team.get_contacts.html_safe
-    .row
-      .col-xs-3
-        = "#{ I18n.t('home_site') }:"
-      .col-xs-9
-        = @team.get_home_site.html_safe
-    .row
-      .col-xs-3
-        = "#{ I18n.t('team.affiliations') }:"
-      .col-xs-9
-        = @team.get_season_type_list
-    .row
-      .col-xs-3
-        = "#{ I18n.t('radiography.first_meeting') }:"
-      .col-xs-9
-        = @team.get_first_meeting_name.html_safe
-    .row
-      .col-xs-3
-        = "#{ I18n.t('radiography.last_meeting') }:"
-      .col-xs-9
-        = @team.get_last_meeting_name.html_safe
+  .row.col-xs-12
+    .col-xs-9
+      - # Data red from teams
+      .row
+        .col-xs-3
+          = "#{ I18n.t(:name) }:"
+        .col-xs-9
+          %b= @team.get_full_name
+      .row
+        .col-xs-3
+          = "#{ I18n.t('address') }:"
+        .col-xs-9
+          = @team.get_complete_address
+      .row
+        .col-xs-3
+          = "#{ I18n.t('contacts') }:"
+        .col-xs-9
+          = @team.get_contacts.html_safe
+      .row
+        .col-xs-3
+          = "#{ I18n.t('home_site') }:"
+        .col-xs-9
+          = @team.get_home_site.html_safe
 
-  .col-xs-3
-    .text-center
-      = image_tag( 'img_radiography.jpg', class: "img-thumbnail" )
-    .row
-      &nbsp;
-    .row.text-center
-      = link_to( t('team.all_races'), search_meetings_path( t: @team.id ), {class: "btn btn-default"} )
+      - # Statistic data
+      .row.goggles-category-gap#general_stats
+        .col-xs-3
+          = I18n.t('radiography.meeting_presence') +':'
+        .col-xs-9
+          = count_with_award_star( @team_stats.get_meetings_count )
+        .col-xs-3
+          = "#{ I18n.t('radiography.first_attended_meeting') }:"
+        .col-xs-9
+          - mtsDAO = @team_stats.get_first_meeting_dao
+          = link_to( Format.a_date(mtsDAO.meeting_date), meeting_show_team_results_path( :id => mtsDAO.meeting_id, :team_id => @team.id), {'data-toggle' => 'tooltip', title: I18n.t('meeting.show_team_results_tooltip') + "\r\n(#{mtsDAO.meeting_description})"} )
+          = ' - '
+          = link_to( "#{mtsDAO.meeting_description} (#{mtsDAO.federation_code})", meeting_show_full_path( :id => mtsDAO.meeting_id, :team_id => @team.id), {'data-toggle' => 'tooltip', title: I18n.t('meeting.show_results_tooltip') + "\r\n(#{mtsDAO.meeting_description})"} )
+      .row
+        .col-xs-3
+          = "#{ I18n.t('radiography.last_attended_meeting') }:"
+        .col-xs-9
+          - mtsDAO = @team_stats.get_last_meeting_dao
+          = link_to( Format.a_date(mtsDAO.meeting_date), meeting_show_team_results_path( :id => mtsDAO.meeting_id, :team_id => @team.id), {'data-toggle' => 'tooltip', title: I18n.t('meeting.show_team_results_tooltip') + "\r\n(#{mtsDAO.meeting_description})"} )
+          = ' - '
+          = link_to( "#{mtsDAO.meeting_description} (#{mtsDAO.federation_code})", meeting_show_full_path( :id => mtsDAO.meeting_id, :team_id => @team.id), {'data-toggle' => 'tooltip', title: I18n.t('meeting.show_results_tooltip') + "\r\n(#{mtsDAO.meeting_description})"} )
+      - if @team_stats.get_meters_swam > 0
+        .row
+          .col-xs-3
+            = I18n.t('radiography.total_metres_swam') +':'
+          .col-xs-9
+            = count_with_star( @team_stats.get_meters_swam )
+        .row
+          .col-xs-3
+            = I18n.t('radiography.total_time_swam') +':'
+          .col-xs-9
+            = @team_stats.get_time_swam.to_s
+        .row
+          .col-xs-3
+            = I18n.t('radiography.total_disqualifications') +':'
+          .col-xs-9
+            - dsq_count = @team_stats.get_disqualifications
+            - if dsq_count > 0
+              = count_with_bomb( dsq_count )
+            - else
+              = I18n.t('radiography.no_disqualifications')
 
-.col-xs-12
-  &nbsp;
+    .col-xs-3
+      .text-center
+        = image_tag( 'img_radiography.jpg', class: "img-thumbnail" )
+      .row
+        &nbsp;
+      .row.text-center
+        = link_to( t('team.all_races'), search_meetings_path( t: @team.id ), {class: "btn btn-default"} )
+
+  .row.goggles-category-gap#federation_stats
+    .col-xs-12
+      %b= "#{ I18n.t('team.affiliations') }:"
+      .row
+        .col-xs-12
+          %table.table.table-striped.table-bordered.table-hover.table-condensed
+            %tbody
+              %tr{'class'=>'success'}
+                %td
+                  %b= I18n.t('radiography.federation')
+                %td
+                  %b= I18n.t('radiography.affiliations')
+                %td
+                  %b= I18n.t('radiography.meeting_presence')
+                %td
+                  %b= I18n.t('radiography.first_attended_meeting')
+                %td
+                  %b= I18n.t('radiography.last_attended_meeting')
+              - @team_stats.federations.each_pair do |fed_name, fed_data|
+                %tr
+                  %td
+                    = fed_name
+                  %td.goggles-rightalign
+                    = fed_data.affiliations_count
+                  %td.goggles-rightalign
+                    = fed_data.meetings_count
+                  %td
+                    - mtsDAO = fed_data.first_meeting_dao
+                    = link_to( "#{Format.a_date(mtsDAO.meeting_date)} - #{mtsDAO.meeting_description}", meeting_show_full_path( :id => mtsDAO.meeting_id, :team_id => @team.id), {'data-toggle' => 'tooltip', title: I18n.t('meeting.show_results_tooltip') + "\r\n(#{mtsDAO.meeting_description})"} )
+                  %td
+                    - mtsDAO = fed_data.last_meeting_dao
+                    = link_to( "#{Format.a_date(mtsDAO.meeting_date)} - #{mtsDAO.meeting_description}", meeting_show_full_path( :id => mtsDAO.meeting_id, :team_id => @team.id), {'data-toggle' => 'tooltip', title: I18n.t('meeting.show_results_tooltip') + "\r\n(#{mtsDAO.meeting_description})"} )

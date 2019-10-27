@@ -38,7 +38,9 @@ describe TeamStats, type: :strategy do
       it "returns a query result with necessary columns" do
         keys = [
           'federation_name', 'min_date', 'max_date',
-          'affiliations_count', 'meetings_count'
+          'affiliations_count', 'meetings_count',
+          'individual_meters', 'individual_minutes', 'individual_seconds', 'individual_hundreds', 'individual_disqualifications',
+          'max_updated_at'
           ]
         result = subject.retrieve_data
         result.each do |element|
@@ -61,19 +63,12 @@ describe TeamStats, type: :strategy do
       end
     end
 
-    describe "#get_item_data" do
+    describe "#get_meeting_detail_data" do
       it "returns an hash if items given" do
-        expect( subject.get_item_data('PIPPO:PLUTO', [:id, :value]) ).to be_a_kind_of( Hash )
+        expect( subject.get_meeting_detail_data('PIPPO:PLUTO:PAPERINO:TOPOLINO') ).to be_a_kind_of( TeamStatsDAO::MeetingTeamStatsDAO )
       end
       it "returns nil if any items given" do
-        expect( subject.get_item_data( nil, [:id, :value] ) ).to be_nil
-      end
-      it "returns an hash with given keys" do
-        keys = [:id, :value, :note]
-        result = subject.get_item_data('PIPPO:PLUTO:PAPERINO', keys)
-        keys.each do |key|
-          expect( result.has_key?( key ) ).to eq(true)
-        end
+        expect( subject.get_meeting_detail_data( nil ) ).to be_nil
       end
     end
   end

@@ -27,6 +27,9 @@ class TeamsController < ApplicationController
   #
   def radio
     @tab_title = I18n.t('radiography.radio_tab')
+    ts = TeamStats.new( @team )
+    ts.retrieve_data
+    @team_stats = ts.get_team_stats_dao
   end
   #-- -------------------------------------------------------------------------
   #++
