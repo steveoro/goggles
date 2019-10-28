@@ -2,7 +2,7 @@
 
 .col-xs-12
   .col-xs-8.col-md-6
-    = "#{ I18n.t('team.meeting_presence') }:"
+    = "#{ I18n.t('radiography.meeting_presence') }:"
   .col-xs-4.col-md-6
     = count_with_award_star( @team.meetings.collect{|row| row.id}.uniq.size )
 
