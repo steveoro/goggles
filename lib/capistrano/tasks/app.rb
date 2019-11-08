@@ -166,7 +166,7 @@ namespace :app do
         within File.join(shared_path, "tmp") do
           as( user: :root ) do
             execute :chown, "-R #{fetch(:runner_user)}:#{fetch(:runner_group)} cache"
-            execute :chmod, "777 cache"
+            execute :chmod, "755 cache"
           end
         end
       end
