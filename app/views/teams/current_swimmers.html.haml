@@ -13,56 +13,73 @@
   %hr
 
 - cache( cache_key_for_team( 'current_swimmers', @team.id, @max_updated_at ) ) do
-  - if @swimmers.size > 0
+  - if @current_swimmers.swimmers.size > 0
     .row
       %table.table.table-striped.table-bordered.table-hover.table-condensed
         %tbody
           %tr{'class'=>'info'}
-            %td.text-center
+            %td.text-center{rowspan: 2}
               %b= I18n.t(:name)
-            %td.text-center
+            %td.text-center{rowspan: 2}
               %b= I18n.t('swimmers.year_of_birth')
-            %td.text-center
+            %td.text-center#goggles-border-rx-thick{rowspan: 2}
               %b= I18n.t('swimmers.age_current')
-            - @affiliations.each do |team_affiliation|
+
+            - @current_swimmers.affiliations.keys.each do |federation_code|
+              %td.text-center#goggles-border-rx-thick{colspan: 4}
+                %b= federation_code
+
+            %td.text-center{rowspan: 2}
+              %b= I18n.t('team_management.meeting_for_team')
+          %tr{'class'=>'info'}
+            - @current_swimmers.affiliations.keys.each do |federation_code|
               %td.text-center
-                %b= team_affiliation.season.federation_type.get_short_name
-                = " (#{I18n.t('meetings')})"
-            %td.text-center
-              %b= I18n.t('radiography.meeting_presence')
-            %td.text-center
-              %b= I18n.t('swimmers.events_attended')
-          - @swimmers.each do |swimmer|
-            - swimmer = swimmer.decorate
+                %b= I18n.t('team_management.badge_number')
+              %td.text-center
+                %b= I18n.t('team_management.category_code')
+              %td.text-center
+                %b= I18n.t('team_management.presence')
+              %td.text-center#goggles-border-rx-thick
+                - if @is_valid_team_manager
+                  %b= I18n.t('team_management.edit')
+                - else
+                  = ''
+
+          - @swimmers.values.each do |swimmer|
             %tr
               %td.goggles-td.goggles-rightalign
-                = swimmer.get_linked_swimmer_name
+                %b= link_to( swimmer.swimmer_name, swimmer_presence_path(id: swimmer.swimmer_id), { 'data-toggle'=>'tooltip', 'title'=>I18n.t('team_management.presence_link') } )
               %td.goggles-td.text-center
-                = swimmer.year_of_birth
-              %td.goggles-td.text-center
-                = Date::today.year - swimmer.year_of_birth
-              - @affiliations.each do |team_affiliation|
-                - badge = swimmer.badges.for_team_affiliation(team_affiliation).first if swimmer.badges.for_team_affiliation(team_affiliation).exists?
-                %td.goggles-div-centeralign{'data-toggle'=>'tooltip', 'title'=> badge ? "#{badge.category_type.code} - #{badge.number}" : 'N/A' }
-                  - if badge
-                    = show_tag( badge )
-                    = " (#{badge.meeting_individual_results.joins(:meeting).includes(:meeting).select('meetings.id').uniq.count})"
+                = swimmer.swimmer_year
+              %td.goggles-td.text-center#goggles-border-rx-thick
+                = Date::today.year - swimmer.swimmer_year
+              - @current_swimmers.affiliations.keys.each do |federation_code|
+                - badge = swimmer.get_badge(federation_code)
+                - if badge
+                  %td.goggles-centeralign
+                    = badge.badge_number
+                  %td.goggles-centeralign
+                    = badge.category_code
+                  %td.goggles-centeralign
+                    = badge.meetings_count
+                  %td.goggles-centeralign#goggles-border-rx-thick
                     / Add a command button column if you are a team manager:
                     - if @is_valid_team_manager
-                      = link_to(badge_edit_form_path(team_id: @team.id, badge_id: badge.id),  |
+                      = link_to(badge_edit_form_path(team_id: @team.id, badge_id: badge.badge_id),  |
                                 { class: "btn btn-default btn-sm", remote: true,              |
-                                onclick: "$('#rowBadgeEditFormContainer-#{swimmer.id}').removeClass('hidden');" }) do |
+                                onclick: "$('#rowBadgeEditFormContainer-#{swimmer.swimmer_id}').removeClass('hidden');" }) do |
                         %span
                           %i.fa.fa-edit
+                - else
+                  %td.goggles-centeralign#goggles-border-rx-thick{colspan: 4}
+                    = '--'
               %td.goggles-td.goggles-rightalign
-                = count_with_small_star( swimmer.meeting_individual_results.for_team( @team ).joins(:meeting).select('meetings.id').uniq.count, 50, :left )
-              %td.goggles-td.goggles-rightalign
-                = count_with_small_star( swimmer.meeting_individual_results.for_team( @team ).count + swimmer.meeting_relay_results.for_team( @team ).count, 100, :left )
+                = count_with_small_star( swimmer.meetings_total, 50, :left )
             - if @is_valid_team_manager
               / In-row placeholder for badge edit form:
-              %tr{ id: "rowBadgeEditFormContainer-#{swimmer.id}", class: 'hidden' }
-                %td{ colspan: 5 + @affiliations.count }
-                  %div{ id: "rowBadgeEditForm-#{swimmer.id}" }
+              %tr{ id: "rowBadgeEditFormContainer-#{swimmer.swimmer_id}", class: 'hidden' }
+                %td{ colspan: 5 + @current_swimmers.affiliations.count }
+                  %div{ id: "rowBadgeEditForm-#{swimmer.swimmer_id}" }
                     %span
                       %i.fa.fa-spinner.fa-spin.fa-fw
   .col-xs-12

@@ -56,6 +56,7 @@ class TeamCurrentSwimmers
       			bdg.swimmer_id as csi_swimmer_id,
       			ft.code as csi_federation_code,
       			ta.number as csi_affiliation_number,
+            bdg.id as csi_badge_id,
       			bdg.number as csi_badge_number,
       			ct.code as csi_category_code,
       			count(distinct ms.meeting_id) as csi_meetings_count,
@@ -73,7 +74,7 @@ class TeamCurrentSwimmers
       		where bdg.team_id = VAR_TEAM_ID
       			and sn.header_year = 'VAR_HEADER_YEAR'
                   and ft.code = 'CSI'
-      		group by bdg.swimmer_id, ft.code, ta.number, bdg.number, ct.code
+      		group by bdg.swimmer_id, ft.code, ta.number, bdg.id, bdg.number, ct.code
       	) bd_csi on bd_csi.csi_swimmer_id = s.id
       	left join (
       		-- Subquery for FIN badges
@@ -81,6 +82,7 @@ class TeamCurrentSwimmers
       			bdg.swimmer_id as fin_swimmer_id,
       			ft.code as fin_federation_code,
       			ta.number as fin_affiliation_number,
+            bdg.id as fin_badge_id,
       			bdg.number as fin_badge_number,
       			ct.code as fin_category_code,
       			count(distinct mss.meeting_id) as fin_meetings_count,
@@ -98,7 +100,7 @@ class TeamCurrentSwimmers
       		where bdg.team_id = VAR_TEAM_ID
       			and sn.header_year = 'VAR_HEADER_YEAR'
                   and ft.code = 'FIN'
-      		group by bdg.swimmer_id, ft.code, ta.number, bdg.number, ct.code
+      		group by bdg.swimmer_id, ft.code, ta.number, bdg.id, bdg.number, ct.code
       	) bd_fin on bd_fin.fin_swimmer_id = s.id
       	left join (
       		-- Subquery for UISP badges
@@ -106,6 +108,7 @@ class TeamCurrentSwimmers
       			bdg.swimmer_id as uisp_swimmer_id,
       			ft.code as uisp_federation_code,
       			ta.number as uisp_affiliation_number,
+            bdg.id as uisp_badge_id,
       			bdg.number as uisp_badge_number,
       			ct.code as uisp_category_code,
       			count(distinct mss.meeting_id) as uisp_meetings_count,
@@ -123,7 +126,7 @@ class TeamCurrentSwimmers
       		where bdg.team_id = VAR_TEAM_ID
       			and sn.header_year = 'VAR_HEADER_YEAR'
             and ft.code = 'UISP'
-      		group by bdg.swimmer_id, ft.code, ta.number, bdg.number, ct.code
+      		group by bdg.swimmer_id, ft.code, ta.number, bdg.id, bdg.number, ct.code
       	) bd_uisp on bd_uisp.uisp_swimmer_id = s.id
       	left join (
       		-- Subquery for global results
@@ -145,7 +148,8 @@ class TeamCurrentSwimmers
       		join seasons sn on sn.id = b.season_id
       	where b.swimmer_id = s.id
       		and b.team_id = VAR_TEAM_ID
-      		and sn.header_year = 'VAR_HEADER_YEAR');
+      		and sn.header_year = 'VAR_HEADER_YEAR')
+      order by s.complete_name;
     "
 
     # Prepare data retrieve query with team as parameter
@@ -169,7 +173,9 @@ class TeamCurrentSwimmers
         csi_affiliation = swimmer_data['csi_affiliation_number']
         fin_affiliation = swimmer_data['fin_affiliation_number']
         uisp_affiliation = swimmer_data['uisp_affiliation_number']
-        tcs.add_affiliation( csi_affiliation ) if csi_affiliation && !tcs.affiliations.has_key?( csi_affiliation )
+        tcs.add_affiliation( swimmer_data['csi_federation_code'], csi_affiliation ) if csi_affiliation && !tcs.affiliations.has_key?( csi_affiliation )
+        tcs.add_affiliation( swimmer_data['fin_federation_code'], fin_affiliation ) if fin_affiliation && !tcs.affiliations.has_key?( fin_affiliation )
+        tcs.add_affiliation( swimmer_data['uisp_federation_code'], uisp_affiliation ) if uisp_affiliation && !tcs.affiliations.has_key?( uisp_affiliation )
 
         tcs.updated_at = swimmer_data['max_updated_at'] if swimmer_data['max_updated_at']
 
@@ -179,19 +185,19 @@ class TeamCurrentSwimmers
 
         # Add CSI badge data if present
         if swimmer_data['csi_badge_number']
-          new_swimmer.add_badge( swimmer_data['csi_federation_code'], swimmer_data['csi_badge_number'], swimmer_data['csi_category_code'], swimmer_data['csi_meetings_count'] )
+          new_swimmer.add_badge( swimmer_data['csi_federation_code'], swimmer_data['csi_badge_id'], swimmer_data['csi_badge_number'], swimmer_data['csi_category_code'], swimmer_data['csi_meetings_count'] )
           tcs.updated_at = swimmer_data['csi_max_updated_at'] if swimmer_data['csi_max_updated_at'] && swimmer_data['csi_max_updated_at'] > tcs.updated_at
         end
 
         # Add FIN badge data if present
         if swimmer_data['fin_badge_number']
-          new_swimmer.add_badge( swimmer_data['fin_federation_code'], swimmer_data['fin_badge_number'], swimmer_data['fin_category_code'], swimmer_data['fin_meetings_count'] )
+          new_swimmer.add_badge( swimmer_data['fin_federation_code'], swimmer_data['fin_badge_id'], swimmer_data['fin_badge_number'], swimmer_data['fin_category_code'], swimmer_data['fin_meetings_count'] )
           tcs.updated_at = swimmer_data['fin_max_updated_at'] if swimmer_data['fin_max_updated_at'] && swimmer_data['fin_max_updated_at'] > tcs.updated_at
         end
 
         # Add UISP badge data if present
         if swimmer_data['uisp_badge_number']
-          new_swimmer.add_badge( swimmer_data['uisp_federation_code'], swimmer_data['uisp_badge_number'], swimmer_data['uisp_category_code'], swimmer_data['uisp_meetings_count'] )
+          new_swimmer.add_badge( swimmer_data['uisp_federation_code'], swimmer_data['uisp_badge_id'], swimmer_data['uisp_badge_number'], swimmer_data['uisp_category_code'], swimmer_data['uisp_meetings_count'] )
           tcs.updated_at = swimmer_data['uisp_max_updated_at'] if swimmer_data['uisp_max_updated_at'] && swimmer_data['uisp_max_updated_at'] > tcs.updated_at
         end
       end

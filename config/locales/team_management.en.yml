@@ -43,3 +43,12 @@ it:
     no_supermaster: "No valid results for FIN Supermaster ranking"
     detail_nav: 'Results detail'
     summary_nav: 'Summary'
+
+
+    badge_act: 'Badge act'
+    badge_number: 'Number'
+    category_code: 'Cat'
+    presence: 'Presence'
+    edit: 'Edit'
+    meeting_for_team: 'Meeting with team'
+    presence_link: "Go to the athlet's presence page"

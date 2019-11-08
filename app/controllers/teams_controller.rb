@@ -48,16 +48,21 @@ class TeamsController < ApplicationController
     params.permit! # (No unsafe params are possible)
     @tab_title = I18n.t('radiography.team_current_swimmers_tab')
 
-    
-    @last_seasons = get_searched_seasons
-    @affiliations = @team.team_affiliations.includes(season: :federation_type).where(season_id: @last_seasons)
-    current_badges = @team.badges.where(season_id: @last_seasons).includes( :swimmer ) if @last_seasons && @team.badges.exists?
-    @swimmers = if current_badges.nil?
-      []
-    else
-      current_badges.map{ |badge| badge.swimmer }.uniq.sort{ |a,b| a.get_full_name <=> b.get_full_name }
-    end
-    @max_updated_at = @swimmers.size > 0 ? current_badges.order(updated_at: :desc).first.updated_at : 0
+    tcs = TeamCurrentSwimmers.new( @team )
+    tcs.retrieve_data
+    @current_swimmers = tcs.set_team_current_swimmers_dao
+    @swimmers = @current_swimmers.swimmers
+    @max_updated_at = @current_swimmers.updated_at
+
+    #@last_seasons = get_searched_seasons
+    #@affiliations = @team.team_affiliations.includes(season: :federation_type).where(season_id: @last_seasons)
+    #current_badges = @team.badges.where(season_id: @last_seasons).includes( :swimmer ) if @last_seasons && @team.badges.exists?
+    #@swimmers = if current_badges.nil?
+    #  []
+    #else
+    #  current_badges.map{ |badge| badge.swimmer }.uniq.sort{ |a,b| a.get_full_name <=> b.get_full_name }
+    #end
+    #@max_updated_at = @swimmers.size > 0 ? current_badges.order(updated_at: :desc).first.updated_at : 0
 
     # Badge management entry point, only for Team Managers:
     @is_valid_team_manager = TeamManagerValidator.can_manage_team?( current_user, @team )

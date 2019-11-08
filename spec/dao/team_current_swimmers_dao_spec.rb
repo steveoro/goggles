@@ -7,6 +7,7 @@ describe TeamCurrentSwimmersDAO, type: :model do
 
   let(:team)                { Team.first(300).sample }
 
+  let(:badge_id)            { (rand * 10000).to_i }
   let(:badge_number)        { "BDG #{(rand * 100000).to_i}" }
   let(:category_code)       { CategoryType.all.sample.code }
   let(:meetings_count)      { (rand * 200).to_i }
@@ -20,23 +21,25 @@ describe TeamCurrentSwimmersDAO, type: :model do
 
   context "CurrentSwimmerBadgeDAO subelement," do
 
-    subject { TeamCurrentSwimmersDAO::CurrentSwimmerBadgeDAO.new() }
+    subject { TeamCurrentSwimmersDAO::CurrentSwimmerBadgeDAO.new( badge_id ) }
 
     it_behaves_like( "(the existance of a method)", [
-      :badge_number, :category_code, :meetings_count
+      :badge_id, :badge_number, :category_code, :meetings_count
     ] )
 
-    describe "when initialized without parameters" do
+    describe "when initialized without optional parameters" do
       it "returns default values" do
+        expect( subject.badge_id ).to eq( badge_id )
         expect( subject.badge_number ).to eq( 'ND' )
         expect( subject.category_code ).to eq( 'ND' )
         expect( subject.meetings_count ).to eq( 0 )
       end
     end
 
-    describe "when initialized with parameters" do
+    describe "when initialized with optional parameters" do
       it "returns given values" do
-        detail = TeamCurrentSwimmersDAO::CurrentSwimmerBadgeDAO.new( badge_number, category_code, meetings_count )
+        detail = TeamCurrentSwimmersDAO::CurrentSwimmerBadgeDAO.new( badge_id, badge_number, category_code, meetings_count )
+        expect( subject.badge_id ).to eq( badge_id )
         expect( detail.badge_number ).to eq( badge_number )
         expect( detail.category_code ).to eq( category_code )
         expect( detail.meetings_count ).to eq( meetings_count )
@@ -92,18 +95,18 @@ describe TeamCurrentSwimmersDAO, type: :model do
 
     describe "#add_badge" do
       it "returns a positive number" do
-        expect( subject.add_badge( federation_code ) ).to be > 0
+        expect( subject.add_badge( federation_code, badge_id ) ).to be > 0
       end
       it "returns 1 if no other data present" do
         expect( subject.badges.size ).to eq( 0 )
-        result = subject.add_badge( federation_code )
+        result = subject.add_badge( federation_code, badge_id )
         expect( result ).to eq( 1 )
         expect( subject.badges.size ).to eq( result )
       end
       it "creates a CurrentSwimmerBadgeDAO element" do
-        subject.add_badge( federation_code )
-        subject.add_badge( 'SOME' )
-        subject.add_badge( 'OTHER' )
+        subject.add_badge( federation_code, badge_id )
+        subject.add_badge( 'SOME', badge_id )
+        subject.add_badge( 'OTHER', badge_id )
         expect( subject.badges.size ).to eq( 3 )
         subject.badges.values do |badge|
           expect( badge ).to be_a_kind_of( TeamCurrentSwimmersDAO::CurrentSwimmerBadgeDAO )
@@ -117,9 +120,9 @@ describe TeamCurrentSwimmersDAO, type: :model do
       end
       it "returns a CurrentSwimmerBadgeDAO element if data present" do
         code = federation_code
-        subject.add_badge( code )
+        subject.add_badge( code, badge_id )
         expect( subject.get_badge( code ) ).to be_a_kind_of( TeamCurrentSwimmersDAO::CurrentSwimmerBadgeDAO )
-        subject.add_badge( 'SOME' )
+        subject.add_badge( 'SOME', badge_id )
         expect( subject.get_badge( 'SOME' ) ).to be_a_kind_of( TeamCurrentSwimmersDAO::CurrentSwimmerBadgeDAO )
       end
     end

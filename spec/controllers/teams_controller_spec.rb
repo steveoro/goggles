@@ -131,8 +131,7 @@ describe TeamsController, type: :controller do
       end
       it "assigns a list of swimmers" do
         expect( response.status ).to eq( 200 )
-        expect( assigns(:swimmers) ).to be_an_instance_of( Array )
-        expect( assigns(:swimmers) ).to all( be_an_instance_of( Swimmer ) )
+        expect( assigns(:swimmers) ).to be_an_kind_of( Hash )
         expect( assigns(:tab_title) ).to be_an_instance_of( String )
       end
     end

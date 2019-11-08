@@ -43,3 +43,11 @@ it:
     no_supermaster: "Nessun master ha rislutati validi per la classifica di società supermaster"
     detail_nav: 'Dettaglio risultati'
     summary_nav: 'Sommario'
+
+    badge_act: 'Tesseramento'
+    badge_number: 'Numero'
+    category_code: 'Cat'
+    presence: 'Presenze'
+    edit: 'Edit'
+    meeting_for_team: 'Meeting con la squadra'
+    presence_link: "Vai alla pagina del riepilogo presenze dell'atleta"

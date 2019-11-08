@@ -39,9 +39,9 @@ describe TeamCurrentSwimmers, type: :strategy do
       it "returns a query result with necessary columns" do
         keys = [
           'swimmer_id', 'swimmer_name', 'swimmer_year',
-          'csi_swimmer_id', 'csi_federation_code', 'csi_affiliation_number', 'csi_badge_number', 'csi_category_code', 'csi_meetings_count', 'csi_max_updated_at',
-          'fin_swimmer_id', 'fin_federation_code', 'fin_affiliation_number', 'fin_badge_number', 'fin_category_code', 'fin_meetings_count', 'fin_max_updated_at',
-          'uisp_swimmer_id', 'uisp_federation_code', 'uisp_affiliation_number', 'uisp_badge_number', 'uisp_category_code', 'uisp_meetings_count', 'uisp_max_updated_at',
+          'csi_swimmer_id', 'csi_federation_code', 'csi_affiliation_number', 'csi_badge_id', 'csi_badge_number', 'csi_category_code', 'csi_meetings_count', 'csi_max_updated_at',
+          'fin_swimmer_id', 'fin_federation_code', 'fin_affiliation_number', 'fin_badge_id', 'fin_badge_number', 'fin_category_code', 'fin_meetings_count', 'fin_max_updated_at',
+          'uisp_swimmer_id', 'uisp_federation_code', 'uisp_affiliation_number', 'uisp_badge_id', 'uisp_badge_number', 'uisp_category_code', 'uisp_meetings_count', 'uisp_max_updated_at',
           'meetings_total', 'max_updated_at'
           ]
         result = subject.retrieve_data
@@ -68,6 +68,7 @@ describe TeamCurrentSwimmers, type: :strategy do
         expect( subject.data_retrieved ).not_to be_nil
         tcs = subject.set_team_current_swimmers_dao
         expect( tcs.swimmers.size ).to be >= 0
+        expect( tcs.affiliations.size ).to be >= 0
       end
     end
   end

@@ -17,12 +17,13 @@ class TeamCurrentSwimmersDAO
   class CurrentSwimmerBadgeDAO
 
     # These can be edited later on:
-    attr_accessor :badge_number, :category_code, :meetings_count
+    attr_accessor :badge_id, :badge_number, :category_code, :meetings_count
 
     # Creates a new instance.
     #
-    def initialize( badge_number = 'ND', category_code = 'ND', meetings_count = 0 )
-      # Individual results
+    def initialize( badge_id, badge_number = 'ND', category_code = 'ND', meetings_count = 0 )
+      # badges data
+      @badge_id       = badge_id
       @badge_number   = badge_number
       @category_code  = category_code
       @meetings_count = meetings_count
@@ -49,8 +50,8 @@ class TeamCurrentSwimmersDAO
       @badges         = Hash.new()
     end
 
-    def add_badge( federation_code, badge_number = 'ND', category_code = 'ND', meetings_count = 0 )
-      @badges[federation_code] = CurrentSwimmerBadgeDAO.new( badge_number, category_code, meetings_count )
+    def add_badge( federation_code, badge_id, badge_number = 'ND', category_code = 'ND', meetings_count = 0 )
+      @badges[federation_code] = CurrentSwimmerBadgeDAO.new( badge_id, badge_number, category_code, meetings_count )
       @badges.size
     end
 
