@@ -165,6 +165,7 @@ namespace :app do
         end
         within File.join(shared_path, "tmp") do
           as( user: :root ) do
+            execute :rm, "cache/.views*" # Clean-up possible junk from either fragment caching or external attacks
             execute :chown, "-R #{fetch(:runner_user)}:#{fetch(:runner_group)} cache"
             execute :chmod, "777 cache"
           end
