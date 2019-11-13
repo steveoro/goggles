@@ -166,7 +166,7 @@ namespace :app do
         within File.join(shared_path, "tmp") do
           as( user: :root ) do
             # Clean-up possible junk from wrong permissions set:
-            invoke_command("if ls cache/.views* 1> /dev/null 2>&1 ; then rm cache/.views* ; fi")
+            execute("if ls cache/.views* 1> /dev/null 2>&1 ; then rm cache/.views* ; fi")
             execute :chown, "-R #{fetch(:runner_user)}:#{fetch(:runner_group)} cache"
             execute :chmod, "755 cache"
           end
