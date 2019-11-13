@@ -165,9 +165,10 @@ namespace :app do
         end
         within File.join(shared_path, "tmp") do
           as( user: :root ) do
-            execute :rm, "cache/.views*" # Clean-up possible junk from either fragment caching or external attacks
+            # Clean-up possible junk from wrong permissions set:
+            invoke_command("if ls cache/.views* 1> /dev/null 2>&1 ; then rm cache/.views* ; fi")
             execute :chown, "-R #{fetch(:runner_user)}:#{fetch(:runner_group)} cache"
-            execute :chmod, "777 cache"
+            execute :chmod, "755 cache"
           end
         end
       end
