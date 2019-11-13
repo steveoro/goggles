@@ -177,7 +177,7 @@ class TeamCurrentSwimmers
         tcs.add_affiliation( swimmer_data['fin_federation_code'], fin_affiliation ) if fin_affiliation && !tcs.affiliations.has_key?( fin_affiliation )
         tcs.add_affiliation( swimmer_data['uisp_federation_code'], uisp_affiliation ) if uisp_affiliation && !tcs.affiliations.has_key?( uisp_affiliation )
 
-        tcs.updated_at = swimmer_data['max_updated_at'] if swimmer_data['max_updated_at']
+        tcs.updated_at = swimmer_data['max_updated_at'] if swimmer_data['max_updated_at'] && swimmer_data['max_updated_at'] > tcs.updated_at
 
         # Creates the swimmer
         tcs.add_swimmer( swimmer_data['swimmer_id'], swimmer_data['swimmer_name'], swimmer_data['swimmer_year'], swimmer_data['meetings_total'] )

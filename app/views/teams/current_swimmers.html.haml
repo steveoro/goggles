@@ -12,7 +12,10 @@
   #rowBadgeEditForm-0
   %hr
 
-- cache( cache_key_for_team( 'current_swimmers', @team.id, @max_updated_at ) ) do
+- page_name = 'current_swimmers'
+- page_name += '_manageable' if @is_valid_team_manager
+- totals = {}
+- cache( cache_key_for_team( page_name, @team.id, @max_updated_at ) ) do
   - if @current_swimmers.swimmers.size > 0
     .row
       %table.table.table-striped.table-bordered.table-hover.table-condensed
@@ -26,6 +29,7 @@
               %b= I18n.t('swimmers.age_current')
 
             - @current_swimmers.affiliations.keys.each do |federation_code|
+              - totals[federation_code] = 0
               %td.text-center#goggles-border-rx-thick{colspan: 4}
                 %b= federation_code
 
@@ -56,6 +60,7 @@
               - @current_swimmers.affiliations.keys.each do |federation_code|
                 - badge = swimmer.get_badge(federation_code)
                 - if badge
+                  - totals[federation_code] += 1
                   %td.goggles-centeralign
                     = badge.badge_number
                   %td.goggles-centeralign
@@ -82,9 +87,19 @@
                   %div{ id: "rowBadgeEditForm-#{swimmer.swimmer_id}" }
                     %span
                       %i.fa.fa-spinner.fa-spin.fa-fw
-  .col-xs-12
-    %i
-      = I18n.t('meeting_team_score.team_total_athletes_for_current_year') + ": "
-      = @swimmers.size
+          %tr{'class'=>'success'}
+            %td.text-right{colspan: 2}
+              %b= I18n.t('meeting_team_score.team_total_athletes_for_current_year') + ": "
+            %td.text-right#goggles-border-rx-thick
+              %b= @swimmers.size
+
+            - @current_swimmers.affiliations.keys.each do |federation_code|
+              %td.text-right{colspan: 2}
+                %b= federation_code
+              %td.text-right#goggles-border-rx-thick{colspan: 2}
+                %b= totals[federation_code]
+            %td
+              %b= ''
+
   .col-xs-12
     &nbsp;
