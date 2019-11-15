@@ -165,9 +165,13 @@ namespace :app do
         end
         within File.join(shared_path, "tmp") do
           as( user: :root ) do
-            execute :rm, "cache/.views*" # Clean-up possible junk from either fragment caching or external attacks
-            execute :chown, "-R #{fetch(:runner_user)}:#{fetch(:runner_group)} cache"
-            execute :chmod, "777 cache"
+            # Clean-up possible junk from wrong permissions set:
+            execute("if ls cache/.views* 1> /dev/null 2>&1 ; then rm cache/.views* ; fi")
+            execute :chown, "-R #{fetch(:runner_user)}:#{fetch(:runner_group)} cache/"
+            # [Steve A.] It seems this is currently the only way to allow the webserver process
+            # to create cache subdirs in the current setup, even though, security-wise, it's
+            # waaay too much:
+            execute :chmod, "-R 777 cache/"
           end
         end
       end
