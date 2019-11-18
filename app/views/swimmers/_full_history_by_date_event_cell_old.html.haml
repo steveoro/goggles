@@ -13,7 +13,7 @@
   %script
     var popContent = "#{ escape_javascript( render(partial: 'result_popover_passages', locals: {individual_result: individual_result, passages: passages})) }";
     $("#passages#{individual_result.id}").popover({                             |
-      title: "#{ escape_javascript(individual_result.time_swam.to_s.html_safe) }",  |
+      title: "#{ escape_javascript(individual_result.get_timing.html_safe) }",  |
       html: true,                                                               |
       content: popContent                                                       |
     });                                                                         |

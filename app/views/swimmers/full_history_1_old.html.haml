@@ -1,47 +1,43 @@
 = render( partial: 'tabs_and_title' )
 - cache( cache_key_for_swimmer( 'full_history_1', @swimmer.id, @max_updated_at ) ) do
+  - pool_types = PoolType.only_for_meetings
   .col-xs-12#pageTop
-    - @swimmer_career.pool_types.keys.each do |pool_code|
+    - pool_types.each do |pool_type|
       .col-xs-6.graph-container-half
-        .graph-placeholder-full{ 'id' => "pie#{pool_code}" }
+        .graph-placeholder-full{ 'id' => "pie#{pool_type.code}" }
         %br/
         .col-xs-offset-4
           %ul.nav.nav-pills
             %li
-              = link_to("##{pool_code}", {'data-turbolinks'=>'false'}) do
-                - #= pool_type.i18n_description
-                = pool_code
+              = link_to("##{pool_type.code}", {'data-turbolinks'=>'false'}) do
+                = pool_type.i18n_description
 
   .col-xs-12.goggles-category-gap#full_history_1
-  - @swimmer_career.pool_types.each_pair do |pool_code, pool|
+  - pool_types.each do |pool_type|
     .col-xs-12
-      .goggles-category-gap{ 'id' => "#{pool_code}" }
+      .goggles-category-gap{ 'id' => "#{pool_type.code}" }
         %h3
-          = pool_code
+          = "#{pool_type.i18n_description}"
           = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
             = image_tag('bullet_arrow_up.png')
-
     .col-xs-12.table-responsive
       %table.table.table-striped.table-bordered.table-hover.table-condensed
         %tbody
           %tr{'class'=>'info'}
             %td.goggles-centeralign
               %b= I18n.t('meeting.meeting')
-            - event_list = pool.get_events
-            - event_list.each do |event_code|
+            - event_list = @full_history_by_date[pool_type.code][0]
+            - event_list.each do |event|
               %td.goggles-centeralign
-                %b= event_code
-
-          - pool.meetings.each_value do |meeting|
-            = render( partial: 'swimmer_career_meeting_row', locals: { meeting: meeting, event_list: event_list } )
-            
+                %b= event
+          - @full_history_by_date[pool_type.code][1].each do |event_by_date|
+            = render( partial: 'full_history_by_date_meeting_row', locals: { event_by_date: event_by_date, event_list: event_list } )
           %tr{'class'=>'info'}
             %td.goggles-centeralign
-              %b= I18n.t('meeting.meeting')
-            - event_list = pool.get_events
-            - event_list.each do |event_code|
+            - event_list = @full_history_by_date[pool_type.code][0]
+            - event_list.each do |event|
               %td.goggles-centeralign
-                %b= event_code
+                %b= event
 
   .col-xs-12.goggles-category-gap
     &nbsp;
@@ -59,8 +55,8 @@
      * [Steve, 20161014] Keep always functions names unique to avoid clash.
      */
     function plotFullHistory1Charts() {
-      var txt25 = "#{ escape_javascript( @swimmer_career.get_pool_events('25').to_json.html_safe ) }";
-      var txt50 = "#{ escape_javascript( @swimmer_career.get_pool_events('50').to_json.html_safe ) }";
+      var txt25 = "#{ escape_javascript( @full_history_events['25'].to_json.html_safe ) }";
+      var txt50 = "#{ escape_javascript( @full_history_events['50'].to_json.html_safe ) }";
       // DEBUG
       //console.log( txt25 );
       //console.log( txt50 );

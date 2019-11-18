@@ -41,17 +41,19 @@ class SwimmerCareerDAO
     attr_reader :event_code, :time_swam
 
     # These can be edited later on:
-    attr_accessor :standard_points, :individual_points, :meeting_points, :passages
+    attr_accessor :is_disqualified, :is_personal_best, :standard_points, :individual_points, :meeting_points, :passages
 
     # Creates a new instance.
     #
-    def initialize( event_code, time_swam, standard_points = nil, individual_points = nil, meeting_points = nil )
+    def initialize( event_code, time_swam, is_disqualified = false, is_personal_best = false, standard_points = nil, individual_points = nil, meeting_points = nil )
       # badges data
-      @event_code      = event_code
-      @time_swam    = time_swam
-      @standard_points    = standard_points
+      @event_code        = event_code
+      @time_swam         = time_swam
+      @is_disqualified   = is_disqualified
+      @is_personal_best  = is_personal_best
+      @standard_points   = standard_points
       @individual_points = individual_points
-      @meeting_points   = meeting_points
+      @meeting_points    = meeting_points
 
       @passages = Hash.new()
     end
@@ -59,6 +61,41 @@ class SwimmerCareerDAO
     def add_passage( passage_code, time_swam, time_swam_from_start = nil )
       @passages[passage_code] = SwimmerCareerPassageDAO.new( time_swam, time_swam_from_start )
       @passages.size
+    end
+
+    def get_timing
+      (time_swam.minutes.to_i > 0 ? "#{time_swam.minutes.to_i}'" : '') +
+        format('%02.0f"', time_swam.seconds.to_i) +
+        format('%02.0f', time_swam.hundreds.to_i)
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  # Represents the collection of swimmer results for a meeting
+  #
+  class SwimmerCareerEventDAO
+
+    # These can be edited later on:
+    attr_reader :event_code
+
+    # These can be edited later on:
+    attr_accessor :count
+
+    # Creates a new instance.
+    #
+    def initialize( event_code )
+      # badges data
+      @event_code        = event_code
+      @count             = 1
+    end
+
+    def add_event_swam
+      @count += 1
+    end
+
+    def get_count
+      @count
     end
   end
   #-- -------------------------------------------------------------------------
@@ -87,9 +124,13 @@ class SwimmerCareerDAO
       @results = Hash.new()
     end
 
-    def add_result( event_code, time_swam, standard_points = nil, individual_points = nil, meeting_points = nil )
-      @results[event_code] = SwimmerCareerResultDAO.new( time_swam, standard_points, individual_points, meeting_points )
+    def add_result( event_code, time_swam, is_disqualified = false, is_personal_best = false, standard_points = nil, individual_points = nil, meeting_points = nil )
+      @results[event_code] = SwimmerCareerResultDAO.new( event_code, time_swam, standard_points, individual_points, meeting_points )
       @results.size
+    end
+
+    def get_result( event_code )
+      @results[event_code]
     end
   end
   #-- -------------------------------------------------------------------------
@@ -123,6 +164,28 @@ class SwimmerCareerDAO
       @categories[category_code] = meeting_id if !@categories.has_key?( category_code )
       @meetings.size
     end
+
+    def add_result( meeting_id, event_order, event_code, time_swam, is_disqualified = false, is_personal_best = false, standard_points = nil, individual_points = nil, meeting_points = nil )
+      if !@events.has_key?( event_order )
+        @events[event_order] = SwimmerCareerEventDAO.new( event_code )
+      else
+        @events[event_order].add_event_swam
+      end
+      meeting = @meetings[meeting_id]
+      meeting.add_result( event_code, time_swam, is_disqualified, is_personal_best, standard_points, individual_points, meeting_points ) if meeting
+    end
+
+    def get_event( event_code  )
+      @events[event_code]
+    end
+
+    def get_events
+      events = []
+      @events.keys.sort{ |p,n| p <=> n }.each do |order|
+        events << @events[order].event_code
+      end
+      events
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -131,7 +194,7 @@ class SwimmerCareerDAO
   attr_reader :swimmer, :to_date, :from_date
 
   # These can be edited later on:
-  attr_accessor :updated_at
+  attr_accessor :updated_at, :pool_types
 
   # Creates a new instance.
   #
@@ -142,6 +205,18 @@ class SwimmerCareerDAO
     @updated_at = updated_at
 
     @pool_types = Hash.new()
+  end
+
+  def add_pool( pool_code )
+    @pool_types[pool_code] = SwimmerCareerDAO::SwimmerCareerPoolDAO.new( pool_code )
+  end
+
+  def get_pool( pool_code )
+    @pool_types[pool_code]
+  end
+
+  def get_pool_events( pool_code )
+    @pool_types[pool_code] ? @pool_types[pool_code].events : {}
   end
   #-- -------------------------------------------------------------------------
   #++

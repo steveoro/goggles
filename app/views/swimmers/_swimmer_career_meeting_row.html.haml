@@ -1,0 +1,11 @@
+%tr
+  %td
+    = meeting.meeting_name
+    = meeting.meeting_date
+    - event_list.each do |event_code|
+      - result = meeting.get_result( event_code )
+      - if result
+        = render( partial: 'full_history_by_date_event_cell', locals: { individual_result: result, passages: nil } )
+      - else
+        %td
+          = '--'
