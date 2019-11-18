@@ -66,6 +66,30 @@ describe SwimmerCareerDAO, type: :model do
       end
     end
 
+    describe "#get_timing" do
+      it "returns a string containing hundreds and seconds of time_swam" do
+        expect( subject.get_timing ).to be_an_instance_of( String )
+        expect( subject.get_timing ).to include( time_swam.hundreds.to_s )
+        expect( subject.get_timing ).to include( time_swam.seconds.to_s )
+      end
+      it "returns a string not containing minutes of time_swam if zero" do
+        result = SwimmerCareerDAO::SwimmerCareerResultDAO.new( event_code, Timing.new( hundreds, seconds ) )
+        expect( result.time_swam.minutes ).to eq( 0 )
+        expect( result.get_timing ).to be_an_instance_of( String )
+        expect( result.get_timing ).to include( time_swam.hundreds.to_s )
+        expect( result.get_timing ).to include( time_swam.seconds.to_s )
+        expect( result.get_timing.size ).to be <= 5
+      end
+      it "returns a string containing minutes of time_swam greater than zero" do
+        result = SwimmerCareerDAO::SwimmerCareerResultDAO.new( event_code, Timing.new( hundreds, seconds, minutes + 1 ) )
+        expect( result.time_swam.minutes ).to be > 0
+        expect( result.get_timing ).to be_an_instance_of( String )
+        expect( result.get_timing ).to include( time_swam.hundreds.to_s )
+        expect( result.get_timing ).to include( time_swam.seconds.to_s )
+        expect( result.get_timing ).to include( time_swam.minutes.to_s )
+      end
+    end
+
     describe "#add_passage" do
       it "adds an element to passages and returns passages count" do
         prev_size = subject.passages.size
@@ -159,6 +183,11 @@ describe SwimmerCareerDAO, type: :model do
         expect( subject.results.size ).to eq( count )
         expect( subject.results.has_key?( event_code )).to eq( true )
         expect( subject.results.has_key?( another_eve )).to eq( true )
+      end
+
+      it "sets the given time swam in the results structure" do
+        subject.add_result( event_code, time_swam )
+        expect( subject.results[event_code].time_swam ).to eq( time_swam )
       end
     end
   end

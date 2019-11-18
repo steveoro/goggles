@@ -1,11 +1,9 @@
 %tr
-  %td
-    = meeting.meeting_name
-    = meeting.meeting_date
+  %td.goggles-smallfont
+    = link_to( "#{meeting.meeting_name}", meeting_show_swimmer_results_path( :id => meeting.meeting_id, :swimmer_id => @swimmer.id), {'data-toggle' => 'tooltip', title: Format.a_date(meeting.meeting_date)} )
     - event_list.each do |event_code|
       - result = meeting.get_result( event_code )
       - if result
         = render( partial: 'full_history_by_date_event_cell', locals: { individual_result: result, passages: nil } )
       - else
         %td
-          = '--'
