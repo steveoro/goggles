@@ -63,6 +63,8 @@ class SwimmerCareerDAO
       @passages.size
     end
 
+    # Wrapper for get_timing method
+    # Could use minutes, seconds and hundreds directly instead of time_swam
     def get_timing
       (time_swam.minutes.to_i > 0 ? "#{time_swam.minutes.to_i}'" : '') +
         format('%02.0f"', time_swam.seconds.to_i) +
@@ -86,8 +88,8 @@ class SwimmerCareerDAO
     #
     def initialize( event_code )
       # badges data
-      @event_code        = event_code
-      @count             = 1
+      @event_code = event_code
+      @count      = 1
     end
 
     def add_event_swam
@@ -216,7 +218,12 @@ class SwimmerCareerDAO
   end
 
   def get_pool_events( pool_code )
-    @pool_types[pool_code] ? @pool_types[pool_code].events : {}
+    events = []
+    if @pool_types[pool_code]
+      @pool_types[pool_code].events.each_value do |eventDAO|
+        events << {:label => eventDAO.event_code, :data => eventDAO.count }
+      end
+    end
   end
   #-- -------------------------------------------------------------------------
   #++

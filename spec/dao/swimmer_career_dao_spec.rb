@@ -84,9 +84,9 @@ describe SwimmerCareerDAO, type: :model do
         result = SwimmerCareerDAO::SwimmerCareerResultDAO.new( event_code, Timing.new( hundreds, seconds, minutes + 1 ) )
         expect( result.time_swam.minutes ).to be > 0
         expect( result.get_timing ).to be_an_instance_of( String )
-        expect( result.get_timing ).to include( time_swam.hundreds.to_s )
-        expect( result.get_timing ).to include( time_swam.seconds.to_s )
-        expect( result.get_timing ).to include( time_swam.minutes.to_s )
+        expect( result.get_timing ).to include( result.time_swam.hundreds.to_s )
+        expect( result.get_timing ).to include( result.time_swam.seconds.to_s )
+        expect( result.get_timing ).to include( result.time_swam.minutes.to_s )
       end
     end
 
