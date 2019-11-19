@@ -21,26 +21,20 @@
             = image_tag('bullet_arrow_up.png')
 
     .col-xs-12.table-responsive
+      - prev_cat = 'none'
       %table.table.table-striped.table-bordered.table-hover.table-condensed
         %tbody
-          %tr{'class'=>'info'}
-            %td.goggles-centeralign
-              %b= I18n.t('meeting.meeting')
-            - event_list = pool.get_events
-            - event_list.each do |event_code|
-              %td.goggles-centeralign
-                %b= event_code
-
+          - event_list = pool.get_events
           - pool.meetings.each_value do |meeting|
+            - if prev_cat != meeting.category_code
+              %tr{'class'=>'info'}
+                %td.goggles-centeralign
+                  %b= I18n.t('meeting.meeting')
+                - event_list.each do |event_code|
+                  %td.goggles-centeralign
+                    %b= event_code
+              - prev_cat = meeting.category_code
             = render( partial: 'swimmer_career_meeting_row', locals: { meeting: meeting, event_list: event_list } )
-
-          %tr{'class'=>'info'}
-            %td.goggles-centeralign
-              %b= I18n.t('meeting.meeting')
-            - event_list = pool.get_events
-            - event_list.each do |event_code|
-              %td.goggles-centeralign
-                %b= event_code
 
   .col-xs-12.goggles-category-gap
     &nbsp;
