@@ -1,23 +1,22 @@
 = render( partial: 'tabs_and_title' )
 - cache( cache_key_for_swimmer( 'full_history_1', @swimmer.id, @max_updated_at ) ) do
   .col-xs-12#pageTop
-    - @swimmer_career.pool_types.keys.each do |pool_code|
+    - @swimmer_career.pool_types.each_value do |pool_data|
       .col-xs-6.graph-container-half
-        .graph-placeholder-full{ 'id' => "pie#{pool_code}" }
+        .graph-placeholder-full{ 'id' => "pie#{pool_data.pool_code}" }
         %br/
         .col-xs-offset-4
           %ul.nav.nav-pills
             %li
-              = link_to("##{pool_code}", {'data-turbolinks'=>'false'}) do
-                - #= pool_type.i18n_description
-                = pool_code
+              = link_to("##{pool_data.pool_code}", {'data-turbolinks'=>'false'}) do
+                = pool_data.description
 
   .col-xs-12.goggles-category-gap#full_history_1
   - @swimmer_career.pool_types.each_pair do |pool_code, pool|
     .col-xs-12
       .goggles-category-gap{ 'id' => "#{pool_code}" }
         %h3
-          = pool_code
+          = pool.description
           = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
             = image_tag('bullet_arrow_up.png')
 
@@ -34,7 +33,7 @@
 
           - pool.meetings.each_value do |meeting|
             = render( partial: 'swimmer_career_meeting_row', locals: { meeting: meeting, event_list: event_list } )
-            
+
           %tr{'class'=>'info'}
             %td.goggles-centeralign
               %b= I18n.t('meeting.meeting')

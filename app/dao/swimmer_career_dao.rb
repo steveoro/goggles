@@ -148,13 +148,14 @@ class SwimmerCareerDAO
     attr_reader :pool_code
 
     # These can be edited later on:
-    attr_accessor :meetings, :categories, :events
+    attr_accessor :description, :meetings, :categories, :events
 
     # Creates a new instance.
     #
     def initialize( pool_code )
       # pools data
-      @pool_code = pool_code
+      @pool_code   = pool_code
+      @description = I18n.t(:pool_type_des).gsub('{POOL_LENGTH}', pool_code )
 
       @meetings   = Hash.new()
       @categories = Hash.new()
@@ -224,6 +225,7 @@ class SwimmerCareerDAO
         events << {:label => eventDAO.event_code, :data => eventDAO.count }
       end
     end
+    events
   end
   #-- -------------------------------------------------------------------------
   #++
