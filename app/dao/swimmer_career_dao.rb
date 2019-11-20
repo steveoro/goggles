@@ -178,9 +178,9 @@ class SwimmerCareerDAO
       @events     = Hash.new()
     end
 
-    def add_meeting( meeting_id, meeting_date, meeting_name, federation_code, category_code )
+    def add_meeting( meeting_id, meeting_date, meeting_name, federation_code, category_code, category_age )
+      @categories[category_code] = category_age if !@categories.has_key?( category_code )
       @meetings[meeting_id] = SwimmerCareerMeetingDAO.new( meeting_id, meeting_date, meeting_name, federation_code, category_code )
-      @categories[category_code] = meeting_id if !@categories.has_key?( category_code )
       @meetings.size
     end
 

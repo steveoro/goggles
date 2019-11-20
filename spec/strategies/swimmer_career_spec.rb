@@ -53,7 +53,7 @@ describe SwimmerCareer, type: :strategy do
       end
       it "returns a query result of elements with necessary columns" do
         columns = [
-          'meeting_id', 'meeting_name', 'meeting_date', 'federation_code', 'category_code',
+          'meeting_id', 'meeting_name', 'meeting_date', 'federation_code', 'category_code', 'category_age',
           'pool_code', 'event_code', 'event_order', 'result_id', 'minutes', 'seconds', 'hundreds', 'is_personal_best', 'is_disqualified', 'updated_at',
           'passages'
         ]

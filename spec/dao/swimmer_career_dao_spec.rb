@@ -12,7 +12,8 @@ describe SwimmerCareerDAO, type: :model do
   let(:meeting_name)        { ( rand * 50 ).to_i.to_s + ' ' + FFaker::Lorem.word.camelcase + ' meeting' }
   let(:federation_code)     { FederationType.all.sample.code }
   let(:pool_code)           { PoolType.all.sample.code }
-  let(:category_code)       { CategoryType.where( season_id: 192 ).sample.code }
+  let(:category_code)       { CategoryType.where( season_id: [191, 192] ).sample.code }
+  let(:category_age)        { CategoryType.find_by_code(category_code).age_begin }
   let(:result_id)           { (rand * 100000).to_i }
   let(:event_code)          { EventType.are_not_relays.sample.code }
   let(:event_order)         { (rand * 20).to_i }
@@ -307,15 +308,15 @@ describe SwimmerCareerDAO, type: :model do
     describe "#add_meeting" do
       it "adds an element to meetings and returns meetings count" do
         prev_size = subject.meetings.size
-        count = subject.add_meeting( meeting_id, meeting_date, meeting_name, federation_code, category_code )
+        count = subject.add_meeting( meeting_id, meeting_date, meeting_name, federation_code, category_code, category_age )
         expect( count ).to eq( prev_size + 1 )
         expect( subject.meetings.size ).to eq( count )
       end
 
       it "sets the given meeting key in meetings structure" do
         another_key = meeting_id + 10
-        subject.add_meeting( meeting_id, meeting_date, meeting_name, federation_code, category_code )
-        count = subject.add_meeting( another_key, meeting_date, meeting_name, federation_code, category_code )
+        subject.add_meeting( meeting_id, meeting_date, meeting_name, federation_code, category_code, category_age )
+        count = subject.add_meeting( another_key, meeting_date, meeting_name, federation_code, category_code, category_age )
         expect( subject.meetings.size ).to eq( count )
         expect( subject.meetings.has_key?( meeting_id )).to eq( true )
         expect( subject.meetings.has_key?( another_key )).to eq( true )
@@ -324,9 +325,9 @@ describe SwimmerCareerDAO, type: :model do
       it "adds the given category in categories structure" do
         another_key = meeting_id + 10
         another_cat = 'Z23' # Category surely not already present
-        subject.add_meeting( meeting_id, meeting_date, meeting_name, federation_code, category_code )
-        subject.add_meeting( another_key, meeting_date, meeting_name, federation_code, category_code )
-        count = subject.add_meeting( -527, meeting_date, meeting_name, federation_code, another_cat )
+        subject.add_meeting( meeting_id, meeting_date, meeting_name, federation_code, category_code, category_age )
+        subject.add_meeting( another_key, meeting_date, meeting_name, federation_code, category_code, category_age )
+        count = subject.add_meeting( -527, meeting_date, meeting_name, federation_code, another_cat, category_age + 5 )
         expect( subject.categories.has_key?( category_code )).to eq( true )
         expect( subject.categories.has_key?( another_cat )).to eq( true )
         expect( subject.meetings.size ).to eq( count )
@@ -337,7 +338,7 @@ describe SwimmerCareerDAO, type: :model do
 
     describe "#add_result" do
       it "adds an element to results collection of meeting and returns meeting's results count" do
-        subject.add_meeting( meeting_id, meeting_date, meeting_name, federation_code, category_code )
+        subject.add_meeting( meeting_id, meeting_date, meeting_name, federation_code, category_code, category_age )
         count = subject.add_result( meeting_id, result_id, event_order, event_code, time_swam )
         expect( count ).to eq( 1 )
         expect( subject.meetings[meeting_id].results.size ).to eq( count )
@@ -345,7 +346,7 @@ describe SwimmerCareerDAO, type: :model do
 
       it "sets the given result key in results structure" do
         another_eve = '130FO' # Event surely not already present
-        subject.add_meeting( meeting_id, meeting_date, meeting_name, federation_code, category_code )
+        subject.add_meeting( meeting_id, meeting_date, meeting_name, federation_code, category_code, category_age )
         subject.add_result( meeting_id, result_id, event_order, event_code, time_swam )
         count = subject.add_result( meeting_id, result_id + 1, (rand * 20).to_i, another_eve, time_swam )
         expect( subject.meetings[meeting_id].results.size ).to eq( count )
@@ -355,14 +356,14 @@ describe SwimmerCareerDAO, type: :model do
 
       it "creates the event key if doesn't alerady exists" do
         expect( subject.events.has_key?( event_code )).to eq( false )
-        subject.add_meeting( meeting_id, meeting_date, meeting_name, federation_code, category_code )
+        subject.add_meeting( meeting_id, meeting_date, meeting_name, federation_code, category_code, category_age )
         subject.add_result( meeting_id, result_id, event_order, event_code, time_swam )
         expect( subject.events.has_key?( event_order )).to eq( true )
         expect( subject.get_event( event_order ).get_count).to eq( 1 )
       end
 
       it "adds 1 to the event count if event alerady exists" do
-        subject.add_meeting( meeting_id, meeting_date, meeting_name, federation_code, category_code )
+        subject.add_meeting( meeting_id, meeting_date, meeting_name, federation_code, category_code, category_age )
         subject.add_result( meeting_id, result_id, event_order, event_code, time_swam )
         expect( subject.events.has_key?( event_order )).to eq( true )
         another_key = meeting_id + 10
@@ -381,7 +382,7 @@ describe SwimmerCareerDAO, type: :model do
         expect( subject.get_event( event_order )).to be_nil
       end
       it "returns a SwimmerCareerEventDAO if event key doesn't exists" do
-        subject.add_meeting( meeting_id, meeting_date, meeting_name, federation_code, category_code )
+        subject.add_meeting( meeting_id, meeting_date, meeting_name, federation_code, category_code, category_age )
         subject.add_result( meeting_id, result_id, event_order, event_code, time_swam )
         expect( subject.events.has_key?( event_order )).to eq( true )
         expect( subject.get_event( event_order )).to be_an_instance_of( SwimmerCareerDAO::SwimmerCareerEventDAO )
@@ -397,7 +398,7 @@ describe SwimmerCareerDAO, type: :model do
         another_eve = '130FO' # Event surely not already present
         another_ord = event_order + 1
         expect( subject.get_events.size).to eq( 0 )
-        subject.add_meeting( meeting_id, meeting_date, meeting_name, federation_code, category_code )
+        subject.add_meeting( meeting_id, meeting_date, meeting_name, federation_code, category_code, category_age )
         subject.add_result( meeting_id, result_id, event_order, event_code, time_swam )
         subject.add_result( meeting_id, result_id + 1, another_ord, another_eve, time_swam )
         subject.add_result( another_key, result_id + 2, event_order, event_code, time_swam )
@@ -479,7 +480,7 @@ describe SwimmerCareerDAO, type: :model do
       end
       it "returns an array of Hash {label, data} if data present" do
         pool = subject.add_pool(pool_code)
-        pool.add_meeting( meeting_id, meeting_date, meeting_name, federation_code, category_code )
+        pool.add_meeting( meeting_id, meeting_date, meeting_name, federation_code, category_code, category_age )
         pool.add_result( meeting_id, result_id, event_order, event_code, time_swam )
         pool.add_result( meeting_id, result_id + 1, event_order, event_code, time_swam )
         pool.add_result( meeting_id + 1, result_id + 2, event_order, event_code, time_swam )

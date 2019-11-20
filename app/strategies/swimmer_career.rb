@@ -53,6 +53,7 @@ class SwimmerCareer
     	m.header_date as meeting_date,
       ft.code as federation_code,
       ct.code as category_code,
+      ct.age_begin as category_age,
       pt.code as pool_code,
       et.code as event_code,
       et.style_order as event_order,
@@ -111,7 +112,7 @@ class SwimmerCareer
 
         # Add meeting data to pool collection if not present
         meeting_id = result['meeting_id'].to_i
-        pool.add_meeting( meeting_id, result['meeting_date'], result['meeting_name'], result['federation_code'], result['category_code'] ) if !pool.meetings.has_key?( meeting_id )
+        pool.add_meeting( meeting_id, result['meeting_date'], result['meeting_name'], result['federation_code'], result['category_code'], result['category_age'].to_i ) if !pool.meetings.has_key?( meeting_id )
 
         # Add result data to meeting collection (never already present)
         time_swam = Timing.new( result['hundreds'].to_i, result['seconds'].to_i, result['minutes'].to_i )
