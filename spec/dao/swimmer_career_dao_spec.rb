@@ -13,6 +13,7 @@ describe SwimmerCareerDAO, type: :model do
   let(:federation_code)     { FederationType.all.sample.code }
   let(:pool_code)           { PoolType.all.sample.code }
   let(:category_code)       { CategoryType.where( season_id: 192 ).sample.code }
+  let(:result_id)           { (rand * 100000).to_i }
   let(:event_code)          { EventType.are_not_relays.sample.code }
   let(:event_order)         { (rand * 20).to_i }
   let(:passage_code)        { PassageType.all.sample.code }
@@ -23,10 +24,80 @@ describe SwimmerCareerDAO, type: :model do
 
   context "SwimmerCareerResultDAO subelement," do
 
-    subject { SwimmerCareerDAO::SwimmerCareerResultDAO.new( event_code, time_swam ) }
+    subject { SwimmerCareerDAO::SwimmerCareerPassageDAO.new( time_swam ) }
 
     it_behaves_like( "(the existance of a method)", [
-      :event_code, :time_swam,
+      :time_swam,
+      :time_swam_from_start
+    ] )
+
+    describe "when initialized without optional parameters" do
+      it "returns given values" do
+        expect( subject.time_swam ).to eq( time_swam )
+        expect( subject.time_swam_from_start ).to be_nil
+      end
+    end
+
+    describe "when initialized with optional parameters" do
+      it "returns given values" do
+        another_time = Timing.new( hundreds, seconds, minutes + 2 )
+        result = SwimmerCareerDAO::SwimmerCareerPassageDAO.new( time_swam, another_time )
+        expect( result.time_swam ).to eq( time_swam )
+        expect( result.time_swam_from_start ).to eq( another_time )
+      end
+    end
+
+    describe "#get_timing" do
+      it "returns a string containing hundreds and seconds of time_swam" do
+        result = subject.get_timing
+        expect( result ).to be_an_instance_of( String )
+        expect( result ).to include( time_swam.hundreds.to_s )
+        expect( result ).to include( time_swam.seconds.to_s )
+      end
+      it "returns a string not containing minutes of time_swam if zero" do
+        result = SwimmerCareerDAO::SwimmerCareerPassageDAO.new( Timing.new( hundreds, seconds ) )
+        expect( result.time_swam.minutes ).to eq( 0 )
+        expect( result.get_timing ).to be_an_instance_of( String )
+        expect( result.get_timing ).to include( time_swam.hundreds.to_s )
+        expect( result.get_timing ).to include( time_swam.seconds.to_s )
+        expect( result.get_timing.size ).to be <= 5
+      end
+      it "returns a string containing minutes of time_swam greater than zero" do
+        result = SwimmerCareerDAO::SwimmerCareerPassageDAO.new( Timing.new( hundreds, seconds, minutes + 1 ) )
+        expect( result.time_swam.minutes ).to be > 0
+        expect( result.get_timing ).to be_an_instance_of( String )
+        expect( result.get_timing ).to include( result.time_swam.hundreds.to_s )
+        expect( result.get_timing ).to include( result.time_swam.seconds.to_s )
+        expect( result.get_timing ).to include( result.time_swam.minutes.to_s )
+      end
+    end
+
+    describe "#get_incremental_timing" do
+      it "returns an empty string if no incremental time set" do
+        result = subject.get_incremental_timing
+        expect( result ).to be_an_instance_of( String )
+        expect( result.size ).to eq( 0 )
+      end
+      it "returns a string containing incremenatal time if set" do
+        another_time = Timing.new( hundreds, seconds, minutes + 2 )
+        scg = SwimmerCareerDAO::SwimmerCareerPassageDAO.new( time_swam, another_time )
+        result = scg.get_incremental_timing
+        expect( result ).to be_an_instance_of( String )
+        expect( result ).to include( scg.time_swam_from_start.hundreds.to_s )
+        expect( result ).to include( scg.time_swam_from_start.seconds.to_s )
+        expect( result ).to include( scg.time_swam_from_start.minutes.to_s )
+      end
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
+
+  context "SwimmerCareerResultDAO subelement," do
+
+    subject { SwimmerCareerDAO::SwimmerCareerResultDAO.new( result_id, event_code, time_swam ) }
+
+    it_behaves_like( "(the existance of a method)", [
+      :result_id, :event_code, :time_swam,
       :standard_points, :individual_points, :meeting_points
     ] )
 
@@ -40,6 +111,7 @@ describe SwimmerCareerDAO, type: :model do
 
     describe "when initialized without optional parameters" do
       it "returns given values" do
+        expect( subject.result_id ).to eq( result_id )
         expect( subject.event_code ).to eq( event_code )
         expect( subject.time_swam ).to eq( time_swam )
         expect( subject.is_disqualified ).to eq( false )
@@ -55,7 +127,8 @@ describe SwimmerCareerDAO, type: :model do
         std = (rand * 1000).round(2)
         ind = (rand * 100).to_i
         mtg = (rand * 1000).round(2)
-        result = SwimmerCareerDAO::SwimmerCareerResultDAO.new( event_code, time_swam, true, false, std, ind, mtg )
+        result = SwimmerCareerDAO::SwimmerCareerResultDAO.new( result_id, event_code, time_swam, true, false, std, ind, mtg )
+        expect( subject.result_id ).to eq( result_id )
         expect( result.event_code ).to eq( event_code )
         expect( result.time_swam ).to eq( time_swam )
         expect( result.is_disqualified ).to eq( true )
@@ -66,14 +139,28 @@ describe SwimmerCareerDAO, type: :model do
       end
     end
 
+    describe "#get_result_title" do
+      it "returns a string containing event_code" do
+        result = subject.get_result_title
+        expect( result ).to be_an_instance_of( String )
+        expect( result ).to include( event_code )
+      end
+      it "returns a string containing time_swam" do
+        result = subject.get_result_title
+        expect( result ).to be_an_instance_of( String )
+        expect( result ).to include( subject.get_timing )
+      end
+    end
+
     describe "#get_timing" do
       it "returns a string containing hundreds and seconds of time_swam" do
-        expect( subject.get_timing ).to be_an_instance_of( String )
-        expect( subject.get_timing ).to include( time_swam.hundreds.to_s )
-        expect( subject.get_timing ).to include( time_swam.seconds.to_s )
+        result = subject.get_timing
+        expect( result ).to be_an_instance_of( String )
+        expect( result ).to include( time_swam.hundreds.to_s )
+        expect( result ).to include( time_swam.seconds.to_s )
       end
       it "returns a string not containing minutes of time_swam if zero" do
-        result = SwimmerCareerDAO::SwimmerCareerResultDAO.new( event_code, Timing.new( hundreds, seconds ) )
+        result = SwimmerCareerDAO::SwimmerCareerResultDAO.new( result_id, event_code, Timing.new( hundreds, seconds ) )
         expect( result.time_swam.minutes ).to eq( 0 )
         expect( result.get_timing ).to be_an_instance_of( String )
         expect( result.get_timing ).to include( time_swam.hundreds.to_s )
@@ -81,7 +168,7 @@ describe SwimmerCareerDAO, type: :model do
         expect( result.get_timing.size ).to be <= 5
       end
       it "returns a string containing minutes of time_swam greater than zero" do
-        result = SwimmerCareerDAO::SwimmerCareerResultDAO.new( event_code, Timing.new( hundreds, seconds, minutes + 1 ) )
+        result = SwimmerCareerDAO::SwimmerCareerResultDAO.new( result_id, event_code, Timing.new( hundreds, seconds, minutes + 1 ) )
         expect( result.time_swam.minutes ).to be > 0
         expect( result.get_timing ).to be_an_instance_of( String )
         expect( result.get_timing ).to include( result.time_swam.hundreds.to_s )
@@ -171,22 +258,22 @@ describe SwimmerCareerDAO, type: :model do
     describe "#add_result" do
       it "adds an element to results and returns results count" do
         prev_size = subject.results.size
-        count = subject.add_result( event_code, time_swam )
+        count = subject.add_result( result_id, event_code, time_swam )
         expect( count ).to eq( prev_size + 1 )
         expect( subject.results.size ).to eq( count )
       end
 
       it "sets the given result key in results structure" do
         another_eve = '130FO' # Event surely not already present
-        subject.add_result( event_code, time_swam )
-        count = subject.add_result( another_eve, time_swam )
+        subject.add_result( result_id, event_code, time_swam )
+        count = subject.add_result( result_id + 1, another_eve, time_swam )
         expect( subject.results.size ).to eq( count )
         expect( subject.results.has_key?( event_code )).to eq( true )
         expect( subject.results.has_key?( another_eve )).to eq( true )
       end
 
       it "sets the given time swam in the results structure" do
-        subject.add_result( event_code, time_swam )
+        subject.add_result( result_id, event_code, time_swam )
         expect( subject.results[event_code].time_swam ).to eq( time_swam )
       end
     end
@@ -251,7 +338,7 @@ describe SwimmerCareerDAO, type: :model do
     describe "#add_result" do
       it "adds an element to results collection of meeting and returns meeting's results count" do
         subject.add_meeting( meeting_id, meeting_date, meeting_name, federation_code, category_code )
-        count = subject.add_result( meeting_id, event_order, event_code, time_swam )
+        count = subject.add_result( meeting_id, result_id, event_order, event_code, time_swam )
         expect( count ).to eq( 1 )
         expect( subject.meetings[meeting_id].results.size ).to eq( count )
       end
@@ -259,8 +346,8 @@ describe SwimmerCareerDAO, type: :model do
       it "sets the given result key in results structure" do
         another_eve = '130FO' # Event surely not already present
         subject.add_meeting( meeting_id, meeting_date, meeting_name, federation_code, category_code )
-        subject.add_result( meeting_id, event_order, event_code, time_swam )
-        count = subject.add_result( meeting_id, (rand * 20).to_i, another_eve, time_swam )
+        subject.add_result( meeting_id, result_id, event_order, event_code, time_swam )
+        count = subject.add_result( meeting_id, result_id + 1, (rand * 20).to_i, another_eve, time_swam )
         expect( subject.meetings[meeting_id].results.size ).to eq( count )
         expect( subject.meetings[meeting_id].results.has_key?( event_code )).to eq( true )
         expect( subject.meetings[meeting_id].results.has_key?( another_eve )).to eq( true )
@@ -269,20 +356,20 @@ describe SwimmerCareerDAO, type: :model do
       it "creates the event key if doesn't alerady exists" do
         expect( subject.events.has_key?( event_code )).to eq( false )
         subject.add_meeting( meeting_id, meeting_date, meeting_name, federation_code, category_code )
-        subject.add_result( meeting_id, event_order, event_code, time_swam )
+        subject.add_result( meeting_id, result_id, event_order, event_code, time_swam )
         expect( subject.events.has_key?( event_order )).to eq( true )
         expect( subject.get_event( event_order ).get_count).to eq( 1 )
       end
 
       it "adds 1 to the event count if event alerady exists" do
         subject.add_meeting( meeting_id, meeting_date, meeting_name, federation_code, category_code )
-        subject.add_result( meeting_id, event_order, event_code, time_swam )
+        subject.add_result( meeting_id, result_id, event_order, event_code, time_swam )
         expect( subject.events.has_key?( event_order )).to eq( true )
         another_key = meeting_id + 10
-        subject.add_result( another_key, event_order, event_code, time_swam )
+        subject.add_result( another_key, result_id + 1, event_order, event_code, time_swam )
         another_ord = event_order + 1
         another_eve = '130FO' # Event surely not already present
-        subject.add_result( meeting_id, another_ord, another_eve, time_swam )
+        subject.add_result( meeting_id, result_id + 2, another_ord, another_eve, time_swam )
         expect( subject.get_event( event_order ).get_count).to eq( 2 )
         expect( subject.get_event( another_ord ).get_count).to eq( 1 )
       end
@@ -295,7 +382,7 @@ describe SwimmerCareerDAO, type: :model do
       end
       it "returns a SwimmerCareerEventDAO if event key doesn't exists" do
         subject.add_meeting( meeting_id, meeting_date, meeting_name, federation_code, category_code )
-        subject.add_result( meeting_id, event_order, event_code, time_swam )
+        subject.add_result( meeting_id, result_id, event_order, event_code, time_swam )
         expect( subject.events.has_key?( event_order )).to eq( true )
         expect( subject.get_event( event_order )).to be_an_instance_of( SwimmerCareerDAO::SwimmerCareerEventDAO )
       end
@@ -311,10 +398,10 @@ describe SwimmerCareerDAO, type: :model do
         another_ord = event_order + 1
         expect( subject.get_events.size).to eq( 0 )
         subject.add_meeting( meeting_id, meeting_date, meeting_name, federation_code, category_code )
-        subject.add_result( meeting_id, event_order, event_code, time_swam )
-        subject.add_result( meeting_id, another_ord, another_eve, time_swam )
-        subject.add_result( another_key, event_order, event_code, time_swam )
-        subject.add_result( another_key, another_ord, another_eve, time_swam )
+        subject.add_result( meeting_id, result_id, event_order, event_code, time_swam )
+        subject.add_result( meeting_id, result_id + 1, another_ord, another_eve, time_swam )
+        subject.add_result( another_key, result_id + 2, event_order, event_code, time_swam )
+        subject.add_result( another_key, result_id + 3, another_ord, another_eve, time_swam )
         expect( subject.get_events.size).to eq( 2 )
         expect( subject.get_events.include?( event_code )).to eq( true )
         expect( subject.get_events.include?( another_eve )).to eq( true )
@@ -375,6 +462,38 @@ describe SwimmerCareerDAO, type: :model do
       end
       it "returns a SwimmerCareerPoolDAO if exists pool code" do
         expect( subject.pool_types.size ).to eq( 0 )
+      end
+    end
+
+    describe "#get_pool_events" do
+      it "returns an empty array if no data present" do
+        expect( subject.pool_types.size ).to eq( 0 )
+        result = subject.get_pool_events(pool_code)
+        expect( result ).to be_a_kind_of( Array )
+        expect( result.size ).to eq( 0 )
+        subject.add_pool(pool_code)
+        expect( subject.pool_types.size ).to eq( 1 )
+        result = subject.get_pool_events(pool_code)
+        expect( result ).to be_a_kind_of( Array )
+        expect( result.size ).to eq( 0 )
+      end
+      it "returns an array of Hash {label, data} if data present" do
+        pool = subject.add_pool(pool_code)
+        pool.add_meeting( meeting_id, meeting_date, meeting_name, federation_code, category_code )
+        pool.add_result( meeting_id, result_id, event_order, event_code, time_swam )
+        pool.add_result( meeting_id, result_id + 1, event_order, event_code, time_swam )
+        pool.add_result( meeting_id + 1, result_id + 2, event_order, event_code, time_swam )
+        another_ord = event_order + 1
+        another_eve = '130FO' # Event surely not already present
+        pool.add_result( meeting_id, result_id + 3, another_ord, another_eve, time_swam )
+        result = subject.get_pool_events(pool_code)
+        expect( result ).to be_a_kind_of( Array )
+        expect( result.size ).to eq( 2 )
+        result.each do |element|
+          expect( element ).to be_a_kind_of( Hash )
+          expect( element.has_key?( :label )).to eq( true )
+          expect( element.has_key?( :data )).to eq( true )
+        end
       end
     end
   end

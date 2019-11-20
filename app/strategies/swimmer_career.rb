@@ -12,7 +12,7 @@ class SwimmerCareer
   attr_reader :swimmer, :to_date, :from_date
 
   # These can be edited later on:
-  attr_accessor :data_retrieved
+  attr_accessor :data_retrieved, :passage_keys
 
   # Initialization
   #
@@ -27,6 +27,13 @@ class SwimmerCareer
     @from_date = from_date
 
     @data_retrieved   = nil
+
+    # Passage concat string structure
+    @passage_keys = [
+      :length_in_meters,
+      :minutes, :seconds, :hundreds,
+      :minutes_from_start, :seconds_from_start, :hundreds_from_start
+    ]
   end
 
   # Retrieve data from DB using the current seasons
@@ -49,6 +56,7 @@ class SwimmerCareer
       pt.code as pool_code,
       et.code as event_code,
       et.style_order as event_order,
+      mir.id as result_id,
       mir.minutes,
       mir.seconds,
       mir.hundreds,
@@ -107,14 +115,59 @@ class SwimmerCareer
 
         # Add result data to meeting collection (never already present)
         time_swam = Timing.new( result['hundreds'].to_i, result['seconds'].to_i, result['minutes'].to_i )
-        pool.add_result( meeting_id, result['event_order'].to_i, result['event_code'], time_swam, result['is_disqualified'], result['is_personal_best'] )
+        event_code = result['event_code']
+        pool.add_result( meeting_id, result['result_id'].to_i, result['event_order'].to_i, event_code, time_swam, result['is_disqualified'], result['is_personal_best'] )
+
+        # Add passages if present
+        if result['passages'] != 'null'
+          resultDAO = pool.get_result( meeting_id, event_code )
+          extract_passages( passage_keys, result['passages'] ).each do |passage|
+            time_pass = Timing.new( passage[:hundreds], passage[:seconds], passage[:minutes] )
+            time_from_start = Timing.new( passage[:hundreds_from_start], passage[:seconds_from_start], passage[:minutes_from_start] )
+            resultDAO.add_passage( passage[:length_in_meters], time_pass, time_from_start )
+          end
+        end
 
         # Sets max updated at value
         sc.updated_at = result['updated_at'] if sc.updated_at = 0 || sc.updated_at < result['updated_at']
-
       end
     end
     sc
+  end
+
+  # Extract passages data from concat string retrieved data
+  # Concat string should cotain:
+  # - null if no passages
+  # - a set, comma separated, of
+  # - length_in_meters;minutes;seconds;hundreds;minutes_from_start;seconds_from_start;hundreds_from_start if passage present
+  #   eg: 50;0;34;12;0;34;12,100;0;37;2;1;11;14,150;0;39;56;1;50;70,200;0;40;53;2;31;23
+  #
+  def extract_passages( keys, passage_list = 'null' )
+    passages = []
+    if passage_list && passage_list != 'null'
+      passage_list.split(',').each do |passages_data|
+        passages << extract_passage( keys, passages_data )
+      end
+    end
+    passages
+  end
+
+  # Extract single passage data from ';' concat string
+  # - length_in_meters;minutes;seconds;hundreds;minutes_from_start;seconds_from_start;hundreds_from_start if passage present
+  #
+  def extract_passage( keys, passages = 'null' )
+    passage = {}
+    if passages != 'null'
+      passage_data = passages.split(';')
+      if passage_data.size == keys.size
+        count = 0
+        keys.each do |key|
+          passage[key] = passage_data[count].to_i
+          count += 1
+        end
+      end
+    end
+    passage
   end
   #-- --------------------------------------------------------------------------
   #++

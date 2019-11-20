@@ -15,6 +15,12 @@ describe SwimmerCareer, type: :strategy do
   let(:leega_cat_50)    { 4 }
   let(:leega_eve_50)    { 14 }
 
+  let(:passage_keys)    {[
+                          :length_in_meters,
+                          :minutes, :seconds, :hundreds,
+                          :minutes_from_start, :seconds_from_start, :hundreds_from_start
+                        ]}
+
 
   context "well formed instance" do
     subject { SwimmerCareer.new( swimmer ) }
@@ -48,7 +54,7 @@ describe SwimmerCareer, type: :strategy do
       it "returns a query result of elements with necessary columns" do
         columns = [
           'meeting_id', 'meeting_name', 'meeting_date', 'federation_code', 'category_code',
-          'pool_code', 'event_code', 'event_order', 'minutes', 'seconds', 'hundreds', 'is_personal_best', 'is_disqualified', 'updated_at',
+          'pool_code', 'event_code', 'event_order', 'result_id', 'minutes', 'seconds', 'hundreds', 'is_personal_best', 'is_disqualified', 'updated_at',
           'passages'
         ]
         result = subject.retrieve_data
@@ -78,6 +84,68 @@ describe SwimmerCareer, type: :strategy do
       it "returns a SwimmerCareerDAO" do
         result = subject.retrieve_data
         expect( subject.set_swimmer_career_dao ).to be_an_instance_of( SwimmerCareerDAO )
+      end
+    end
+
+    describe "#extract_passages" do
+      it "returns an empty array if no parameters given" do
+        result = subject.extract_passages( passage_keys )
+        expect( result ).to be_a_kind_of( Array )
+        expect( result.size ).to eq( 0 )
+      end
+      it "returns an empty array if 'null' string given" do
+        result = subject.extract_passages( passage_keys, 'null' )
+        expect( result ).to be_a_kind_of( Array )
+        expect( result.size ).to eq( 0 )
+      end
+      it "returns a non empty array if data string given" do
+        data = '50;zio;pippo,100;20;23'
+        result = subject.extract_passages( passage_keys, data )
+        expect( result ).to be_a_kind_of( Array )
+        expect( result.size ).to eq( 2 )
+      end
+      it "returns an array of empty hash if wrong data string given" do
+        data = '50;zio;pippo,100;20;23'
+        result = subject.extract_passages( passage_keys, data )
+        result.each do |passage|
+          expect( passage ).to be_a_kind_of( Hash )
+          expect( passage.size ).to eq( 0 )
+        end
+      end
+      it "returns an array of non empty hash if good data string given" do
+        data = '50;0;34;12;0;34;12,100;0;37;2;1;11;14,150;0;39;56;1;50;70,200;0;40;53;2;31;23'
+        result = subject.extract_passages( passage_keys, data )
+        result.each do |passage|
+          expect( passage ).to be_a_kind_of( Hash )
+          expect( passage.size ).to eq( passage_keys.size )
+        end
+      end
+    end
+
+    describe "#extract_passage" do
+      it "returns an empty hash if no parameters given" do
+        result = subject.extract_passage( passage_keys )
+        expect( result ).to be_a_kind_of( Hash )
+        expect( result.size ).to eq( 0 )
+      end
+      it "returns an empty hash if 'null' string given" do
+        result = subject.extract_passage( passage_keys, 'null' )
+        expect( result ).to be_a_kind_of( Hash )
+        expect( result.size ).to eq( 0 )
+      end
+      it "returns an empty hash if wrong string given" do
+        result = subject.extract_passage( passage_keys, '50;zio;pippo' )
+        expect( result ).to be_a_kind_of( Hash )
+        expect( result.size ).to eq( 0 )
+      end
+      it "returns an hash if data string given" do
+        data = ['100', '0', '35', '27', '1', '08', '89']
+        result = subject.extract_passage( passage_keys, data.join(';') )
+        expect( result ).to be_a_kind_of( Hash )
+        expect( result.size ).to eq( passage_keys.length )
+        passage_keys.each do |key|
+          expect( result.has_key?( key )).to eq( true )
+        end
       end
     end
   end

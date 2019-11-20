@@ -1,0 +1,9 @@
+%table.table.table-striped.table-bordered.table-condensed.table-hover
+  - passages.each_pair do |passage_code,passage|
+    %tr
+      %td.goggles-rightalign
+        %i= "#{ passage_code } #{ I18n.t('meters_short') }"
+      %td.goggles-rightalign
+        = passage.get_timing
+      %td.goggles-rightalign
+        = passage.get_incremental_timing

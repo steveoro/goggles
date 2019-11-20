@@ -29,6 +29,17 @@ class SwimmerCareerDAO
       @time_swam            = time_swam
       @time_swam_from_start = time_swam_from_start
     end
+
+    # Wrapper for get_timing method
+    # Could use minutes, seconds and hundreds directly instead of time_swam
+    def get_timing( time_swam = @time_swam )
+      (time_swam.minutes.to_i > 0 ? "#{time_swam.minutes.to_i}'" : '') +
+        format('%02.0f"', time_swam.seconds.to_i) +
+        format('%02.0f', time_swam.hundreds.to_i)
+    end
+    def get_incremental_timing
+      time_swam_from_start ? get_timing( time_swam_from_start ) : ''
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -38,15 +49,16 @@ class SwimmerCareerDAO
   class SwimmerCareerResultDAO
 
     # These can be edited later on:
-    attr_reader :event_code, :time_swam
+    attr_reader :result_id, :event_code, :time_swam
 
     # These can be edited later on:
     attr_accessor :is_disqualified, :is_personal_best, :standard_points, :individual_points, :meeting_points, :passages
 
     # Creates a new instance.
     #
-    def initialize( event_code, time_swam, is_disqualified = false, is_personal_best = false, standard_points = nil, individual_points = nil, meeting_points = nil )
+    def initialize( result_id, event_code, time_swam, is_disqualified = false, is_personal_best = false, standard_points = nil, individual_points = nil, meeting_points = nil )
       # badges data
+      @result_id         = result_id
       @event_code        = event_code
       @time_swam         = time_swam
       @is_disqualified   = is_disqualified
@@ -59,8 +71,12 @@ class SwimmerCareerDAO
     end
 
     def add_passage( passage_code, time_swam, time_swam_from_start = nil )
-      @passages[passage_code] = SwimmerCareerPassageDAO.new( time_swam, time_swam_from_start )
-      @passages.size
+      passages[passage_code] = SwimmerCareerPassageDAO.new( time_swam, time_swam_from_start )
+      passages.size
+    end
+
+    def get_result_title
+      "#{event_code}: #{get_timing}"
     end
 
     # Wrapper for get_timing method
@@ -126,8 +142,8 @@ class SwimmerCareerDAO
       @results = Hash.new()
     end
 
-    def add_result( event_code, time_swam, is_disqualified = false, is_personal_best = false, standard_points = nil, individual_points = nil, meeting_points = nil )
-      @results[event_code] = SwimmerCareerResultDAO.new( event_code, time_swam, standard_points, individual_points, meeting_points )
+    def add_result( result_id, event_code, time_swam, is_disqualified = false, is_personal_best = false, standard_points = nil, individual_points = nil, meeting_points = nil )
+      @results[event_code] = SwimmerCareerResultDAO.new( result_id, event_code, time_swam, standard_points, individual_points, meeting_points )
       @results.size
     end
 
@@ -168,14 +184,18 @@ class SwimmerCareerDAO
       @meetings.size
     end
 
-    def add_result( meeting_id, event_order, event_code, time_swam, is_disqualified = false, is_personal_best = false, standard_points = nil, individual_points = nil, meeting_points = nil )
+    def add_result( meeting_id, result_id, event_order, event_code, time_swam, is_disqualified = false, is_personal_best = false, standard_points = nil, individual_points = nil, meeting_points = nil )
       if !@events.has_key?( event_order )
         @events[event_order] = SwimmerCareerEventDAO.new( event_code )
       else
         @events[event_order].add_event_swam
       end
       meeting = @meetings[meeting_id]
-      meeting.add_result( event_code, time_swam, is_disqualified, is_personal_best, standard_points, individual_points, meeting_points ) if meeting
+      meeting.add_result( result_id, event_code, time_swam, is_disqualified, is_personal_best, standard_points, individual_points, meeting_points ) if meeting
+    end
+
+    def get_result( meeting_id, event_code )
+      @meetings[meeting_id].get_result( event_code ) if @meetings[meeting_id]
     end
 
     def get_event( event_code  )
