@@ -28,6 +28,7 @@ en:
     relay_metres_swam: "Relay metres swam"
     relay_time_swam: "Relay time swam"
     relay_disqualifications: "Relay disqualifications"
+    category: "Category"
 
   swimmer:
     unable_to_retrieve_row_data: "Error during the retrieval of the pre-existing data from table 'swimmers'!"

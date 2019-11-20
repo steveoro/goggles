@@ -28,6 +28,7 @@ it:
     relay_metres_swam: "Metri frazioni percorsi"
     relay_time_swam: "Tempo totale frazioni"
     relay_disqualifications: "Squalifiche subite"
+    category: "Categoria"
 
   swimmer:
     unable_to_retrieve_row_data: "Errore durante il reperimento dei dati pre-esistenti sui Nuotatori! (tab: 'swimmers')"

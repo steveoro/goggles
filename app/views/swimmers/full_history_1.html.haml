@@ -1,5 +1,20 @@
 = render( partial: 'tabs_and_title' )
 - cache( cache_key_for_swimmer( 'full_history_1', @swimmer.id, @max_updated_at ) ) do
+  - # Right side bottom menù
+  .col-xs-12
+    %ul.col-xs-offset-10.col-xs-2.col-sm-offset-11.col-sm-1.col-md-offset-11.col-md-1.nav.nav-pills.nav-stacked.navbar-fixed-bottom.goggles-divlist-odd.navpill_side
+      %li
+        = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+          = I18n.t('top_of_page')
+      - @swimmer_career.pool_types.each_value do |pool_data|
+        %li
+          = link_to("##{pool_data.pool_code}", {'data-turbolinks'=>'false'}) do
+            = pool_data.description
+        - pool_data.categories.each_key do |category_code|
+          %li
+            = link_to("##{pool_data.pool_code}-#{category_code}", {'data-turbolinks'=>'false'}) do
+              = category_code
+
   .col-xs-12#pageTop
     - @swimmer_career.pool_types.each_value do |pool_data|
       .col-xs-6.graph-container-half
@@ -27,6 +42,17 @@
           - event_list = pool.get_events
           - pool.meetings.each_value do |meeting|
             - if prev_cat != meeting.category_code
+              %tr{'class'=>'success', 'id' => "#{pool_code}-#{meeting.category_code}" }
+                %td.goggles-centeralign
+                  %b= I18n.t('swimmers.category')
+                  = ' '
+                  %b= meeting.category_code
+                %td{'colspan'=>"#{event_list.size - 1}"}
+                  = ''
+                %td.goggles-centeralign
+                  = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+                    = image_tag('bullet_arrow_up.png')
+
               %tr{'class'=>'info'}
                 %td.goggles-centeralign
                   %b= I18n.t('meeting.meeting')
