@@ -1,117 +1,123 @@
 = render( partial: 'tabs_and_title' )
-- cache( cache_key_for_swimmer( 'full_history_1', @swimmer.id, @max_updated_at ) ) do
-  - # Right side bottom menù
-  .col-xs-12
-    %ul.col-xs-offset-10.col-xs-2.col-sm-offset-11.col-sm-1.col-md-offset-11.col-md-1.nav.nav-pills.nav-stacked.navbar-fixed-bottom.goggles-divlist-odd.navpill_side
-      %li
-        = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
-          = I18n.t('top_of_page')
-      - @swimmer_career.pool_types.each_value do |pool_data|
-        %li
-          = link_to("##{pool_data.pool_code}", {'data-turbolinks'=>'false'}) do
-            = pool_data.description
-        - pool_data.categories.each_pair do |category_code,category_age|
-          %li
-            = link_to("##{pool_data.pool_code}-#{category_age}", {'data-turbolinks'=>'false'}) do
-              = category_code
-
-  .col-xs-12#pageTop
-    - @swimmer_career.pool_types.each_value do |pool_data|
-      .col-xs-6.graph-container-half
-        .graph-placeholder-full{ 'id' => "pie#{pool_data.pool_code}" }
-        %br/
-        .col-xs-offset-4
-          %ul.nav.nav-pills
-            %li
-              = link_to("##{pool_data.pool_code}", {'data-turbolinks'=>'false'}) do
-                = pool_data.description
-
-  .col-xs-12.goggles-category-gap#full_history_1
-  - @swimmer_career.pool_types.each_pair do |pool_code, pool|
+- if @swimmer_career.pool_types.size > 0
+  - cache( cache_key_for_swimmer( 'full_history_1', @swimmer.id, @max_updated_at ) ) do
+    - # Right side bottom menù
     .col-xs-12
-      .goggles-category-gap{ 'id' => "#{pool_code}" }
-        %h3
-          = pool.description
+      %ul.col-xs-offset-10.col-xs-2.col-sm-offset-11.col-sm-1.col-md-offset-11.col-md-1.nav.nav-pills.nav-stacked.navbar-fixed-bottom.goggles-divlist-odd.navpill_side
+        %li
           = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
-            = image_tag('bullet_arrow_up.png')
+            = I18n.t('top_of_page')
+        - @swimmer_career.pool_types.each_value do |pool_data|
+          %li
+            = link_to("##{pool_data.pool_code}", {'data-turbolinks'=>'false'}) do
+              = pool_data.description
+          - pool_data.categories.each_pair do |category_code,category_age|
+            %li
+              = link_to("##{pool_data.pool_code}-#{category_age}", {'data-turbolinks'=>'false'}) do
+                = category_code
 
-    .col-xs-12.table-responsive
-      - prev_age = 0
-      %table.table.table-striped.table-bordered.table-hover.table-condensed
-        %tbody
-          - event_list = pool.get_events
-          - pool.meetings.each_value do |meeting|
-            - age = pool.categories[meeting.category_code]
-            - if prev_age < age
-              %tr{'class'=>'success', 'id' => "#{pool_code}-#{age}" }
-                %td.goggles-centeralign
-                  %b= I18n.t('swimmers.category')
-                  = ' '
-                  %b= meeting.category_code
-                %td{'colspan'=>"#{event_list.size - 1}"}
-                  = ''
-                %td.goggles-centeralign
-                  = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
-                    = image_tag('bullet_arrow_up.png')
+    .col-xs-12#pageTop
+      - @swimmer_career.pool_types.each_value do |pool_data|
+        .col-xs-6.graph-container-half
+          .graph-placeholder-full{ 'id' => "pie#{pool_data.pool_code}" }
+          %br/
+          .col-xs-offset-4
+            %ul.nav.nav-pills
+              %li
+                = link_to("##{pool_data.pool_code}", {'data-turbolinks'=>'false'}) do
+                  = pool_data.description
 
-              %tr{'class'=>'info'}
-                %td.goggles-centeralign
-                  %b= I18n.t('meeting.meeting')
-                - event_list.each do |event_code|
+    .col-xs-12.goggles-category-gap#full_history_1
+    - @swimmer_career.pool_types.each_pair do |pool_code, pool|
+      .col-xs-12
+        .goggles-category-gap{ 'id' => "#{pool_code}" }
+          %h3
+            = pool.description
+            = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+              = image_tag('bullet_arrow_up.png')
+
+      .col-xs-12.table-responsive
+        - prev_age = 0
+        %table.table.table-striped.table-bordered.table-hover.table-condensed
+          %tbody
+            - event_list = pool.get_events
+            - pool.meetings.each_value do |meeting|
+              - age = pool.categories[meeting.category_code]
+              - if prev_age < age
+                %tr{'class'=>'success', 'id' => "#{pool_code}-#{age}" }
                   %td.goggles-centeralign
-                    %b= event_code
-              - prev_age = age
-            = render( partial: 'swimmer_career_meeting_row', locals: { meeting: meeting, event_list: event_list } )
+                    %b= I18n.t('swimmers.category')
+                    = ' '
+                    %b= meeting.category_code
+                  %td{'colspan'=>"#{event_list.size - 1}"}
+                    = ''
+                  %td.goggles-centeralign
+                    = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+                      = image_tag('bullet_arrow_up.png')
 
-  .col-xs-12.goggles-category-gap
-    &nbsp;
+                %tr{'class'=>'info'}
+                  %td.goggles-centeralign
+                    %b= I18n.t('meeting.meeting')
+                  - event_list.each do |event_code|
+                    %td.goggles-centeralign
+                      %b= event_code
+                - prev_age = age
+              = render( partial: 'swimmer_career_meeting_row', locals: { meeting: meeting, event_list: event_list } )
 
-  :javascript
-    // Custom label formatter:
-    function labelFormatter(label, series) {
-      return "<div style='font-size:8pt; text-align:center; padding:2px; color:white;'>" +
-             label + "<br/>" + Math.round(series.percent) + "%</div>";
-    }
+    .col-xs-12.goggles-category-gap
+      &nbsp;
 
-    /**
-     * Defines and plots the pie graphs for #full_history_1
-     *
-     * [Steve, 20161014] Keep always functions names unique to avoid clash.
-     */
-    function plotFullHistory1Charts() {
-      var txt25 = "#{ escape_javascript( @swimmer_career.get_pool_events('25').to_json.html_safe ) }";
-      var txt50 = "#{ escape_javascript( @swimmer_career.get_pool_events('50').to_json.html_safe ) }";
-      // DEBUG
-      //console.log( txt25 );
-      //console.log( txt50 );
-      var data25 = JSON.parse( txt25 );
-      var data50 = JSON.parse( txt50 );
-      var options = {
-          series: {
-              pie: {
-                  show: true,
-                  radius: 1,
-                  // tilt: 0.5,
-                  label: {
-                      show: true,
-                      radius: 3/4,
-                      formatter: labelFormatter,
-                      background: { opacity: 0.5 }
-                  }
-              }
-          },
-          grid: {
-              hoverable: true
-          },
-          legend: { show: false }
-      };
-
-      $.plot( "#pie25", data25, options );
-      $.plot( "#pie50", data50, options );
-    }
-
-    $( function() {
-      if ( $('#full_history_1')['length'] == 1 ) {
-        plotFullHistory1Charts();
+    :javascript
+      // Custom label formatter:
+      function labelFormatter(label, series) {
+        return "<div style='font-size:8pt; text-align:center; padding:2px; color:white;'>" +
+               label + "<br/>" + Math.round(series.percent) + "%</div>";
       }
-    });
+
+      /**
+       * Defines and plots the pie graphs for #full_history_1
+       *
+       * [Steve, 20161014] Keep always functions names unique to avoid clash.
+       */
+      function plotFullHistory1Charts() {
+        var txt25 = "#{ escape_javascript( @swimmer_career.get_pool_events('25').to_json.html_safe ) }";
+        var txt50 = "#{ escape_javascript( @swimmer_career.get_pool_events('50').to_json.html_safe ) }";
+        // DEBUG
+        //console.log( txt25 );
+        //console.log( txt50 );
+        var data25 = JSON.parse( txt25 );
+        var data50 = JSON.parse( txt50 );
+        var options = {
+            series: {
+                pie: {
+                    show: true,
+                    radius: 1,
+                    // tilt: 0.5,
+                    label: {
+                        show: true,
+                        radius: 3/4,
+                        formatter: labelFormatter,
+                        background: { opacity: 0.5 }
+                    }
+                }
+            },
+            grid: {
+                hoverable: true
+            },
+            legend: { show: false }
+        };
+
+        $.plot( "#pie25", data25, options );
+        $.plot( "#pie50", data50, options );
+      }
+
+      $( function() {
+        if ( $('#full_history_1')['length'] == 1 ) {
+          plotFullHistory1Charts();
+        }
+      });
+
+- else
+  .col-xs-12.goggles-div-centeralign
+    %p= image_tag( 'mmh.jpg', class: "img_thumbnail" )
+    %h3=I18n.t('career.no_data')

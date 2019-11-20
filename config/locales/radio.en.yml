@@ -140,3 +140,6 @@ en:
     presences_link: 'Goto swimmer presence tab'
     season: 'Season'
     no_data: 'Mmmmh... No data found for selected season'
+
+  career:
+    no_data: 'Mmmmh... No results found for swimmer'
