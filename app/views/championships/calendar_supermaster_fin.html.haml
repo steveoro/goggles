@@ -11,8 +11,7 @@
             = link_to( t('championships.back_to_current'), championships_calendar_supermaster_fin_path( id: @current_season_id ), {class: "goggles-nav-compact"})
         .ghost-divider-vertical
 
-.row.col-xs-12
-  = render( partial: 'goggles/meeting_list', locals: {season: false} )
+= render( partial: 'goggles/meeting_list', locals: {season: false} )
 
 .row.col-xs-12.goggles-category-gap#Remark
   %b= t('calendars.remark')

@@ -40,7 +40,7 @@
           %tr.text-center{'id'=>"#{prev_month}", 'class'=>'success'}
             %td.goggles-centeralign{'colspan'=>"#{@calendarDAO.column_to_be_shown}"}
               %b= meeting.month
-            
+
         - meeting.meeting_sessions.each_with_index do |meeting_session, index|
           %tr{'id'=>"#{meeting.id}-#{index}"}
             - if index == 0

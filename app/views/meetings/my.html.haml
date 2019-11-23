@@ -4,10 +4,9 @@
     .col-xs-12
       %h3= I18n.t('meeting.my.title')
     .col-xs-12
-      %h4= I18n.t('meeting.my.subtitle')
+      = I18n.t('meeting.my.subtitle')
 
-.row.col-xs-12
-  = render( partial: 'goggles/meeting_list', locals: {season: true} )
+= render( partial: 'goggles/meeting_list', locals: {season: true} )
 
 .row.col-xs-12.goggles-category-gap#Remark
   %p

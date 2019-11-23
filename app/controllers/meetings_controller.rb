@@ -42,60 +42,17 @@ class MeetingsController < ApplicationController
   # a customized calendar to check out frequently.
   #
   def my
-    
     open_season_ids = Season.is_not_ended.select(:id).map{|s| s.id }
+
+    # Why refine? If user tags a meeting out form his affikliation it should be shown
+    browsable_season_ids = open_season_ids
     # Refine the list of open seasons:
-    browsable_season_ids = open_season_ids.select{ |season_id|
-      ! current_user.find_team_affiliation_id_from_badges_for( season_id ).nil?
-    } + open_season_ids.select{ |season_id|
-      ! current_user.find_team_affiliation_id_from_team_managers_for( season_id ).nil?
-    }
-    browsable_season_ids.uniq!
-
-=begin
-    # Extract the user-tagged browsable meetings:
-    @meetings = Meeting.includes( :season, :season_type, :meeting_sessions, :swimming_pools )
-      .joins( :season, :season_type, :meeting_sessions, :swimming_pools )
-      .where( "meetings.season_id IN (?)", browsable_season_ids )
-      .tagged_with( "u#{ current_user.id }", on: :tags_by_users )
-      .order( "meetings.header_date DESC" )
-      .to_a
-
-    # Add also the team-tagged browsable meetings.
-    # Find the current, browsable team affiliations that may have tagged the meetings,
-    # and, for each, add any tagged meeting found to the list:
-    browsable_season_ids.map{ |season_id| current_user.find_team_affiliation_id_from_badges_for(season_id) }
-        .compact.each do |tagger_team_affiliation_id|
-          @meetings += Meeting.includes( :season, :season_type, :meeting_sessions, :swimming_pools )
-            .joins( :season, :season_type, :meeting_sessions, :swimming_pools )
-            .where( "meetings.season_id IN (?)", browsable_season_ids )
-            .tagged_with( "ta#{ tagger_team_affiliation_id }", on: :tags_by_teams )
-            .order( "meetings.header_date DESC" )
-            .to_a
-        end
-
-    # Add also any already attended and closed meeting belonging to the browsable
-    # seasons: (the relationship w/ swimmer is through MIRs, so the inner join is enough)
-    if current_user.has_associated_swimmer?
-      attended_ids = current_user.swimmer.meetings
-        .where( "meetings.season_id IN (?)", browsable_season_ids )
-        .map{ |meeting| meeting.id }
-        .uniq
-        .delete_if{ |id| @meetings.any?{|m| m.id == id } }
-      if attended_ids.count > 0
-        @meetings += Meeting.includes( :season, :season_type, :meeting_sessions, :swimming_pools )
-          .joins( :season, :season_type, :meeting_sessions, :swimming_pools )
-          .where( "meetings.id IN (?)", attended_ids )
-          .order( "meetings.header_date DESC" )
-          .to_a
-      end
-    end
-
-    # Re-sort the modified array, *descending* order (that is: B <=> A):
-    @meetings.uniq!
-    @meetings.sort!{ |ma, mb| mb.header_date <=> ma.header_date }
-=end   
-
+    #browsable_season_ids = open_season_ids.select{ |season_id|
+    #  ! current_user.find_team_affiliation_id_from_badges_for( season_id ).nil?
+    #} + open_season_ids.select{ |season_id|
+    #  ! current_user.find_team_affiliation_id_from_team_managers_for( season_id ).nil?
+    #}
+    #browsable_season_ids.uniq!
 
     # Extract the user-tagged browsable meetings:
     meeting_id_list = Meeting
@@ -104,23 +61,25 @@ class MeetingsController < ApplicationController
       .select( :id, :season_id )
       .map{ |meeting| meeting.id }
 
-    # Add also the team-tagged browsable meetings.
-    # Find the current, browsable team affiliations that may have tagged the meetings,
-    # and, for each, add any tagged meeting found to the list:
-    browsable_season_ids
-      .map{ |season_id| current_user.find_team_affiliation_id_from_badges_for(season_id) }
-      .compact.each do |tagger_team_affiliation_id|
-        meeting_id_list += Meeting
-          .where( ["meetings.season_id IN (?)", browsable_season_ids] )
-          .tagged_with( "ta#{ tagger_team_affiliation_id }", on: :tags_by_teams )
-          .map{ |meeting| meeting.id }
-      end
-
-#          .where( ["meetings.id not in (?) and meetings.season_id IN (?)", meeting_id_list, browsable_season_ids] )
-
-    # Add also any already attended and closed meeting belonging to the browsable
-    # seasons: (the relationship w/ swimmer is through MIRs, so the inner join is enough)
+    # If user has an associated swimmer look for team tagged and attended meetings too
     if current_user.has_associated_swimmer?
+      # Add also the team-tagged browsable meetings.
+      # Find the current, browsable team affiliations that may have tagged the meetings,
+      # and, for each, add any tagged meeting found to the list:
+      browsable_season_ids
+        .map{ |season_id| current_user.find_team_affiliation_id_from_badges_for(season_id) }
+        .compact.each do |tagger_team_affiliation_id|
+          meeting_id_list += Meeting
+            .where( ["meetings.season_id IN (?)", browsable_season_ids] )
+            .tagged_with( "ta#{ tagger_team_affiliation_id }", on: :tags_by_teams )
+            .select( :id, :season_id )
+            .map{ |meeting| meeting.id }
+        end
+
+  #          .where( ["meetings.id not in (?) and meetings.season_id IN (?)", meeting_id_list, browsable_season_ids] )
+
+      # Add also any already attended and closed meeting belonging to the browsable
+      # seasons: (the relationship w/ swimmer is through MIRs, so the inner join is enough)
       meeting_id_list += current_user.swimmer.meetings
         .where( ["meetings.season_id IN (?)", browsable_season_ids] )
         .select( :id, :season_id )
@@ -162,7 +121,7 @@ class MeetingsController < ApplicationController
     @calendarMeetingPicker = CalendarMeetingPicker.new( @start_date, @end_date )
     @calendarDAO = @calendarMeetingPicker.pick_meetings( 'ASC', false, current_user )
     @meetings = @calendarDAO.get_paginated_meetings( params[:page] || 1 )
-        
+
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -558,7 +517,7 @@ class MeetingsController < ApplicationController
       flash[:error] = I18n.t(:no_result_to_show)
       redirect_to( meetings_current_path() ) and return
     end
-    
+
     # Get a timestamp for the cache key:
     @max_updated_at = @meeting.meeting_individual_results.for_team(@team).has_points('goggle_cup_points').unscope(:order).order(:updated_at).last.updated_at.to_i
   end

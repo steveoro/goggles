@@ -4,6 +4,6 @@
     - event_list.each do |event_code|
       - result = meeting.get_result( event_code )
       - if result
-        = render( partial: 'full_history_by_date_event_cell', locals: { individual_result: result, passages: result.passages } )
+        = render( partial: 'swimmer_career_event_cell', locals: { individual_result: result, passages: result.passages } )
       - else
         %td

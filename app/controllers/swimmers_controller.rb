@@ -79,97 +79,6 @@ class SwimmersController < ApplicationController
   #++
 
 
-# FIXME / TODO REMOVE THIS, SINCE IT'S NOT USED ANYMORE (route has been commented-out too)
-
-  # Radiography for a specified swimmer id: "Records" tab rendering
-  #
-  # == Params:
-  # id: the swimmer id to be processed
-  #
-  # TODO Show the record held by swimmer summary
-  #
-  # def records
-    # # --- "Medals" tab: ---
-    # @tab_title = I18n.t('radiography.records_tab')
-    # @tot_season_records_for_this_swimmer = 0
-    # @seasonal_record_collection = []
-#
-    # # TODO Until we'll have finished FIN import this scan will be used
-    # # for CSI only.
-    # # FIXME this has not been tested yet:
-    # #all_championships_records = MeetingIndividualResult.includes(
-    # #  :season, :event_type, :category_type, :gender_type, :pool_type
-    # #).is_valid.select(
-    # #  'seasons.id, meeting_program_id, swimmer_id, min(minutes*6000 + seconds*100 + hundreds) as timing, event_types.code, category_types.code, gender_types.code, pool_types.code'
-    # #).group(
-    # #  'seasons.id, event_types.code, category_types.code, gender_types.code, pool_types.code'
-    # #)
-                                                    # # Filter all_championships_records and find out how many records this swimmer still holds (if any)
-    # # FIXME this has not been tested yet:
-    # #all_championships_records.each{ | mir |
-    # #  @tot_season_records_for_this_swimmer += 1 if (mir.swimmer_id == @swimmer.id)
-    # #}
-#
-    # @swimmer.season_types.uniq.each do |season_type|
-      # # Creates an hash for seasonal medals
-      # seasonal_records = Hash.new
-      # seasonal_records[:season_type] = season_type.get_full_name
-      # seasonal_records[:tot_season_records] = 0
-#
-      # # FIXME this has not been tested yet:
-      # #all_championships_records.each{ | mir |
-      # #  if mir.season_type && (mir.swimmer_id == @swimmer.id) && (mir.season_type.id == season_type.id)
-      # #    seasonal_medals[:tot_season_records] += 1
-      # #  end
-      # #}
-      # @seasonal_record_collection << seasonal_records
-    # end
-  # end
-  # #-- -------------------------------------------------------------------------
-  # #++
-
-# *****************************************************************************
-# XXX KEPT ONLY AS REFERENCE - New implementation (below) is 10-90msec faster
-# *****************************************************************************
-
-  # Radiography for a specified swimmer id: "Best timings" tab rendering
-  #
-  # Implementation using the PersonalBestCollector (older strategy class)
-  #
-  # == Params:
-  # id: the swimmer id to be processed
-  #
-  # def best_timings # XXX SLOWER than implementation below
-    # # --- "Best Timings" tab: ---
-    # @tab_title = I18n.t('radiography.best_timings_tab')
-    # current_season = Season.get_last_season_by_type( 'MASFIN' )
-#
-    # # Leega.
-    # # TODO: Delegate to an AJAX function. I've removed the prevoius AJAX call
-    # collector = PersonalBestCollector.new( @swimmer )
-#
-    # # Collect personal bests
-    # collector.full_scan do |this, events_by_pool_type|
-      # this.collect_from_all_category_results_having( events_by_pool_type, 'SPB' )
-    # end
-#
-    # # Collect last result
-    # collector.full_scan do |this, events_by_pool_type|
-      # this.collect_last_results_having( events_by_pool_type, 'SLP' )
-    # end
-#
-    # # Collect seasonal bests
-    # collector.set_start_date( current_season.begin_date )
-    # collector.set_end_date( current_season.end_date )
-    # collector.full_scan do |this, events_by_pool_type|
-      # this.collect_from_all_category_results_having( events_by_pool_type, 'SSB' )
-    # end
-#
-    # @grid_builder = PersonalBestGridBuilder.new( collector )
-  # end
-  #-- -------------------------------------------------------------------------
-  #++
-
   # XXX WIP: A-B testing Best-timings view versions:
   # Radiography for a specified Swimmer id: "Best timings" tab rendering
   #
@@ -202,89 +111,11 @@ class SwimmersController < ApplicationController
     @tab_title = I18n.t('radiography.full_history_by_date')
 
     # Retrieve swimmer results and gets DAO structure to show them
-    # Could limit date range
+    # Could limit date range with optional parameters
     sc = SwimmerCareer.new( @swimmer )
     sc.retrieve_data
     @swimmer_career = sc.set_swimmer_career_dao
     @max_updated_at = @swimmer_career.updated_at
-
-  end
-
-  def full_history_1_old # Remove if new version look good
-    # --- "Full History by date" tab: ---
-    @tab_title = I18n.t('radiography.full_history_by_date')
-    @full_history_by_date = {}
-    @full_history_events = {}
-                                                    # Cycles between pool types suitable for meetings:
-    PoolType.only_for_meetings.each do |pool_type|
-      pool_code = pool_type.code
-                                                    # Collect results for the current pool type:
-      #mirs = @swimmer.meeting_individual_results
-      #  .joins(meeting_program: [:pool_type, meeting_event: [:event_type, :meeting_session]])
-      #  .for_pool_type( pool_type )
-      #  .sort_by_date
-      #  #.select([:id, :minutes, :seconds, :hundreds, :is_personal_best])
-
-      mirs=@swimmer.meeting_individual_results
-        .joins(meeting_program: [:pool_type, meeting_event: [:event_type, :meeting_session]])
-        .includes(:meeting, :stroke_type, :passages)
-        .where(['pool_types.id = ?', pool_type.id])
-        .order("meeting_sessions.scheduled_date")
-        .select([:id, :minutes, :seconds, :hundreds, :is_personal_best, :is_disqualified, :meeting_program_id])
-
-      # *event_by_date* structure:
-      # The structure is an array of hashes with elements formed by
-      # the meeting (meeting) that contains the meeting reference
-      # and the event_type_codes ("50SL", "50FA", etc.) that
-      # contains the meeting_individual_result swam in the event_type
-      # at the meeting.
-      # TODO Refactor that structure as a collection, like personal bests
-
-      event_list = []                               # Initi event list
-      event_by_date = []                            # Init lists of events
-      @full_history_events[ pool_code ] = []
-
-      mirs.each do |meeting_individual_result|
-        event_code = meeting_individual_result.event_type.code
-        #event_name = meeting_individual_result.event_type.i18n_short
-        found_idx = event_by_date.rindex{ |meeting_hash| meeting_hash[:meeting] == meeting_individual_result.meeting }
-        mir_with_pass = { :mir => meeting_individual_result }
-        mir_with_pass[:passages] = meeting_individual_result.passages if meeting_individual_result.passages.exists?
-
-        # If it's the first meeting result found, we create a new element:
-        if found_idx
-          event_by_date[ found_idx ][ event_code ] = mir_with_pass
-        # ...Else, we add the result for the event type:
-        else
-          event_by_date << {
-            :meeting      => meeting_individual_result.meeting,
-            :meeting_link => meeting_individual_result.meeting.decorate.get_linked_custom_name( "#{meeting_individual_result.meeting.get_full_name} #{Format.a_date( meeting_individual_result.meeting.header_date )}" ),
-            event_code    => mir_with_pass
-          }
-        end
-
-        # Same as above, but for the collection of events used in the graphs:
-        #found_idx = @full_history_events[ pool_code ].rindex{ |event_hash| event_hash[:label] == event_name }
-        found_idx = @full_history_events[ pool_code ].rindex{ |event_hash| event_hash[:label] == event_code }
-        if found_idx
-          @full_history_events[ pool_code ][ found_idx ][:data] += 1
-        else
-          @full_history_events[ pool_code ] << {
-            #:label => event_name,
-            :label => event_code,
-            :data  => 1
-          }
-        end
-
-        # Keep distinct events list
-        event_list << event_code if !event_list.include?( event_code )
-      end
-
-      # Sort event type list by event type style order
-      #event_list.sort!{ |el_prev, el_next| EventType.find_by_code(el_prev) <=> EventType.find_by_code(el_next) }
-      event_list = EventType.sort_list_by_style_order( event_list )
-      @full_history_by_date[ pool_code ] = [ event_list, event_by_date ]
-    end
   end
   #-- -------------------------------------------------------------------------
   #++
