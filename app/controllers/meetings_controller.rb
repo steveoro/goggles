@@ -648,6 +648,7 @@ class MeetingsController < ApplicationController
     @meeting_events_list = @meeting.meeting_events
       .joins( :meeting_session, :event_type, :stroke_type )
       .includes( :meeting_session, :event_type, :stroke_type )
+      .unscope( :order )
       .order( 'meeting_sessions.session_order, meeting_events.event_order' )
 
     # Get a timestamp for the cache key, either from last MIR, last MRR (when existing),
