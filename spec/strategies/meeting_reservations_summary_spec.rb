@@ -41,7 +41,7 @@ describe MeetingReservationsSummary, type: :strategy do
           'has_confirmed', 'event_order', 'event_code', 'is_out_of_race',
           'minutes', 'seconds', 'hundreds',
           'session_order', 'session_date', 'begin_time', 'warm_up_time',
-          'updated_at'
+          'updated_at', 'is_a_relay'
         ]
         result = subject.retrieve_data
         result.each do |element|

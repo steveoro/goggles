@@ -42,7 +42,7 @@ class MeetingReservationsSummary
       mr.has_confirmed, me.event_order, et.code as event_code, me.is_out_of_race,
       mer.suggested_minutes as minutes, mer.suggested_seconds as seconds, mer.suggested_hundreds as hudreds,
       ms.session_order, ms.scheduled_date as session_date, substr(ms.begin_time, 1, 5) as begin_time, substr(ms.warm_up_time, 1, 5) as warm_up_time,
-      mer.updated_at
+      mer.updated_at, et.is_a_relay
     from meeting_reservations mr
      	join badges b on b.id = mr.badge_id
       join category_types ct on ct.id = b.category_type_id
@@ -55,7 +55,25 @@ class MeetingReservationsSummary
       and mr.team_id = VAR_TEAM_ID
     	and not mr.is_not_coming
       and mer.is_doing_this
-    order by s.complete_name, ms.session_order, me.event_order;
+    union
+    select mr2.swimmer_id, s2.complete_name, ct2.code, mrr.meeting_event_id,
+  	  mr2.has_confirmed, me2.event_order, et2.code as event_code, me2.is_out_of_race,
+      0 as minutes, 0 as seconds, 0 as hudreds,
+      ms2.session_order, ms2.scheduled_date as date, substr(ms2.begin_time, 1, 5) as begin_time, substr(ms2.warm_up_time, 1, 5) as warm_up_time,
+      mrr.updated_at, et2.is_a_relay
+    from meeting_reservations mr2
+  	  join badges b2 on b2.id = mr2.badge_id
+      join category_types ct2 on ct2.id = b2.category_type_id
+      join swimmers s2 on s2.id = mr2.swimmer_id
+  	  join meeting_relay_reservations mrr on mrr.meeting_id = mr2.meeting_id and mrr.badge_id = mr2.badge_id
+      join meeting_events me2 on me2.id = mrr.meeting_event_id
+      join event_types et2 on et2.id = me2.event_type_id
+      join meeting_sessions ms2 on ms2.id = me2.meeting_session_id
+    where mr2.meeting_id = VAR_MEETING_ID
+      and mr2.team_id = VAR_TEAM_ID
+  	  and not mr2.is_not_coming
+      and mrr.is_doing_this
+    order by 2, 13, 6;
     '
 
     # Prepare data retrieve query with swimemr and date inteval as parameters
