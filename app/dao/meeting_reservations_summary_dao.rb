@@ -120,12 +120,17 @@ class MeetingReservationsSummaryDAO
     @reservations = Hash.new()
   end
 
-  def add_swimmer_reservations( swimmer_id, swimmer_name, gender_code, category_code = nil )
-    @reservations[swimmer_name] = SwimmerReservationsDAO.new( swimmer_id, swimmer_name, gender_code, category_code )
-    @reservations.size
+  def create_swimmer_reservations( swimmer_id, swimmer_name, gender_code, category_code = nil )
+    @reservations[get_swimmer_key( swimmer_id, swimmer_name )] = SwimmerReservationsDAO.new( swimmer_id, swimmer_name, gender_code, category_code )
   end
 
+  def get_swimmer_reservations( swimmer_id, swimmer_name )
+    @reservations[get_swimmer_key( swimmer_id, swimmer_name )]
+  end
 
+  def get_swimmer_key( swimmer_id, swimmer_name )
+    "#{swimmer_name}-#{swimmer_id}"
+  end
   #-- -------------------------------------------------------------------------
   #++
 end

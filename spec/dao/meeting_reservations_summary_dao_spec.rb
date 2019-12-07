@@ -197,7 +197,7 @@ describe MeetingReservationsSummaryDAO, type: :model do
         expect( subject.individual_reservations.has_key?( event_code )).to eq( false )
         expect( subject.get_individual_reservation( event_code )).to be_nil
       end
-      it "returns a IndividualEventReservationDAO if event key doesn't exists" do
+      it "returns a IndividualEventReservationDAO if event key exists" do
         subject.add_individual_reservation( event_code, suggested_time )
         expect( subject.individual_reservations.has_key?( event_code )).to eq( true )
         expect( subject.get_individual_reservation( event_code )).to be_an_instance_of( MeetingReservationsSummaryDAO::IndividualEventReservationDAO )
@@ -209,7 +209,7 @@ describe MeetingReservationsSummaryDAO, type: :model do
         expect( subject.relay_reservations.has_key?( event_code )).to eq( false )
         expect( subject.get_relay_reservation( event_code )).to be_nil
       end
-      it "returns a SwimmerCareerEventDAO if event key doesn't exists" do
+      it "returns a RelayReservationDAO if event key exists" do
         subject.add_relay_reservation( event_code, fraction )
         expect( subject.relay_reservations.has_key?( event_code )).to eq( true )
         expect( subject.get_relay_reservation( event_code )).to be_an_instance_of( MeetingReservationsSummaryDAO::RelayReservationDAO )
@@ -235,7 +235,7 @@ describe MeetingReservationsSummaryDAO, type: :model do
     describe "when initialized without optional parameters" do
       it "returns given values, default values and initialize empty data structures" do
         expect( subject.meeting ).to eq( meeting )
-        expect( subject.updated_at ).to be_nil
+        expect( subject.updated_at ).to eq( 0 )
         expect( subject.reservations.size ).to eq( 0 )
       end
     end
@@ -247,6 +247,47 @@ describe MeetingReservationsSummaryDAO, type: :model do
         expect( result.meeting ).to eq( meeting )
         expect( result.updated_at ).to eq( updated_at )
         expect( result.reservations.size ).to eq( 0 )
+      end
+    end
+
+    describe "#get_swimmer_key" do
+      it "returns a string" do
+        expect( subject.get_swimmer_key( swimmer_id, swimmer_name )).to be_an_instance_of( String )
+      end
+      it "returns a string containing swimmer's name and id '-' separated" do
+        result = subject.get_swimmer_key( swimmer_id, swimmer_name )
+        expect( result ).to include( swimmer_name )
+        expect( result ).to include( swimmer_id.to_s )
+        expect( result ).to include( '-' )
+      end
+      it "returns a string containing only swimmer name '-' separator and swimmer id" do
+        result = subject.get_swimmer_key( swimmer_id, swimmer_name )
+        expect( result ).to eq( "#{swimmer_name}-#{swimmer_id}" )
+      end
+    end
+
+    describe "#create_swimmer_reservations" do
+      it "returns a SwimmerReservationsDAO and increase reservations size when called without optional parameters" do
+        prev_count = subject.reservations.size
+        expect( subject.create_swimmer_reservations( swimmer_id, swimmer_name, gender_code )).to be_an_instance_of( MeetingReservationsSummaryDAO::SwimmerReservationsDAO )
+        expect( subject.reservations.size ).to eq( prev_count + 1 )
+      end
+      it "returns a SwimmerReservationsDAO and increase reservations size when called with optional parameters" do
+        prev_count = subject.reservations.size
+        expect( subject.create_swimmer_reservations( swimmer_id, swimmer_name, gender_code, category_code )).to be_an_instance_of( MeetingReservationsSummaryDAO::SwimmerReservationsDAO )
+        expect( subject.reservations.size ).to eq( prev_count + 1 )
+      end
+    end
+
+    describe "#get_swimmer_reservations" do
+      it "returns nil if swimmer key doesn't exists" do
+        expect( subject.reservations.has_key?( subject.get_swimmer_key( swimmer_id, swimmer_name ) )).to eq( false )
+        expect( subject.get_swimmer_reservations( swimmer_id, swimmer_name )).to be_nil
+      end
+      it "returns a SwimmerReservationsDAO if swimmer key exists" do
+        subject.create_swimmer_reservations( swimmer_id, swimmer_name, gender_code )
+        expect( subject.reservations.has_key?( subject.get_swimmer_key( swimmer_id, swimmer_name ) )).to eq( true )
+        expect( subject.get_swimmer_reservations( swimmer_id, swimmer_name )).to be_an_instance_of( MeetingReservationsSummaryDAO::SwimmerReservationsDAO )
       end
     end
   end
