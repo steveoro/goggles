@@ -12,44 +12,72 @@
 =end
 class MeetingScheduleDAO
 
-  # Represents a swimmer individual event reservation
+  # Represents an event of a meeting's session
   #
-  class MeetinSessionScheduleDAO
+  class MeetingScheduleEventDAO
 
     # These can be edited later on:
-    attr_reader :seesion_order, :scheduled_date, :pool_code
+    attr_reader :event_code
 
     # These can be edited later on:
-    attr_accessor :begin_time, :warm_up_time, :pool_name, :pool_address, :day_part, :notes
+    attr_accessor :event_order, :heat_type, :is_out_of_race, :has_separate_gender, :has_separate_categories, :notes
 
     # Creates a new instance.
     #
-    def initialize( seesion_order, scheduled_date, pool_code, begin_time = '', warm_up_time = '', pool_name = '', pool_address = '', day_part = '', notes = '' )
-      @seesion_order  = seesion_order
-      @scheduled_date = scheduled_date
-      @pool_code      = pool_code
-      @begin_time     = begin_time
-      @warm_up_time   = warm_up_time
-      @pool_address   = pool_address
-      @day_part       = day_part
-      @notes          = notes
+    def initialize( event_code, event_order = 0, heat_type = nil, is_out_of_race = false, has_separate_gender = true, has_separate_categories = false, notes = '' )
+      @event_code              = event_code
+      @event_order             = event_order
+      @heat_type               = heat_type
+      @is_out_of_race          = is_out_of_race
+      @is_out_of_race          = is_out_of_race
+      @has_separate_gender     = has_separate_gender
+      @has_separate_categories = has_separate_categories
+      @notes                   = notes
     end
   end
   #-- -------------------------------------------------------------------------
   #++
 
+  # Represents a session of a meeting
+  #
+  class MeetingScheduleSessionDAO
+
+    # These can be edited later on:
+    attr_reader :session_order, :scheduled_date, :pool_code
+
+    # These can be edited later on:
+    attr_accessor :begin_time, :warm_up_time, :pool_name, :pool_address, :day_part, :notes, :events
+
+    # Creates a new instance.
+    #
+    def initialize( session_order, scheduled_date, pool_code, begin_time = '', warm_up_time = '', pool_name = '', pool_address = '', day_part = nil, notes = '' )
+      @session_order  = session_order
+      @scheduled_date = scheduled_date
+      @pool_code      = pool_code
+      @begin_time     = begin_time
+      @warm_up_time   = warm_up_time
+      @pool_name      = pool_name
+      @pool_address   = pool_address
+      @day_part       = day_part
+      @notes          = notes
+
+      @events = Hash.new()
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 
   # These must be initialized on creation:
   attr_reader :meeting
 
   # These can be edited later on:
-  attr_accessor :updated_at
+  attr_accessor :is_confirmed, :sessions
 
   # Creates a new instance.
   #
-  def initialize( meeting, updated_at = 0 )
+  def initialize( meeting, is_confirmed = true )
     @meeting      = meeting
-    @updated_at   = updated_at
+    @is_confirmed = is_confirmed
 
     @sessions = Hash.new()
   end
