@@ -17,18 +17,18 @@ class MeetingScheduleDAO
   class MeetingScheduleEventDAO
 
     # These can be edited later on:
-    attr_reader :event_code
+    attr_reader :event_code, :is_a_relay
 
     # These can be edited later on:
     attr_accessor :event_order, :heat_type, :is_out_of_race, :has_separate_gender, :has_separate_categories, :notes
 
     # Creates a new instance.
     #
-    def initialize( event_code, event_order = 0, heat_type = nil, is_out_of_race = false, has_separate_gender = true, has_separate_categories = false, notes = '' )
+    def initialize( event_code, is_a_relay = false, event_order = 0, heat_type = nil, is_out_of_race = false, has_separate_gender = true, has_separate_categories = false, notes = '' )
       @event_code              = event_code
+      @is_a_relay              = is_a_relay
       @event_order             = event_order
       @heat_type               = heat_type
-      @is_out_of_race          = is_out_of_race
       @is_out_of_race          = is_out_of_race
       @has_separate_gender     = has_separate_gender
       @has_separate_categories = has_separate_categories
@@ -63,6 +63,17 @@ class MeetingScheduleDAO
 
       @events = Hash.new()
     end
+
+    # Adds a new event to events colelction
+    def add_event( event_key, event_code, is_a_relay = false, event_order = 0, heat_type = nil, is_out_of_race = false, has_separate_gender = true, has_separate_categories = false, notes = '' )
+      @events[event_key] = MeetingScheduleEventDAO.new( event_code, is_a_relay, event_order, heat_type, is_out_of_race, has_separate_gender, has_separate_categories, notes )
+      @events.size
+    end
+
+    # Gets an event by key
+    def get_event( event_key )
+      @events[event_key]
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -75,9 +86,8 @@ class MeetingScheduleDAO
 
   # Creates a new instance.
   #
-  def initialize( meeting, is_confirmed = true )
-    @meeting      = meeting
-    @is_confirmed = is_confirmed
+  def initialize( meeting  )
+    @meeting = meeting
 
     @sessions = Hash.new()
   end

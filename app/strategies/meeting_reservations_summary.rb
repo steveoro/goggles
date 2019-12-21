@@ -94,7 +94,7 @@ class MeetingReservationsSummary
     select ms.id as meeting_session_id,
     	ms.session_order, ms.scheduled_date, substr(ms.begin_time, 1, 5) as begin_time, substr(ms.warm_up_time, 1, 5) as warm_up_time,
 	    sp.name as pool_name, sp.address as pool_address, pt.code as pool_code,
-      me.event_order, et.code as event_code
+      me.event_order, et.code as event_code, et.is_a_relay, me.is_out_of_race
     from meeting_sessions ms
 	    join swimming_pools sp on sp.id = ms.swimming_pool_id
       join pool_types pt on pt.id = sp.pool_type_id

@@ -86,7 +86,7 @@ describe MeetingReservationsSummary, type: :strategy do
           'meeting_session_id',
           'session_order', 'scheduled_date', 'begin_time', 'warm_up_time',
           'pool_name', 'pool_address', 'pool_code',
-          'event_order', 'event_code'
+          'event_order', 'event_code', 'is_a_relay', 'is_out_of_race'
         ]
         result = subject.retrieve_schedule_data
         result.each do |element|
