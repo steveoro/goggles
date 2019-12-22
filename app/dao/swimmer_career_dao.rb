@@ -143,7 +143,7 @@ class SwimmerCareerDAO
     end
 
     def add_result( result_id, event_code, time_swam, is_disqualified = false, is_personal_best = false, standard_points = nil, individual_points = nil, meeting_points = nil )
-      @results[event_code] = SwimmerCareerResultDAO.new( result_id, event_code, time_swam, standard_points, individual_points, meeting_points )
+      @results[event_code] = SwimmerCareerResultDAO.new( result_id, event_code, time_swam, is_disqualified, is_personal_best, standard_points, individual_points, meeting_points )
       @results.size
     end
 

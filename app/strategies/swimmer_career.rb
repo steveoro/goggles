@@ -117,7 +117,7 @@ class SwimmerCareer
         # Add result data to meeting collection (never already present)
         time_swam = Timing.new( result['hundreds'].to_i, result['seconds'].to_i, result['minutes'].to_i )
         event_code = result['event_code']
-        pool.add_result( meeting_id, result['result_id'].to_i, result['event_order'].to_i, event_code, time_swam, result['is_disqualified'], result['is_personal_best'] )
+        pool.add_result( meeting_id, result['result_id'].to_i, result['event_order'].to_i, event_code, time_swam, (result['is_disqualified'].to_i) > 0, (result['is_personal_best'].to_i) > 0 )
 
         # Add passages if present
         if result['passages'] != 'null'
