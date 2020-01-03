@@ -43,21 +43,24 @@ class MeetingScheduleDAO
   class MeetingScheduleSessionDAO
 
     # These can be edited later on:
-    attr_reader :session_order, :scheduled_date, :pool_code
+    attr_reader :session_order, :scheduled_date, :pool_id, :pool_type
 
     # These can be edited later on:
-    attr_accessor :begin_time, :warm_up_time, :pool_name, :pool_address, :day_part, :notes, :events
+    attr_accessor :begin_time, :warm_up_time, :pool_name, :pool_address, :city, :maps_uri, :day_part, :notes, :events
 
     # Creates a new instance.
     #
-    def initialize( session_order, scheduled_date, pool_code, begin_time = '', warm_up_time = '', pool_name = '', pool_address = '', day_part = nil, notes = '' )
+    def initialize( session_order, scheduled_date, pool_id, pool_type, begin_time = '', warm_up_time = '', pool_name = '', pool_address = '', city = '', maps_uri = nil, day_part = nil, notes = '' )
       @session_order  = session_order
       @scheduled_date = scheduled_date
-      @pool_code      = pool_code
+      @pool_id        = pool_id
+      @pool_type      = pool_type
       @begin_time     = begin_time
       @warm_up_time   = warm_up_time
       @pool_name      = pool_name
       @pool_address   = pool_address
+      @city           = city
+      @maps_uri       = maps_uri
       @day_part       = day_part
       @notes          = notes
 
@@ -90,6 +93,17 @@ class MeetingScheduleDAO
     @meeting = meeting
 
     @sessions = Hash.new()
+  end
+
+  # Adds a new session to sessions colelction
+  def add_session( session_key, session_order, scheduled_date, pool_id, pool_type, begin_time = '', warm_up_time = '', pool_name = '', pool_address = '', city = '', maps_uri = '', day_part = nil, notes = '' )
+    @sessions[session_key] = MeetingScheduleSessionDAO.new( session_order, scheduled_date, pool_id, pool_type, begin_time, warm_up_time, pool_name, pool_address, city, maps_uri, day_part, notes )
+    @sessions.size
+  end
+
+  # Gets a session by key
+  def get_session( session_key )
+    @sessions[session_key]
   end
   #-- -------------------------------------------------------------------------
   #++

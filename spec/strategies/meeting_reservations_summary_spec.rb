@@ -17,7 +17,7 @@ describe MeetingReservationsSummary, type: :strategy do
     subject { MeetingReservationsSummary.new( meeting, team ) }
 
     it_behaves_like( "(the existance of a method)", [
-      :meeting,
+      :meeting, :team,
       :reservation_data_retrieved, :schedule_data_retrieved
     ] )
 
@@ -68,43 +68,6 @@ describe MeetingReservationsSummary, type: :strategy do
       it "returns a non empty query result for a recent CSI meeting" do
         sm = MeetingReservationsSummary.new( csi_meeting, ober_ferrari )
         result = sm.retrieve_reservation_data
-        expect( result ).to be_a_kind_of( ActiveRecord::Result )
-        expect( result.count ).to be > 0
-      end
-    end
-
-    describe "#retrieve_schedule_data" do
-      it "returns a relation and sets schedule_data_retrieved" do
-        expect( subject.schedule_data_retrieved ).to be_nil
-        result = subject.retrieve_schedule_data
-        expect( result ).to be_a_kind_of( ActiveRecord::Result )
-        expect( subject.schedule_data_retrieved ).to be_a_kind_of( ActiveRecord::Result )
-        expect( subject.schedule_data_retrieved ).to eq( result )
-      end
-      it "returns a query result of elements with necessary columns" do
-        columns = [
-          'meeting_session_id',
-          'session_order', 'scheduled_date', 'begin_time', 'warm_up_time',
-          'pool_name', 'pool_address', 'pool_code',
-          'event_order', 'event_code', 'is_a_relay', 'is_out_of_race'
-        ]
-        result = subject.retrieve_schedule_data
-        result.each do |element|
-          expect( element.size ).to eq( columns.size )
-          columns.each do |column|
-            expect( element.has_key?(column) ).to eq(true)
-          end
-        end
-      end
-      it "returns an empty query result for a newer meeting" do
-        sm = MeetingReservationsSummary.new( new_meeting, ober_ferrari )
-        result = sm.retrieve_schedule_data
-        expect( result ).to be_a_kind_of( ActiveRecord::Result )
-        expect( result.count ).to eq( 0 )
-      end
-      it "returns a non empty query result for a recent CSI meeting" do
-        sm = MeetingReservationsSummary.new( csi_meeting, ober_ferrari )
-        result = sm.retrieve_schedule_data
         expect( result ).to be_a_kind_of( ActiveRecord::Result )
         expect( result.count ).to be > 0
       end
