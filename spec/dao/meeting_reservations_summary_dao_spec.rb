@@ -110,7 +110,7 @@ describe MeetingReservationsSummaryDAO, type: :model do
 
     it_behaves_like( "(the existance of a method)", [
       :swimmer_id, :swimmer_name, :gender_code,
-      :category_code
+      :has_confirmed, :category_code
     ] )
 
     it_behaves_like( "(the existance of a method returning an hash)", [
@@ -118,10 +118,11 @@ describe MeetingReservationsSummaryDAO, type: :model do
     ] )
 
     describe "when initialized without optional parameters" do
-      it "returns given values" do
+      it "returns given values and defaults" do
         expect( subject.swimmer_id ).to eq( swimmer_id )
         expect( subject.swimmer_name ).to eq( swimmer_name )
         expect( subject.gender_code ).to eq( gender_code )
+        expect( subject.has_confirmed ).to eq( false )
         expect( subject.category_code ).to be_nil
         expect( subject.individual_reservations.size ).to eq( 0 )
         expect( subject.relay_reservations.size ).to eq( 0 )
@@ -130,10 +131,11 @@ describe MeetingReservationsSummaryDAO, type: :model do
 
     describe "when initialized with optional parameters" do
       it "returns given values" do
-        result = MeetingReservationsSummaryDAO::SwimmerReservationsDAO.new( swimmer_id, swimmer_name, gender_code, category_code )
+        result = MeetingReservationsSummaryDAO::SwimmerReservationsDAO.new( swimmer_id, swimmer_name, gender_code, true, category_code )
         expect( result.swimmer_id ).to eq( swimmer_id )
         expect( result.swimmer_name ).to eq( swimmer_name )
         expect( result.gender_code ).to eq( gender_code )
+        expect( result.has_confirmed ).to eq( true )
         expect( result.category_code ).to eq( category_code )
         expect( result.individual_reservations.size ).to eq( 0 )
         expect( result.relay_reservations.size ).to eq( 0 )

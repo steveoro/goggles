@@ -27,6 +27,11 @@ class MeetingScheduleDAODecorator < Draper::Decorator
   end
 
   # Gets a string with meeting header containing id, name, date and code
+  def get_session_header
+    "#{date_to_s(object.scheduled_date)} (#{object.warm_up_time}) #{object.begin_time}"
+  end
+
+  # Gets a string with meeting header containing id, name, date and code
   def get_pool_header
     "'#{object.pool_name}' (#{object.lanes}x#{object.pool_type}), #{object.pool_address} #{object.city}"
   end

@@ -70,14 +70,15 @@ class MeetingReservationsSummaryDAO
     attr_reader :swimmer_id, :swimmer_name, :gender_code
 
     # These can be edited later on:
-    attr_accessor :category_code, :individual_reservations, :relay_reservations
+    attr_accessor :has_confirmed, :category_code, :individual_reservations, :relay_reservations
 
     # Creates a new instance.
     #
-    def initialize( swimmer_id, swimmer_name, gender_code, category_code = nil )
+    def initialize( swimmer_id, swimmer_name, gender_code, has_confirmed = false, category_code = nil )
       @swimmer_id    = swimmer_id
       @swimmer_name  = swimmer_name
       @gender_code   = gender_code
+      @has_confirmed = has_confirmed
       @category_code = category_code
 
       @individual_reservations = Hash.new()
@@ -120,8 +121,8 @@ class MeetingReservationsSummaryDAO
     @reservations = Hash.new()
   end
 
-  def create_swimmer_reservations( swimmer_id, swimmer_name, gender_code, category_code = nil )
-    @reservations[get_swimmer_key( swimmer_id, swimmer_name )] = SwimmerReservationsDAO.new( swimmer_id, swimmer_name, gender_code, category_code )
+  def create_swimmer_reservations( swimmer_id, swimmer_name, gender_code, has_confirmed = false, category_code = nil )
+    @reservations[get_swimmer_key( swimmer_id, swimmer_name )] = SwimmerReservationsDAO.new( swimmer_id, swimmer_name, gender_code, has_confirmed, category_code )
   end
 
   def get_swimmer_reservations( swimmer_id, swimmer_name )
@@ -130,6 +131,10 @@ class MeetingReservationsSummaryDAO
 
   def get_swimmer_key( swimmer_id, swimmer_name )
     "#{swimmer_name}-#{swimmer_id}"
+  end
+
+  def get_swimmer_keys
+    @reservations.keys
   end
   #-- -------------------------------------------------------------------------
   #++

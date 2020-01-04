@@ -80,49 +80,10 @@ class MeetingReservationsSummary
     @reservation_data_retrieved = ActiveRecord::Base.connection.exec_query(data_retrieve_query)
   end
 
-  # Retrieve schedule data from DB using the current meeting
-  # Use one single query to decrease db access
-  # Force meeting id in the query before execute
-  #
-  def retrieve_schedule_data
-    @schedule_data_retrieved = nil
-
-    # Define query for data retrieve.
-    # Query is defined in a way that should be easily execute in an SQL client
-    # So meeting_id will be forced in a second step
-    data_retrieve_query = '
-    select ms.id as meeting_session_id,
-    	ms.session_order, ms.scheduled_date, substr(ms.begin_time, 1, 5) as begin_time, substr(ms.warm_up_time, 1, 5) as warm_up_time,
-	    sp.name as pool_name, sp.address as pool_address, pt.code as pool_code,
-      me.event_order, et.code as event_code, et.is_a_relay, me.is_out_of_race
-    from meeting_sessions ms
-	    join swimming_pools sp on sp.id = ms.swimming_pool_id
-      join pool_types pt on pt.id = sp.pool_type_id
-      join meeting_events me on me.meeting_session_id = ms.id
-      join event_types et on et.id = me.event_type_id
-    where ms.meeting_id = VAR_MEETING_ID
-    order by ms.session_order, me.event_order;
-    '
-
-    # Prepare data retrieve query with swimemr and date inteval as parameters
-    data_retrieve_query.gsub!('VAR_MEETING_ID', @meeting.id.to_s)
-
-    # Retrieve data
-    @schedule_data_retrieved = ActiveRecord::Base.connection.exec_query(data_retrieve_query)
-  end
-
   # Gets meeting reservations summary dao populated with data retrieved
   #
   def set_meeting_reservation_summary_dao
     mrs = MeetingReservationsSummaryDAO.new( @meeting, @team )
-
-    # Sets schedule data
-    #retrieve_schedule_data if @schedule_data_retrieved.nil?
-    if !@schedule_data_retrieved.nil?
-      # Cycle between retrieved data to populate DAO
-      @schedule_data_retrieved.each do |schedule|
-      end
-    end
 
     #retrieve_reservation_data if @reservation_data_retrieved.nil?
     if !@reservation_data_retrieved.nil?
@@ -134,7 +95,7 @@ class MeetingReservationsSummary
         swimmer_key  = mrs.get_swimmer_key( swimmer_id, swimmer_name )
 
         # Add meeting data to pool collection if not present
-        mrs.create_swimmer_reservations( swimmer_id, swimmer_name, reservation['gender_code'], reservation['category_code'] ) if !mrs.reservations.has_key?( swimmer_key )
+        mrs.create_swimmer_reservations( swimmer_id, swimmer_name, reservation['gender_code'], reservation['has_confirmed'].to_i > 0, reservation['category_code'] ) if !mrs.reservations.has_key?( swimmer_key )
         sr = mrs.get_swimmer_reservations( swimmer_id, swimmer_name )
 
         # Add reservation

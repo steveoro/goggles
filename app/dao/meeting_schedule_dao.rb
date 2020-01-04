@@ -47,7 +47,8 @@ class MeetingScheduleDAO
     attr_reader :session_id, :session_order, :scheduled_date, :pool_id, :pool_type
 
     # These can be edited later on:
-    attr_accessor :lanes, :begin_time, :warm_up_time, :pool_name, :pool_address, :city, :maps_uri, :day_part, :notes, :events
+    attr_accessor :lanes, :begin_time, :warm_up_time, :pool_name, :pool_address, :city, :maps_uri, :day_part, :notes,
+                  :events, :individuals, :relays
 
     # Creates a new instance.
     #
@@ -67,12 +68,19 @@ class MeetingScheduleDAO
       @day_part       = day_part
       @notes          = notes
 
-      @events = Hash.new()
+      @events     = Hash.new()
+      @individuals = 0
+      @relays     = 0
     end
 
     # Adds a new event to events colelction
     def add_event( event_key, event_id, event_code, is_a_relay = false, event_order = 0, heat_type = nil, is_out_of_race = false, has_separate_gender = true, has_separate_categories = false, notes = '' )
       @events[event_key] = MeetingScheduleEventDAO.new( event_id, event_code, is_a_relay, event_order, heat_type, is_out_of_race, has_separate_gender, has_separate_categories, notes )
+      if is_a_relay
+        @relays += 1
+      else
+        @individuals += 1
+      end
       @events.size
     end
 

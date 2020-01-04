@@ -93,6 +93,25 @@ class MeetingReservationsController < ApplicationController
   # for the (currently) chseon meeting, team and logged-in user.
   #
   def show
+    # Retrieves meeting headers (sessions and events)
+    ms = MeetingSchedule.new( @meeting )
+    ms.retrieve_schedule_data
+    @msdao = ms.set_meeting_schedule_dao
+
+    # Retrieves team (affiliation) reservations
+    mrs = MeetingReservationsSummary.new( @meeting, @team )
+    mrs.retrieve_reservation_data
+    @mrsdao = mrs.set_meeting_reservation_summary_dao
+
+    # Stops if no reservations found
+    if @mrsdao.reservations.size < 1
+      flash[:error] = I18n.t(:no_result_to_show)
+      redirect_to( meetings_current_path() ) and return
+    end
+
+  end
+
+  def show_old
     prepare_meeting_reservations( @meeting, @team_affiliation )  # Collect the created list of badge reservations
     if @meeting_reservations.count < 1
       flash[:error] = I18n.t(:no_result_to_show)
