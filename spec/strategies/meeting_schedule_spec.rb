@@ -35,7 +35,7 @@ describe MeetingSchedule, type: :strategy do
         columns = [
           'meeting_session_id',
           'session_order', 'scheduled_date', 'begin_time', 'warm_up_time', 'session_notes',
-          'swimming_pool_id', 'pool_name', 'pool_address', 'city', 'pool_type', 'maps_uri',
+          'swimming_pool_id', 'lanes_number', 'pool_name', 'pool_address', 'city', 'pool_type', 'maps_uri',
           'meeting_event_id', 'event_order', 'event_code', 'is_a_relay',
           'is_out_of_race', 'has_separate_gender', 'has_separate_categories', 'event_notes'
         ]
@@ -83,7 +83,7 @@ describe MeetingSchedule, type: :strategy do
         expect( size ).to be > 0
         expect( size ).to eq( meeting.meeting_sessions.count )
         meeting.meeting_sessions.each do |meeting_session|
-          mss = ms.get_session( meeting_session.id )
+          mss = ms.get_session( subject.get_key( meeting_session.session_order, meeting_session.id ))
           expect( mss ).to be_an_instance_of( MeetingScheduleDAO::MeetingScheduleSessionDAO )
           expect( mss.events.size ).to eq( meeting_session.meeting_events.count )
         end

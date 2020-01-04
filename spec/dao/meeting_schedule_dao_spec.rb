@@ -9,8 +9,10 @@ describe MeetingScheduleDAO, type: :model do
   let(:meeting)             { Meeting.last(100).sample }
   let(:gender_code)         { EventType.all.sammple.code }
   let(:category_code)       { CategoryType.where( season_id: [191, 192] ).sample.code }
+  let(:event_id)            { ( rand * 1000 ).to_i + 1 }
   let(:event_code)          { EventType.all.sample.code }
   let(:is_a_relay)          { [true, false].sample }
+  let(:session_id)          { ( rand * 1000 ).to_i + 1 }
   let(:session_order)       { ( rand * 6 ).to_i + 1 }
   let(:event_order)         { ( rand * 22 ).to_i + 1 }
   let(:heat_type)           { HeatType.all.sample.i18n_description }
@@ -33,15 +35,16 @@ describe MeetingScheduleDAO, type: :model do
 
   context "MeetingScheduleEventDAO subelement," do
 
-    subject { MeetingScheduleDAO::MeetingScheduleEventDAO.new( event_code ) }
+    subject { MeetingScheduleDAO::MeetingScheduleEventDAO.new( event_id, event_code ) }
 
     it_behaves_like( "(the existance of a method)", [
-      :event_code, :is_a_relay,
+      :event_id, :event_code, :is_a_relay,
       :event_order, :heat_type, :is_out_of_race, :has_separate_gender, :has_separate_categories, :notes
     ] )
 
     describe "when initialized without optional parameters" do
       it "returns given values and sets defaults" do
+        expect( subject.event_id ).to eq( event_id )
         expect( subject.event_code ).to eq( event_code )
         expect( subject.is_a_relay ).to eq( false )
         expect( subject.event_order ).to eq( 0 )
@@ -55,7 +58,8 @@ describe MeetingScheduleDAO, type: :model do
 
     describe "when initialized with optional parameters" do
       it "returns given values" do
-        result = MeetingScheduleDAO::MeetingScheduleEventDAO.new( event_code, is_a_relay, event_order, heat_type, boolean1, boolean2, boolean3, notes )
+        result = MeetingScheduleDAO::MeetingScheduleEventDAO.new( event_id, event_code, is_a_relay, event_order, heat_type, boolean1, boolean2, boolean3, notes )
+        expect( result.event_id ).to eq( event_id )
         expect( result.event_code ).to eq( event_code )
         expect( result.is_a_relay ).to eq( is_a_relay )
         expect( result.event_order ).to eq( event_order )
@@ -70,11 +74,11 @@ describe MeetingScheduleDAO, type: :model do
 
   context "MeetingScheduleSessionDAO subelement," do
 
-    subject { MeetingScheduleDAO::MeetingScheduleSessionDAO.new( session_order, date, pool.id, pool_type ) }
+    subject { MeetingScheduleDAO::MeetingScheduleSessionDAO.new( session_id, session_order, date, pool.id, pool_type ) }
 
     it_behaves_like( "(the existance of a method)", [
-      :session_order, :scheduled_date, :pool_id, :pool_type,
-      :begin_time, :warm_up_time, :pool_name, :pool_address, :city, :maps_uri, :day_part, :notes
+      :session_id, :session_order, :scheduled_date, :pool_id, :pool_type,
+      :lanes, :begin_time, :warm_up_time, :pool_name, :pool_address, :city, :maps_uri, :day_part, :notes
     ] )
 
     it_behaves_like( "(the existance of a method returning an hash)", [
@@ -83,6 +87,7 @@ describe MeetingScheduleDAO, type: :model do
 
     describe "when initialized without optional parameters" do
       it "returns given values and sets defaults" do
+        expect( subject.session_id ).to eq( session_id )
         expect( subject.session_order ).to eq( session_order )
         expect( subject.scheduled_date ).to eq( date )
         expect( subject.pool_id ).to eq( pool.id )
@@ -101,11 +106,13 @@ describe MeetingScheduleDAO, type: :model do
 
     describe "when initialized with optional parameters" do
       it "returns given values" do
-        result = MeetingScheduleDAO::MeetingScheduleSessionDAO.new( session_order, date, pool.id, pool_type, time1, time2, pool_name, address, city, url, day_part, notes )
+        result = MeetingScheduleDAO::MeetingScheduleSessionDAO.new( session_id, session_order, date, pool.id, pool_type, pool.lanes_number, time1, time2, pool_name, address, city, url, day_part, notes )
+        expect( result.session_id ).to eq( session_id )
         expect( result.session_order ).to eq( session_order )
         expect( result.scheduled_date ).to eq( date )
         expect( result.pool_id ).to eq( pool.id )
         expect( result.pool_type ).to eq( pool_type )
+        expect( result.lanes ).to eq( pool.lanes_number )
         expect( result.begin_time ).to eq( time1 )
         expect( result.warm_up_time ).to eq( time2 )
         expect( result.pool_name ).to eq( pool_name )
@@ -121,7 +128,7 @@ describe MeetingScheduleDAO, type: :model do
     describe "#add_event" do
       it "increases events count" do
         prev_count = subject.events.size
-        count = subject.add_event( 1, event_code )
+        count = subject.add_event( 1, event_id, event_code )
         expect( count ).to eq( prev_count + 1 )
         expect( subject.events.size ).to eq( count )
       end
@@ -130,8 +137,8 @@ describe MeetingScheduleDAO, type: :model do
         event_key = 1
         wrong_key = '_NOT_' # Event surely not already present
         another_key = '130FO' # Event surely not already present
-        subject.add_event( event_key, event_code )
-        count = subject.add_event( another_key, event_code )
+        subject.add_event( event_key, event_id, event_code )
+        count = subject.add_event( another_key, event_id + 1, event_code )
         expect( subject.events.size ).to eq( count )
         expect( subject.events.has_key?( event_key )).to eq( true )
         expect( subject.events.has_key?( another_key )).to eq( true )
@@ -140,7 +147,8 @@ describe MeetingScheduleDAO, type: :model do
 
       it "sets the given data in the events structure" do
         event_key = 1
-        subject.add_event( event_key, event_code, is_a_relay, event_order, heat_type, boolean1, boolean2, boolean3, notes )
+        subject.add_event( event_key, event_id, event_code, is_a_relay, event_order, heat_type, boolean1, boolean2, boolean3, notes )
+        expect( subject.events[event_key].event_id ).to eq( event_id )
         expect( subject.events[event_key].event_code ).to eq( event_code )
         expect( subject.events[event_key].is_a_relay ).to eq( is_a_relay )
         expect( subject.events[event_key].event_order ).to eq( event_order )
@@ -161,8 +169,8 @@ describe MeetingScheduleDAO, type: :model do
       it "returns a MeetingScheduleEventDAO cotaining event if event key exists" do
         another_key = '130FO' # Event surely not already present
         event_key = 1
-        subject.add_event( another_key, 'PUPPA' )
-        subject.add_event( event_key, event_code )
+        subject.add_event( another_key, event_id - 1, 'PUPPA' )
+        subject.add_event( event_key, event_id, event_code )
         expect( subject.events.has_key?( event_key )).to eq( true )
         event = subject.get_event( event_key )
         expect( event ).to be_an_instance_of( MeetingScheduleDAO::MeetingScheduleEventDAO )
@@ -179,7 +187,8 @@ describe MeetingScheduleDAO, type: :model do
     subject { MeetingScheduleDAO.new( meeting ) }
 
     it_behaves_like( "(the existance of a method)", [
-      :meeting
+      :meeting,
+      :meeting_date
     ] )
 
     it_behaves_like( "(the existance of a method returning an hash)", [
@@ -193,10 +202,16 @@ describe MeetingScheduleDAO, type: :model do
       end
     end
 
+    describe "#meeting_date" do
+      it "returns a date" do
+        expect( subject.meeting_date ).to be_an_instance_of( Date )
+      end
+    end
+
     describe "#add_session" do
       it "increases sessions count" do
         prev_count = subject.sessions.size
-        count = subject.add_session( 1, session_order, date, pool.id, pool_type )
+        count = subject.add_session( 1, session_id, session_order, date, pool.id, pool_type )
         expect( count ).to eq( prev_count + 1 )
         expect( subject.sessions.size ).to eq( count )
       end
@@ -205,8 +220,8 @@ describe MeetingScheduleDAO, type: :model do
         session_key = 1
         wrong_key = '_NOT_' # Event surely not already present
         another_key = '130FO' # Event surely not already present
-        subject.add_session( session_key, session_order, date, pool.id, pool_type )
-        count = subject.add_session( another_key, session_order + 1, date + 1, pool.id, pool_type )
+        subject.add_session( session_key, session_id, session_order, date, pool.id, pool_type )
+        count = subject.add_session( another_key, session_id + 1, session_order + 1, date + 1, pool.id, pool_type )
         expect( subject.sessions.size ).to eq( count )
         expect( subject.sessions.has_key?( session_key )).to eq( true )
         expect( subject.sessions.has_key?( another_key )).to eq( true )
@@ -215,11 +230,13 @@ describe MeetingScheduleDAO, type: :model do
 
       it "sets the given data in the sessions structure" do
         session_key = 1
-        subject.add_session( session_key, session_order, date, pool.id, pool_type, time1, time2, pool_name, address, city, url, day_part, notes )
+        subject.add_session( session_key, session_id, session_order, date, pool.id, pool_type, pool.lanes_number, time1, time2, pool_name, address, city, url, day_part, notes )
+        expect( subject.sessions[session_key].session_id ).to eq( session_id )
         expect( subject.sessions[session_key].session_order ).to eq( session_order )
         expect( subject.sessions[session_key].scheduled_date ).to eq( date )
         expect( subject.sessions[session_key].pool_id ).to eq( pool.id )
         expect( subject.sessions[session_key].pool_type ).to eq( pool_type )
+        expect( subject.sessions[session_key].lanes ).to eq( pool.lanes_number )
         expect( subject.sessions[session_key].begin_time ).to eq( time1 )
         expect( subject.sessions[session_key].warm_up_time ).to eq( time2 )
         expect( subject.sessions[session_key].pool_name ).to eq( pool_name )
@@ -240,11 +257,12 @@ describe MeetingScheduleDAO, type: :model do
       it "returns a MeetingScheduleSessionDAO cotaining session if session key exists" do
         another_key = '130FO' # Session surely not already present
         session_key = 1
-        subject.add_session( another_key, session_order - 1, date - 1, pool.id, pool_type )
-        subject.add_session( session_key, session_order, date, pool.id, pool_type )
+        subject.add_session( another_key, session_id - 1, session_order - 1, date - 1, pool.id, pool_type )
+        subject.add_session( session_key, session_id, session_order, date, pool.id, pool_type )
         expect( subject.sessions.has_key?( session_key )).to eq( true )
         session = subject.get_session( session_key )
         expect( session ).to be_an_instance_of( MeetingScheduleDAO::MeetingScheduleSessionDAO )
+        expect( session.session_id ).to eq( session_id )
         expect( session.session_order ).to eq( session_order )
         expect( session.scheduled_date ).to eq( date )
         expect( session.pool_type ).to eq( pool_type )

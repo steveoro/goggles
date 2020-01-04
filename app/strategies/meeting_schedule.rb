@@ -37,7 +37,7 @@ class MeetingSchedule
     data_retrieve_query = '
     select ms.id as meeting_session_id,
     	ms.session_order, ms.scheduled_date, substr(ms.begin_time, 1, 5) as begin_time, substr(ms.warm_up_time, 1, 5) as warm_up_time, ms.notes as session_notes,
-	    sp.id as swimming_pool_id, sp.name as pool_name, sp.address as pool_address, c.name as city, sp.maps_uri, pt.code as pool_type,
+	    sp.id as swimming_pool_id, sp.lanes_number, sp.name as pool_name, sp.address as pool_address, c.name as city, sp.maps_uri, pt.code as pool_type,
       me.id as meeting_event_id, me.event_order, et.code as event_code, et.is_a_relay,
       me.is_out_of_race, me.has_separate_gender_start_list as has_separate_gender, me.has_separate_category_start_list as has_separate_categories, me.notes as event_notes
     from meeting_sessions ms
@@ -70,24 +70,31 @@ class MeetingSchedule
       # Cycle between retrieved data to populate DAO
       @schedule_data_retrieved.each do |schedule|
         # Check meeting session
-        session = schedule['meeting_session_id'].to_i
-        if session != current_session
+        session_id    = schedule['meeting_session_id'].to_i
+        session_order = schedule['session_order'].to_i
+        session_key   = get_key( session_order, session_id )
+        if session_id != current_session
           # Session doesn't already exists. Should create
-          meeting_date = schedule['scheduled_date']
-          current_session = session
-          ms.add_session( session,
-            schedule['session_order'].to_i, meeting_date, schedule['pool_id'].to_i, schedule['pool_type'],
-            schedule['begin_time'], schedule['warm_up_time'], schedule['pool_name'], schedule['pool_address'], schedule['city'], schedule['maps_uri'], schedule['day_part'], schedule['notes'] )
+          meeting_date    = schedule['scheduled_date']
+          current_session = session_id
+          ms.add_session( session_key,
+            session_id, session_order, meeting_date, schedule['pool_id'].to_i, schedule['pool_type'],
+            schedule['lanes_number'], schedule['begin_time'], schedule['warm_up_time'], schedule['pool_name'], schedule['pool_address'], schedule['city'], schedule['maps_uri'], schedule['day_part'], schedule['notes'] )
         end
-        mss = ms.get_session(session)
+        mss = ms.get_session( session_key )
 
         # Add event
-        event = schedule['meeting_event_id'].to_i
-        mss.add_event( event, schedule['event_code'],
-         schedule['is_a_relay'].to_i > 0, schedule['event_order'].to_i, schedule['heat_type'], schedule['is_out_of_race'].to_i > 0, schedule['has_separate_gender'].to_i > 0, schedule['has_separate_categories'].to_i > 0, schedule['notes'] )
+        event_id    = schedule['meeting_event_id'].to_i
+        event_order = schedule['event_order'].to_i
+        mss.add_event( get_key( event_order, event_id ), session_id, schedule['event_code'],
+         schedule['is_a_relay'].to_i > 0, event_order, schedule['heat_type'], schedule['is_out_of_race'].to_i > 0, schedule['has_separate_gender'].to_i > 0, schedule['has_separate_categories'].to_i > 0, schedule['notes'] )
       end
     end
     ms
+  end
+
+  def get_key( order, id )
+    "#{order}-#{id}"
   end
   #-- --------------------------------------------------------------------------
   #++
