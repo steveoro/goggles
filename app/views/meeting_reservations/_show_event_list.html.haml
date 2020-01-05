@@ -1,7 +1,7 @@
-%h3= t('meeting_reservation.show_event_list_title')
+%h3#individual_list= t('meeting_reservation.show_event_list_title')
 %table.table.table-striped.table-bordered.table-hover.table-condensed
   %tbody
-    = render( partial: 'header_row', locals: { meeting: @meeting, filter: :are_not_relays, add_notes_column: false, suppress_sessions: false } )
+    = render( partial: 'meeting_schedule', locals: { meeting: @meeting, individuals: true, relays: false, add_notes_column: false, suppress_sessions: false } )
     -# Event Data rows:
     - event_res_count = 0
     - @mrsdao.reservations.values.each do |swimmer|
@@ -25,14 +25,28 @@
                 - if sir
                   - event_res_count += 1
                   = sir.get_timing
-    = render( partial: 'header_row', locals: { meeting: @meeting, filter: :are_not_relays, add_notes_column: false, suppress_sessions: true } )
-    %tr.success
-      %td
-        %b= t('meeting_stats.swimmers')
-      %td.goggles-rightalign
-        %b= @mrsdao.reservations.size
-    %tr.success
-      %td
-        %b= t('meeting_stats.tot_athletes_by_event')
-      %td.goggles-rightalign
-        %b= event_res_count
+    = render( partial: 'meeting_schedule', locals: { meeting: @meeting, individuals: true, relays: false, add_notes_column: false, suppress_sessions: true } )
+
+.col-xs-4.goggles-category-gap#individual_summary
+  %h4= t('meeting_reservation.show_event_list_summary')
+  %table.table.table-striped.table-bordered.table-hover.table-condensed
+    %tbody
+      %tr
+        %td
+          %b= t('meeting_stats.swimmers')
+        %td.goggles-rightalign
+          %b= @mrsdao.reservations.size
+      %tr
+        %td
+          %b= t('meeting_stats.tot_athletes_by_event')
+        %td.goggles-rightalign
+          %b= event_res_count
+      - total_individual_costs = 0.00
+      - total_individual_costs += (event_res_count * @mrsdao.meeting.event_fee) if @mrsdao.meeting.event_fee
+      - total_individual_costs += (@mrsdao.reservations.size * @mrsdao.meeting.meeting_fee) if @mrsdao.meeting.meeting_fee
+      - if total_individual_costs > 0
+        %tr
+          %td
+            %b= t('meeting_reservation.tot_individual_costs')
+          %td.goggles-rightalign
+            %b= sprintf( "%02.2f", total_individual_costs )

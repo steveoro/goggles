@@ -1,0 +1,41 @@
+- session_keys = @msdao.get_session_keys
+- unless suppress_sessions
+  %tr.success.text-center
+    %td{ colspan: 2, rowspan: 2, id: "goggles-border-rx-thick" }
+      %b= I18n.t('meeting_stats.swimmers')
+    - session_keys.each do |session_key|
+      - mss = MeetingScheduleDAODecorator.new( @msdao.get_session( session_key ))
+      - columns = 0
+      - columns += mss.individuals if individuals
+      - columns += mss.relays if relays
+      %td{ colspan: columns, id: "goggles-border-rx-thick" }
+        %i= mss.get_session_header
+    - if add_notes_column
+      %td
+        &nbsp;
+
+%tr.success.text-center
+  - if suppress_sessions
+    %td{ colspan: 2, id: "goggles-border-rx-thick" }
+      %b= I18n.t('meeting_stats.swimmers')
+  - session_keys.each do |session_key|
+    - mss = @msdao.get_session( session_key )
+    - num = 0
+    - columns = 0
+    - columns += mss.individuals if individuals
+    - columns += mss.relays if relays
+    - mss.get_event_keys.each do |event_key|
+      - msse = mss.get_event( event_key )
+      - if individuals && !msse.is_a_relay
+        - num += 1
+        - out_of_race = msse.is_out_of_race ? ' (FG)' : ''
+        %td{ class: (msse.is_out_of_race ? "warning" : nil ), id: (num == columns ? "goggles-border-rx-thick" : nil) }
+          %b= msse.event_code + out_of_race
+      - if relays && msse.is_a_relay
+        - num += 1
+        - out_of_race = msse.is_out_of_race ? ' (FG)' : ''
+        %td{ class: (msse.is_out_of_race ? "warning" : nil ), id: (num == columns ? "goggles-border-rx-thick" : nil) }
+          %b= msse.event_code + out_of_race
+  - if add_notes_column
+    %td
+      %i= I18n.t('meeting_reservation.free_notes')

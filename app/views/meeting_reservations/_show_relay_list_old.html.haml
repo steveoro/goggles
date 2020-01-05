@@ -1,0 +1,33 @@
+%h3= t('meeting_reservation.show_relay_list_title')
+.row{ class: @reservations_relays[@meeting_reservations.first.id].size < 3 ? 'col-xs-6' : '' }
+  %table.table.table-striped.table-bordered.table-hover.table-condensed
+    %tbody
+      = render( partial: 'header_row', locals: { meeting: @meeting, filter: :only_relays, add_notes_column: false, suppress_sessions: false } )
+      -# Relay Data rows:
+      - @meeting_reservations.each do |reservation|
+        -# Avoid showing rows for people who are not coming:
+        - unless reservation.is_not_coming || (! @reservations_relays[reservation.id].any?{ |row| row.is_doing_this? })
+          %tr
+            %td{ colspan: 2, class: 'info' }
+              %a{'id'=>"swimmer#{reservation.swimmer_id}", 'href'=>"#{ swimmer_radio_path(id: reservation.swimmer_id) }", 'data-toggle'=>'tooltip', 'title'=>I18n.t('radiography.radio_tab_tooltip')}
+                %b= reservation.swimmer.get_full_name
+              &nbsp;
+              %small
+                %i
+                  = I18n.t('meeting_reservation.add_maybe') if !reservation.has_confirmed
+
+            - @meeting.meeting_events.only_relays.each do |meeting_event|
+              - event_reservation = @reservations_relays[ reservation.id ].find{ |row| row.meeting_event_id == meeting_event.id }
+              - if event_reservation
+                %td{ 'data-toggle'=>'tooltip', 'title'=> "#{ event_reservation.event_type.i18n_short }, #{ reservation.swimmer.get_full_name }" }
+                  .text-center
+                    = show_tag( true ) if event_reservation && event_reservation.is_doing_this?
+                    - if event_reservation && event_reservation.notes.to_s.size > 0
+                      = event_reservation.notes.to_s.split(';').first
+                      = ","
+                      &nbsp;
+                      = "#"
+                      = event_reservation.notes.to_s.split(';').last.to_i
+              - else
+                %td
+                  &nbsp;

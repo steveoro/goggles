@@ -1,3 +1,22 @@
 = render( partial: 'tabs_and_title' )
 
+.row
+  %ul.col-xs-offset-10.col-xs-2.col-sm-offset-11.col-sm-1.col-md-offset-11.col-md-1.nav.nav-pills.nav-stacked.navbar-fixed-bottom.goggles-divlist-odd.navpill_side
+    %li
+      = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+        = image_tag('bullet_arrow_up.png')
+    %li
+      = link_to("#individual_list", {'data-turbolinks'=>'false', class: 'btn goggles-nav-compact'}) do
+        = I18n.t('meeting_reservation.show_event_list_title')
+    %li
+      = link_to("#individual_summary", {'data-turbolinks'=>'false', class: 'btn goggles-nav-compact'}) do
+        = I18n.t('meeting_reservation.show_event_list_summary')
+    %li
+      = link_to("#relay_list", {'data-turbolinks'=>'false', class: 'btn goggles-nav-compact'}) do
+        = I18n.t('meeting_reservation.show_relay_list_title')
+
 = render( partial: 'show_event_list' )
+
+.col-xs-12.goggles-category-gap#relay_list
+  = render( partial: 'show_relay_list' )
+.col-xs-12.goggles-category-gap#relay_list

@@ -1,29 +1,38 @@
-- session_keys = @msdao.get_session_keys
-- unless suppress_sessions
+%tr#header_row
+  - session_dates   = meeting.meeting_events.send( filter.to_sym ).map{|me| Format.a_date(me.meeting_session.scheduled_date) + ' ' + Format.a_time(me.meeting_session.begin_time) }
+  -# XXX Some Meeting sessions have been found with nil day_part_type_id! DEFAULT: code: 'M'
+  - session_orders  = meeting.meeting_events.send( filter.to_sym ).map{|me| "(#{ I18n.t('activerecord.models.session') } #{ me.meeting_session.session_order }) #{ me.meeting_session.day_part_type_id.nil? ? '???' : DayPartType.new(code: me.meeting_session.day_part_type.code).i18n_short }" }
+  - uniq_dates  = session_dates.uniq
+  - uniq_orders = session_orders.uniq
+
+  -# Common header #1: session date
+  - unless suppress_sessions
+    %tr.success.text-center
+      %td{ colspan: 2 }
+        &nbsp;
+      - tot_columns = uniq_dates.map{ |date| session_dates.count(date) }
+      - uniq_dates.each_with_index do |session_date, index|
+        -# Avoid a thick border on the last column:
+        - is_not_last_item = index+1 < uniq_dates.count
+        %td{ colspan: tot_columns[index], id: (is_not_last_item ? "goggles-border-rx-thick" : nil) }
+          %i= session_date
+      - if add_notes_column
+        %td
+          &nbsp;
+  -# Common header #2: event title
   %tr.success.text-center
-    %td{ colspan: 2, id: "goggles-border-rx-thick" }
-      %b= I18n.t('meeting_stats.swimmers')
-    - session_keys.each do |session_key|
-      - mss = MeetingScheduleDAODecorator.new( @msdao.get_session( session_key ))
-      %td{ colspan: mss.individuals, id: "goggles-border-rx-thick" }
-        %i= mss.get_session_header
+    %td{ colspan: 2 }
+      %i= I18n.t('meeting_stats.swimmers')
+    - curr_session_order = 1
+    - meeting.meeting_events.send( filter.to_sym ).each do |meeting_event|
+      - out_of_race = meeting_event.is_out_of_race ? ' (FG)' : ''
+      - if meeting_event.meeting_session.session_order > curr_session_order
+        - curr_session_order = meeting_event.meeting_session.session_order
+        %td#goggles-border-lx-thick
+          %b= meeting_event.event_type.i18n_short + out_of_race
+      - else
+        %td{ class: meeting_event.is_out_of_race ? 'warning' : '' }
+          %b= meeting_event.event_type.i18n_short + out_of_race
     - if add_notes_column
       %td
-        &nbsp;
-
-%tr.success.text-center
-  %td{ colspan: 2, id: "goggles-border-rx-thick" }
-    &nbsp;
-  - session_keys.each do |session_key|
-    - mss = @msdao.get_session( session_key )
-    - num = 0
-    - mss.get_event_keys.each do |event_key|
-      - msse = mss.get_event( event_key )
-      - if !msse.is_a_relay
-        - num += 1
-        - out_of_race = msse.is_out_of_race ? ' (FG)' : ''
-        %td{ class: (msse.is_out_of_race ? "warning" : nil ), id: (num == mss.individuals ? "goggles-border-rx-thick" : nil) }
-          %b= msse.event_code + out_of_race
-  - if add_notes_column
-    %td
-      %i= I18n.t('meeting_reservation.free_notes')
+        %i= I18n.t('meeting_reservation.free_notes')

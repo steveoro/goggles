@@ -118,7 +118,7 @@ class MeetingReservationsSummaryDAO
     @meeting      = meeting
     @updated_at   = updated_at
 
-    @reservations = Hash.new()
+    @reservations    = Hash.new()
   end
 
   def create_swimmer_reservations( swimmer_id, swimmer_name, gender_code, has_confirmed = false, category_code = nil )

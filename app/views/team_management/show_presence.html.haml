@@ -1,81 +1,76 @@
 = render( partial: 'teams/tabs_and_title' )
 = render( partial: 'team_management/show_presence_sub_tab_menu' )
 - if @presence_data && @presence_data.count > 0
-  .row
-    %ul.col-xs-offset-10.col-xs-2.col-sm-offset-11.col-sm-1.col-md-offset-11.col-md-1.nav.nav-pills.nav-stacked.navbar-fixed-bottom.goggles-divlist-odd.navpill_side
+  %ul.col-xs-offset-10.col-xs-2.col-sm-offset-11.col-sm-1.col-md-offset-11.col-md-1.nav.nav-pills.nav-stacked.navbar-fixed-bottom.goggles-divlist-odd.navpill_side
+    %li
+      = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
+        = image_tag('bullet_arrow_up.png')
+    - @current_seasons.each do |season|
       %li
-        = link_to("#pageTop", {'data-turbolinks'=>'false', 'data-toggle'=>'tooltip', 'title'=>I18n.t('top_of_page')}) do
-          = image_tag('bullet_arrow_up.png')
+        = link_to("##{season.id}", {'data-turbolinks'=>'false', class: 'btn goggles-nav-compact'}) do
+          = I18n.t('presences.season') + ' ' + season.season_type.federation_type.code
+    %li
+      = link_to("#swimmers_summary", {'data-turbolinks'=>'false', class: 'btn goggles-nav-compact'}) do
+        = I18n.t('presences.summary')
+
+  %table.table.table-striped.table-bordered.table-hover.table-condensed
+    %tbody
       - @current_seasons.each do |season|
-        %ul.nav.nav-pills
-          %li
-            = link_to("##{season.id}", {'data-turbolinks'=>'false', class: 'btn goggles-nav-compact'}) do
-              = I18n.t('presences.season') + ' ' + season.season_type.federation_type.code
-      %ul.nav.nav-pills
-        %li
-          = link_to("#swimmers_summary", {'data-turbolinks'=>'false', class: 'btn goggles-nav-compact'}) do
-            = I18n.t('presences.summary')
+        - num_swimmers = 0
+        - num_events = 0
+        - num_relays = 0
+        - tot_costs = 0
+        %tr{'class'=>'info', 'id' => "#{season.id}"}
+          %td.text-center{'colspan'=>'6'}
+            %b= season.get_full_name
+        %tr{'class'=>'info'}
+          %td.text-center
+            %b= I18n.t(:name)
+          %td.text-center
+            %b= I18n.t('presences.meetings')
+          %td.text-center
+            %b= I18n.t('presences.events')
+          %td.text-center
+            %b= I18n.t('presences.relays')
+          %td.text-center
+            %b= I18n.t('presences.badge_shorted')
+          %td.text-right
+            %b= I18n.t('presences.costs')
 
-
-  .row
-    %table.table.table-striped.table-bordered.table-hover.table-condensed
-      %tbody
-        - @current_seasons.each do |season|
-          - num_swimmers = 0
-          - num_events = 0
-          - num_relays = 0
-          - tot_costs = 0
-          %tr{'class'=>'info', 'id' => "#{season.id}"}
-            %td.text-center{'colspan'=>'6'}
-              %b= season.get_full_name
-          %tr{'class'=>'info'}
-            %td.text-center
-              %b= I18n.t(:name)
-            %td.text-center
-              %b= I18n.t('presences.meetings')
-            %td.text-center
-              %b= I18n.t('presences.events')
-            %td.text-center
-              %b= I18n.t('presences.relays')
-            %td.text-center
-              %b= I18n.t('presences.badge_shorted')
-            %td.text-right
-              %b= I18n.t('presences.costs')
-
-          - @presence_data.reject{ |e| e['season_id'] != season.id }.each do |swimmer|
-            %tr
-              %td.text-right
-                %a{ href: "#{ swimmer_presence_path(:id=>swimmer['swimmer_id']) }", 'data-toggle' => 'tooltip', title: I18n.t('presences.presences_link') }
-                  = swimmer['complete_name']
-              %td.text-center
-                = swimmer['mtg_count']
-              %td.text-center
-                = swimmer['mir_count']
-              %td.text-center
-                = swimmer['rel_count']
-              %td.text-center
-                = show_tag( swimmer['badge_fee'] > 0 )
-              %td.text-right
-                = sprintf( "%02.2f", swimmer['badge_fee'] + swimmer['mtg_fee'] + swimmer['mir_fee'] + swimmer['rel_fee'])
-            - num_swimmers += 1
-            - num_events += swimmer['mir_count']
-            - num_relays += swimmer['rel_count']
-            - tot_costs += swimmer['badge_fee'] + swimmer['mtg_fee'] + swimmer['mir_fee'] + swimmer['rel_fee']
-          %tr{'class'=>'success'}
-            %td.goggles-td.goggles-rightalign
-              %b= num_swimmers
-            %td.text-center
-              %b= '--'
-            %td.text-center
-              %b= num_events
-            %td.text-center
-              %b= (num_relays / 4).to_i.to_s + ' (' + num_relays.to_s + ')'
-            %td.text-center
-              %b= '--'
-            %td.text-right
-              %b= sprintf( "%02.2f", tot_costs)
+        - @presence_data.reject{ |e| e['season_id'] != season.id }.each do |swimmer|
           %tr
-            %td{'colspan' => '6'}
+            %td.text-right
+              %a{ href: "#{ swimmer_presence_path(:id=>swimmer['swimmer_id']) }", 'data-toggle' => 'tooltip', title: I18n.t('presences.presences_link') }
+                = swimmer['complete_name']
+            %td.text-center
+              = swimmer['mtg_count']
+            %td.text-center
+              = swimmer['mir_count']
+            %td.text-center
+              = swimmer['rel_count']
+            %td.text-center
+              = show_tag( swimmer['badge_fee'] > 0 )
+            %td.text-right
+              = sprintf( "%02.2f", swimmer['badge_fee'] + swimmer['mtg_fee'] + swimmer['mir_fee'] + swimmer['rel_fee'])
+          - num_swimmers += 1
+          - num_events += swimmer['mir_count']
+          - num_relays += swimmer['rel_count']
+          - tot_costs += swimmer['badge_fee'] + swimmer['mtg_fee'] + swimmer['mir_fee'] + swimmer['rel_fee']
+        %tr{'class'=>'success'}
+          %td.goggles-td.goggles-rightalign
+            %b= num_swimmers
+          %td.text-center
+            %b= '--'
+          %td.text-center
+            %b= num_events
+          %td.text-center
+            %b= (num_relays / 4).to_i.to_s + ' (' + num_relays.to_s + ')'
+          %td.text-center
+            %b= '--'
+          %td.text-right
+            %b= sprintf( "%02.2f", tot_costs)
+        %tr
+          %td{'colspan' => '6'}
 
   - if @swimmers_summary.count > 0
     - tot_costs = 0
@@ -83,65 +78,64 @@
     - tot_payments = 0
     - last_payment = nil
     - tot_cash = 0
-    .col-xs-12
+    .col-xs-12#swimmers_summary
       &nbsp;
-    .row#swimmers_summary
-      %table.table.table-striped.table-bordered.table-hover.table-condensed
-        %tbody
-          %tr{'class'=>'info'}
-            %td.text-center{'colspan' => '6'}
-              %b= I18n.t('presences.summary')
-          %tr{'class'=>'info'}
-            %td.text-center{'rowspan' => '2'}
-              %b= I18n.t(:name)
-            %td.text-right{'rowspan' => '2'}
-              %b= I18n.t('presences.costs')
-            %td.text-center{'colspan' => '3'}
-              %b= I18n.t('presences.payments')
-            %td.text-right{'rowspan' => '2'}
-              %b= I18n.t('presences.cash')
-          %tr{'class'=>'info'}
-            %td.text-center
-              %b= I18n.t('presences.num')
-            %td.text-center
-              %b= I18n.t('presences.amount')
-            %td.text-center
-              %b= I18n.t('presences.last_operation')
-          - @swimmers_summary.each do |swimmer_summary|
-            - swimmer_cash = swimmer_summary['payments'] - swimmer_summary['tot_costs']
-            - cash_class = swimmer_cash < 0 ? 'warning' : 'success'
-            - tot_costs += swimmer_summary['tot_costs']
-            - num_payments += swimmer_summary['num_payments']
-            - tot_payments += swimmer_summary['payments']
-            - last_payment = swimmer_summary['last_payment'] if !swimmer_summary['last_payment'].nil? && (last_payment.nil? || last_payment < swimmer_summary['last_payment'])
-            - tot_cash += swimmer_cash
-            %tr
-              %td.text-right
-                %a{ href: "#{ swimmer_presence_path(:id=>swimmer_summary['swimmer_id']) }", 'data-toggle' => 'tooltip', title: I18n.t('presences.presences_link') }
-                  = swimmer_summary['complete_name']
-              %td.text-right
-                = sprintf( "%02.2f", swimmer_summary['tot_costs'] )
-              %td.text-center
-                = swimmer_summary['num_payments']
-              %td.text-right
-                = sprintf( "%02.2f", swimmer_summary['payments'] )
-              %td.text-center
-                = Format.a_date( swimmer_summary['last_payment'] )
-              %td.text-right{'class'=>cash_class}
-                %b= sprintf( "%02.2f", swimmer_cash )
-          %tr{'class'=>'success'}
+    %table.table.table-striped.table-bordered.table-hover.table-condensed
+      %tbody
+        %tr{'class'=>'info'}
+          %td.text-center{'colspan' => '6'}
+            %b= I18n.t('presences.summary')
+        %tr{'class'=>'info'}
+          %td.text-center{'rowspan' => '2'}
+            %b= I18n.t(:name)
+          %td.text-right{'rowspan' => '2'}
+            %b= I18n.t('presences.costs')
+          %td.text-center{'colspan' => '3'}
+            %b= I18n.t('presences.payments')
+          %td.text-right{'rowspan' => '2'}
+            %b= I18n.t('presences.cash')
+        %tr{'class'=>'info'}
+          %td.text-center
+            %b= I18n.t('presences.num')
+          %td.text-center
+            %b= I18n.t('presences.amount')
+          %td.text-center
+            %b= I18n.t('presences.last_operation')
+        - @swimmers_summary.each do |swimmer_summary|
+          - swimmer_cash = swimmer_summary['payments'] - swimmer_summary['tot_costs']
+          - cash_class = swimmer_cash < 0 ? 'warning' : 'success'
+          - tot_costs += swimmer_summary['tot_costs']
+          - num_payments += swimmer_summary['num_payments']
+          - tot_payments += swimmer_summary['payments']
+          - last_payment = swimmer_summary['last_payment'] if !swimmer_summary['last_payment'].nil? && (last_payment.nil? || last_payment < swimmer_summary['last_payment'])
+          - tot_cash += swimmer_cash
+          %tr
             %td.text-right
-              %b= I18n.t('presences.summary')
-            %td.text-center
-              %b= sprintf( "%02.2f", tot_costs )
-            %td.text-center
-              %b= num_payments
+              %a{ href: "#{ swimmer_presence_path(:id=>swimmer_summary['swimmer_id']) }", 'data-toggle' => 'tooltip', title: I18n.t('presences.presences_link') }
+                = swimmer_summary['complete_name']
             %td.text-right
-              %b= sprintf( "%02.2f", tot_payments )
+              = sprintf( "%02.2f", swimmer_summary['tot_costs'] )
             %td.text-center
-              %b= Format.a_date( last_payment )
+              = swimmer_summary['num_payments']
             %td.text-right
-              %b= sprintf( "%02.2f", tot_cash )
+              = sprintf( "%02.2f", swimmer_summary['payments'] )
+            %td.text-center
+              = Format.a_date( swimmer_summary['last_payment'] )
+            %td.text-right{'class'=>cash_class}
+              %b= sprintf( "%02.2f", swimmer_cash )
+        %tr{'class'=>'success'}
+          %td.text-right
+            %b= I18n.t('presences.summary')
+          %td.text-center
+            %b= sprintf( "%02.2f", tot_costs )
+          %td.text-center
+            %b= num_payments
+          %td.text-right
+            %b= sprintf( "%02.2f", tot_payments )
+          %td.text-center
+            %b= Format.a_date( last_payment )
+          %td.text-right
+            %b= sprintf( "%02.2f", tot_cash )
 
   .col-xs-12
     &nbsp;
