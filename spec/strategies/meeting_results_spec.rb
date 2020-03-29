@@ -21,7 +21,8 @@ describe MeetingResults, type: :strategy do
 
     it_behaves_like( "(the existance of a method)", [
       :meeting,
-      :data_retrieved, :max_updated_at, :set_meeting_results_dao
+      :data_retrieved, :max_updated_at,
+      :retrieve_data_by_query, :retrieve_data, :set_meeting_results_dao_from_query
     ] )
 
     it "assigns attributes as given parameters" do
@@ -36,21 +37,45 @@ describe MeetingResults, type: :strategy do
       expect( subject.data_retrieved ).to be_nil
     end
 
-    describe "#retrieve_data" do
+    describe "#retrieve_data_by_query" do
       it "returns a relation and sets date_retrieved" do
         expect( subject.data_retrieved ).to be_nil
-        result = subject.retrieve_data
+        result = subject.retrieve_data_by_query
         expect( result ).to be_a_kind_of( ActiveRecord::Result )
         expect( subject.data_retrieved ).to be_a_kind_of( ActiveRecord::Result )
         expect( subject.data_retrieved ).to eq( result )
       end
-      xit "returns a query result of elements with necessary columns" do
+      it "returns a query result of elements with necessary columns" do
         columns = [
-          'meeting_id', 'meeting_name', 'meeting_date', 'federation_code', 'category_code', 'category_age',
-          'pool_code', 'event_code', 'event_order', 'result_id', 'minutes', 'seconds', 'hundreds', 'is_personal_best', 'is_disqualified', 'updated_at',
-          'passages'
+          'session_order',
+          'event_order',
+          'event_code',
+          'heat_type',
+          'is_out_of_race',
+          'gender_code',
+          'age_begin',
+          'category_code',
+        	'rank',
+          'is_disqualified',
+          'minutes',
+          'seconds',
+          'hundreds',
+          'is_personal_best',
+          'reaction_time',
+          'standard_points',
+          'meeting_individual_points',
+          'goggle_cup_points',
+          'team_points',
+          'complete_name',
+          'year_of_birth',
+          'team_name',
+          'updated_at',
+          'team_id',
+          'swimmer_id',
+          'meeting_event_id',
+          'meeting_program_id'
         ]
-        result = subject.retrieve_data
+        result = subject.retrieve_data_by_query
         result.each do |element|
           expect( element.size ).to eq( columns.size )
           columns.each do |column|
@@ -58,25 +83,12 @@ describe MeetingResults, type: :strategy do
           end
         end
       end
-      xit "returns an empty query result for a date interval in future" do
-        sm = SwimmerCareer.new( swimmer, Date.today() + 500, Date.today() + 50 )
-        result = sm.retrieve_data
-        expect( result ).to be_a_kind_of( ActiveRecord::Result )
-        expect( result.count ).to eq( 0 )
-      end
-      xit "returns an empty query result for a result-less swimmer" do
-        new_swimmer = create( :swimmer )
-        sm = SwimmerCareer.new( new_swimmer )
-        result = sm.retrieve_data
-        expect( result ).to be_a_kind_of( ActiveRecord::Result )
-        expect( result.count ).to eq( 0 )
-      end
     end
 
-    describe "#set_meeting_results_dao" do
+    describe "#set_meeting_results_dao_from_query" do
       it "returns a MeetingResultsDAO" do
         result = subject.retrieve_data
-        expect( subject.set_meeting_results_dao ).to be_an_instance_of( MeetingResultsDAO )
+        expect( subject.set_meeting_results_dao_from_query ).to be_an_instance_of( MeetingResultsDAO )
       end
     end
   end

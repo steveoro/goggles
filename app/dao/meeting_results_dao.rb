@@ -58,16 +58,17 @@ class MeetingResultsDAO
   class MeetingResultsProgramDAO
 
     # These can be edited later on@
-    attr_reader :meeting_program_id, :event_code, :gender_code, :category_code
+    attr_reader :meeting_program_id, :event_code, :heat_code, :gender_code, :category_code
 
     # These can be edited later on@
     attr_accessor :results
 
     # Creates a new instance.
     #
-    def initialize( meeting_program_id, event_code, gender_code, category_code )
+    def initialize( meeting_program_id, event_code, heat_code, gender_code, category_code )
       @meeting_program_id = meeting_program_id
       @event_code         = event_code
+      @heat_code          = heat_code
       @gender_code        = gender_code
       @category_code      = category_code
 
@@ -82,16 +83,20 @@ class MeetingResultsDAO
   class MeetingResultsEventDAO
 
     # These can be edited later on@
-    attr_reader :meeting_event_id, :event_code
+    attr_reader :meeting_event_id, :event_code, :session_order, :event_order, :heat_code, :is_out_of_race
 
     # These can be edited later on@
     attr_accessor :programs
 
     # Creates a new instance.
     #
-    def initialize( meeting_event_id, event_code )
+    def initialize( meeting_event_id, event_code, session_order, event_order, heat_code = 'F', is_out_of_race = false )
       @meeting_event_id = meeting_event_id
       @event_code       = event_code
+      @session_order    = session_order
+      @event_order      = event_order
+      @heat_code        = heat_code
+      @is_out_of_race   = is_out_of_race
 
       @programs = Hash.new()
     end
@@ -114,12 +119,16 @@ class MeetingResultsDAO
     @events     = Hash.new()
   end
 
-  def creat_event_key( event_order, event_code, heat_code )
-    "#{event_order}-#{event_code}-#{heat_code}"
+  def create_event_key( session_order, event_order, event_code, heat_code )
+    "#{session_order}-#{event_order}-#{event_code}-#{heat_code}"
   end
 
-  def creat_program_key( event_code, heat_code, gender_code, category_code )
-    "#{event_order}-#{heat_code}-#{gender_code}-#{category_code}"
+  def create_program_key( event_code, heat_code, gender_code, category_code )
+    "#{event_code}-#{heat_code}-#{gender_code}-#{category_code}"
+  end
+
+  def create_result_key( is_disqualified, rank, complete_name )
+    "#{is_disqualified}-#{rank}-#{complete_name}"
   end
   #-- -------------------------------------------------------------------------
   #++
