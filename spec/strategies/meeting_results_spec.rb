@@ -9,7 +9,8 @@ describe MeetingResults, type: :strategy do
 
     it_behaves_like( "(the existance of a method)", [
       :meeting,
-      :data_retrieved, :max_updated_at, :set_meeting_results_dao
+      :data_retrieved, :max_updated_at,
+      :retrieve_data_by_query, :retrieve_data, :set_meeting_results_dao_from_query
     ] )
 
     it "assigns attributes as given parameters" do
@@ -24,10 +25,10 @@ describe MeetingResults, type: :strategy do
       expect( subject.data_retrieved ).to be_nil
     end
 
-    describe "#retrieve_data" do
+    describe "#retrieve_data_by_query" do
       it "returns a relation and sets date_retrieved" do
         expect( subject.data_retrieved ).to be_nil
-        result = subject.retrieve_data
+        result = subject.retrieve_data_by_query
         expect( result ).to be_a_kind_of( ActiveRecord::Result )
         expect( subject.data_retrieved ).to be_a_kind_of( ActiveRecord::Result )
         expect( subject.data_retrieved ).to eq( result )
@@ -38,13 +39,20 @@ describe MeetingResults, type: :strategy do
           'seconds', 'hundreds', 'is_personal_best', 'reaction_time', 'standard_points', 'meeting_individual_points', 'goggle_cup_points', 'team_points',
           'complete_name', 'year_of_birth', 'team_name', 'team_id', 'swimmer_id', 'meeting_event_id', 'meeting_program_id'
         ]
+        result = subject.retrieve_data_by_query
+          result.each do |element|
+            expect( element.size ).to eq( columns.size )
+            columns.each do |column|
+              expect( element.has_key?(column) ).to eq(true)
+            end
+          end
+        end
       end
-   end
 
-    describe "#set_meeting_results_dao" do
+    describe "#set_meeting_results_dao_from_query" do
       it "returns a MeetingResultsDAO" do
         result = subject.retrieve_data
-        expect( subject.set_meeting_results_dao ).to be_an_instance_of( MeetingResultsDAO )
+        expect( subject.set_meeting_results_dao_from_query ).to be_an_instance_of( MeetingResultsDAO )
       end
     end
   end

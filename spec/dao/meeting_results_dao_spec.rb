@@ -6,7 +6,23 @@ require 'ffaker'
 
 describe MeetingResultsDAO, type: :model do
 
- let(:meeting)             { Meeting.last(300).sample }
+  let(:meeting)             { Swimmer.last(300).sample }
+  let(:id)                  { (rand * 10000).to_i + 1 }
+  let(:other_id)            { (rand * 10000).to_i + 1 }
+  let(:rank)                { (rand * 15).to_i + 1 }
+  let(:year_of_birth)       { (rand * 75).to_i + 1920 }
+  let(:complete_name)       { FFaker::NameIT.name }
+  let(:team_name)           { FFaker::Lorem.word.camelcase + ' Team' }
+  let(:event_code)          { EventType.are_not_relays.sample.code }
+  let(:gender_code)         { GenderType.all.sample.code }
+  let(:category_code)       { CategoryType.where( season_id: [191, 192] ).sample.code }
+  let(:heat_code)           { HeatType.all.sample.code }
+  let(:session_order)       { (rand * 4).to_i  + 1}
+  let(:event_order)         { (rand * 20).to_i + 1 }
+  let(:minutes)             { (rand * 2).to_i }
+  let(:seconds)             { (rand * 59).to_i }
+  let(:hundreds)            { (rand * 99).to_i }
+  let(:time_swam)           { Timing.new( hundreds, seconds, minutes ) }
 
   context "MeetingResultsIndividualDAO subelement," do
 
@@ -70,10 +86,10 @@ describe MeetingResultsDAO, type: :model do
 
   context "MeetingResultsProgramDAO subelement," do
 
-    subject { MeetingResultsDAO::MeetingResultsProgramDAO.new( id, event_code, gender_code, category_code ) }
+    subject { MeetingResultsDAO::MeetingResultsProgramDAO.new( id, event_code, heat_code, gender_code, category_code ) }
 
     it_behaves_like( "(the existance of a method)", [
-      :meeting_program_id, :event_code, :gender_code, :category_code
+      :meeting_program_id, :event_code, :heat_code, :gender_code, :category_code
     ] )
 
     it_behaves_like( "(the existance of a method returning an hash)", [
@@ -84,6 +100,7 @@ describe MeetingResultsDAO, type: :model do
       it "returns given values" do
         expect( subject.meeting_program_id ).to eq( id )
         expect( subject.event_code ).to eq( event_code )
+        expect( subject.heat_code ).to eq( heat_code )
         expect( subject.gender_code ).to eq( gender_code )
         expect( subject.category_code ).to eq( category_code )
       end
@@ -94,10 +111,10 @@ describe MeetingResultsDAO, type: :model do
 
   context "MeetingResultsEventDAO subelement," do
 
-    subject { MeetingResultsDAO::MeetingResultsEventDAO.new( id, event_code ) }
+    subject { MeetingResultsDAO::MeetingResultsEventDAO.new( id, event_code, session_order, event_order ) }
 
     it_behaves_like( "(the existance of a method)", [
-      :meeting_event_id, :event_code
+      :meeting_event_id, :event_code, :session_order, :event_order, :heat_code, :is_out_of_race
     ] )
 
     it_behaves_like( "(the existance of a method returning an hash)", [
@@ -134,13 +151,7 @@ describe MeetingResultsDAO, type: :model do
       end
     end
 
-    describe "when initialized with optional parameters" do
-      it "returns given values" do
-        updated_at = Date.today() - (rand * 1000).to_i
-        result = MeetingResultsDAO.new( meeting, updated_at )
-        expect( result.meeting ).to eq( meeting )
-        expect( result.updated_at ).to eq( updated_at )
-      end
+
   end
   #-- -------------------------------------------------------------------------
   #++
