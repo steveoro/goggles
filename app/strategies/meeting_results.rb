@@ -98,18 +98,14 @@ class MeetingResults
       # Cycle between retrieved data to populate DAO
       @data_retrieved.each do |result|
         event_id = result['meeting_event_id']
-        event_key = sc.create_key()
-        me = MeetingResultsEventDAO.new( event_id ) if !sc.events.has_key?(event_key)
-        sc.events[event_key] = me
+        me = MeetingResultsEventDAO.new( event_id, result['event_code'] ) if !sc.events.has_key?(event_id)
+        sc.events[event_id] = me
 
         program_id = result['meeting_program_id']
-        event_key = sc.create_key()
+        mp = MeetingResultsProgramDAO.new( program_id, result['event_code'], result['gender_code'], result['category_code'] ) if !sc.programs.has_key?(program_id)
+        me.programs[program_id] = mp
 
-
-
-
-        me.programs << MeetingResultsProgramDAO.new()
-        mp.results << MeetingResultsIndividualDAO.new(  )
+        mp.results << MeetingResultsIndividualDAO2.new( result )
 
         # Sets max updated at value
         sc.updated_at = result['updated_at'] if sc.updated_at = 0 || sc.updated_at < result['updated_at']

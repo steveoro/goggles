@@ -6,21 +6,7 @@ require 'ffaker'
 
 describe MeetingResultsDAO, type: :model do
 
-  let(:meeting)             { Swimmer.last(300).sample }
-  let(:id)                  { (rand * 10000).to_i + 1 }
-  let(:other_id)            { (rand * 10000).to_i + 1 }
-  let(:rank)                { (rand * 15).to_i + 1 }
-  let(:year_of_birth)       { (rand * 75).to_i + 1920 }
-  let(:complete_name)       { FFaker::NameIT.name }
-  let(:team_name)           { FFaker::Lorem.word.camelcase + ' Team' }
-  let(:event_code)          { EventType.are_not_relays.sample.code }
-  let(:gender_code)         { GenderType.all.sample.code }
-  let(:category_code)       { CategoryType.where( season_id: [191, 192] ).sample.code }
-  let(:event_order)         { (rand * 20).to_i }
-  let(:minutes)             { (rand * 2).to_i }
-  let(:seconds)             { (rand * 59).to_i }
-  let(:hundreds)            { (rand * 99).to_i }
-  let(:time_swam)           { Timing.new( hundreds, seconds, minutes ) }
+ let(:meeting)             { Meeting.last(300).sample }
 
   context "MeetingResultsIndividualDAO subelement," do
 
@@ -30,10 +16,54 @@ describe MeetingResultsDAO, type: :model do
 
     it_behaves_like( "(the existance of a method)", [
       :team_id, :swimmer_id,
-      :rank, :complete_name, :year_of_birth, :team_name,
-      :reaction_time, :time_swam, :is_disqualified, :is_personal_best,
+      :rank, :complete_name, :year_of_birth, :team_name, :time_swam,
+      :is_disqualified, :is_personal_best, :reaction_time,
       :standard_points, :meeting_individual_points, :goggle_cup_points, :team_points
     ] )
+
+    it_behaves_like( "(the existance of a method returning a boolean value)", [
+      :is_disqualified, :is_personal_best
+    ] )
+
+    describe "when initialized without optional parameters" do
+      it "returns given values" do
+        expect( subject.meeting_program_id ).to eq( id )
+        expect( subject.other_id ).to eq( other_id )
+        expect( subject.rank ).to eq( rank )
+        expect( subject.complete_name).to eq(complete_name)
+        expect( subject.year_of_birth).to eq(year_of_birth)
+        expect( subject.team_name).to eq(team_name)
+        expect( subject.time_swam).to eq(time_swam)
+      end
+    end
+
+    describe "when initialized with optional parameters" do
+      it "returns given values" do
+        rea = (rand * 1000).round(2))
+        std = (rand * 1000).round(2)
+        ind = (rand * 100).to_i
+        cup = (rand * 1000).round(2)
+        tea = (rand * 1000).round(2)
+        result = MeetingResultsDAO::MeetingResultsIndividualDAO.new(
+            id, other_id, rank, complete_name, year_of_birth, team_name, time_swam,
+            false, true, rea, std, ind, cup, tea)
+        expect( subject.meeting_program_id ).to eq( id )
+        expect( subject.other_id ).to eq( other_id )
+        expect( subject.rank ).to eq( rank )
+        expect( subject.complete_name).to eq(complete_name)
+        expect( subject.year_of_birth).to eq(year_of_birth)
+        expect( subject.team_name).to eq(team_name)
+        expect( subject.time_swam).to eq(time_swam)
+        expect( result.is_disqualified ).to eq( false )
+        expect( result.is_personal_best ).to eq( true )
+        expect( result.reaction_time ).to eq( rea )
+        expect( result.standard_points ).to eq( std )
+        expect( result.meeting_individual_points ).to eq( ind )
+        expect( result.goggle_cup_points ).to eq( cup )
+        expect( result.team_points ).to eq( tea )
+      end
+    end
+
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -103,6 +133,14 @@ describe MeetingResultsDAO, type: :model do
         expect( subject.updated_at ).to eq( 0 )
       end
     end
+
+    describe "when initialized with optional parameters" do
+      it "returns given values" do
+        updated_at = Date.today() - (rand * 1000).to_i
+        result = MeetingResultsDAO.new( meeting, updated_at )
+        expect( result.meeting ).to eq( meeting )
+        expect( result.updated_at ).to eq( updated_at )
+      end
   end
   #-- -------------------------------------------------------------------------
   #++

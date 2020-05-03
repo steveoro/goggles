@@ -52,6 +52,42 @@ class MeetingResultsDAO
   end
   #-- -------------------------------------------------------------------------
   #++
+  #NAILA
+  class MeetingResultsIndividualDAO2
+
+    # These can be edited later on@
+    attr_reader :team_id, :swimmer_id,
+          :rank, :complete_name, :year_of_birth, :team_name,
+          :time_swam, :is_disqualified, :is_personal_best, :reaction_time,
+          :standard_points, :meeting_individual_points, :goggle_cup_points, :team_points
+
+    # These can be edited later on@
+    #attr_accessor
+
+    # Creates a new instance.
+    #
+    def initialize( result ) 
+      # ids
+      @team_id    = result['team_id']
+      @swimmer_id = result['swimmer_id']
+      # Rank
+      @rank             = result['rank']
+      @complete_name    = result['complete_name']
+      @year_of_birth    = result['year_of_birth']
+      @team_name        = result['team_name']
+      @time_swam        = result['time_swam']
+      @is_disqualified  = result['is_disqualified']
+      @is_personal_best = result['is_personal_best']
+      @reaction_time    = result['reaction_time']
+      # Points
+      @standard_points           = result['standard_points']
+      @meeting_individual_points = result['meeting_individual_points']
+      @goggle_cup_points         = result['goggle_cup_points']
+      @team_points               = result['team_points']
+    end
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Represents the collection of swimmer results for a meeting
   #
@@ -112,14 +148,6 @@ class MeetingResultsDAO
     @updated_at = updated_at
 
     @events     = Hash.new()
-  end
-
-  def creat_event_key( event_order, event_code, heat_code )
-    "#{event_order}-#{event_code}-#{heat_code}"
-  end
-
-  def creat_program_key( event_code, heat_code, gender_code, category_code )
-    "#{event_order}-#{heat_code}-#{gender_code}-#{category_code}"
   end
   #-- -------------------------------------------------------------------------
   #++
